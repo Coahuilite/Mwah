@@ -1,0 +1,132 @@
+param(
+    [string]$ProjectRoot = (Split-Path -Parent $PSScriptRoot),
+    [switch]$PackDev
+)
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = "Stop"
+
+# 本模组的本地验证：无测试工程，因此检查顺序为
+#   1   Release 构建（零警告零错误由 dotnet 自身把关）
+#   2   全部 XML 良构
+#   3   Keyed 中英键集合一致
+#   4   C# 引用的 EPK.* 键在两种语言里都存在
+#   5   defName(XML) ↔ DefOf 字段(C#) ↔ driverClass 字符串
+#   6   DLL 符号审计 + 零 Harmony 断言
+#   7   版本纪律：csproj <Version> == About.xml <modVersion>
+#   8   分发卫生与隐私红线：无 PublishedFileId、无绝对本地路径
+# 全部通过后 -PackDev 才出 dev 包。
+
+$root = [System.IO.Path]::GetFullPath($ProjectRoot)
+
+function Get-KeySet([string]$path) {
+    [xml]$doc = Get-Content -Raw -LiteralPath $path
+    # 只取元素节点：XML 注释在 DOM 里名为 #comment，会把键计数灌水。
+    @($doc.DocumentElement.ChildNodes | Where-Object { $_.Name -notlike '#*' } | ForEach-Object { $_.Name }) | Sort-Object
+}
+$modName = 'EveryPawnKissEachOther'
+$projectFile = Join-Path $root "Source\$modName\$modName.csproj"
+$assemblyPath = Join-Path $root "1.6\Assemblies\$modName.dll"
+$failures = @()
+
+function Invoke-Check {
+    param([string]$Name, [scriptblock]$Action)
+    & $Action
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "[FAIL] $Name"
+        $script:failures += $Name
+    } else {
+        Write-Host "[ok] $Name"
+    }
+}
+
+function Assert-True([string]$Name, [bool]$Condition, [string]$Detail = '') {
+    if ($Condition) { Write-Host "[ok] $Name" }
+    else {
+        Write-Host "[FAIL] $Name $Detail"
+        $script:failures += $Name
+    }
+}
+
+# 1. Release build
+Invoke-Check "Release build ($modName.csproj)" {
+    & dotnet build $projectFile -nologo -c Release -p:DebugType=none -p:DebugSymbols=false | Out-Host
+}
+
+Assert-True 'built assembly present' (Test-Path -LiteralPath $assemblyPath -PathType Leaf)
+
+# 2. XML well-formedness
+$xmlFiles = Get-ChildItem -LiteralPath $root -Recurse -Filter *.xml |
+    Where-Object { $_.FullName -notmatch '\\(obj|bin|dist|\.git)\\' }
+$bad = @()
+foreach ($f in $xmlFiles) {
+    try { $null = [xml](Get-Content -Raw -LiteralPath $f.FullName) }
+    catch { $bad += "$($f.Name): $($_.Exception.Message)" }
+}
+Assert-True ("all XML well-formed (" + @($xmlFiles).Count + " files)") ($bad.Count -eq 0) ($bad -join ' | ')
+
+# 3/4. Localization
+$enPath = Join-Path $root '1.6\Languages\English\Keyed\EPK_Strings.xml'
+$zhPath = Join-Path $root '1.6\Languages\ChineseSimplified\Keyed\EPK_Strings.xml'
+$en = Get-KeySet $enPath
+$zh = Get-KeySet $zhPath
+Assert-True "Keyed parity English/ChineseSimplified ($($en.Count)/$($zh.Count))" ((@(Compare-Object $en $zh)).Count -eq 0)
+
+$code = @(Get-ChildItem (Join-Path $root "Source\$modName") -Recurse -Filter *.cs | Get-Content -Raw) -join "`n"
+$used = @([regex]::Matches($code, '"(EPK\.[A-Za-z0-9_.]+)"') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique)
+$missing = @($used | Where-Object { $en -notcontains $_ -or $zh -notcontains $_ })
+Assert-True ("all $($used.Count) C#-referenced keys exist in both languages") ($missing.Count -eq 0) ($missing -join ', ')
+# 反向信息项：定义了却没人用的键（不失败，只提示，防止语言文件攒尸体）
+$unused = @($en | Where-Object { $used -notcontains $_ })
+if ($unused.Count -gt 0) { Write-Host ("[info] defined but unreferenced keys: " + ($unused -join ', ')) }
+
+# 5. Def identity cross-check
+$defXml = @(Get-ChildItem (Join-Path $root '1.6\Defs') -Recurse -Filter *.xml | Get-Content -Raw) -join "`n"
+$xmlDefs = @([regex]::Matches($defXml, '<defName>(EPK_\w+)</defName>') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique)
+$defOfFields = @([regex]::Matches((Get-ChildItem (Join-Path $root "Source\$modName\DefOf") -Recurse -Filter *.cs | Get-Content -Raw),
+    'public static (?!class\b)\w+ (EPK_\w+)') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique)
+$orphanFields = @($defOfFields | Where-Object { $xmlDefs -notcontains $_ })
+Assert-True ("DefOf fields all resolve to an XML defName ($($defOfFields.Count)/$($xmlDefs.Count))") ($orphanFields.Count -eq 0) ($orphanFields -join ', ')
+$driverRefs = @([regex]::Matches($defXml, '<driverClass>([^<]+)</driverClass>') | ForEach-Object { $_.Groups[1].Value })
+Assert-True 'driverClass uses the real namespace.type' (($driverRefs.Count -eq 1) -and $driverRefs[0] -eq "$modName.JobDriver_Kiss")
+
+# 6. DLL symbol audit + zero Harmony
+$text = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes($assemblyPath))
+$symbols = @('FloatMenuOptionProvider_Kiss','JobDriver_Kiss','KissUtility','KissMoodReward','KissCooldown',
+    'EPKSettings','EPKMod','EPK_JobDefOf','EPK_ThoughtDefOf',"$modName.JobDriver_Kiss",'EPK_Kiss','EPK_KissedBond')
+$missingSyms = @($symbols | Where-Object { -not $text.Contains($_) })
+Assert-True ("DLL contains all $($symbols.Count) key symbols") ($missingSyms.Count -eq 0) ($missingSyms -join ', ')
+Assert-True 'zero-Harmony: no Harmony/HarmonyLib reference in DLL' (-not ($text.Contains('HarmonyLib') -or $text.Contains('Harmony')))
+
+# 7. Version discipline
+[xml]$csproj = Get-Content -LiteralPath $projectFile -Raw
+$csprojVersion = $csproj.SelectSingleNode('/Project/PropertyGroup/Version').InnerText.Trim()
+[xml]$about = Get-Content -LiteralPath (Join-Path $root 'About\About.xml') -Raw
+$modVersion = $about.SelectSingleNode('/ModMetaData/modVersion').InnerText.Trim()
+$packageId = $about.SelectSingleNode('/ModMetaData/packageId').InnerText.Trim()
+$constMatch = [regex]::Match($code, 'ModId = "([^"]+)"').Groups[1].Value
+Assert-True "csproj <Version> == About <modVersion> ($csprojVersion)" ($csprojVersion -eq $modVersion)
+Assert-True "Constants.ModId == About packageId ($packageId)" ($constMatch -eq $packageId)
+Assert-True 'packageId is lowercase' ($packageId -eq $packageId.ToLowerInvariant())
+
+# 8. Distribution hygiene + privacy red line
+Assert-True 'no About/PublishedFileId.txt in repo' (-not (Test-Path -LiteralPath (Join-Path $root 'About\PublishedFileId.txt')))
+$textFiles = Get-ChildItem -LiteralPath $root -Recurse -File -Include *.cs, *.xml, *.ps1, *.slnx, *.md, .gitignore, .gitattributes |
+    Where-Object { $_.FullName -notmatch '\\(obj|bin|dist|\.git)\\' }
+$privacyHits = @($textFiles | Select-String -Pattern '[A-Za-z]:\\' | Where-Object { $_.Line -notmatch '^\s*#' })
+Assert-True 'no absolute local paths in tracked text files' ($privacyHits.Count -eq 0) (($privacyHits | Select-Object -First 3 | ForEach-Object { "$($_.Path):$($_.LineNumber)" }) -join ' | ')
+
+if ($failures.Count -gt 0) {
+    Write-Host ''
+    Write-Host "[verify-local] FAIL: $($failures.Count) check(s) failed:"
+    $failures | ForEach-Object { Write-Host "  - $_" }
+    exit 1
+}
+
+Write-Host ''
+Write-Host '[verify-local] all checks passed.'
+
+if ($PackDev) {
+    & (Join-Path $PSScriptRoot 'pack-dev.ps1') -ProjectRoot $root
+    if ($LASTEXITCODE -ne 0) { throw 'pack-dev failed.' }
+}
