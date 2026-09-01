@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <!--
+    亲吻 job。双方各自跑同一个 JobDef（镜像 job，沿用原版 JobDriver_Lovin 的双人锁定手法）。
+    TargetIndex.A = 对方 pawn。数值（时长/爱心间隔/心情时长）由 ModSettings 决定，job 本身不写死。
+  -->
+  <JobDef>
+    <defName>EPK_Kiss</defName>
+    <driverClass>EveryPawnKissEachOther.JobDriver_Kiss</driverClass>
+    <reportString>kissing TargetA.</reportString>
+    <casualInterruptible>false</casualInterruptible>
+    <playerInterruptible>true</playerInterruptible>
+    <checkOverrideOnDamage>Always</checkOverrideOnDamage>
+    <allowOpportunisticPrefix>false</allowOpportunisticPrefix>
+    <alwaysShowReport>true</alwaysShowReport>
+  </JobDef>
+</Defs>
