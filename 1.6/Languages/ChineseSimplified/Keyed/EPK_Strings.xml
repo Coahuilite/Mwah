@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <!-- 右键菜单 -->
+  <EPK.FloatMenu.Kiss>亲吻{TARGET}</EPK.FloatMenu.Kiss>
+  <EPK.FloatMenu.KissTooltip>走过去、与{TARGET}面对面、亲一个，然后各自回到刚才站的地方。</EPK.FloatMenu.KissTooltip>
+
+  <!-- 不可用原因 -->
+  <EPK.Fail.Disabled>设置里已关闭亲吻</EPK.Fail.Disabled>
+  <EPK.Fail.Self>不能亲自己</EPK.Fail.Self>
+  <EPK.Fail.Hostile>对方正处于敌对状态</EPK.Fail.Hostile>
+  <EPK.Fail.NonHumanlike>设置里未开放非人类目标</EPK.Fail.NonHumanlike>
+  <EPK.Fail.ImmobilePair>两个都动不了</EPK.Fail.ImmobilePair>
+  <EPK.Fail.CannotReach>够不到{TARGET}</EPK.Fail.CannotReach>
+  <EPK.Fail.Busy>已经在亲了</EPK.Fail.Busy>
+  <EPK.Fail.CooldownPawn>{PAWN} 还得缓缓才能再亲（{TIME}）</EPK.Fail.CooldownPawn>
+  <EPK.Fail.CooldownPair>{PAWN} 和 {OTHER} 刚亲过（{TIME}）</EPK.Fail.CooldownPair>
+
+  <!-- 设置页 -->
+  <EPK.SettingsCategory>每个小人都互相亲吻</EPK.SettingsCategory>
+  <EPK.Settings.Header>容忍一下这份唐突的多情。</EPK.Settings.Header>
+  <EPK.Settings.TimingFormat>{0} tick / {1} 秒 / {2} 游戏时</EPK.Settings.TimingFormat>
+  <EPK.Settings.TimingHint>所有时长按 tick 存储，显示为 tick / 现实秒 / 游戏小时。换算：60 tick = 1 现实秒（1 倍速），2500 tick = 1 游戏小时，60000 tick = 1 游戏日。</EPK.Settings.TimingHint>
+
+  <EPK.Settings.Enabled>启用亲吻</EPK.Settings.Enabled>
+  <EPK.Settings.EnabledDesc>总开关。关闭后右键菜单里不再出现亲吻；正在进行中的亲吻正常结束。</EPK.Settings.EnabledDesc>
+
+  <EPK.Settings.Duration>亲吻时长</EPK.Settings.Duration>
+  <EPK.Settings.DurationDesc>两人站着亲多久。这段时间内会持续冒出爱心。</EPK.Settings.DurationDesc>
+
+  <EPK.Settings.FleckInterval>爱心间隔</EPK.Settings.FleckInterval>
+  <EPK.Settings.FleckIntervalDesc>两次爱心之间的间隔。原版滚床单是 100 tick。</EPK.Settings.FleckIntervalDesc>
+
+  <EPK.Settings.PawnCooldown>单人冷却</EPK.Settings.PawnCooldown>
+  <EPK.Settings.PawnCooldownDesc>一个小人亲完之后再亲别人要等多久。原版社交互动只有 120 tick 冷却。</EPK.Settings.PawnCooldownDesc>
+
+  <EPK.Settings.PairCooldown>成对冷却</EPK.Settings.PairCooldown>
+  <EPK.Settings.PairCooldownDesc>同样两个小人之间再亲一次要等多久。设为 0 就是随便亲。</EPK.Settings.PairCooldownDesc>
+
+  <EPK.Settings.ThoughtDuration>心情持续</EPK.Settings.ThoughtDuration>
+  <EPK.Settings.ThoughtDurationDesc>亲完之后这份心情能撑多久。</EPK.Settings.ThoughtDurationDesc>
+
+  <EPK.Settings.MoodMultiplier>心情强度</EPK.Settings.MoodMultiplier>
+  <EPK.Settings.MoodMultiplierDesc>缩放最终心情加成。实际数值 = 想法基准值 × 本倍率 × 该小人自身的社交影响，所以会说话的人亲一次更赚，闷葫芦收益更低。</EPK.Settings.MoodMultiplierDesc>
+
+  <EPK.Settings.AllowHostile>允许敌对小人</EPK.Settings.AllowHostile>
+  <EPK.Settings.AllowHostileDesc>允许你对正在敌对的单位下亲吻命令。对方的回应可能是……物理层面的。</EPK.Settings.AllowHostileDesc>
+
+  <EPK.Settings.AllowNonHumanlike>允许动物、机械与无人机</EPK.Settings.AllowNonHumanlike>
+  <EPK.Settings.AllowNonHumanlikeDesc>让任何 pawn 都能参与，包括动物、机械族、无人机与异象实体。它们没有心情系统，所以只能收获这份心意本身。</EPK.Settings.AllowNonHumanlikeDesc>
+
+  <EPK.Settings.ChangeOpinion>亲吻留下痕迹</EPK.Settings.ChangeOpinion>
+  <EPK.Settings.ChangeOpinionDesc>同时改变两人对彼此的观感。这会接入原版恋爱链——只想要无厘头亲亲就别开。</EPK.Settings.ChangeOpinionDesc>
+
+  <EPK.Settings.ReturnHome>亲完回原位</EPK.Settings.ReturnHome>
+  <EPK.Settings.ReturnHomeDesc>结束后两人都回到被下令时站的位置。这只是个礼貌请求——紧急需求和排班工作仍然会插队。</EPK.Settings.ReturnHomeDesc>
+
+  <EPK.Settings.Reset>恢复默认值</EPK.Settings.Reset>
+</LanguageData>
