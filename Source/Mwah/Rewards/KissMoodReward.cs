@@ -1,7 +1,7 @@
 using RimWorld;
 using Verse;
 
-namespace EveryPawnKissEachOther;
+namespace Mwah;
 
 /// <summary>
 /// 亲吻奖励：只有带心情系统（needs.mood）的 pawn 才拿得到。
@@ -25,8 +25,8 @@ public static class KissMoodReward
             return;
         }
 
-        EPKSettings settings = EPKMod.Settings;
-        ThoughtDef def = settings.OpinionAffected ? EPK_ThoughtDefOf.EPK_KissedBond : EPK_ThoughtDefOf.EPK_Kissed;
+        MwahSettings settings = MwahMod.Settings;
+        ThoughtDef def = settings.OpinionAffected ? MWAH_ThoughtDefOf.MWAH_KissedBond : MWAH_ThoughtDefOf.MWAH_Kissed;
         if (ThoughtMaker.MakeThought(def) is not Thought_Memory memory)
         {
             return;

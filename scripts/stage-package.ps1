@@ -20,8 +20,8 @@ $stageDir = Resolve-NormalizedPath $StageDir
 $aboutSource = Join-Path $root 'About'
 $loadFoldersSource = Join-Path $root 'LoadFolders.xml'
 $versionedSource = Join-Path $root '1.6'
-$assemblyPath = Join-Path $versionedSource 'Assemblies\EveryPawnKissEachOther.dll'
-$modName = 'EveryPawnKissEachOther'
+$assemblyPath = Join-Path $versionedSource 'Assemblies\Mwah.dll'
+$modName = 'Mwah'
 
 if (-not (Test-Path -LiteralPath $assemblyPath -PathType Leaf)) {
     throw "Missing built assembly: 1.6/Assemblies/$modName.dll. Build the desired flavor before staging."

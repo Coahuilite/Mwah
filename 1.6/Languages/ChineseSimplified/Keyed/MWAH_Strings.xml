@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <!-- 右键菜单 -->
+  <MWAH.FloatMenu.Kiss>亲吻{TARGET}</MWAH.FloatMenu.Kiss>
+  <MWAH.FloatMenu.KissTooltip>走过去、与{TARGET}面对面、亲一个，然后各自回到刚才站的地方。</MWAH.FloatMenu.KissTooltip>
+
+  <!-- 不可用原因 -->
+  <MWAH.Fail.Disabled>设置里已关闭亲吻</MWAH.Fail.Disabled>
+  <MWAH.Fail.Self>不能亲自己</MWAH.Fail.Self>
+  <MWAH.Fail.Hostile>对方正处于敌对状态</MWAH.Fail.Hostile>
+  <MWAH.Fail.NonHumanlike>设置里未开放非人类目标</MWAH.Fail.NonHumanlike>
+  <MWAH.Fail.ImmobilePair>两个都动不了</MWAH.Fail.ImmobilePair>
+  <MWAH.Fail.CannotReach>够不到{TARGET}</MWAH.Fail.CannotReach>
+  <MWAH.Fail.Busy>已经在亲了</MWAH.Fail.Busy>
+  <MWAH.Fail.CooldownPawn>{PAWN} 还得缓缓才能再亲（{TIME}）</MWAH.Fail.CooldownPawn>
+  <MWAH.Fail.CooldownPair>{PAWN} 和 {OTHER} 刚亲过（{TIME}）</MWAH.Fail.CooldownPair>
+
+  <!-- 设置页 -->
+  <MWAH.SettingsCategory>每个小人都互相亲吻</MWAH.SettingsCategory>
+  <MWAH.Settings.Header>容忍一下这份唐突的多情。</MWAH.Settings.Header>
+  <MWAH.Settings.TimingFormat>{0} tick / {1} 秒 / {2} 游戏时</MWAH.Settings.TimingFormat>
+  <MWAH.Settings.TimingHint>所有时长按 tick 存储，显示为 tick / 现实秒 / 游戏小时。换算：60 tick = 1 现实秒（1 倍速），2500 tick = 1 游戏小时，60000 tick = 1 游戏日。</MWAH.Settings.TimingHint>
+
+  <MWAH.Settings.Enabled>启用亲吻</MWAH.Settings.Enabled>
+  <MWAH.Settings.EnabledDesc>总开关。关闭后右键菜单里不再出现亲吻；正在进行中的亲吻正常结束。</MWAH.Settings.EnabledDesc>
+
+  <MWAH.Settings.Duration>亲吻时长</MWAH.Settings.Duration>
+  <MWAH.Settings.DurationDesc>两人站着亲多久。这段时间内会持续冒出爱心。</MWAH.Settings.DurationDesc>
+
+  <MWAH.Settings.FleckInterval>爱心间隔</MWAH.Settings.FleckInterval>
+  <MWAH.Settings.FleckIntervalDesc>两次爱心之间的间隔。原版滚床单是 100 tick。</MWAH.Settings.FleckIntervalDesc>
+
+  <MWAH.Settings.PawnCooldown>单人冷却</MWAH.Settings.PawnCooldown>
+  <MWAH.Settings.PawnCooldownDesc>一个小人亲完之后再亲别人要等多久。原版社交互动只有 120 tick 冷却。</MWAH.Settings.PawnCooldownDesc>
+
+  <MWAH.Settings.PairCooldown>成对冷却</MWAH.Settings.PairCooldown>
+  <MWAH.Settings.PairCooldownDesc>同样两个小人之间再亲一次要等多久。设为 0 就是随便亲。</MWAH.Settings.PairCooldownDesc>
+
+  <MWAH.Settings.ThoughtDuration>心情持续</MWAH.Settings.ThoughtDuration>
+  <MWAH.Settings.ThoughtDurationDesc>亲完之后这份心情能撑多久。</MWAH.Settings.ThoughtDurationDesc>
+
+  <MWAH.Settings.MoodMultiplier>心情强度</MWAH.Settings.MoodMultiplier>
+  <MWAH.Settings.MoodMultiplierDesc>缩放最终心情加成。实际数值 = 想法基准值 × 本倍率 × 该小人自身的社交影响，所以会说话的人亲一次更赚，闷葫芦收益更低。</MWAH.Settings.MoodMultiplierDesc>
+
+  <MWAH.Settings.AllowHostile>允许敌对小人</MWAH.Settings.AllowHostile>
+  <MWAH.Settings.AllowHostileDesc>允许你对正在敌对的单位下亲吻命令。对方的回应可能是……物理层面的。</MWAH.Settings.AllowHostileDesc>
+
+  <MWAH.Settings.AllowNonHumanlike>允许动物、机械与无人机</MWAH.Settings.AllowNonHumanlike>
+  <MWAH.Settings.AllowNonHumanlikeDesc>让任何 pawn 都能参与，包括动物、机械族、无人机与异象实体。它们没有心情系统，所以只能收获这份心意本身。</MWAH.Settings.AllowNonHumanlikeDesc>
+
+  <MWAH.Settings.ChangeOpinion>亲吻留下痕迹</MWAH.Settings.ChangeOpinion>
+  <MWAH.Settings.ChangeOpinionDesc>同时改变两人对彼此的观感。这会接入原版恋爱链——只想要无厘头亲亲就别开。</MWAH.Settings.ChangeOpinionDesc>
+
+  <MWAH.Settings.ReturnHome>亲完回原位</MWAH.Settings.ReturnHome>
+  <MWAH.Settings.ReturnHomeDesc>结束后两人都回到被下令时站的位置。这只是个礼貌请求——紧急需求和排班工作仍然会插队。</MWAH.Settings.ReturnHomeDesc>
+
+  <MWAH.Settings.Reset>恢复默认值</MWAH.Settings.Reset>
+</LanguageData>

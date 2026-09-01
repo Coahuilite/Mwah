@@ -10,7 +10,7 @@ $ErrorActionPreference = "Stop"
 #   1   Release 构建（零警告零错误由 dotnet 自身把关）
 #   2   全部 XML 良构
 #   3   Keyed 中英键集合一致
-#   4   C# 引用的 EPK.* 键在两种语言里都存在
+#   4   C# 引用的 MWAH.* 键在两种语言里都存在
 #   5   defName(XML) ↔ DefOf 字段(C#) ↔ driverClass 字符串
 #   6   DLL 符号审计 + 零 Harmony 断言
 #   7   版本纪律：csproj <Version> == About.xml <modVersion>
@@ -24,7 +24,7 @@ function Get-KeySet([string]$path) {
     # 只取元素节点：XML 注释在 DOM 里名为 #comment，会把键计数灌水。
     @($doc.DocumentElement.ChildNodes | Where-Object { $_.Name -notlike '#*' } | ForEach-Object { $_.Name }) | Sort-Object
 }
-$modName = 'EveryPawnKissEachOther'
+$modName = 'Mwah'
 $projectFile = Join-Path $root "Source\$modName\$modName.csproj"
 $assemblyPath = Join-Path $root "1.6\Assemblies\$modName.dll"
 $failures = @()
@@ -66,14 +66,14 @@ foreach ($f in $xmlFiles) {
 Assert-True ("all XML well-formed (" + @($xmlFiles).Count + " files)") ($bad.Count -eq 0) ($bad -join ' | ')
 
 # 3/4. Localization
-$enPath = Join-Path $root '1.6\Languages\English\Keyed\EPK_Strings.xml'
-$zhPath = Join-Path $root '1.6\Languages\ChineseSimplified\Keyed\EPK_Strings.xml'
+$enPath = Join-Path $root '1.6\Languages\English\Keyed\MWAH_Strings.xml'
+$zhPath = Join-Path $root '1.6\Languages\ChineseSimplified\Keyed\MWAH_Strings.xml'
 $en = Get-KeySet $enPath
 $zh = Get-KeySet $zhPath
 Assert-True "Keyed parity English/ChineseSimplified ($($en.Count)/$($zh.Count))" ((@(Compare-Object $en $zh)).Count -eq 0)
 
 $code = @(Get-ChildItem (Join-Path $root "Source\$modName") -Recurse -Filter *.cs | Get-Content -Raw) -join "`n"
-$used = @([regex]::Matches($code, '"(EPK\.[A-Za-z0-9_.]+)"') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique)
+$used = @([regex]::Matches($code, '"(MWAH\.[A-Za-z0-9_.]+)"') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique)
 $missing = @($used | Where-Object { $en -notcontains $_ -or $zh -notcontains $_ })
 Assert-True ("all $($used.Count) C#-referenced keys exist in both languages") ($missing.Count -eq 0) ($missing -join ', ')
 # 反向信息项：定义了却没人用的键（不失败，只提示，防止语言文件攒尸体）
@@ -82,9 +82,9 @@ if ($unused.Count -gt 0) { Write-Host ("[info] defined but unreferenced keys: " 
 
 # 5. Def identity cross-check
 $defXml = @(Get-ChildItem (Join-Path $root '1.6\Defs') -Recurse -Filter *.xml | Get-Content -Raw) -join "`n"
-$xmlDefs = @([regex]::Matches($defXml, '<defName>(EPK_\w+)</defName>') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique)
+$xmlDefs = @([regex]::Matches($defXml, '<defName>(MWAH_\w+)</defName>') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique)
 $defOfFields = @([regex]::Matches((Get-ChildItem (Join-Path $root "Source\$modName\DefOf") -Recurse -Filter *.cs | Get-Content -Raw),
-    'public static (?!class\b)\w+ (EPK_\w+)') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique)
+    'public static (?!class\b)\w+ (MWAH_\w+)') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique)
 $orphanFields = @($defOfFields | Where-Object { $xmlDefs -notcontains $_ })
 Assert-True ("DefOf fields all resolve to an XML defName ($($defOfFields.Count)/$($xmlDefs.Count))") ($orphanFields.Count -eq 0) ($orphanFields -join ', ')
 $driverRefs = @([regex]::Matches($defXml, '<driverClass>([^<]+)</driverClass>') | ForEach-Object { $_.Groups[1].Value })
@@ -93,7 +93,7 @@ Assert-True 'driverClass uses the real namespace.type' (($driverRefs.Count -eq 1
 # 6. DLL symbol audit + zero Harmony
 $text = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes($assemblyPath))
 $symbols = @('FloatMenuOptionProvider_Kiss','JobDriver_Kiss','KissUtility','KissMoodReward','KissCooldown',
-    'EPKSettings','EPKMod','EPK_JobDefOf','EPK_ThoughtDefOf',"$modName.JobDriver_Kiss",'EPK_Kiss','EPK_KissedBond')
+    'MwahSettings','MwahMod','MWAH_JobDefOf','MWAH_ThoughtDefOf',"$modName.JobDriver_Kiss",'MWAH_Kiss','MWAH_KissedBond')
 $missingSyms = @($symbols | Where-Object { -not $text.Contains($_) })
 Assert-True ("DLL contains all $($symbols.Count) key symbols") ($missingSyms.Count -eq 0) ($missingSyms -join ', ')
 Assert-True 'zero-Harmony: no Harmony/HarmonyLib reference in DLL' (-not ($text.Contains('HarmonyLib') -or $text.Contains('Harmony')))

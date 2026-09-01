@@ -7,7 +7,7 @@ $ErrorActionPreference = "Stop"
 
 # 一条命令出本地 dev 包：先按 csproj 默认（Dev flavor）构建，再 stage + zip。
 $root = [System.IO.Path]::GetFullPath($ProjectRoot)
-$projectFile = Join-Path $root 'Source\EveryPawnKissEachOther\EveryPawnKissEachOther.csproj'
+$projectFile = Join-Path $root 'Source\Mwah\Mwah.csproj'
 
 & dotnet build $projectFile -c Release -nologo
 if ($LASTEXITCODE -ne 0) {

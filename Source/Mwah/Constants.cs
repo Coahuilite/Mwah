@@ -2,23 +2,23 @@ using System;
 using RimWorld;
 using Verse;
 
-namespace EveryPawnKissEachOther;
+namespace Mwah;
 
 /// <summary>
-/// 全部可配置项的代码层兜底默认值。运行时的真实来源是 EPKSettings（玩家可改），
+/// 全部可配置项的代码层兜底默认值。运行时的真实来源是 MwahSettings（玩家可改），
 /// 这里只定义"出厂默认"，不要在此处直接读改。
 /// </summary>
 public static class Constants
 {
-    public const string ModId = "coahuilite.everypawnkisheachother";
-    public const string LogPrefix = "[EPK] ";
+    public const string ModId = "coahuilite.mwah";
+    public const string LogPrefix = "[MWAH] ";
 
     // 时长类默认值一律以 tick 为准，界面上再换算成现实秒与游戏小时。
     public const int KissDurationTicks = 150;          // ≈ 2.5 现实秒 ≈ 0.06 游戏小时
     public const int HeartFleckIntervalTicks = 100;    // 与原版 JobDriver_Lovin 的 TicksBetweenHeartMotes 一致
     public const int PawnCooldownTicks = 2500;         // 1 游戏小时
     public const int PairCooldownTicks = 6000;         // 2.4 游戏小时
-    public const float ThoughtDurationGameHours = 6f;  // 与 EPK_Kissed 的 durationDays 0.25 对齐
+    public const float ThoughtDurationGameHours = 6f;  // 与 MWAH_Kissed 的 durationDays 0.25 对齐
 
     public const float MoodMultiplier = 1f;
     public const int MaxSelectionReach = 9999;
@@ -38,7 +38,7 @@ public static class Constants
 }
 
 /// <summary>本地化取值入口。玩家可见文字一律走 Keyed，不硬编码。</summary>
-public static class EPKStrings
+public static class MwahStrings
 {
     public static string Get(string key) => key.Translate();
 

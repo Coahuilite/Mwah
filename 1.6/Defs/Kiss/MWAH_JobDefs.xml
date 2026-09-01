@@ -5,8 +5,8 @@
     TargetIndex.A = 对方 pawn。数值（时长/爱心间隔/心情时长）由 ModSettings 决定，job 本身不写死。
   -->
   <JobDef>
-    <defName>EPK_Kiss</defName>
-    <driverClass>EveryPawnKissEachOther.JobDriver_Kiss</driverClass>
+    <defName>MWAH_Kiss</defName>
+    <driverClass>Mwah.JobDriver_Kiss</driverClass>
     <reportString>kissing TargetA.</reportString>
     <casualInterruptible>false</casualInterruptible>
     <playerInterruptible>true</playerInterruptible>

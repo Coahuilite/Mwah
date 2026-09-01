@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
-  <EPK_Kissed>
+  <MWAH_Kissed>
     <stages>
       <li>
         <label>被{0}亲过</label>
         <description>有人亲了我，我也亲了回去。脸到现在还是热的。</description>
       </li>
     </stages>
-  </EPK_Kissed>
-  <EPK_KissedBond>
+  </MWAH_Kissed>
+  <MWAH_KissedBond>
     <stages>
       <li>
         <label>被{0}亲过</label>
@@ -16,5 +16,5 @@
         <description>有人亲了我，我也亲了回去。脸到现在还是热的。</description>
       </li>
     </stages>
-  </EPK_KissedBond>
+  </MWAH_KissedBond>
 </LanguageData>

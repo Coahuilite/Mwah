@@ -6,7 +6,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 $root = [System.IO.Path]::GetFullPath($ProjectRoot)
-$modName = 'EveryPawnKissEachOther'
+$modName = 'Mwah'
 $devDir = Join-Path $root 'dist\dev'
 $stageDir = Join-Path $root "dist\dev\$modName"
 $projectFile = Join-Path $root "Source\$modName\$modName.csproj"

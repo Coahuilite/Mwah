@@ -3,14 +3,14 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 
-namespace EveryPawnKissEachOther;
+namespace Mwah;
 
 /// <summary>
 /// 玩家配置。生命周期：immediate canonical + coalesced persistence。
-/// 控件改动立刻成为唯一权威值并即时生效；磁盘写入由 <see cref="EPKMod"/> 防抖合并，关窗时强制 flush。
+/// 控件改动立刻成为唯一权威值并即时生效；磁盘写入由 <see cref="MwahMod"/> 防抖合并，关窗时强制 flush。
 /// 所有时长按 tick 存储，界面同时给出 tick / 现实秒 / 游戏小时三种读法。
 /// </summary>
-public class EPKSettings : ModSettings
+public class MwahSettings : ModSettings
 {
     private const float ContentHeight = 980f;
 
@@ -41,7 +41,7 @@ public class EPKSettings : ModSettings
     public int PairCooldown => Mathf.Clamp(pairCooldownTicks, Constants.CooldownTicksRange.min, Constants.CooldownTicksRange.max);
     public float ThoughtDurationHours => Mathf.Clamp(thoughtDurationGameHours, Constants.ThoughtHoursRange.min, Constants.ThoughtHoursRange.max);
     public float MoodMult => Mathf.Clamp(moodMultiplier, Constants.MoodMultiplierRange.min, Constants.MoodMultiplierRange.max);
-    public int ThoughtDurationTicks => EPKTime.FromGameHours(ThoughtDurationHours);
+    public int ThoughtDurationTicks => MwahTime.FromGameHours(ThoughtDurationHours);
 
     public override void ExposeData()
     {
@@ -98,32 +98,32 @@ public class EPKSettings : ModSettings
         list.ColumnWidth = viewRect.width - 24f;
         list.Begin(viewRect);
 
-        list.Label("EPK.Settings.Header".Translate());
+        list.Label("MWAH.Settings.Header".Translate());
         list.GapLine();
-        changed |= Checkbox(list, ref modEnabled, "EPK.Settings.Enabled", "EPK.Settings.EnabledDesc");
+        changed |= Checkbox(list, ref modEnabled, "MWAH.Settings.Enabled", "MWAH.Settings.EnabledDesc");
         list.Gap();
 
-        changed |= TickSlider(list, ref kissDurationTicks, "EPK.Settings.Duration", "EPK.Settings.DurationDesc",
+        changed |= TickSlider(list, ref kissDurationTicks, "MWAH.Settings.Duration", "MWAH.Settings.DurationDesc",
             Constants.DurationTicksRange.min, Constants.DurationTicksRange.max);
-        changed |= TickSlider(list, ref heartFleckIntervalTicks, "EPK.Settings.FleckInterval", "EPK.Settings.FleckIntervalDesc",
+        changed |= TickSlider(list, ref heartFleckIntervalTicks, "MWAH.Settings.FleckInterval", "MWAH.Settings.FleckIntervalDesc",
             Constants.FleckIntervalTicksRange.min, Constants.FleckIntervalTicksRange.max);
-        changed |= TickSlider(list, ref pawnCooldownTicks, "EPK.Settings.PawnCooldown", "EPK.Settings.PawnCooldownDesc",
+        changed |= TickSlider(list, ref pawnCooldownTicks, "MWAH.Settings.PawnCooldown", "MWAH.Settings.PawnCooldownDesc",
             Constants.CooldownTicksRange.min, Constants.CooldownTicksRange.max);
-        changed |= TickSlider(list, ref pairCooldownTicks, "EPK.Settings.PairCooldown", "EPK.Settings.PairCooldownDesc",
+        changed |= TickSlider(list, ref pairCooldownTicks, "MWAH.Settings.PairCooldown", "MWAH.Settings.PairCooldownDesc",
             Constants.CooldownTicksRange.min, Constants.CooldownTicksRange.max);
         changed |= HoursSlider(list);
         changed |= MoodSlider(list);
 
         list.GapLine();
-        changed |= Checkbox(list, ref allowHostileTargets, "EPK.Settings.AllowHostile", "EPK.Settings.AllowHostileDesc");
-        changed |= Checkbox(list, ref allowNonHumanlike, "EPK.Settings.AllowNonHumanlike", "EPK.Settings.AllowNonHumanlikeDesc");
-        changed |= Checkbox(list, ref changeOpinion, "EPK.Settings.ChangeOpinion", "EPK.Settings.ChangeOpinionDesc");
-        changed |= Checkbox(list, ref returnHomeAfterKiss, "EPK.Settings.ReturnHome", "EPK.Settings.ReturnHomeDesc");
+        changed |= Checkbox(list, ref allowHostileTargets, "MWAH.Settings.AllowHostile", "MWAH.Settings.AllowHostileDesc");
+        changed |= Checkbox(list, ref allowNonHumanlike, "MWAH.Settings.AllowNonHumanlike", "MWAH.Settings.AllowNonHumanlikeDesc");
+        changed |= Checkbox(list, ref changeOpinion, "MWAH.Settings.ChangeOpinion", "MWAH.Settings.ChangeOpinionDesc");
+        changed |= Checkbox(list, ref returnHomeAfterKiss, "MWAH.Settings.ReturnHome", "MWAH.Settings.ReturnHomeDesc");
 
         list.Gap();
-        list.Label("EPK.Settings.TimingHint".Translate());
+        list.Label("MWAH.Settings.TimingHint".Translate());
         list.Gap();
-        if (list.ButtonText("EPK.Settings.Reset".Translate()))
+        if (list.ButtonText("MWAH.Settings.Reset".Translate()))
         {
             RestoreDefaults();
             changed = true;
@@ -133,7 +133,7 @@ public class EPKSettings : ModSettings
         Widgets.EndScrollView();
         if (changed)
         {
-            EPKMod.Instance?.RequestSettingsSave();
+            MwahMod.Instance?.RequestSettingsSave();
         }
     }
 
@@ -147,7 +147,7 @@ public class EPKSettings : ModSettings
     private static bool TickSlider(Listing_Standard list, ref int ticks, string labelKey, string tipKey, int min, int max)
     {
         int before = ticks;
-        string label = labelKey.Translate() + ": " + EPKTime.FormatTicks(ticks);
+        string label = labelKey.Translate() + ": " + MwahTime.FormatTicks(ticks);
         ticks = Mathf.RoundToInt(list.SliderLabeled(label, ticks, min, max, 0.62f, tipKey.Translate()));
         return before != ticks;
     }
@@ -155,9 +155,9 @@ public class EPKSettings : ModSettings
     private bool HoursSlider(Listing_Standard list)
     {
         float before = thoughtDurationGameHours;
-        string label = "EPK.Settings.ThoughtDuration".Translate() + ": " + EPKTime.FormatGameHours(before);
+        string label = "MWAH.Settings.ThoughtDuration".Translate() + ": " + MwahTime.FormatGameHours(before);
         float raw = list.SliderLabeled(label, before, Constants.ThoughtHoursRange.min, Constants.ThoughtHoursRange.max,
-            0.62f, "EPK.Settings.ThoughtDurationDesc".Translate());
+            0.62f, "MWAH.Settings.ThoughtDurationDesc".Translate());
         // 1/4 游戏小时粒度：小于这个跨度在体感上没有区别，却会让存档里出现无意义的长小数。
         thoughtDurationGameHours = Mathf.Round(raw * 4f) / 4f;
         return !Mathf.Approximately(before, thoughtDurationGameHours);
@@ -166,9 +166,9 @@ public class EPKSettings : ModSettings
     private bool MoodSlider(Listing_Standard list)
     {
         float before = moodMultiplier;
-        string label = "EPK.Settings.MoodMultiplier".Translate() + ": " + before.ToString("0.##") + "x";
+        string label = "MWAH.Settings.MoodMultiplier".Translate() + ": " + before.ToString("0.##") + "x";
         float raw = list.SliderLabeled(label, before, Constants.MoodMultiplierRange.min, Constants.MoodMultiplierRange.max,
-            0.62f, "EPK.Settings.MoodMultiplierDesc".Translate());
+            0.62f, "MWAH.Settings.MoodMultiplierDesc".Translate());
         moodMultiplier = Mathf.Round(raw * 20f) / 20f; // 0.05 粒度
         return !Mathf.Approximately(before, moodMultiplier);
     }

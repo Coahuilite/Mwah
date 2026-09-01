@@ -3,7 +3,7 @@ using RimWorld;
 using Verse;
 using Verse.AI;
 
-namespace EveryPawnKissEachOther;
+namespace Mwah;
 
 /// <summary>
 /// 右键菜单入口。FloatMenuMakerMap.Init() 用 AllSubclassesNonAbstract() 反射发现所有
@@ -67,7 +67,7 @@ public class FloatMenuOptionProvider_Kiss : FloatMenuOptionProvider
             return null;
         }
 
-        string label = "EPK.FloatMenu.Kiss".Translate(clickedPawn.Named("TARGET"));
+        string label = "MWAH.FloatMenu.Kiss".Translate(clickedPawn.Named("TARGET"));
         if (context.IsMultiselect)
         {
             // 多选时不写"谁去亲"，否则一屏"kiss 张三"分不清主体。
@@ -86,7 +86,7 @@ public class FloatMenuOptionProvider_Kiss : FloatMenuOptionProvider
         var option = new FloatMenuOption(label, delegate { KissUtility.BeginKiss(selected, clickedPawn); },
             MenuOptionPriority.InitiateSocial, null, clickedPawn)
         {
-            tooltip = new TipSignal("EPK.FloatMenu.KissTooltip".Translate(clickedPawn.Named("TARGET")))
+            tooltip = new TipSignal("MWAH.FloatMenu.KissTooltip".Translate(clickedPawn.Named("TARGET")))
         };
 
         // 会打断对方当前工作的提示（爱心图标 + "会抢占"标记），复用原版装饰器。

@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>EveryPawnKissEachOther</RootNamespace>
-    <AssemblyName>EveryPawnKissEachOther</AssemblyName>
+    <RootNamespace>Mwah</RootNamespace>
+    <AssemblyName>Mwah</AssemblyName>
     <TargetFramework>net472</TargetFramework>
     <PlatformTarget>x64</PlatformTarget>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -37,8 +37,8 @@
 
   <!-- 构建渠道：Dev / Steam / GitHub，仅影响启动日志 banner，运行逻辑一致。 -->
   <PropertyGroup>
-    <EPKBuildFlavor Condition="'$(EPKBuildFlavor)' == ''">Dev</EPKBuildFlavor>
-    <DefineConstants>$(DefineConstants);EPK_$(EPKBuildFlavor.ToUpper())</DefineConstants>
+    <MWAHBuildFlavor Condition="'$(MWAHBuildFlavor)' == ''">Dev</MWAHBuildFlavor>
+    <DefineConstants>$(DefineConstants);MWAH_$(MWAHBuildFlavor.ToUpper())</DefineConstants>
   </PropertyGroup>
 
   <!-- 零 Harmony：不引用 Lib.Harmony，运行时也不依赖 brrainz.harmony。 -->

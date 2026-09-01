@@ -2,7 +2,7 @@ using RimWorld;
 using Verse;
 using Verse.AI;
 
-namespace EveryPawnKissEachOther;
+namespace Mwah;
 
 /// <summary>
 /// 一次"要不要在右键菜单里出现"的完整判定结果。
@@ -63,7 +63,7 @@ public static class KissUtility
         {
             if (!CanMoveNow(target))
             {
-                return KissProposal.Blocked("EPK.Fail.ImmobilePair".Translate());
+                return KissProposal.Blocked("MWAH.Fail.ImmobilePair".Translate());
             }
             doer = target;
             receiver = selected;
@@ -78,22 +78,22 @@ public static class KissUtility
     /// <summary>静态资格：与"此刻忙不忙、够不够得到"无关的过滤。</summary>
     private static AcceptanceReport CheckEligibility(Pawn a, Pawn b)
     {
-        EPKSettings? settings = EPKMod.Settings;
+        MwahSettings? settings = MwahMod.Settings;
         if (settings == null || !settings.Enabled)
         {
-            return new AcceptanceReport("EPK.Fail.Disabled".Translate());
+            return new AcceptanceReport("MWAH.Fail.Disabled".Translate());
         }
         if (a.Dead || b.Dead || !a.Spawned || !b.Spawned)
         {
-            return new AcceptanceReport("EPK.Fail.Self".Translate());
+            return new AcceptanceReport("MWAH.Fail.Self".Translate());
         }
         if (!settings.NonHumanlikeAllowed && (!a.RaceProps.Humanlike || !b.RaceProps.Humanlike))
         {
-            return new AcceptanceReport("EPK.Fail.NonHumanlike".Translate());
+            return new AcceptanceReport("MWAH.Fail.NonHumanlike".Translate());
         }
         if (!settings.HostileAllowed && a.HostileTo(b))
         {
-            return new AcceptanceReport("EPK.Fail.Hostile".Translate());
+            return new AcceptanceReport("MWAH.Fail.Hostile".Translate());
         }
         return AcceptanceReport.WasAccepted;
     }
@@ -103,26 +103,26 @@ public static class KissUtility
     {
         if (IsKissing(doer) || IsKissing(receiver))
         {
-            return new AcceptanceReport("EPK.Fail.Busy".Translate());
+            return new AcceptanceReport("MWAH.Fail.Busy".Translate());
         }
 
         int pawnRemaining = KissCooldown.PawnRemaining(doer);
         if (pawnRemaining > 0)
         {
-            return new AcceptanceReport(EPKStrings.Get("EPK.Fail.CooldownPawn",
-                doer.Named("PAWN"), EPKTime.FormatTicks(pawnRemaining).Named("TIME")));
+            return new AcceptanceReport(MwahStrings.Get("MWAH.Fail.CooldownPawn",
+                doer.Named("PAWN"), MwahTime.FormatTicks(pawnRemaining).Named("TIME")));
         }
 
         int pairRemaining = KissCooldown.PairRemaining(doer, receiver);
         if (pairRemaining > 0)
         {
-            return new AcceptanceReport(EPKStrings.Get("EPK.Fail.CooldownPair",
-                doer.Named("PAWN"), receiver.Named("OTHER"), EPKTime.FormatTicks(pairRemaining).Named("TIME")));
+            return new AcceptanceReport(MwahStrings.Get("MWAH.Fail.CooldownPair",
+                doer.Named("PAWN"), receiver.Named("OTHER"), MwahTime.FormatTicks(pairRemaining).Named("TIME")));
         }
 
         if (!doer.CanReach(receiver.Position, PathEndMode.Touch, Danger.Deadly))
         {
-            return new AcceptanceReport(EPKStrings.Get("EPK.Fail.CannotReach", receiver.Named("TARGET")));
+            return new AcceptanceReport(MwahStrings.Get("MWAH.Fail.CannotReach", receiver.Named("TARGET")));
         }
         return AcceptanceReport.WasAccepted;
     }
@@ -133,20 +133,20 @@ public static class KissUtility
         KissProposal proposal = Propose(selected, target);
         if (!proposal.Allowed || proposal.Doer == null || proposal.Receiver == null)
         {
-            Messages.Message(proposal.BlockedReason ?? "EPK.Fail.Busy".Translate(),
+            Messages.Message(proposal.BlockedReason ?? "MWAH.Fail.Busy".Translate(),
                 new LookTargets(selected, target), MessageTypeDefOf.RejectInput, historical: false);
             return;
         }
 
-        EPKSettings settings = EPKMod.Settings;
+        MwahSettings settings = MwahMod.Settings;
         // 冷却在下令瞬间消耗，避免同一 tick 反复排队刷爱心。
         KissCooldown.Mark(proposal.Doer, proposal.Receiver, settings.PawnCooldown, settings.PairCooldown);
 
-        var job = JobMaker.MakeJob(EPK_JobDefOf.EPK_Kiss, proposal.Receiver);
+        var job = JobMaker.MakeJob(MWAH_JobDefOf.MWAH_Kiss, proposal.Receiver);
         proposal.Doer.jobs.StartJob(job, JobCondition.InterruptForced);
     }
 
-    public static bool IsKissing(Pawn pawn) => pawn.CurJobDef == EPK_JobDefOf.EPK_Kiss;
+    public static bool IsKissing(Pawn pawn) => pawn.CurJobDef == MWAH_JobDefOf.MWAH_Kiss;
 
     /// <summary>
     /// 1.6 已无 Pawn.CanMove，移动能力唯一可靠读法是 Moving 容量 + pather 存在；
@@ -164,7 +164,7 @@ public static class KissUtility
     /// <summary>结束后回被下令时站的位置。只是礼貌请求：紧急需求与排班仍会插队。</summary>
     public static void RequestReturnHome(Pawn pawn, IntVec3 homeCell)
     {
-        if (!EPKMod.Settings.ReturnsHome || pawn == null || !homeCell.IsValid || pawn.Position == homeCell)
+        if (!MwahMod.Settings.ReturnsHome || pawn == null || !homeCell.IsValid || pawn.Position == homeCell)
         {
             return;
         }

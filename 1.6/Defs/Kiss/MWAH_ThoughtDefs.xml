@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Defs>
   <!--
-    默认使用 EPK_Kissed：纯 Thought_Memory，只给心情，不写入好感度，不动浪漫链。
+    默认使用 MWAH_Kissed：纯 Thought_Memory，只给心情，不写入好感度，不动浪漫链。
     stage 的 baseMoodEffect 是"社交影响 = 1.0（殖民者 0 级社交、容量满）"时的基准值；
     实际强度 = baseMoodEffect × moodPowerFactor，而 moodPowerFactor = 自己的 SocialImpact × 设置里的倍率。
     实际时长由设置项写入 durationTicksOverride；这里的 durationDays 只是兜底值（0.25 日 = 6 游戏小时）。
   -->
   <ThoughtDef>
-    <defName>EPK_Kissed</defName>
+    <defName>MWAH_Kissed</defName>
     <thoughtClass>Thought_Memory</thoughtClass>
     <durationDays>0.25</durationDays>
     <stackLimit>3</stackLimit>
@@ -24,7 +24,7 @@
 
   <!-- 设置里打开"影响好感度"后才使用：Thought_MemorySocial，额外写入对对方的意见。 -->
   <ThoughtDef>
-    <defName>EPK_KissedBond</defName>
+    <defName>MWAH_KissedBond</defName>
     <thoughtClass>Thought_MemorySocial</thoughtClass>
     <durationDays>0.25</durationDays>
     <stackLimit>3</stackLimit>

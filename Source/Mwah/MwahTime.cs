@@ -2,14 +2,14 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 
-namespace EveryPawnKissEachOther;
+namespace Mwah;
 
 /// <summary>
 /// tick ↔ 现实秒 ↔ 游戏小时 的唯一换算入口。
 /// 依据：GenTicks.TicksPerRealSecond = 60（1 倍速），GenDate.TicksPerDay = 60000，1 日 = 24 游戏小时。
 /// 设置界面只允许以 tick 为存储单位，显示时同时给出三种单位，避免玩家猜数量级。
 /// </summary>
-public static class EPKTime
+public static class MwahTime
 {
     public const int TicksPerRealSecond = GenTicks.TicksPerRealSecond; // 60
     public const int TicksPerGameHour = GenDate.TicksPerDay / 24;      // 2500
@@ -25,7 +25,7 @@ public static class EPKTime
     /// <summary>以 tick 为主显示值，同时括出现实秒与游戏小时。</summary>
     public static string FormatTicks(int ticks)
     {
-        return EPKStrings.Get("EPK.Settings.TimingFormat",
+        return MwahStrings.Get("MWAH.Settings.TimingFormat",
             ticks.ToString(),
             ToRealSeconds(ticks).ToString("0.##"),
             ToGameHours(ticks).ToString("0.###"));
@@ -34,7 +34,7 @@ public static class EPKTime
     /// <summary>以游戏小时为主显示值（心情时长这类玩家直觉按小时想）。</summary>
     public static string FormatGameHours(float hours)
     {
-        return EPKStrings.Get("EPK.Settings.TimingFormat",
+        return MwahStrings.Get("MWAH.Settings.TimingFormat",
             FromGameHours(hours).ToString(),
             ToRealSeconds(FromGameHours(hours)).ToString("0.##"),
             hours.ToString("0.##"));

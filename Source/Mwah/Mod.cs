@@ -4,20 +4,20 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 
-namespace EveryPawnKissEachOther;
+namespace Mwah;
 
 /// <summary>
 /// 模组入口。零 Harmony：不 PatchAll、不依赖 brrainz.harmony，
 /// 触发入口靠原版 FloatMenuOptionProvider 自动发现，行为靠自定义 JobDriver。
 /// 设置持久化采用"内存即时生效 + 磁盘防抖合并"，失败时保留 dirty 并重试。
 /// </summary>
-public class EPKMod : Mod
+public class MwahMod : Mod
 {
     private const float SaveDebounceSeconds = 0.35f;
     private const float SaveRetrySeconds = 2f;
 
-    public static EPKSettings Settings = null!;
-    public static EPKMod? Instance { get; private set; }
+    public static MwahSettings Settings = null!;
+    public static MwahMod? Instance { get; private set; }
 
     private bool savePending;
     private float saveDueAt;
@@ -25,23 +25,23 @@ public class EPKMod : Mod
     private long persistedGeneration;
     private long failedGeneration = -1;
 
-#if EPK_STEAM
+#if MWAH_STEAM
     private const string BuildFlavor = "steam";
-#elif EPK_GITHUB
+#elif MWAH_GITHUB
     private const string BuildFlavor = "github";
 #else
     private const string BuildFlavor = "dev";
 #endif
 
-    public EPKMod(ModContentPack content) : base(content)
+    public MwahMod(ModContentPack content) : base(content)
     {
         Instance = this;
-        Settings = GetSettings<EPKSettings>();
-        EPKLog.Info($"loaded [{BuildFlavor} {VersionString()}]");
+        Settings = GetSettings<MwahSettings>();
+        MwahLog.Info($"loaded [{BuildFlavor} {VersionString()}]");
     }
 
     /// <summary>返回非空字符串是设置页在"模式选项"里出现的唯一条件。</summary>
-    public override string SettingsCategory() => "EPK.SettingsCategory".Translate();
+    public override string SettingsCategory() => "MWAH.SettingsCategory".Translate();
 
 
     public override void DoSettingsWindowContents(Rect inRect)
@@ -80,14 +80,14 @@ public class EPKMod : Mod
             WriteSettings();
             persistedGeneration = requestedGeneration;
             savePending = false;
-            EPKLog.Dev($"settings saved (generation {persistedGeneration})");
+            MwahLog.Dev($"settings saved (generation {persistedGeneration})");
         }
         catch (Exception ex)
         {
             // 保存失败不能清掉 dirty：留着下次重试，并把原因告诉开发者。
             failedGeneration = requestedGeneration;
             saveDueAt = Time.realtimeSinceStartup + SaveRetrySeconds;
-            EPKLog.Error($"settings save failed (generation {requestedGeneration}): {ex}");
+            MwahLog.Error($"settings save failed (generation {requestedGeneration}): {ex}");
         }
     }
 
@@ -100,7 +100,7 @@ public class EPKMod : Mod
 
     private static string VersionString()
     {
-        string? informational = typeof(EPKMod).Assembly
+        string? informational = typeof(MwahMod).Assembly
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
         return string.IsNullOrEmpty(informational) ? "unknown" : informational!;
     }

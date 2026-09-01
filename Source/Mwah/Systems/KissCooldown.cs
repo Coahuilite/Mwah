@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using Verse;
 
-namespace EveryPawnKissEachOther;
+namespace Mwah;
 
 /// <summary>
 /// 亲吻冷却。会话内内存态（与 Let Me Gnaw On You 的 CooldownManager 同一取舍）：

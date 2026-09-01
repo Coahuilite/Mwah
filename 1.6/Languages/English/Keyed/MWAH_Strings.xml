@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <!-- 右键菜单 -->
+  <MWAH.FloatMenu.Kiss>kiss {TARGET}</MWAH.FloatMenu.Kiss>
+  <MWAH.FloatMenu.KissTooltip>Walk over, face {TARGET}, share a kiss, then both return to where they stood.</MWAH.FloatMenu.KissTooltip>
+
+  <!-- 不可用原因 -->
+  <MWAH.Fail.Disabled>kissing is disabled in mod settings</MWAH.Fail.Disabled>
+  <MWAH.Fail.Self>cannot kiss themselves</MWAH.Fail.Self>
+  <MWAH.Fail.Hostile>they are actively hostile</MWAH.Fail.Hostile>
+  <MWAH.Fail.NonHumanlike>non-humanlike targets are disabled in mod settings</MWAH.Fail.NonHumanlike>
+  <MWAH.Fail.ImmobilePair>neither of them can move</MWAH.Fail.ImmobilePair>
+  <MWAH.Fail.CannotReach>cannot reach {TARGET}</MWAH.Fail.CannotReach>
+  <MWAH.Fail.Busy>already in the middle of a kiss</MWAH.Fail.Busy>
+  <MWAH.Fail.CooldownPawn>{PAWN} needs a moment between kisses ({TIME})</MWAH.Fail.CooldownPawn>
+  <MWAH.Fail.CooldownPair>{PAWN} and {OTHER} already kissed recently ({TIME})</MWAH.Fail.CooldownPair>
+
+  <!-- 设置页 -->
+  <MWAH.SettingsCategory>Mwah!</MWAH.SettingsCategory>
+  <MWAH.Settings.Header>Tolerate the audacity of affection.</MWAH.Settings.Header>
+  <MWAH.Settings.TimingFormat>{0} t / {1} s / {2} h</MWAH.Settings.TimingFormat>
+  <MWAH.Settings.TimingHint>Every duration is stored in ticks and shown as ticks / real seconds / game hours. Reference: 60 t = 1 real second at 1x speed, 2500 t = 1 game hour, 60000 t = 1 game day.</MWAH.Settings.TimingHint>
+
+  <MWAH.Settings.Enabled>Enable kissing</MWAH.Settings.Enabled>
+  <MWAH.Settings.EnabledDesc>Master switch. Off removes the right-click option; ongoing kisses finish normally.</MWAH.Settings.EnabledDesc>
+
+  <MWAH.Settings.Duration>Kiss length</MWAH.Settings.Duration>
+  <MWAH.Settings.DurationDesc>How long the two stand there kissing. Hearts spawn repeatedly inside this window.</MWAH.Settings.DurationDesc>
+
+  <MWAH.Settings.FleckInterval>Heart interval</MWAH.Settings.FleckInterval>
+  <MWAH.Settings.FleckIntervalDesc>Gap between heart bursts. Vanilla lovemakin' uses 100 t.</MWAH.Settings.FleckIntervalDesc>
+
+  <MWAH.Settings.PawnCooldown>Cooldown per pawn</MWAH.Settings.PawnCooldown>
+  <MWAH.Settings.PawnCooldownDesc>How long a pawn must wait before kissing anyone again. Vanilla social interactions only cool down for 120 t.</MWAH.Settings.PawnCooldownDesc>
+
+  <MWAH.Settings.PairCooldown>Cooldown per pair</MWAH.Settings.PairCooldown>
+  <MWAH.Settings.PairCooldownDesc>How long the same two pawns must wait before kissing each other again. Set to 0 for free-for-all.</MWAH.Settings.PairCooldownDesc>
+
+  <MWAH.Settings.ThoughtDuration>Mood duration</MWAH.Settings.ThoughtDuration>
+  <MWAH.Settings.ThoughtDurationDesc>How long the mood bonus lingers after a kiss.</MWAH.Settings.ThoughtDurationDesc>
+
+  <MWAH.Settings.MoodMultiplier>Mood strength</MWAH.Settings.MoodMultiplier>
+  <MWAH.Settings.MoodMultiplierDesc>Scales the final mood bonus. Actual bonus = thought base x this x the pawn's own social impact, so a smooth talker gets more out of a kiss than a mute grump.</MWAH.Settings.MoodMultiplierDesc>
+
+  <MWAH.Settings.AllowHostile>Allow hostile pawns</MWAH.Settings.AllowHostile>
+  <MWAH.Settings.AllowHostileDesc>Let you order a kiss at pawns that are currently hostile. They may react... physically.</MWAH.Settings.AllowHostileDesc>
+
+  <MWAH.Settings.AllowNonHumanlike>Allow animals, mechs and drones</MWAH.Settings.AllowNonHumanlike>
+  <MWAH.Settings.AllowNonHumanlikeDesc>Let any pawn be involved, including animals, mechanoids, drones and entities. They have no mood, so they gain nothing but the gesture.</MWAH.Settings.AllowNonHumanlikeDesc>
+
+  <MWAH.Settings.ChangeOpinion>Affection leaves a mark</MWAH.Settings.ChangeOpinion>
+  <MWAH.Settings.ChangeOpinionDesc>Also shift how the two pawns feel about each other. This feeds the vanilla romance chain - keep it off if you just want silly kissing.</MWAH.Settings.ChangeOpinionDesc>
+
+  <MWAH.Settings.ReturnHome>Return to original spot</MWAH.Settings.ReturnHome>
+  <MWAH.Settings.ReturnHomeDesc>Afterwards both pawn go back to where the kiss was ordered. A polite request - urgent needs and work still win.</MWAH.Settings.ReturnHomeDesc>
+
+  <MWAH.Settings.Reset>Restore defaults</MWAH.Settings.Reset>
+</LanguageData>

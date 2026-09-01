@@ -3,7 +3,7 @@ using RimWorld;
 using Verse;
 using Verse.AI;
 
-namespace EveryPawnKissEachOther;
+namespace Mwah;
 
 /// <summary>
 /// 站立版"滚床单"双人镜像 job（骨架照原版 JobDriver_Lovin，去掉床）：
@@ -114,13 +114,13 @@ public class JobDriver_Kiss : JobDriver
         var toil = ToilMaker.MakeToil(nameof(ToilLockPartner));
         toil.initAction = delegate
         {
-            isPassivePartner = Partner.CurJob != null && Partner.CurJob.def == EPK_JobDefOf.EPK_Kiss;
+            isPassivePartner = Partner.CurJob != null && Partner.CurJob.def == MWAH_JobDefOf.MWAH_Kiss;
             if (!isPassivePartner)
             {
-                var partnerJob = JobMaker.MakeJob(EPK_JobDefOf.EPK_Kiss, base.pawn);
+                var partnerJob = JobMaker.MakeJob(MWAH_JobDefOf.MWAH_Kiss, base.pawn);
                 Partner.jobs.StartJob(partnerJob, JobCondition.InterruptForced);
             }
-            ticksLeft = EPKMod.Settings.DurationTicks;
+            ticksLeft = MwahMod.Settings.DurationTicks;
         };
         toil.socialMode = RandomSocialMode.Off;
         toil.defaultCompleteMode = ToilCompleteMode.Instant;
@@ -144,7 +144,7 @@ public class JobDriver_Kiss : JobDriver
                 return;
             }
             FaceEachOther();
-            int interval = EPKMod.Settings.FleckIntervalTicks;
+            int interval = MwahMod.Settings.FleckIntervalTicks;
             if (interval > 0 && base.pawn.IsHashIntervalTick(interval, delta))
             {
                 // 与原版滚床单完全同一支调用；两边各来一次，比原版更热闹。
@@ -158,7 +158,7 @@ public class JobDriver_Kiss : JobDriver
         toil.AddFailCondition(delegate
         {
             // 只约束被动方：对方走开了就散场。主动方不依赖对方是否接下了 job（躺着的对象可能接不下）。
-            return isPassivePartner && (Partner.CurJob == null || Partner.CurJob.def != EPK_JobDefOf.EPK_Kiss);
+            return isPassivePartner && (Partner.CurJob == null || Partner.CurJob.def != MWAH_JobDefOf.MWAH_Kiss);
         });
         toil.AddFinishAction(delegate
         {
