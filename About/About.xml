@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+  <packageId>coahuilite.everypawnkisheachother</packageId>
+  <name>Every Pawn Kiss Each Other</name>
+  <author>Coahuilite</author>
+  <description>Let anyone kiss anyone. Select any pawn on the map, right-click another pawn, and order a kiss: the one that can walk goes over, both turn to face each other, and vanilla lovemakin' hearts float up. If the pawn you selected cannot walk, the other one comes over instead. When it is over, both head back to where they stood.
+
+Pawns with a mood get a mood bonus scaled by their own social impact; pawns without one (animals, mechanoids, drones, entities) get nothing at all. Live maps only, single-player only. Romance, opinion and relationships stay untouched unless you turn that on in the mod settings.
+  </description>
+  <modVersion>0.1.0</modVersion>
+  <url>https://github.com/Coahuilite/EveryPawnKissEachOther</url>
+  <supportedVersions>
+    <li>1.6</li>
+  </supportedVersions>
+</ModMetaData>

@@ -1,0 +1,16 @@
+# 仓库文本统一按 LF 存储，Windows 检出也用 LF（与 let_me_gnaw_on_you 一致）。
+* text=auto eol=lf
+
+# RimWorld 运行时构建产物与媒体是二进制。
+*.dll binary
+*.pdb binary
+*.zip binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.dds binary
+*.psd binary
+*.xcf binary
+*.wav binary
+*.ogg binary
+*.mp3 binary

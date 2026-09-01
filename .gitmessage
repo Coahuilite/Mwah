@@ -1,0 +1,20 @@
+# <type>: <short imperative subject, <= 50 chars>
+#
+# type ∈ feat / fix / docs / refactor / chore / style / test
+#   feat     新功能
+#   fix      修 bug
+#   docs     文档 / 记忆文件
+#   refactor 重构（不改行为）
+#   chore    构建 / 打包 / 工具 / 杂项
+#   style    格式（不改逻辑）
+#   test     测试
+#
+# 原子提交原则：一个 commit 只做一件事。
+# gameplay 代码、Defs、本地化、版本路由、文档、打包工具分开提交，便于单独回滚。
+# 主题用英文祈使句（Conventional Commits 1.0.0），正文可中文补充动机与取舍。
+#
+# 示例：
+#   feat(kiss): allow any selectable pawn to kiss any other pawn
+#   fix(kiss): stop passive partner from granting the mood bonus twice
+#   chore(scripts): add dev packaging with commit-labeled zips
+#   docs: record the no-junction testing rule

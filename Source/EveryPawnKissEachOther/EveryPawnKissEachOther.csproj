@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>EveryPawnKissEachOther</RootNamespace>
+    <AssemblyName>EveryPawnKissEachOther</AssemblyName>
+    <TargetFramework>net472</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>$(MSBuildThisFileDirectory)../../1.6/Assemblies</OutputPath>
+    <LangVersion>12</LangVersion>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <!-- 版本单一源头：SemVer，内测 0.x.y。tag 使用 v<version>。 -->
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
+    <FileVersion>$(VersionPrefix).0</FileVersion>
+    <InformationalVersion>$(VersionPrefix)</InformationalVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <Optimize>false</Optimize>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <!-- 构建渠道：Dev / Steam / GitHub，仅影响启动日志 banner，运行逻辑一致。 -->
+  <PropertyGroup>
+    <EPKBuildFlavor Condition="'$(EPKBuildFlavor)' == ''">Dev</EPKBuildFlavor>
+    <DefineConstants>$(DefineConstants);EPK_$(EPKBuildFlavor.ToUpper())</DefineConstants>
+  </PropertyGroup>
+
+  <!-- 零 Harmony：不引用 Lib.Harmony，运行时也不依赖 brrainz.harmony。 -->
+  <ItemGroup>
+    <PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.*" />
+  </ItemGroup>
+
+</Project>

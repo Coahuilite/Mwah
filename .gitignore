@@ -1,0 +1,58 @@
+# 编译输出：仓库只存源码，DLL/PDB 由构建再生
+1.6/Assemblies/*.dll
+1.6/Assemblies/*.xml
+*.pdb
+!.gitkeep
+
+# Build artifacts
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+artifacts/
+*.binlog
+
+# NuGet / MSBuild
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+project.lock.json
+project.fragment.lock.json
+
+# Visual Studio / Rider user files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+.vs/
+.idea/
+
+# RimWorld local/generated content
+dist/
+About/PublishedFileId.txt
+1.6/Assemblies/*.pdb
+*.pdb
+
+# OS junk
+Thumbs.db
+Desktop.ini
+.DS_Store
+~$*
+*~
+
+# Misc
+mono_crash.*
+StyleCopReport.xml
+*.coverage
