@@ -1,8 +1,15 @@
 # MEMORY
 
 ## 当前耐久状态
+## 命名决定（2026-09-02 定稿）
 
-- RimWorld 1.6 模组，`packageId` `coahuilite.everypawnkisheachother`，产品版本 **0.1.0**（csproj `<Version>` 为主源，About `<modVersion>` 跟随）。尚未发布、无远端仓库、无创意工坊条目。
+- 品牌短名 **`Mwah!`**，全称 **`Every Pawn Kisses Each Other`**，`packageId` = `coahuilite.mwah`，前缀 `MWAH_` / 键前缀 `MWAH.` / 日志 `[MWAH]`。工作区目录名保留 `every_pawn_kiss_each_other/`，工程身份一律 `Mwah`。
+- 候选与淘汰理由（已核实部分标注依据）：`KISS_` 全称最直白但作为通用前缀撞车概率与工坊检索噪音最高（**注意：并非原版占用**——rimsage 核实原版无任何含 `kiss` 的 defName，仅 `Tales_DoublePawn_Relationships.xml` 有 "deeply kissing" 文案）；`PECK_` 是真词"轻吻"但被"鸟啄/轻敲"次要义稀释，且 `PECK_` 无法由全称首字母正向拼出；`CHUU_`（ちゅっ）对中文/ACG 受众有效但英文玩家不直觉；`XOXO_` 的 X 与"处决/取消"视觉混淆且含我们未实现的拥抱语义；`SMOOCH_` 前缀过长。
+- 原版 token 占用核查结论：`Mwah / Peck / Chuu / Snog / Xoxo / Smooch` 在 1.6+Odyssey 的 defName、`Defs/Core/Names` 人名部件中**均无占用**（rimsage 检索为空）。
+- `MWAH` 明确**不**做全称首字母展开，它是拟声词；全称负责"指示所有小人互亲"的语义，缩写负责菜单与日志里的嘴声。
+
+
+- RimWorld 1.6 模组，`packageId` `coahuilite.mwah`，产品版本 **0.1.0**（csproj `<Version>` 为主源，About `<modVersion>` 跟随）。尚未发布、无远端仓库、无创意工坊条目。
 - 功能面：**仅 live map、仅单机、零 Harmony**。选中任意 pawn 右键另一 pawn → `kiss`；能走的一方走过去，双方 `FaceTarget` 相对、贴脸（`PathEndMode.Touch`）、按间隔抛原版爱心，结束后各自 `JobDefOf.Goto` 回原位。有 `needs.mood` 的按**自己**的 `SocialImpact` 拿心情，没有的什么都不加。
 - 明确不做（不是待办）：世界地图/商队途中、RimWorld Multiplayer 同步、AI 自主亲吻（`InteractionDef` 二期候选）、真·贴合亲吻动画、Downed 者当发起方（需 Harmony 放开原版闸门）。
 - **不做 junction**：`Mods/` 与 `Mods/*` 一律不建、不校验、不假设存在；复制模组与实机测试由维护者本人执行（2026-09-02 维护者指令）。
@@ -38,7 +45,7 @@
 
 - 已绿（离线）：`dotnet build` Debug/Release 均 **0 警告 0 错误**；`scripts/verify-local.ps1` 14 项全 `[ok]`（8 个 XML 良构、Keyed 中英各 38 键且集合一致、C# 引用的 38 个键双语齐备、DefOf↔defName 无孤儿、`driverClass` 与 `namespace.type` 一致、DLL 含 12 个关键符号、DLL 无 Harmony 符号、版本与 packageId 三处一致、无绝对本地路径）。
 - 「定义了却没人引用」的反向键检查是有价值的闸门：它在开发过程中抓到 `Mod.cs` 丢失 `SettingsCategory()` override —— 该方法返回非空是设置页出现在「模式选项」里的唯一条件，丢了就等于整个设置面不可达。删掉这条检查前必须先想清楚。
-- 未做（阻塞在维护者实机）：游戏内右键、心情数值、非人单位、倒地对象、敌对反应、设置界面换算、存读档含 `EPK_Kiss` job。矩阵见 `TODO.md`。
-- 已知待确认：卸载本模组后，存档里残留的 `EPK_Kissed*` 记忆与 `EPK_Kiss` job 会成为未知 Def；具体表现（静默丢弃 or 红字）尚未实测，见 `TODO.md`。
+- 未做（阻塞在维护者实机）：游戏内右键、心情数值、非人单位、倒地对象、敌对反应、设置界面换算、存读档含 `MWAH_Kiss` job。矩阵见 `TODO.md`。
+- 已知待确认：卸载本模组后，存档里残留的 `MWAH_Kissed*` 记忆与 `MWAH_Kiss` job 会成为未知 Def；具体表现（静默丢弃 or 红字）尚未实测，见 `TODO.md`。
 
 当前目标、开放行动与延后项只记在 `TODO.md`；冷证据在 `OBLIVIONIS.md`，不能覆盖本文件与源码。
