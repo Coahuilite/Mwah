@@ -56,7 +56,9 @@
 ## 工程决定
 
 - `AGENTS.md` 每轮注入，是成本：只放记忆协定、不可漂移的身份、漏看即做错的硬边界；**禁止易变内容**（目录结构、文件清单、命令行、版本目录字面量、进度矩阵）——那些写在本文件与 `TODO.md`。预算 ≤ 35 行（2026-09-02 维护者规则）。
-- 自主亲吻（2026-09-02 维护者要求"所有 pawn 都啵嘴"）走 ' + BT + 'KissAmbient : GameComponent' + BT + ' 定时促成，**只对非玩家控制的 pawn 生效**（' + BT + 'doer.IsPlayerControlled' + BT + ' 直接跳过），玩家能下令的照旧只能右键。
+- 自主亲吻（2026-09-02 维护者要求"所有 pawn 都啵嘴"）走 ' + BT + 'KissAmbient : GameComponent' + BT + ' 定时促成，**只对玩家管不着的 pawn 生效**（判据 ' + BT + 'KissBoundary.UnderPlayerManagement = IsPlayerControlled ∨ IsColonyAnimal' + BT + '，即自家动物算玩家侧），玩家能下令的照旧只能右键。
+  两条路径**互不相干、并行存在**，只在 ' + BT + 'KissUtility.Propose' + BT + ' 汇合：右键那次不会派生后续，定时器也不因你右键过而多派。不存在"玩家下令后转交游戏继续下发"。
+  自家动物的后果：原版 ' + BT + 'CanTakeOrder' + BT + ' 不含 ' + BT + 'IsColonyAnimal' + BT + '（右键下令不了它），加上现在也不算自主对象 ⇒ **只能被亲，不会主动亲**。要它也能主动，只能把它留在自主派发里（改判据一行）。
   理由：原版 ' + BT + 'FloatMenuContext' + BT + ' 先 ' + BT + 'RemoveAll(!CanTakeOrder)' + BT + '，非己方 pawn 连被选中都做不到，零 Harmony 无解。
   当初否决 ' + BT + 'InteractionDef' + BT + ' 路线的理由（只覆盖 flesh + humanlike、与全覆盖取向冲突）依然成立——正因如此才改用定时器；' + BT + 'GameComponent' + BT + ' 由原版自动实例化，不需要 Def/XML/补丁。
   自主发起的 job 打 ' + BT + 'playerForced = true' + BT + '，否则 pawn 自己的 think tree 会在下一个 override 检查点把它拽回去，变成"起步即取消"。

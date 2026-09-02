@@ -5,7 +5,8 @@ using Verse;
 namespace Mwah;
 
 /// <summary>
-/// 自主亲吻：**只服务非玩家控制的 pawn**。玩家控制的小人仍然由你右键下令，这条路不碰它们。
+/// 自主亲吻：**只服务玩家管不着的 pawn**（判据 <see cref="KissBoundary.UnderPlayerManagement"/>，含自家动物）。
+/// 玩家侧的小人仍然只能由你右键下令，这条路一次都不碰它们。
 ///
 /// 为什么需要它：右键菜单对非己方 pawn 永远不通 ——
 /// FloatMenuContext 构造时先做 selectedPawns.RemoveAll(!CanTakeOrder)，
@@ -54,9 +55,8 @@ public class KissAmbient : GameComponent
         int start = Rand.Range(0, pawns.Count - 1);
         for (int i = 0; i < pawns.Count; i++)
         {
-            Pawn doer = pawns[(start + i) % pawns.Count];
-            // 玩家控制得过来的，就不替他做主。
-            if (doer.IsPlayerControlled)
+            // 玩家管得过来的（含自家动物），就不替他做主。
+            if (KissBoundary.UnderPlayerManagement(doer))
             {
                 continue;
             }

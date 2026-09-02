@@ -20,6 +20,16 @@ public static class KissBoundary
     public static bool HasMood(Pawn pawn) =>
         pawn != null && pawn.needs?.mood?.thoughts?.memories != null;
 
+    /// <summary>
+    /// "归玩家管"的口径。原版 IsPlayerControlled 不含殖民地动物（它们过不了 CanTakeOrder），
+    /// 但自家动物按维护者的口径算玩家侧，所以这里显式并上 IsColonyAnimal。
+    ///
+    /// 代价要写清楚：自家动物因此既不能被右键下令（原版限制）、也不参与自主派发（这条口径），
+    /// 于是它们只能被亲，不会主动去亲。要它们也能主动，只能把它们留在自主派发里。
+    /// </summary>
+    public static bool UnderPlayerManagement(Pawn pawn) =>
+        pawn != null && (pawn.IsPlayerControlled || pawn.IsColonyAnimal);
+
     /// <summary>参与层：任何一方的即时状态门槛，对齐原版 SocialInteractionUtility。</summary>
     public static AcceptanceReport CanParticipate(Pawn pawn)
     {
