@@ -42,6 +42,18 @@ public class JobDriver_Kiss : JobDriver
     /// </summary>
     private bool ArrangesPosition => pawn.thingIDNumber < Partner.thingIDNumber;
 
+    /// <summary>绕到侧面最多试 2 次；用完即放弃并排，接受上下相邻（走廊与门道里仍能亲成）。</summary>
+    private const int SideAttemptBudget = 2;
+
+    /// <summary>同一段路重复发第 3 次即判定走不动，结束 job，不再每 tick 重发。</summary>
+    private const int ApproachAttemptBudget = 3;
+
+    private IntVec3 lastApproachCell = IntVec3.Invalid;
+
+    private int approachAttempts;
+
+    private int sideTries;
+
     public override void ExposeData()
     {
         base.ExposeData();
@@ -110,9 +122,10 @@ public class JobDriver_Kiss : JobDriver
     }
 
     /// <summary>
-    /// 位置是否已经到位：并排即算完成。
-    /// 不负责走位的那一方只要已经贴到对方身上（哪怕是上下方向）就停手，
-    /// 让负责走位的那一方绕过去——这是"两人互相绕圈"的唯一解。
+    /// 位置是否已经到位。
+    /// 不负责走位的一方：贴到对方身上即算完成（哪怕上下方向），这是"两人互相绕圈"的主解——
+    /// 只有一方移动，另一方原地不动，谁也不会去追对方。
+    /// 负责走位的一方：先要求并排；侧面绕不过去（预算用完）后才退回接受任意相邻。
     /// </summary>
     private bool Settled()
     {
@@ -120,27 +133,51 @@ public class JobDriver_Kiss : JobDriver
         {
             return true;
         }
-        return !ArrangesPosition && base.pawn.AdjacentTo8WayOrInside(Partner);
+        bool acceptsAnySide = !ArrangesPosition || sideTries >= SideAttemptBudget;
+        return acceptsAnySide && base.pawn.AdjacentTo8WayOrInside(Partner);
     }
 
-    /// <summary>起一段走向侧面格；侧面不可用时退回原版的贴脸寻路。</summary>
+    /// <summary>起一段走向侧面格；侧面不可用或绕不过去时退回原版的贴脸寻路。</summary>
     private bool StartApproach()
     {
-        if (ArrangesPosition)
+        IntVec3 cell = ArrangesPosition && sideTries < SideAttemptBudget
+            ? HorizontalCell(base.pawn, Partner)
+            : IntVec3.Invalid;
+        if (!cell.IsValid)
         {
-            IntVec3 cell = HorizontalCell(base.pawn, Partner);
-            if (cell.IsValid)
+            if (!base.pawn.CanReach(Partner.Position, PathEndMode.Touch, Danger.Deadly))
             {
-                base.pawn.pather.StartPath(cell, PathEndMode.OnCell);
-                return true;
+                return false;
             }
+            base.pawn.pather.StartPath(Partner, PathEndMode.Touch);
+            return true;
         }
-        if (!base.pawn.CanReach(Partner.Position, PathEndMode.Touch, Danger.Deadly))
+        sideTries++;
+        if (!PathProgressing(cell))
         {
             return false;
         }
-        base.pawn.pather.StartPath(Partner, PathEndMode.Touch);
+        base.pawn.pather.StartPath(cell, PathEndMode.OnCell);
         return true;
+    }
+
+    /// <summary>
+    /// 走位止损：路径被截断（门被关、被人堵住）时 pawn 会停在半路，此时目标格不变，
+    /// 每 tick 重发同一段路就是原地打转且 job 永不结束。同一格连发三次即判定走不动。
+    /// 计数器不进存档：读档后允许多试一次，比永久卡死便宜。
+    /// </summary>
+    private bool PathProgressing(IntVec3 c)
+    {
+        if (c == lastApproachCell)
+        {
+            approachAttempts++;
+        }
+        else
+        {
+            lastApproachCell = c;
+            approachAttempts = 1;
+        }
+        return approachAttempts <= ApproachAttemptBudget;
     }
 
     /// <summary>把对方拉进同一个 job；对方已经在亲别人/已在 job 里则本次仍由我方独自完成。</summary>
