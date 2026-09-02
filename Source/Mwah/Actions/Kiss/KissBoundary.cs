@@ -95,15 +95,31 @@ public static class KissBoundary
         {
             return new AcceptanceReport("MWAH.Fail.Gone".Translate());
         }
-        if (!settings.MoodlessAllowed && (!HasMood(a) || !HasMood(b)))
-        {
-            return new AcceptanceReport("MWAH.Fail.NoMood".Translate());
-        }
-        if (!settings.HostileAllowed && a.HostileTo(b))
-        {
-            return new AcceptanceReport("MWAH.Fail.Hostile".Translate());
-        }
         return AcceptanceReport.WasAccepted;
+    }
+
+    /// <summary>
+    /// 门禁层：越界不解释设置，只给一句"谁不想"。
+    /// 主语取越界的那一方；两边都越界时让被点的那位拒绝（玩家点的是它）。
+    /// 阵营与种族本来都不设限，收到哪一档是玩家自己的选择，不该由系统出面说话。
+    /// </summary>
+    public static AcceptanceReport CheckScope(Pawn a, Pawn b)
+    {
+        MwahSettings? settings = MwahMod.Settings;
+        if (settings == null)
+        {
+            return new AcceptanceReport("MWAH.Fail.Disabled".Translate());
+        }
+        KissScope scope = settings.Scope;
+        bool aIn = KissScopeUtility.InScope(a, b, scope);
+        bool bIn = KissScopeUtility.InScope(b, a, scope);
+        if (aIn && bIn)
+        {
+            return AcceptanceReport.WasAccepted;
+        }
+        Pawn unwilling = bIn ? a : b;
+        Pawn other = unwilling == a ? b : a;
+        return new AcceptanceReport("MWAH.Fail.Unwilling".Translate(unwilling.Named("PAWN"), other.Named("OTHER")));
     }
 
     /// <summary>菜单标签用的提示：这一对里有人没有心情系统，亲了也只有动作没有收益。</summary>

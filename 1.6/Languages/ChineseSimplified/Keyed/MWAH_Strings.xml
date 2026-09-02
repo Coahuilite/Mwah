@@ -7,9 +7,9 @@
 
   <!-- 不可用原因 -->
   <MWAH.Fail.Disabled>设置里已关闭亲吻</MWAH.Fail.Disabled>
-  <MWAH.Fail.Hostile>对方正处于敌对状态</MWAH.Fail.Hostile>
   <MWAH.Fail.Self>不能亲自己</MWAH.Fail.Self>
   <MWAH.Fail.Gone>有一个已经不在了</MWAH.Fail.Gone>
+  <MWAH.Fail.Unwilling>{PAWN} 不想和 {OTHER} 啵嘴</MWAH.Fail.Unwilling>
   <MWAH.Fail.Stale>这个亲吻已经不成立了</MWAH.Fail.Stale>
   <MWAH.Fail.Immobile>{PAWN} 现在动不了</MWAH.Fail.Immobile>
   <MWAH.Fail.ImmobilePair>两个都动不了</MWAH.Fail.ImmobilePair>
@@ -19,7 +19,6 @@
   <MWAH.Fail.TooYoung>{PAWN} 还太小，不会主动亲</MWAH.Fail.TooYoung>
   <MWAH.Fail.SociallyIncapable>{PAWN} 已经顾不上这种细腻的东西了</MWAH.Fail.SociallyIncapable>
   <MWAH.Fail.RitualAbsorbed>{PAWN} 正沉浸在仪式里</MWAH.Fail.RitualAbsorbed>
-  <MWAH.Fail.NoMood>有一个没有心情系统（设置里未开放）</MWAH.Fail.NoMood>
   <MWAH.Fail.CannotReach>够不到{TARGET}</MWAH.Fail.CannotReach>
   <MWAH.Fail.Busy>已经在亲了</MWAH.Fail.Busy>
   <MWAH.Fail.CooldownPawn>{PAWN} 还得缓缓才能再亲（{TIME}）</MWAH.Fail.CooldownPawn>
@@ -52,11 +51,15 @@
   <MWAH.Settings.MoodMultiplier>心情强度</MWAH.Settings.MoodMultiplier>
   <MWAH.Settings.MoodMultiplierDesc>缩放最终心情加成。实际数值 = 想法基准值 × 本倍率 × 该小人自身的社交影响，所以会说话的人亲一次更赚，闷葫芦收益更低。</MWAH.Settings.MoodMultiplierDesc>
 
-  <MWAH.Settings.AllowHostile>允许敌对小人</MWAH.Settings.AllowHostile>
-  <MWAH.Settings.AllowHostileDesc>允许你对正在敌对的单位下亲吻命令。对方的回应可能是……物理层面的。</MWAH.Settings.AllowHostileDesc>
-
-  <MWAH.Settings.AllowMoodless>纳入没有心情的生物</MWAH.Settings.AllowMoodless>
-  <MWAH.Settings.AllowMoodlessDesc>也让动物、机械族、无人机、虚空实体与复活的尸体参与。它们没有心情系统，所以亲吻对它们纯粹是动作：爱心照冒，收益为零。关掉后这个选项只留给真的能因此心情变好的小人。</MWAH.Settings.AllowMoodlessDesc>
+  <MWAH.Settings.PairScope>谁能亲谁</MWAH.Settings.PairScope>
+  <MWAH.Settings.PairScopeDesc>门开多大。拖到最右就是不限阵营、不限种族——这本模组要的就是这个。想要撮合殖民地的玩法就往左拖。双方都必须在范围内；档位只会越往右越宽，每格多加一类人。</MWAH.Settings.PairScopeDesc>
+  <MWAH.Settings.Scope.FreeColonists>只限自由殖民者</MWAH.Settings.Scope.FreeColonists>
+  <MWAH.Settings.Scope.ColonyPopulation>殖民地人口（加上奴隶与囚犯）</MWAH.Settings.Scope.ColonyPopulation>
+  <MWAH.Settings.Scope.ColonyOwned>自家一切（加上动物与机甲——没有心情，只是做做样子）</MWAH.Settings.Scope.ColonyOwned>
+  <MWAH.Settings.Scope.NonHostileHumanlike>＋非敌对人形（访客、商人、盟友）</MWAH.Settings.Scope.NonHostileHumanlike>
+  <MWAH.Settings.Scope.AllHumanlike>＋所有人形（加上袭击者与古人）</MWAH.Settings.Scope.AllHumanlike>
+  <MWAH.Settings.Scope.AllFlesh>＋所有血肉（加上野生动物、昆虫、血肉兽）</MWAH.Settings.Scope.AllFlesh>
+  <MWAH.Settings.Scope.Everything>每个小人都互相亲吻</MWAH.Settings.Scope.Everything>
 
   <MWAH.Settings.ChangeOpinion>亲吻留下痕迹</MWAH.Settings.ChangeOpinion>
   <MWAH.Settings.ChangeOpinionDesc>同时改变两人对彼此的观感。这会接入原版恋爱链——只想要无厘头亲亲就别开。</MWAH.Settings.ChangeOpinionDesc>

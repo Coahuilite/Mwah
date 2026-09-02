@@ -16,8 +16,7 @@ public class MwahSettings : ModSettings
 
     // 出厂默认来自 Constants；玩家改动只落在这些字段上，Scribe key 与字段名一致。
     public bool modEnabled = Constants.ModEnabled;
-    public bool allowHostileTargets = Constants.AllowHostileTargets;
-    public bool allowMoodless = Constants.AllowMoodless;
+    public int pairScope = Constants.PairScopeDefault;
     public bool changeOpinion = Constants.ChangeOpinion;
     public bool returnHomeAfterKiss = Constants.ReturnHomeAfterKiss;
     public int kissDurationTicks = Constants.KissDurationTicks;
@@ -31,8 +30,7 @@ public class MwahSettings : ModSettings
 
     // 读侧统一 canonicalize：脏配置或手改的 XML 不能把运行时带进非法区间。
     public bool Enabled => modEnabled;
-    public bool HostileAllowed => allowHostileTargets;
-    public bool MoodlessAllowed => allowMoodless;
+    public KissScope Scope => KissScopeUtility.Clamp(pairScope);
     public bool OpinionAffected => changeOpinion;
     public bool ReturnsHome => returnHomeAfterKiss;
     public int DurationTicks => Mathf.Clamp(kissDurationTicks, Constants.DurationTicksRange.min, Constants.DurationTicksRange.max);
@@ -47,8 +45,7 @@ public class MwahSettings : ModSettings
     {
         base.ExposeData();
         Scribe_Values.Look(ref modEnabled, "modEnabled", Constants.ModEnabled);
-        Scribe_Values.Look(ref allowHostileTargets, "allowHostileTargets", Constants.AllowHostileTargets);
-        Scribe_Values.Look(ref allowMoodless, "allowMoodless", Constants.AllowMoodless);
+        Scribe_Values.Look(ref pairScope, "pairScope", Constants.PairScopeDefault);
         Scribe_Values.Look(ref changeOpinion, "changeOpinion", Constants.ChangeOpinion);
         Scribe_Values.Look(ref returnHomeAfterKiss, "returnHomeAfterKiss", Constants.ReturnHomeAfterKiss);
         Scribe_Values.Look(ref kissDurationTicks, "kissDurationTicks", Constants.KissDurationTicks);
@@ -72,13 +69,13 @@ public class MwahSettings : ModSettings
         pairCooldownTicks = PairCooldown;
         thoughtDurationGameHours = ThoughtDurationHours;
         moodMultiplier = MoodMult;
+        pairScope = (int)Scope;
     }
 
     public void RestoreDefaults()
     {
         modEnabled = Constants.ModEnabled;
-        allowHostileTargets = Constants.AllowHostileTargets;
-        allowMoodless = Constants.AllowMoodless;
+        pairScope = Constants.PairScopeDefault;
         changeOpinion = Constants.ChangeOpinion;
         returnHomeAfterKiss = Constants.ReturnHomeAfterKiss;
         kissDurationTicks = Constants.KissDurationTicks;
@@ -115,8 +112,7 @@ public class MwahSettings : ModSettings
         changed |= MoodSlider(list);
 
         list.GapLine();
-        changed |= Checkbox(list, ref allowHostileTargets, "MWAH.Settings.AllowHostile", "MWAH.Settings.AllowHostileDesc");
-        changed |= Checkbox(list, ref allowMoodless, "MWAH.Settings.AllowMoodless", "MWAH.Settings.AllowMoodlessDesc");
+        changed |= ScopeSlider(list);
         changed |= Checkbox(list, ref changeOpinion, "MWAH.Settings.ChangeOpinion", "MWAH.Settings.ChangeOpinionDesc");
         changed |= Checkbox(list, ref returnHomeAfterKiss, "MWAH.Settings.ReturnHome", "MWAH.Settings.ReturnHomeDesc");
 
@@ -150,6 +146,17 @@ public class MwahSettings : ModSettings
         string label = labelKey.Translate() + ": " + MwahTime.FormatTicks(ticks);
         ticks = Mathf.RoundToInt(list.SliderLabeled(label, ticks, min, max, 0.62f, tipKey.Translate()));
         return before != ticks;
+    }
+
+    /// <summary>七档门禁滑条；当前档位名直接跟在标签后面，省得玩家猜刻度。</summary>
+    private bool ScopeSlider(Listing_Standard list)
+    {
+        int before = pairScope;
+        string label = "MWAH.Settings.PairScope".Translate() + ": " + KissScopeUtility.Label(Scope);
+        pairScope = Mathf.RoundToInt(list.SliderLabeled(label, pairScope,
+            Constants.PairScopeRange.min, Constants.PairScopeRange.max, 0.62f,
+            "MWAH.Settings.PairScopeDesc".Translate()));
+        return before != pairScope;
     }
 
     private bool HoursSlider(Listing_Standard list)

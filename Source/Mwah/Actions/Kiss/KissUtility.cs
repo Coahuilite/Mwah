@@ -46,7 +46,7 @@ public static class KissUtility
 {
     /// <summary>
     /// 谁当发起方：被选中的那位优先主动；它主动不了（动不了 / 没嘴 / 生命阶段不允许）
-    /// 而对方能，就让对方过来亲它。结构性不可能 → 连灰项都不给；即时状态 → 灰项带原因。
+    /// 而对方能，就让对方过来亲它。总开关与"已经不在了" → 连灰项都不给；门禁越界与即时状态 → 灰项带原因。
     /// </summary>
     public static KissProposal Propose(Pawn selected, Pawn target)
     {
@@ -58,6 +58,12 @@ public static class KissUtility
         if (!structure.Accepted)
         {
             return KissProposal.Hidden(structure.Reason);
+        }
+
+        AcceptanceReport scope = KissBoundary.CheckScope(selected, target);
+        if (!scope.Accepted)
+        {
+            return KissProposal.Blocked(scope.Reason);
         }
 
         AcceptanceReport selectedState = KissBoundary.CanParticipate(selected);

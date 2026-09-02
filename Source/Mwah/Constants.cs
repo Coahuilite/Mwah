@@ -23,10 +23,9 @@ public static class Constants
     public const float MoodMultiplier = 1f;
     public const int MaxSelectionReach = 9999;
 
-    // 允许性开关的出厂默认：胡逼模式全开。
+    // 允许性开关的出厂默认：不限阵营、不限种族，门禁滑条停在最右档。
     public const bool ModEnabled = true;
-    public const bool AllowHostileTargets = true;
-    public const bool AllowMoodless = true;
+    public const int PairScopeDefault = (int)KissScope.Everything;
     public const bool ChangeOpinion = false;           // 默认不接入原版恋爱/好感链
     public const bool ReturnHomeAfterKiss = true;
 
@@ -35,6 +34,7 @@ public static class Constants
     public static readonly IntRange CooldownTicksRange = new(0, 60000);
     public static readonly FloatRange ThoughtHoursRange = new(0.5f, 240f);
     public static readonly FloatRange MoodMultiplierRange = new(0f, 5f);
+    public static readonly IntRange PairScopeRange = new((int)KissScope.FreeColonists, (int)KissScope.Everything);
 }
 
 /// <summary>本地化取值入口。玩家可见文字一律走 Keyed，不硬编码。</summary>

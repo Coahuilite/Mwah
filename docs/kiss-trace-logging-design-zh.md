@@ -103,7 +103,7 @@
 ```
 [MWAH] kiss.order   t=<tick> doer=<id:label:race> recv=<id:label:race> dur=<n>t cd=<pawn>/<pair> reach=<ok|no>
 [MWAH] kiss.end     t=<tick> doer=<id:label:race> recv=<id:label:race> role=<initiator|passive> cond=<JobCondition> walk=<n>t motes=<n> partner=<accepted|solo|already> settle=<A:+x(SI y) B:+z(SI w)>
-[MWAH] kiss.reject  t=<tick> doer=<...> recv=<...> layer=<structure|participate|initiate|availability> code=<Key>
+[MWAH] kiss.reject  t=<tick> doer=<...> recv=<...> layer=<structure|scope|participate|initiate|availability> code=<Key>
 [MWAH] kiss.abnormal t=<tick> doer=<...> recv=<...> site=<reservation|toil|load> why=<sanitized>
 [MWAH] settings.saved t=<tick> changed=<field:old->new,...> gen=<n>
 ```
@@ -111,7 +111,7 @@
 - 常规一次亲吻 **3 行**：`kiss.order`、主动方的 `kiss.end`（带 `settle=` 两人结果）、被动方的 `kiss.end`。对方没接住 job 时只有 2 行（`partner=solo`）。被动方那条也写全双方身份，代价是几个字符，换来"任意一行自解释"。
 - `settle=` 记的是"我们做了什么决定、依据哪些输入"，不是"世界最后怎样"——后者由存档 XML 证明（`otherPawn`/moodPowerFactor/age），两条证据可互相核对。没心情的一方写成 `settle=<who>=skipped-no-mood`。
 - **trace 降级为一个复选框**（默认关）：勾上后每次右键对每个 (选中, 被点) 组合多打一行 `kiss.menu`，用来抓负证据（灰项/不出现）。不做缓冲，量由 10000 条上限自己兜住——上限触发时原版会打 `Reached max messages limit.'，一眼可见。
-- 原因码 `code=<Key>` 用稳定键名（`Unconscious` / `Burning` / `NoMouth` / `TooYoung` / `SociallyIncapable` / `RitualAbsorbed` / `NoMood` / `Hostile` / `Immobile` / `ImmobilePair` / `CannotReach` / `Busy` / `CooldownPawn` / `CooldownPair` / `Disabled` / `Gone`），译文只在 UI 侧生成。
+- 原因码 `code=<Key>` 用稳定键名（`Unconscious` / `Burning` / `NoMouth` / `TooYoung` / `SociallyIncapable` / `RitualAbsorbed` / `Unwilling` / `Immobile` / `ImmobilePair` / `CannotReach` / `Busy` / `CooldownPawn` / `CooldownPair` / `Disabled` / `Gone`），译文只在 UI 侧生成。
 - 不记：设置快照、DLC 列表、结算后的世界状态。
 
 ## 6. 决策状态
