@@ -24,6 +24,20 @@
   <MWAH.Fail.CooldownPawn>{PAWN} needs a moment between kisses ({TIME})</MWAH.Fail.CooldownPawn>
   <MWAH.Fail.CooldownPair>{PAWN} and {OTHER} already kissed recently ({TIME})</MWAH.Fail.CooldownPair>
 
+  <!-- 亲吻导演台 -->
+  <MWAH.Director.Title>Kiss director</MWAH.Director.Title>
+  <MWAH.Director.Doer>Initiator</MWAH.Director.Doer>
+  <MWAH.Director.Receiver>Receiver</MWAH.Director.Receiver>
+  <MWAH.Director.SetDoer>initiate</MWAH.Director.SetDoer>
+  <MWAH.Director.SetReceiver>receive</MWAH.Director.SetReceiver>
+  <MWAH.Director.Empty>nobody picked yet</MWAH.Director.Empty>
+  <MWAH.Director.Filter>Search</MWAH.Director.Filter>
+  <MWAH.Director.Count>{0} of {1} shown</MWAH.Director.Count>
+  <MWAH.Director.Go>Make them kiss</MWAH.Director.Go>
+  <MWAH.Director.NeedBoth>pick both pawns first</MWAH.Director.NeedBoth>
+  <MWAH.Director.Ready>ready</MWAH.Director.Ready>
+  <MWAH.Director.Started>{PAWN} goes to kiss {OTHER}.</MWAH.Director.Started>
+
   <!-- 设置页 -->
   <MWAH.SettingsCategory>Mwah!</MWAH.SettingsCategory>
   <MWAH.Settings.Header>Tolerate the audacity of affection.</MWAH.Settings.Header>

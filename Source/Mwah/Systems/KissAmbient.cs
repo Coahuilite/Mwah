@@ -66,7 +66,7 @@ public class KissAmbient : GameComponent
                 continue;
             }
             Pawn? receiver = NearestWilling(doer, pawns, settings);
-            if (receiver != null && KissUtility.BeginAutonomous(doer, receiver))
+            if (receiver != null && KissUtility.BeginDirected(doer, receiver))
             {
                 return;
             }

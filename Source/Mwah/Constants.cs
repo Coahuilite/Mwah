@@ -28,7 +28,7 @@ public static class Constants
     public const int PairScopeDefault = (int)KissScope.Everything;
     public const bool ChangeOpinion = false;           // 默认不接入原版恋爱/好感链
     public const bool ReturnHomeAfterKiss = true;
-    public const bool AutonomousKissing = true;
+    public const bool AutonomousKissing = false;      // 第三优先级，先不默认开
     public const int AutonomousIntervalTicks = 250;      // 1 游戏小时促成一桩
     public const int AutonomousRadiusCells = 10;         // 超出这个距离就不去追
 

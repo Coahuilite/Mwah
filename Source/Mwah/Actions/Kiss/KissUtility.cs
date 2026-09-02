@@ -140,24 +140,34 @@ public static class KissUtility
                 new LookTargets(selected, target), MessageTypeDefOf.RejectInput, historical: false);
             return;
         }
-        Start(proposal, forcedByAi: false);
+        Start(proposal, forced: false);
     }
 
     /// <summary>
-    /// 自主亲吻的发起（只由 <see cref="KissAmbient"/> 对非玩家控制的 pawn 调用）。
-    /// 判定与玩家下令完全同一套，差别只在：不弹拒绝提示（没人点任何东西），
-    /// 以及 job 标记 playerForced —— 否则 pawn 自己的 think tree 会在下一个
-    /// override 检查点把它拽回去，自动亲吻就变成"起步即取消"。
+    /// 代发亲吻：由 <see cref="Window_KissDirector"/> 点名，或由 <see cref="KissAmbient"/> 定时促成。
+    /// 与右键那条的差别只有两点：不弹拒绝提示（没人点东西），以及 job 打 playerForced ——
+    /// 否则 pawn 自己的 think tree 会在下一个 override 检查点把它拽回去，变成"起步即取消"。
+    /// 走这条路的前提正是"原版不给玩家下令权"，所以它天然绕开 CanTakeOrder，判定仍全复用 Propose。
     /// </summary>
-    public static bool BeginAutonomous(Pawn doer, Pawn receiver)
+    public static bool BeginDirected(Pawn doer, Pawn receiver)
     {
         KissProposal proposal = Propose(doer, receiver);
         if (!proposal.Allowed || proposal.Doer == null || proposal.Receiver == null)
         {
             return false;
         }
-        Start(proposal, forcedByAi: true);
+        Start(proposal, forced: true);
         return true;
+    }
+
+    /// <summary>
+    /// 导演台用的可行性预览：不发起，只返回挡住它的原因文本，可行时返回 null。
+    /// 界面要靠它把按钮置灰并写明理由，所以不能只给 bool。
+    /// </summary>
+    public static string? DirectPreview(Pawn a, Pawn b)
+    {
+        KissProposal proposal = Propose(a, b);
+        return proposal.Allowed ? null : proposal.BlockedReason;
     }
 
     /// <summary>
@@ -172,13 +182,13 @@ public static class KissUtility
     }
 
     /// <summary>共用的落地动作：消耗冷却 + 起 job。冷却在发起瞬间记，避免同一 tick 反复排队刷爱心。</summary>
-    private static void Start(KissProposal proposal, bool forcedByAi)
+    private static void Start(KissProposal proposal, bool forced)
     {
         MwahSettings settings = MwahMod.Settings;
         KissCooldown.Mark(proposal.Doer!, proposal.Receiver!, settings.PawnCooldown, settings.PairCooldown);
 
         var job = JobMaker.MakeJob(MWAH_JobDefOf.MWAH_Kiss, proposal.Receiver);
-        if (forcedByAi)
+        if (forced)
         {
             job.playerForced = true;
         }
