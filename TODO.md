@@ -38,6 +38,7 @@
 - [ ] 征召状态朝向：把殖民者征召后再下令亲吻 → 两人仍互相面对，**不会一起朝南**（原版 `Pawn_RotationTracker.UpdateRotation` 对 drafted 会强制 `Rot4.South`，靠 `Toil.handlingFacing` 挡住）。
 - [ ] 不互相绕圈：两个都能动的人互亲 → 只有 thingIDNumber 较小的那方走位，另一方原地不动；观察没有来回追人。
 - [ ] 侧面不可用时：在 1 格宽的走廊/墙边下令 → 左/右格都不可站或不可达，退回原版贴脸相邻（允许上下），朝向按实际方向给 North/South，不卡死。
+- [ ] 走位止损：侧面格可达但路上被人堵住/门被关 → 观察是**绕两次就放弃并亲成（上下相邻）**或干净结束，而不是原地反复起步；`Player.log` 不该出现刷屏。
 - [ ] 存档兼容：亲吻进行中存档 → 读档 → job 正常继续或干净结束，无 `ticksLeft`/`homeX` 相关红字。
 - [ ] 卸载残留：存档含 `MWAH_Kissed`/`MWAH_KissedBond` 记忆与 `MWAH_Kiss` job 后关闭模组 → 确认是静默丢弃还是报错，据此决定是否在 About 里加卸载提示。
 
