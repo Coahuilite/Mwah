@@ -4,7 +4,7 @@
 
 - RimWorld 1.6 模组，`packageId` `coahuilite.mwah`，产品版本 **0.1.0**（csproj `<Version>` 为主源，About `<modVersion>` 跟随）。尚未发布、无远端仓库、无创意工坊条目。
 - 功能面：**仅 live map、仅单机、零 Harmony**。选中**可下令的** pawn 右键另一 pawn → `kiss`（三层判定见「谁能亲：三层边界」）；能走的一方走过去，双方 `FaceTarget` 相对、贴脸（`PathEndMode.Touch`）、按间隔抛原版爱心，结束后各自 `JobDefOf.Goto` 回原位。有 `needs.mood` 的按**自己**的 `SocialImpact` 拿心情，没有的什么都不加。
-- 设计取向：**纯娱乐、门槛尽量低**——不限阵营、不限种族、不要求征召。但"零门槛"从来不是事实，也不该假装是：原版 `CanTakeOrder` 与 `ShouldGenerateFloatMenuForPawn` 在 provider 之前就把关，动物与中立者当不了发起方、倒地者连菜单都不生成。2026-09-02 边界收敛后，本模组自己的前提写成 `KissBoundary` 三层，不再用"种族"近似"能力"。收益面保守（见「工程决定」）。工作区目录名 `every_pawn_kiss_each_other/` 是历史值，不构成身份。
+- 设计取向：**纯娱乐、门槛尽量低**——不限阵营、不限种族、不要求征召。这是维护者的立场，2026-09-02 明确重申过：玩家反馈"想要只撮合殖民地"用**门禁滑条**承接（出厂停在最右档 = 双不限），**不改默认值**。但"零门槛"从来不是事实，也不该假装是：原版 `CanTakeOrder` 与 `ShouldGenerateFloatMenuForPawn` 在 provider 之前就把关，动物与中立者当不了发起方、倒地者连菜单都不生成。2026-09-02 边界收敛后，本模组自己的前提写成 `KissBoundary` 三层，不再用"种族"近似"能力"。收益面保守（见「工程决定」）。工作区目录名 `every_pawn_kiss_each_other/` 是历史值，不构成身份。
 - 明确不做（不是待办）：世界地图/商队途中、RimWorld Multiplayer 同步、AI 自主亲吻（`InteractionDef` 二期候选）、真·贴合亲吻动画、Downed 者当发起方（需 Harmony 放开原版闸门）。
 - **不做 junction**：`Mods/` 与 `Mods/*` 一律不建、不校验、不假设存在；复制模组与实机测试由维护者本人执行（2026-09-02 维护者指令）。
 
@@ -58,7 +58,7 @@
 - `AGENTS.md` 每轮注入，是成本：只放记忆协定、不可漂移的身份、漏看即做错的硬边界；**禁止易变内容**（目录结构、文件清单、命令行、版本目录字面量、进度矩阵）——那些写在本文件与 `TODO.md`。预算 ≤ 35 行（2026-09-02 维护者规则）。
 - 菜单被拒必须说真原因：`KissProposal` 即使 `Visible=false` 也带 `BlockedReason`，点下过期菜单项时回显该原因；没有原因的那条路径（自亲，已被 `CanSelfTarget` 挡）说"这个亲吻已经不成立了"，不再谎报"已经在亲了"。
 - 打点裁定（2026-09-02 维护者）：**只走 Player.log**，不建自定义文件、不做环形缓冲与按需导出（为"亲亲"引入这些是过度设计）；**每行必带双方身份**（`doer=` 与 `recv=`），不允许靠 cid 回查上一行。方案与依据见 `docs/kiss-trace-logging-design-zh.md`。
-- 设置项 `allowNonHumanlike` → **`allowMoodless`**（2026-09-02 边界收敛）：旧名按种族判，会把"种族是人形但没有心情"的 mutant 漏进来；新名的判据是运行时 `needs.mood`。Scribe key 同步改名，未发布版本不做旧 key 兼容。
+- 允许性面 = **七档 `KissScope` 滑条**（`pairScope`，0 只自由殖民者 → 6 万物互亲，出厂 6）。每档 = 前一档 ∨ 一类人群，双方都要在档内，谓词全取自原版（`IsFreeNonSlaveColonist`/`IsColonist`/`IsPrisoner`/`IsColony*`/`Humanlike`/`IsFlesh`/`HostileTo`）。它取代了 `allowHostileTargets` 与 `allowMoodless` 两个布尔开关（见 `OBLIVIONIS.md`）；档位名键由枚举拼接，靠 `verify-local` 的门反向核对双语与范围常量。
 - 冷却（单人 + 成对）为**会话内内存态**，不落盘、不占 tick，只在结算时顺带清过期项；读档后归零是接受取舍（与 `let_me_gnaw_on_you` 的 `CooldownManager` 同一口径）。
 - 默认 `changeOpinion=false`：用普通 `Thought_Memory`，不写好感度、不喂原版恋爱链；开启后切换到 `Thought_MemorySocial` 变体。
 - 心情发放只由**发起方**结算一次，被动方只负责自己的回原位；`isPassivePartner` 是这条不变量的载体。
@@ -77,6 +77,7 @@
 | 谁去亲 / 能不能亲 | `Source/…/Actions/Kiss/KissUtility.cs`（`KissProposal` 三态） |
 | 亲吻表演与结算 | `Source/…/Jobs/JobDriver_Kiss.cs`（双人镜像 job） |
 | 心情与社交缩放 | `Source/…/Rewards/KissMoodReward.cs`（无 `needs.mood` 者静默） |
+| 谁能亲谁（范围档位） | `Source/…/Actions/Kiss/KissScope.cs` | 七档累积析取，出厂最右档 |
 | 冷却 | `Source/…/Systems/KissCooldown.cs`（会话内内存态） |
 | 单位换算唯一入口 | `Source/…/MwahTime.cs` |
 | 设置项与生命周期 | `Source/…/MwahSettings.cs` + `Mod.cs`（即时生效 + 防抖落盘） |
@@ -95,7 +96,7 @@
 ## 验证状态
 
 - 已绿（离线）：`dotnet build` Debug/Release 均 **0 警告 0 错误**；`scripts/verify-local.ps1` 15 项全 `[ok]`（8 个 XML 良构、Keyed 中英各 48 键且集合一致、C# 引用的 48 个键双语齐备、DefOf↔defName 无孤儿、`driverClass` 与 `namespace.type` 一致、DLL 含 13 个关键符号、DLL 无 Harmony 符号、版本与 packageId 三处一致、无绝对本地路径、设置项字段↔Scribe key↔`Constants` 三处锁死共 11 项）。
-- 边界收敛（`KissBoundary` 三层、`allowMoodless` 改名）目前**只有离线证据**：编译期 API 存在性与静态门已绿，运行时行为（灰项文案、动物不可主动、机械族可主动、mutant 被参与层挡住）全部未在游戏内观测，见 `TODO.md` 矩阵新增项。
+- 边界收敛（`KissBoundary` 三层）与七档门禁目前**只有离线证据**：编译期 API 存在性与静态门已绿，运行时行为（灰项文案、动物不可主动、机械族可主动、mutant 被参与层挡住）全部未在游戏内观测，见 `TODO.md` 矩阵新增项。
 - 「定义了却没人引用」的反向键检查是有价值的闸门：它在开发过程中抓到 `Mod.cs` 丢失 `SettingsCategory()` override —— 该方法返回非空是设置页出现在「模式选项」里的唯一条件，丢了就等于整个设置面不可达。删掉这条检查前必须先想清楚。
 - 产物：`scripts/build-dev.ps1` 出 `dist/dev/Mwah-dev-v<VERSION>-EXP-<shortsha>[-dirty].zip`（当前 commit `89bf4ee`），包内 `version.txt` 三行 = 名称+标签 / build / commit；`dist/` 与 DLL 全 gitignored。
 - 未做（阻塞在维护者实机）：游戏内右键、心情数值、非人单位、倒地对象、敌对反应、设置界面换算、存读档含 `MWAH_Kiss` job。矩阵见 `TODO.md`。
