@@ -105,7 +105,7 @@ Assert-True 'driverClass uses the real namespace.type' (($driverRefs.Count -eq 1
 
 # 6. DLL symbol audit + zero Harmony
 $text = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes($assemblyPath))
-$symbols = @('FloatMenuOptionProvider_Kiss','JobDriver_Kiss','KissUtility','KissBoundary','KissScope','KissScopeUtility',
+$symbols = @('FloatMenuOptionProvider_Kiss','JobDriver_Kiss','KissUtility','KissBoundary','KissScope','KissScopeUtility','KissAmbient',
     'KissMoodReward','KissCooldown','MwahSettings','MwahMod','MWAH_JobDefOf','MWAH_ThoughtDefOf',"$modName.JobDriver_Kiss",'MWAH_Kiss','MWAH_KissedBond')
 $missingSyms = @($symbols | Where-Object { -not $text.Contains($_) })
 Assert-True ("DLL contains all $($symbols.Count) key symbols") ($missingSyms.Count -eq 0) ($missingSyms -join ', ')
