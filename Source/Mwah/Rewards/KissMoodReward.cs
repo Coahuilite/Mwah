@@ -8,7 +8,7 @@ namespace Mwah;
 /// 不是种族：动物、机械族、无人机、异象实体本来就没有 mood，而 Anomaly 的蹒跚者/尸鬼/唤醒尸体
 /// 种族是 Human（Humanlike 为真）却被 MutantDef.disableNeeds 摘掉了全部需求，同样拿不到。
 /// 拿不到就是什么都不加，不做任何替代收益（结构层的开关会提前挡掉这种配对，
-/// 见 <see cref="KissBoundary.CheckStructure"/>；这里的判空只是兜住中途状态变化）。
+/// 见 <see cref="KissBoundary.CheckStructure"/>；这里的判空只兜住菜单打开后的状态变化）。
 /// 强度 = ThoughtStage.baseMoodEffect × (自身 SocialImpact) × 设置倍率，
 /// 由 Thought_Memory.moodPowerFactor 承载（原版 AddInteractionThought 同源机制）。
 /// </summary>
@@ -35,14 +35,10 @@ public static class KissMoodReward
             return;
         }
 
-        // SocialImpact 由社交技能 + 说话/听觉容量决定；取不到有效值时按 1 处理，
-        // 而不是把收益静默乘成 0（NaN/负数同样兜住）。
-        float social = pawn.GetStatValue(StatDefOf.SocialImpact);
-        if (float.IsNaN(social) || social <= 0f)
-        {
-            social = 1f;
-        }
-        memory.moodPowerFactor = social * settings.MoodMult;
+        // SocialImpact 对"有心情的 pawn"必然取到有效值：该 StatDef 标了 neverDisabled，且
+        // SkillNeed_BaseBonus.ValueFor 在 pawn.skills == null 时直接返回 1f（依据见 MEMORY
+        // 「原版能力边界」）。所以这里不兜 NaN/0 —— 兜不住的东西不存在。
+        memory.moodPowerFactor = pawn.GetStatValue(StatDefOf.SocialImpact) * settings.MoodMult;
         if (settings.OpinionAffected && memory is Thought_MemorySocial socialMemory)
         {
             socialMemory.opinionOffset *= settings.MoodMult;
