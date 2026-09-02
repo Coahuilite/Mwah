@@ -16,6 +16,7 @@ $ErrorActionPreference = "Stop"
 #   7   版本纪律：csproj <Version> == About.xml <modVersion>
 #   8   分发卫生与隐私红线：无 PublishedFileId、无绝对本地路径
 #   9   设置项三处锁死：字段名 ↔ Scribe key ↔ Constants 默认值
+#  10   门禁档位 ↔ 双语档位名键 ↔ Constants 档位范围
 # 全部通过后 -PackDev 才出 dev 包。
 
 $root = [System.IO.Path]::GetFullPath($ProjectRoot)
@@ -74,7 +75,18 @@ $zh = Get-KeySet $zhPath
 Assert-True "Keyed parity English/ChineseSimplified ($($en.Count)/$($zh.Count))" ((@(Compare-Object $en $zh)).Count -eq 0)
 
 $code = @(Get-ChildItem (Join-Path $root "Source\$modName") -Recurse -Filter *.cs | Get-Content -Raw) -join "`n"
-$used = @([regex]::Matches($code, '"(MWAH\.[A-Za-z0-9_.]+)"') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique)
+
+# 门禁档位名键是拼出来的（"MWAH.Settings.Scope." + scope），字面量扫描看不见，
+# 所以先从枚举展开真实键名，再让正、反两个方向都用展开后的集合。
+$scopeCs = Get-Content -Raw -LiteralPath (Join-Path $root "Source\$modName\Actions\Kiss\KissScope.cs")
+$scopeRungs = @()
+if ($scopeCs -match '(?s)public enum KissScope\s*\r?\n\{(.*?)\r?\n\}') {
+    $scopeRungs = @([regex]::Matches($matches[1], '(?m)^\s{4}(\w+)\s*=\s*(\d+)') | ForEach-Object { ,@($_.Groups[1].Value, [int]$_.Groups[2].Value) })
+}
+$scopeKeys = @($scopeRungs | ForEach-Object { "MWAH.Settings.Scope." + $_[0] })
+$literalKeys = @([regex]::Matches($code, '"(MWAH\.[A-Za-z0-9_.]+)"') | ForEach-Object { $_.Groups[1].Value })
+# 以点结尾的匹配是拼接前缀，不是键名。
+$used = @((($literalKeys + $scopeKeys) | Where-Object { $_ -notmatch '\.$' } | Sort-Object -Unique))
 $missing = @($used | Where-Object { $en -notcontains $_ -or $zh -notcontains $_ })
 Assert-True ("all $($used.Count) C#-referenced keys exist in both languages") ($missing.Count -eq 0) ($missing -join ', ')
 # 反向信息项：定义了却没人用的键（不失败，只提示，防止语言文件攒尸体）
@@ -93,8 +105,8 @@ Assert-True 'driverClass uses the real namespace.type' (($driverRefs.Count -eq 1
 
 # 6. DLL symbol audit + zero Harmony
 $text = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes($assemblyPath))
-$symbols = @('FloatMenuOptionProvider_Kiss','JobDriver_Kiss','KissUtility','KissBoundary','KissMoodReward','KissCooldown',
-    'MwahSettings','MwahMod','MWAH_JobDefOf','MWAH_ThoughtDefOf',"$modName.JobDriver_Kiss",'MWAH_Kiss','MWAH_KissedBond')
+$symbols = @('FloatMenuOptionProvider_Kiss','JobDriver_Kiss','KissUtility','KissBoundary','KissScope','KissScopeUtility',
+    'KissMoodReward','KissCooldown','MwahSettings','MwahMod','MWAH_JobDefOf','MWAH_ThoughtDefOf',"$modName.JobDriver_Kiss",'MWAH_Kiss','MWAH_KissedBond')
 $missingSyms = @($symbols | Where-Object { -not $text.Contains($_) })
 Assert-True ("DLL contains all $($symbols.Count) key symbols") ($missingSyms.Count -eq 0) ($missingSyms -join ', ')
 Assert-True 'zero-Harmony: no Harmony/HarmonyLib reference in DLL' (-not ($text.Contains('HarmonyLib') -or $text.Contains('Harmony')))
@@ -131,6 +143,19 @@ foreach ($d in $decls) {
     if ($constantsCs -notmatch ('\b' + $const + '\b')) { $badSettings += "$field : Constants.$const missing" }
 }
 Assert-True ("settings fields locked to Scribe keys and Constants ($($decls.Count) fields)") ($badSettings.Count -eq 0) ($badSettings -join ' | ')
+
+# 10. 门禁每加一档就得同时有双语档位名，且范围与默认常量跟着改；漏一处就是滑条上出现裸键名。
+#     枚举在门 3/4 之前已解析成 $scopeRungs，这里只做断言，不重复解析。
+Assert-True ("kiss scope enum parsed ($($scopeRungs.Count) rungs)") ($scopeRungs.Count -ge 2)
+$missingRungKeys = @($scopeRungs | Where-Object { $en -notcontains ("MWAH.Settings.Scope." + $_[0]) -or $zh -notcontains ("MWAH.Settings.Scope." + $_[0]) } | ForEach-Object { $_[0] })
+Assert-True ("every kiss scope rung has a label in both languages ($($scopeRungs.Count) rungs)") ($missingRungKeys.Count -eq 0) ($missingRungKeys -join ', ')
+$rungsSequential = $true
+for ($k = 0; $k -lt $scopeRungs.Count; $k++) { if ($scopeRungs[$k][1] -ne $k) { $rungsSequential = $false } }
+Assert-True 'scope rungs are numbered from 0 without gaps' $rungsSequential
+$rangeLine = [regex]::Match($constantsCs, 'PairScopeRange = new\(\(int\)KissScope\.(\w+),\s*\(int\)KissScope\.(\w+)\)')
+Assert-True 'scope range constants match the enum ends' ($rangeLine.Success -and $rangeLine.Groups[1].Value -eq $scopeRungs[0][0] -and $rangeLine.Groups[2].Value -eq $scopeRungs[$scopeRungs.Count - 1][0])
+$defaultLine = [regex]::Match($constantsCs, 'PairScopeDefault = \(int\)KissScope\.(\w+)')
+Assert-True ("factory default scope is the widest rung ($($defaultLine.Groups[1].Value))") ($defaultLine.Groups[1].Value -eq $scopeRungs[$scopeRungs.Count - 1][0])
 
 if ($failures.Count -gt 0) {
     Write-Host ''
