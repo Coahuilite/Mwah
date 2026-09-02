@@ -29,6 +29,7 @@
 - **心情缩放**：`Thought_Memory.MoodOffset() = stage.baseMoodEffect × moodPowerFactor + moodOffset`；`Thought_Memory.durationTicksOverride` 可逐实例改时长；`ThoughtDef.DurationTicks = durationDays × 60000`（0.25 日 = 6 游戏时）。原版 `Pawn_InteractionsTracker.AddInteractionThought` 是 public static 但乘的是**对方**的 `SocialImpact`，且前置要求 `Talking` 容量与 `interactions` tracker → 本模组自己写，取**自己**的 `SocialImpact`。
 - **不炸的边界**：`SkillNeed_BaseBonus.ValueFor` 对 `pawn.skills == null` 返回 `1f`，且 `SocialImpact` 标了 `neverDisabled` → 无技能单位取该属性安全。
 - **社会语义副作用开关**：`Thought_MemorySocial.Init()` 在 `ThoughtMaker.MakeThought` 内被调用并写入 `opinionOffset = stage.baseOpinionOffset` → MakeThought 之后再乘倍率才有效；`ShouldDiscard` 要求 `otherPawn != null && opinionOffset != 0`。
+- **日志基础设施的上限**：Player.log 无逐行时间戳、全局 10000 条 Unity 日志上限（到顶后 `Debug.unityLogger.logEnabled = false`，我们的 `Log.*` 全被吞）、连续相同文本折叠到 99 次后不再写入 ⇒ 任何打点必须自带 `t=<tick>` 与唯一字段。设置文件只写非默认值（是 diff 不是快照），结算结果由存档 XML 自带证据。**细节与取舍见 `docs/kiss-trace-logging-design-zh.md`。**
 - **单位常量**：`GenTicks.TicksPerRealSecond = 60`、`GenDate.TicksPerDay = 60000` → 1 游戏小时 = 2500 tick。
 - 灰项惯例：`new FloatMenuOption(label, null, priority…)`（action 传 null 即禁用），原因写进 label 括号；可用 `FloatMenuUtility.DecoratePrioritizedTask` 标"会抢占"。菜单优先级有现成的 `MenuOptionPriority.InitiateSocial`。
 
@@ -68,22 +69,7 @@
 
 ## 仓库结构与导航
 
-```text
-every_pawn_kiss_each_other/
-├── AGENTS.md / MEMORY.md / TODO.md / OBLIVIONIS.md
-├── About/About.xml
-├── LoadFolders.xml                     <li>/</li><li>1.6</li>
-├── Mwah.slnx                           只用 .slnx，不建 .sln
-├── 1.6/
-│   ├── Assemblies/                     构建产物（gitignored，.gitkeep 占位）
-│   ├── Defs/Kiss/                      MWAH_JobDefs.xml, MWAH_ThoughtDefs.xml
-│   └── Languages/{English,ChineseSimplified}/
-├── Source/Mwah/
-│   ├── Mod.cs / MwahSettings.cs / Constants.cs / MwahTime.cs / MwahLog.cs
-│   └── DefOf/ Actions/Kiss/ Jobs/ Rewards/ Systems/
-└── scripts/                            stage-package / pack-dev / build-dev / verify-local
-```
-
+运行内容全部在版本目录 `1.6/` 下（`Defs/Kiss/`、`Languages/{English,ChineseSimplified}/`、`Assemblies/` 为构建产物）；`LoadFolders.xml` 映射 `/` 与 `1.6`；解决方案只有 `Mwah.slnx`，不建 `.sln`；C# 源在 `Source/Mwah/`（`DefOf/ Actions/Kiss/ Jobs/ Rewards/ Systems/`）。目录细节以 `ls` 为准，本节不维护树状图。
 | 要看什么 | 位置 |
 |---|---|
 | 右键入口 | `Source/…/Actions/Kiss/FloatMenuOptionProvider_Kiss.cs`（原版反射发现，无需注册） |
@@ -93,6 +79,7 @@ every_pawn_kiss_each_other/
 | 冷却 | `Source/…/Systems/KissCooldown.cs`（会话内内存态） |
 | 单位换算唯一入口 | `Source/…/MwahTime.cs` |
 | 设置项与生命周期 | `Source/…/MwahSettings.cs` + `Mod.cs`（即时生效 + 防抖落盘） |
+| 日志/打点设计与引擎上限 | `docs/kiss-trace-logging-design-zh.md` | 未实现，含保留意见与待决策 |
 | 打包与门 | `scripts/`；跨项目通用骨架见 `../modding_documents/RimWorld_Mod_RepoInit_AgentMemory_And_Packaging_Guide_zh.md` |
 
 ## 提交与命令实践
