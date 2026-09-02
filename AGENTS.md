@@ -77,6 +77,7 @@ every_pawn_kiss_each_other/
 | 单位换算 | `Source/…/MwahTime.cs` | 60 t = 1 秒，2500 t = 1 游戏时 |
 | 设置项与生命周期 | `Source/…/MwahSettings.cs` + `Mod.cs` | 即时生效 + 防抖落盘 |
 | 打包与验证 | `scripts/` | 见 COMMANDS |
+| 同类新工程的通用骨架（仓库/记忆/脚本三件事） | `../modding_documents/RimWorld_Mod_RepoInit_AgentMemory_And_Packaging_Guide_zh.md` | 占位符版，跨项目复用 |
 
 ## COMMANDS
 
