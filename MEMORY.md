@@ -5,7 +5,7 @@
 - RimWorld 1.6 模组，`packageId` `coahuilite.mwah`，产品版本 **0.1.0**（csproj `<Version>` 为主源，About `<modVersion>` 跟随）。尚未发布、无远端仓库、无创意工坊条目。
 - 功能面：**仅 live map、仅单机、零 Harmony**。选中**可下令的** pawn 右键另一 pawn → `kiss`（三层判定见「谁能亲：三层边界」）；能走的一方走过去，双方 `FaceTarget` 相对、贴脸（`PathEndMode.Touch`）、按间隔抛原版爱心，结束后各自 `JobDefOf.Goto` 回原位。有 `needs.mood` 的按**自己**的 `SocialImpact` 拿心情，没有的什么都不加。
 - 设计取向：**纯娱乐、门槛尽量低**——不限阵营、不限种族、不要求征召。这是维护者的立场，2026-09-02 明确重申过：玩家反馈"想要只撮合殖民地"用**门禁滑条**承接（出厂停在最右档 = 双不限），**不改默认值**。但"零门槛"从来不是事实，也不该假装是：原版 `CanTakeOrder` 与 `ShouldGenerateFloatMenuForPawn` 在 provider 之前就把关，动物与中立者当不了发起方、倒地者连菜单都不生成。2026-09-02 边界收敛后，本模组自己的前提写成 `KissBoundary` 三层，不再用"种族"近似"能力"。收益面保守（见「工程决定」）。工作区目录名 `every_pawn_kiss_each_other/` 是历史值，不构成身份。
-- 明确不做（不是待办）：世界地图/商队途中、RimWorld Multiplayer 同步、AI 自主亲吻（`InteractionDef` 二期候选）、真·贴合亲吻动画、Downed 者当发起方（需 Harmony 放开原版闸门）。
+- 明确不做（不是待办）：世界地图/商队途中、RimWorld Multiplayer 同步、真·贴合亲吻动画、Downed 者当发起方（需 Harmony 放开原版闸门）。
 - **不做 junction**：`Mods/` 与 `Mods/*` 一律不建、不校验、不假设存在；复制模组与实机测试由维护者本人执行（2026-09-02 维护者指令）。
 
 ## 命名决定（2026-09-02 定稿）
@@ -56,6 +56,11 @@
 ## 工程决定
 
 - `AGENTS.md` 每轮注入，是成本：只放记忆协定、不可漂移的身份、漏看即做错的硬边界；**禁止易变内容**（目录结构、文件清单、命令行、版本目录字面量、进度矩阵）——那些写在本文件与 `TODO.md`。预算 ≤ 35 行（2026-09-02 维护者规则）。
+- 自主亲吻（2026-09-02 维护者要求"所有 pawn 都啵嘴"）走 ' + BT + 'KissAmbient : GameComponent' + BT + ' 定时促成，**只对非玩家控制的 pawn 生效**（' + BT + 'doer.IsPlayerControlled' + BT + ' 直接跳过），玩家能下令的照旧只能右键。
+  理由：原版 ' + BT + 'FloatMenuContext' + BT + ' 先 ' + BT + 'RemoveAll(!CanTakeOrder)' + BT + '，非己方 pawn 连被选中都做不到，零 Harmony 无解。
+  当初否决 ' + BT + 'InteractionDef' + BT + ' 路线的理由（只覆盖 flesh + humanlike、与全覆盖取向冲突）依然成立——正因如此才改用定时器；' + BT + 'GameComponent' + BT + ' 由原版自动实例化，不需要 Def/XML/补丁。
+  自主发起的 job 打 ' + BT + 'playerForced = true' + BT + '，否则 pawn 自己的 think tree 会在下一个 override 检查点把它拽回去，变成"起步即取消"。
+  三个新设置项：' + BT + 'autonomousKissing' + BT + '（默认开）、' + BT + 'autonomousIntervalTicks' + BT + '（默认 250 = 1 游戏时一次机会）、' + BT + 'autonomousRadiusCells' + BT + '（默认 10 格，防止穿越全图去亲、把战斗变成观光团）。
 - 菜单被拒必须说真原因：`KissProposal` 即使 `Visible=false` 也带 `BlockedReason`，点下过期菜单项时回显该原因；没有原因的那条路径（自亲，已被 `CanSelfTarget` 挡）说"这个亲吻已经不成立了"，不再谎报"已经在亲了"。
 - 2026-09-02 三次硬崩溃`**已归因到环境，不是本模组**`：`0xC0000005` 读 `0x1000000000000000` @ `ntdll!RtlDosApplyFileIsolationRedirection_Ustr+0x387`（Windows 正在惰性加载 `TextShaping.dll`），进程内同时注入 Steam 覆盖层与 Defender `MpOAV`。本模组零 DllImport、零原生加载，最多是"让新中文文本第一次上屏"的触发者。取证方法见跨项目排查指南 §6.5–6.6。
 - 打点裁定（2026-09-02 维护者）：**只走 Player.log**，不建自定义文件、不做环形缓冲与按需导出（为"亲亲"引入这些是过度设计）；**每行必带双方身份**（`doer=` 与 `recv=`），不允许靠 cid 回查上一行。方案与依据见 `docs/kiss-trace-logging-design-zh.md`。
