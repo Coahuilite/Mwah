@@ -25,17 +25,9 @@
   <MWAH.Fail.CooldownPair>{PAWN} 和 {OTHER} 刚亲过（{TIME}）</MWAH.Fail.CooldownPair>
 
   <!-- 亲吻导演台 -->
-  <MWAH.Director.Title>啵嘴导演台</MWAH.Director.Title>
-  <MWAH.Director.Doer>发起方</MWAH.Director.Doer>
-  <MWAH.Director.Receiver>接受方</MWAH.Director.Receiver>
-  <MWAH.Director.SetDoer>发起</MWAH.Director.SetDoer>
-  <MWAH.Director.SetReceiver>接受</MWAH.Director.SetReceiver>
-  <MWAH.Director.Empty>还没选人</MWAH.Director.Empty>
-  <MWAH.Director.Filter>搜索</MWAH.Director.Filter>
-  <MWAH.Director.Count>显示 {0} / {1}</MWAH.Director.Count>
-  <MWAH.Director.Go>让他俩啵一个</MWAH.Director.Go>
-  <MWAH.Director.NeedBoth>先把两个人都选上</MWAH.Director.NeedBoth>
-  <MWAH.Director.Ready>可以了</MWAH.Director.Ready>
+  <MWAH.Director.PickFirst>啵嘴导演台：点选第一个小人（右键取消）</MWAH.Director.PickFirst>
+  <MWAH.Director.PickSecond>啵嘴导演台：再点 {PAWN} 要亲的人（右键取消）</MWAH.Director.PickSecond>
+
   <MWAH.Director.Started>{PAWN} 去亲 {OTHER}。</MWAH.Director.Started>
 
   <!-- 设置页 -->

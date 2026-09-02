@@ -29,6 +29,7 @@
 - **心情缩放**：`Thought_Memory.MoodOffset() = stage.baseMoodEffect × moodPowerFactor + moodOffset`；`Thought_Memory.durationTicksOverride` 可逐实例改时长；`ThoughtDef.DurationTicks = durationDays × 60000`（0.25 日 = 6 游戏时）。原版 `Pawn_InteractionsTracker.AddInteractionThought` 是 public static 但乘的是**对方**的 `SocialImpact`，且前置要求 `Talking` 容量与 `interactions` tracker → 本模组自己写，取**自己**的 `SocialImpact`。
 - **不炸的边界**：`SkillNeed_BaseBonus.ValueFor` 对 `pawn.skills == null` 返回 `1f`，且 `SocialImpact` 标了 `neverDisabled` → 无技能单位取该属性安全。
 - **社会语义副作用开关**：`Thought_MemorySocial.Init()` 在 `ThoughtMaker.MakeThought` 内被调用并写入 `opinionOffset = stage.baseOpinionOffset` → MakeThought 之后再乘倍率才有效；`ShouldDiscard` 要求 `otherPawn != null && opinionOffset != 0`。
+- **底栏按钮可扩、右下角开关条不可扩**：' + BT + 'MainButtonDef' + BT + ' 是普通 Def（' + BT + 'workerClass/tabWindowClass/order/minimized/buttonVisible/defaultHotKey' + BT + '），mod 纯 XML 就能加底栏按钮；' + BT + 'MainButtonsRoot.DoButtons()' + BT + ' 每帧按 ' + BT + 'Worker.Visible' + BT + ' 决定显隐 ⇒ 自定义 worker 覆写 ' + BT + 'Visible' + BT + ' 即可动态显隐，零 Harmony。但右下角那排显示开关**不是数据驱动的**：' + BT + 'PlaySettings.DoMapControls(WidgetRow)' + BT + ' 里是一串硬编码 ' + BT + 'row.ToggleableIcon(...)' + BT + '，无 Def 无列表 ⇒ 想加一格必须 Harmony（红线禁止）。底栏也**没有折叠/展开态**：按钮多了只是变窄（宽度 = 屏宽 ÷ 可见数，' + BT + 'minimized' + BT + ' 占半宽），1.5 的 archon ring 在 1.6 源码零命中。
 - **日志基础设施的上限**：Player.log 无逐行时间戳、全局 10000 条 Unity 日志上限（到顶后 `Debug.unityLogger.logEnabled = false`，我们的 `Log.*` 全被吞）、连续相同文本折叠到 99 次后不再写入 ⇒ 任何打点必须自带 `t=<tick>` 与唯一字段。设置文件只写非默认值（是 diff 不是快照），结算结果由存档 XML 自带证据。**细节与取舍见 `docs/kiss-trace-logging-design-zh.md`。**
 - **单位常量**：`GenTicks.TicksPerRealSecond = 60`、`GenDate.TicksPerDay = 60000` → 1 游戏小时 = 2500 tick。
 - 灰项惯例：`new FloatMenuOption(label, null, priority…)`（action 传 null 即禁用），原因写进 label 括号；可用 `FloatMenuUtility.DecoratePrioritizedTask` 标"会抢占"。菜单优先级有现成的 `MenuOptionPriority.InitiateSocial`。
@@ -65,6 +66,9 @@
   三个新设置项：' + BT + 'autonomousKissing' + BT + '（默认开）、' + BT + 'autonomousIntervalTicks' + BT + '（默认 250 = 1 游戏时一次机会）、' + BT + 'autonomousRadiusCells' + BT + '（默认 10 格，防止穿越全图去亲、把战斗变成观光团）。
 - 菜单被拒必须说真原因：`KissProposal` 即使 `Visible=false` 也带 `BlockedReason`，点下过期菜单项时回显该原因；没有原因的那条路径（自亲，已被 `CanSelfTarget` 挡）说"这个亲吻已经不成立了"，不再谎报"已经在亲了"。
 - 2026-09-02 三次硬崩溃`**已归因到环境，不是本模组**`：`0xC0000005` 读 `0x1000000000000000` @ `ntdll!RtlDosApplyFileIsolationRedirection_Ustr+0x387`（Windows 正在惰性加载 `TextShaping.dll`），进程内同时注入 Steam 覆盖层与 Defender `MpOAV`。本模组零 DllImport、零原生加载，最多是"让新中文文本第一次上屏"的触发者。取证方法见跨项目排查指南 §6.5–6.6。
+- 导演台形态（2026-09-02）= 底栏按钮 + **两步点选**：' + BT + 'MainButtonWorker_KissDirector.Activate()' + BT + ' 开关 ' + BT + 'KissPickMode' + BT + '，' + BT + 'KissPick : GameComponent' + BT + ' 在 ' + BT + 'GameComponentOnGUI' + BT + ' 里取点并画提示条，派发走 ' + BT + 'KissUtility.BeginDirected' + BT + '。
+  点选挂 GameComponent 而不是自建全屏窗口：全屏窗口才收得到地图点击，而它会连带吞掉底栏与殖民者栏的输入。取点用原版同一支 ' + BT + 'GenUI.ThingsUnderMouse(pos, 0.8f, ForPawns())' + BT + '，叠格优先级与右键菜单一致。
+  代价（维护者已认）：点选模式没有"灰按钮"，可行性只能在点完之后用消息告知。
 - 打点裁定（2026-09-02 维护者）：**只走 Player.log**，不建自定义文件、不做环形缓冲与按需导出（为"亲亲"引入这些是过度设计）；**每行必带双方身份**（`doer=` 与 `recv=`），不允许靠 cid 回查上一行。方案与依据见 `docs/kiss-trace-logging-design-zh.md`。
 - 允许性面 = **七档 `KissScope` 滑条**（`pairScope`，0 只自由殖民者 → 6 万物互亲，出厂 6）。每档 = 前一档 ∨ 一类人群，双方都要在档内，谓词全取自原版（`IsFreeNonSlaveColonist`/`IsColonist`/`IsPrisoner`/`IsColony*`/`Humanlike`/`IsFlesh`/`HostileTo`）。它取代了 `allowHostileTargets` 与 `allowMoodless` 两个布尔开关（见 `OBLIVIONIS.md`）；档位名键由枚举拼接，靠 `verify-local` 的门反向核对双语与范围常量。
 - 冷却（单人 + 成对）为**会话内内存态**，不落盘、不占 tick，只在结算时顺带清过期项；读档后归零是接受取舍（与 `let_me_gnaw_on_you` 的 `CooldownManager` 同一口径）。
