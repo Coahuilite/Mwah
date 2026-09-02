@@ -55,6 +55,7 @@ public class KissAmbient : GameComponent
         int start = Rand.Range(0, pawns.Count - 1);
         for (int i = 0; i < pawns.Count; i++)
         {
+            Pawn doer = pawns[(start + i) % pawns.Count];
             // 玩家管得过来的（含自家动物），就不替他做主。
             if (KissBoundary.UnderPlayerManagement(doer))
             {
