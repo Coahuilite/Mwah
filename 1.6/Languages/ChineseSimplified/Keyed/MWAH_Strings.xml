@@ -25,7 +25,7 @@
   <MWAH.Fail.CooldownPair>{PAWN} 和 {OTHER} 刚亲过（{TIME}）</MWAH.Fail.CooldownPair>
 
   <!-- 设置页 -->
-  <MWAH.SettingsCategory>每个小人都互相亲吻</MWAH.SettingsCategory>
+  <MWAH.SettingsCategory>所有Pawn都给我啵嘴！</MWAH.SettingsCategory>
   <MWAH.Settings.Header>容忍一下这份唐突的多情。</MWAH.Settings.Header>
   <MWAH.Settings.TimingFormat>{0} tick / {1} 秒 / {2} 游戏时</MWAH.Settings.TimingFormat>
   <MWAH.Settings.TimingHint>所有时长按 tick 存储，显示为 tick / 现实秒 / 游戏小时。换算：60 tick = 1 现实秒（1 倍速），2500 tick = 1 游戏小时，60000 tick = 1 游戏日。</MWAH.Settings.TimingHint>
