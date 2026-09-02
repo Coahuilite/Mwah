@@ -99,6 +99,7 @@ every_pawn_kiss_each_other/
 - Conventional Commits 1.0.0；主题英文祈使句，正文可中文写动机与取舍。
 - 原子划分：骨架/metadata → gameplay 代码 + Defs → 本地化 → 打包工具 → 记忆文档。Defs 与代码同一条（拆开会留下构建失败的中间态），本地化可分开。
 - 改名类变更走"改动后新建提交"，不回写历史。
+- 分支模型：**原子提交落在 `dev`**，`main` 只在发布时前进（对应指南里的"main 保护 / dev 原子"）。2026-09-02 之前的 9 条提交实际全落在 `main`，`dev` 停摆 7 条 —— 已用纯 fast-forward 把 `dev` 指到 `main` 并切到 `dev` 工作，未动任何提交。远端与分支保护建立前，`main` 只是发布锚点。
 - 不入库：`dist/`、`1.6/Assemblies/*.{dll,pdb,xml}`、`Source/**/{obj,bin}`、`About/PublishedFileId.txt`、`.idea/`、`.vs/`。
 - 命令：`dotnet build Source/Mwah/Mwah.csproj -nologo`；`pwsh -NoProfile -File scripts/verify-local.ps1`（15 项静态与产物门）；`scripts/build-dev.ps1`（构建 + 出包）；`scripts/pack-dev.ps1`（只打包，需已有产物与 HEAD）。无测试工程；实机面见 `TODO.md`。
 

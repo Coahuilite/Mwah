@@ -7,7 +7,7 @@
 ## 下一会话入口
 
 - 先读 `MEMORY.md` 的「原版能力边界」与「命名决定」两节再动代码。
-- 离线面全绿；`main == dev == HEAD`（哈希看 `git log --oneline -1`，本文件不钉死它），无远端、未推送、未打 tag，工作树应为干净。
+- 离线面全绿；工作分支是 `dev`，`main` 与它同点（哈希看 `git log --oneline -1`，本文件不钉死它）。无远端、未推送、未打 tag，工作树应为干净。
 - 2026-09-02 完成**边界收敛**：判定收进 `KissBoundary` 三层，设置项 `allowNonHumanlike` 改名 `allowMoodless`（旧存档该项会回到默认）。依据见 `MEMORY.md` 的「谁能亲：三层边界」。
 - 唯一在途事项 = 下面的实机矩阵，执行者是维护者本人。agent 侧的下一步只在两种情况下出现：矩阵回报缺陷、或维护者批准发布/二期动作。
 - 若要发布：先定 `LICENSE` 与远端（均属外部操作，需授权）；`packageId coahuilite.mwah` 自此不可再改。
