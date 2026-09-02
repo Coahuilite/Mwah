@@ -61,6 +61,12 @@
   <MWAH.Settings.Scope.AllFlesh>+ all flesh (adds wild animals, insects, fleshbeasts)</MWAH.Settings.Scope.AllFlesh>
   <MWAH.Settings.Scope.Everything>every pawn kisses each other</MWAH.Settings.Scope.Everything>
 
+  <MWAH.Settings.Autonomous>Autonomous kissing</MWAH.Settings.Autonomous>
+  <MWAH.Settings.AutonomousDesc>Pawns you cannot give orders to - raiders, visitors, wild animals, mechanoids - start kissing on their own. Player-controlled pawns are never auto-ordered; they still wait for your right-click. This is the only way to reach "every pawn" without patching the game.</MWAH.Settings.AutonomousDesc>
+  <MWAH.Settings.AutonomousInterval>Kissing urge interval</MWAH.Settings.AutonomousInterval>
+  <MWAH.Settings.AutonomousIntervalDesc>How often the map gets one chance to start an autonomous kiss. The per-pawn and per-pair cooldowns still apply, so this is a ceiling, not a guarantee.</MWAH.Settings.AutonomousIntervalDesc>
+  <MWAH.Settings.AutonomousRadius>Willing to walk this far</MWAH.Settings.AutonomousRadius>
+  <MWAH.Settings.AutonomousRadiusDesc>Only pawns already this close will consider it. Without a limit a raider would cross the whole map to kiss someone, and the battle turns into a sightseeing tour.</MWAH.Settings.AutonomousRadiusDesc>
   <MWAH.Settings.ChangeOpinion>Affection leaves a mark</MWAH.Settings.ChangeOpinion>
   <MWAH.Settings.ChangeOpinionDesc>Also shift how the two pawns feel about each other. This feeds the vanilla romance chain - keep it off if you just want silly kissing.</MWAH.Settings.ChangeOpinionDesc>
 

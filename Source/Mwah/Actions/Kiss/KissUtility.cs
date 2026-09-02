@@ -140,13 +140,49 @@ public static class KissUtility
                 new LookTargets(selected, target), MessageTypeDefOf.RejectInput, historical: false);
             return;
         }
+        Start(proposal, forcedByAi: false);
+    }
 
+    /// <summary>
+    /// 自主亲吻的发起（只由 <see cref="KissAmbient"/> 对非玩家控制的 pawn 调用）。
+    /// 判定与玩家下令完全同一套，差别只在：不弹拒绝提示（没人点任何东西），
+    /// 以及 job 标记 playerForced —— 否则 pawn 自己的 think tree 会在下一个
+    /// override 检查点把它拽回去，自动亲吻就变成"起步即取消"。
+    /// </summary>
+    public static bool BeginAutonomous(Pawn doer, Pawn receiver)
+    {
+        KissProposal proposal = Propose(doer, receiver);
+        if (!proposal.Allowed || proposal.Doer == null || proposal.Receiver == null)
+        {
+            return false;
+        }
+        Start(proposal, forcedByAi: true);
+        return true;
+    }
+
+    /// <summary>
+    /// 便宜的成对预筛：只跑静态判定与状态判定，不做寻路。
+    /// 给 <see cref="KissAmbient"/> 在一堆候选人里筛目标用；真正发起前仍会走完整的 <see cref="Propose"/>。
+    /// </summary>
+    public static bool PairLooksKissable(Pawn a, Pawn b)
+    {
+        return KissBoundary.CheckStructure(a, b).Accepted
+            && KissBoundary.CanParticipate(a).Accepted
+            && KissBoundary.CanParticipate(b).Accepted;
+    }
+
+    /// <summary>共用的落地动作：消耗冷却 + 起 job。冷却在发起瞬间记，避免同一 tick 反复排队刷爱心。</summary>
+    private static void Start(KissProposal proposal, bool forcedByAi)
+    {
         MwahSettings settings = MwahMod.Settings;
-        // 冷却在下令瞬间消耗，避免同一 tick 反复排队刷爱心。
-        KissCooldown.Mark(proposal.Doer, proposal.Receiver, settings.PawnCooldown, settings.PairCooldown);
+        KissCooldown.Mark(proposal.Doer!, proposal.Receiver!, settings.PawnCooldown, settings.PairCooldown);
 
         var job = JobMaker.MakeJob(MWAH_JobDefOf.MWAH_Kiss, proposal.Receiver);
-        proposal.Doer.jobs.StartJob(job, JobCondition.InterruptForced);
+        if (forcedByAi)
+        {
+            job.playerForced = true;
+        }
+        proposal.Doer!.jobs.StartJob(job, JobCondition.InterruptForced);
     }
 
     public static bool IsKissing(Pawn pawn) => pawn.CurJobDef == MWAH_JobDefOf.MWAH_Kiss;

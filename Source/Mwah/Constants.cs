@@ -28,6 +28,9 @@ public static class Constants
     public const int PairScopeDefault = (int)KissScope.Everything;
     public const bool ChangeOpinion = false;           // 默认不接入原版恋爱/好感链
     public const bool ReturnHomeAfterKiss = true;
+    public const bool AutonomousKissing = true;
+    public const int AutonomousIntervalTicks = 250;      // 1 游戏小时促成一桩
+    public const int AutonomousRadiusCells = 10;         // 超出这个距离就不去追
 
     public static readonly IntRange DurationTicksRange = new(30, 2400);
     public static readonly IntRange FleckIntervalTicksRange = new(20, 1200);
@@ -35,6 +38,8 @@ public static class Constants
     public static readonly FloatRange ThoughtHoursRange = new(0.5f, 240f);
     public static readonly FloatRange MoodMultiplierRange = new(0f, 5f);
     public static readonly IntRange PairScopeRange = new((int)KissScope.FreeColonists, (int)KissScope.Everything);
+    public static readonly IntRange AutonomousIntervalTicksRange = new(30, 60000);
+    public static readonly IntRange AutonomousRadiusRange = new(2, 40);
 }
 
 /// <summary>本地化取值入口。玩家可见文字一律走 Keyed，不硬编码。</summary>

@@ -12,7 +12,7 @@ namespace Mwah;
 /// </summary>
 public class MwahSettings : ModSettings
 {
-    private const float ContentHeight = 980f;
+    private const float ContentHeight = 1160f;
 
     // 出厂默认来自 Constants；玩家改动只落在这些字段上，Scribe key 与字段名一致。
     public bool modEnabled = Constants.ModEnabled;
@@ -23,6 +23,9 @@ public class MwahSettings : ModSettings
     public int heartFleckIntervalTicks = Constants.HeartFleckIntervalTicks;
     public int pawnCooldownTicks = Constants.PawnCooldownTicks;
     public int pairCooldownTicks = Constants.PairCooldownTicks;
+    public bool autonomousKissing = Constants.AutonomousKissing;
+    public int autonomousIntervalTicks = Constants.AutonomousIntervalTicks;
+    public int autonomousRadiusCells = Constants.AutonomousRadiusCells;
     public float thoughtDurationGameHours = Constants.ThoughtDurationGameHours;
     public float moodMultiplier = Constants.MoodMultiplier;
 
@@ -40,6 +43,9 @@ public class MwahSettings : ModSettings
     public float ThoughtDurationHours => Mathf.Clamp(thoughtDurationGameHours, Constants.ThoughtHoursRange.min, Constants.ThoughtHoursRange.max);
     public float MoodMult => Mathf.Clamp(moodMultiplier, Constants.MoodMultiplierRange.min, Constants.MoodMultiplierRange.max);
     public int ThoughtDurationTicks => MwahTime.FromGameHours(ThoughtDurationHours);
+    public bool AutonomousEnabled => autonomousKissing;
+    public int AutonomousIntervalTicks => Mathf.Clamp(autonomousIntervalTicks, Constants.AutonomousIntervalTicksRange.min, Constants.AutonomousIntervalTicksRange.max);
+    public int AutonomousRadius => Mathf.Clamp(autonomousRadiusCells, Constants.AutonomousRadiusRange.min, Constants.AutonomousRadiusRange.max);
 
     public override void ExposeData()
     {
@@ -52,6 +58,9 @@ public class MwahSettings : ModSettings
         Scribe_Values.Look(ref heartFleckIntervalTicks, "heartFleckIntervalTicks", Constants.HeartFleckIntervalTicks);
         Scribe_Values.Look(ref pawnCooldownTicks, "pawnCooldownTicks", Constants.PawnCooldownTicks);
         Scribe_Values.Look(ref pairCooldownTicks, "pairCooldownTicks", Constants.PairCooldownTicks);
+        Scribe_Values.Look(ref autonomousKissing, "autonomousKissing", Constants.AutonomousKissing);
+        Scribe_Values.Look(ref autonomousIntervalTicks, "autonomousIntervalTicks", Constants.AutonomousIntervalTicks);
+        Scribe_Values.Look(ref autonomousRadiusCells, "autonomousRadiusCells", Constants.AutonomousRadiusCells);
         Scribe_Values.Look(ref thoughtDurationGameHours, "thoughtDurationGameHours", Constants.ThoughtDurationGameHours);
         Scribe_Values.Look(ref moodMultiplier, "moodMultiplier", Constants.MoodMultiplier);
 
@@ -70,6 +79,8 @@ public class MwahSettings : ModSettings
         thoughtDurationGameHours = ThoughtDurationHours;
         moodMultiplier = MoodMult;
         pairScope = (int)Scope;
+        autonomousIntervalTicks = AutonomousIntervalTicks;
+        autonomousRadiusCells = AutonomousRadius;
     }
 
     public void RestoreDefaults()
@@ -82,6 +93,9 @@ public class MwahSettings : ModSettings
         heartFleckIntervalTicks = Constants.HeartFleckIntervalTicks;
         pawnCooldownTicks = Constants.PawnCooldownTicks;
         pairCooldownTicks = Constants.PairCooldownTicks;
+        autonomousKissing = Constants.AutonomousKissing;
+        autonomousIntervalTicks = Constants.AutonomousIntervalTicks;
+        autonomousRadiusCells = Constants.AutonomousRadiusCells;
         thoughtDurationGameHours = Constants.ThoughtDurationGameHours;
         moodMultiplier = Constants.MoodMultiplier;
     }
@@ -113,6 +127,11 @@ public class MwahSettings : ModSettings
 
         list.GapLine();
         changed |= ScopeSlider(list);
+        changed |= Checkbox(list, ref autonomousKissing, "MWAH.Settings.Autonomous", "MWAH.Settings.AutonomousDesc");
+        changed |= TickSlider(list, ref autonomousIntervalTicks, "MWAH.Settings.AutonomousInterval", "MWAH.Settings.AutonomousIntervalDesc",
+            Constants.AutonomousIntervalTicksRange.min, Constants.AutonomousIntervalTicksRange.max);
+        changed |= CellSlider(list, ref autonomousRadiusCells, "MWAH.Settings.AutonomousRadius", "MWAH.Settings.AutonomousRadiusDesc",
+            Constants.AutonomousRadiusRange.min, Constants.AutonomousRadiusRange.max);
         changed |= Checkbox(list, ref changeOpinion, "MWAH.Settings.ChangeOpinion", "MWAH.Settings.ChangeOpinionDesc");
         changed |= Checkbox(list, ref returnHomeAfterKiss, "MWAH.Settings.ReturnHome", "MWAH.Settings.ReturnHomeDesc");
 
@@ -138,6 +157,15 @@ public class MwahSettings : ModSettings
         bool before = value;
         list.CheckboxLabeled(labelKey.Translate(), ref value, tipKey.Translate());
         return before != value;
+    }
+
+    /// <summary>格数滑条：与时长滑条同形，但后缀是"格"而不是 tick 三读法。</summary>
+    private static bool CellSlider(Listing_Standard list, ref int cells, string labelKey, string tipKey, int min, int max)
+    {
+        int before = cells;
+        string label = labelKey.Translate() + ": " + cells;
+        cells = Mathf.RoundToInt(list.SliderLabeled(label, cells, min, max, 0.62f, tipKey.Translate()));
+        return before != cells;
     }
 
     private static bool TickSlider(Listing_Standard list, ref int ticks, string labelKey, string tipKey, int min, int max)

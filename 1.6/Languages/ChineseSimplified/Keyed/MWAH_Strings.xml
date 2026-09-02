@@ -61,6 +61,12 @@
   <MWAH.Settings.Scope.AllFlesh>＋所有血肉（加上野生动物、昆虫、血肉兽）</MWAH.Settings.Scope.AllFlesh>
   <MWAH.Settings.Scope.Everything>每个小人都互相亲吻</MWAH.Settings.Scope.Everything>
 
+  <MWAH.Settings.Autonomous>自主啵嘴</MWAH.Settings.Autonomous>
+  <MWAH.Settings.AutonomousDesc>你管不着的小人——袭击者、访客、野生动物、机械族——会自己发起啵嘴。玩家控制的小人永远不会被自动下令，它们照旧等你右键。这是不打补丁就能做到"所有 Pawn"的唯一路子。</MWAH.Settings.AutonomousDesc>
+  <MWAH.Settings.AutonomousInterval>啵嘴冲动间隔</MWAH.Settings.AutonomousInterval>
+  <MWAH.Settings.AutonomousIntervalDesc>地图上每隔多久获得一次促成自主啵嘴的机会。单人冷却与成对冷却照常生效，所以这是上限而不是保证。</MWAH.Settings.AutonomousIntervalDesc>
+  <MWAH.Settings.AutonomousRadius>愿意走多远</MWAH.Settings.AutonomousRadius>
+  <MWAH.Settings.AutonomousRadiusDesc>只有本来就离得这么近的两个才会考虑。不设上限的话，袭击者会穿过整张地图去亲另一端的人，战斗就变成观光团了。</MWAH.Settings.AutonomousRadiusDesc>
   <MWAH.Settings.ChangeOpinion>亲吻留下痕迹</MWAH.Settings.ChangeOpinion>
   <MWAH.Settings.ChangeOpinionDesc>同时改变两人对彼此的观感。这会接入原版恋爱链——只想要无厘头亲亲就别开。</MWAH.Settings.ChangeOpinionDesc>
 
