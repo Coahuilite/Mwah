@@ -8,7 +8,9 @@
   <!-- 不可用原因 -->
   <MWAH.Fail.Disabled>设置里已关闭亲吻</MWAH.Fail.Disabled>
   <MWAH.Fail.Hostile>对方正处于敌对状态</MWAH.Fail.Hostile>
+  <MWAH.Fail.Self>不能亲自己</MWAH.Fail.Self>
   <MWAH.Fail.Gone>有一个已经不在了</MWAH.Fail.Gone>
+  <MWAH.Fail.Stale>这个亲吻已经不成立了</MWAH.Fail.Stale>
   <MWAH.Fail.Immobile>{PAWN} 现在动不了</MWAH.Fail.Immobile>
   <MWAH.Fail.ImmobilePair>两个都动不了</MWAH.Fail.ImmobilePair>
   <MWAH.Fail.Unconscious>{PAWN} 在睡着或不清醒</MWAH.Fail.Unconscious>

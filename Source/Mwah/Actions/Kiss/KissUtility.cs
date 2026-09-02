@@ -27,7 +27,11 @@ public readonly struct KissProposal
         BlockedReason = blockedReason;
     }
 
-    public static KissProposal Hidden => default;
+    /// <summary>
+    /// 菜单里不出现，但仍带上原因：点下已经开了几秒的菜单项时，
+    /// 状态可能变了，那时这条原因就是给玩家的解释。
+    /// </summary>
+    public static KissProposal Hidden(string? reason = null) => new(false, false, null, null, reason);
 
     public static KissProposal Allow(Pawn doer, Pawn receiver) => new(true, true, doer, receiver, null);
 
@@ -48,12 +52,12 @@ public static class KissUtility
     {
         if (selected == null || target == null || selected == target)
         {
-            return KissProposal.Hidden;
+            return KissProposal.Hidden("MWAH.Fail.Self".Translate());
         }
-
-        if (!KissBoundary.CheckStructure(selected, target).Accepted)
+        AcceptanceReport structure = KissBoundary.CheckStructure(selected, target);
+        if (!structure.Accepted)
         {
-            return KissProposal.Hidden;
+            return KissProposal.Hidden(structure.Reason);
         }
 
         AcceptanceReport selectedState = KissBoundary.CanParticipate(selected);
@@ -126,7 +130,7 @@ public static class KissUtility
         KissProposal proposal = Propose(selected, target);
         if (!proposal.Allowed || proposal.Doer == null || proposal.Receiver == null)
         {
-            Messages.Message(proposal.BlockedReason ?? "MWAH.Fail.Busy".Translate(),
+            Messages.Message(proposal.BlockedReason ?? "MWAH.Fail.Stale".Translate(),
                 new LookTargets(selected, target), MessageTypeDefOf.RejectInput, historical: false);
             return;
         }

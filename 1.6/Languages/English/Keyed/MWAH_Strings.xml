@@ -8,7 +8,9 @@
   <!-- 不可用原因 -->
   <MWAH.Fail.Disabled>kissing is disabled in mod settings</MWAH.Fail.Disabled>
   <MWAH.Fail.Hostile>they are actively hostile</MWAH.Fail.Hostile>
+  <MWAH.Fail.Self>cannot kiss themselves</MWAH.Fail.Self>
   <MWAH.Fail.Gone>one of them is no longer here</MWAH.Fail.Gone>
+  <MWAH.Fail.Stale>that kiss is no longer on</MWAH.Fail.Stale>
   <MWAH.Fail.Immobile>{PAWN} can't move right now</MWAH.Fail.Immobile>
   <MWAH.Fail.ImmobilePair>neither of them can move</MWAH.Fail.ImmobilePair>
   <MWAH.Fail.Unconscious>{PAWN} is asleep or out of it</MWAH.Fail.Unconscious>
