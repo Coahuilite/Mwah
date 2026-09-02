@@ -12,7 +12,7 @@
   <MainButtonDef>
     <defName>MWAH_KissDirector</defName>
     <label>kiss director</label>
-    <description>Pick any two pawns on the map and make them kiss - including pawns you do not control.</description>
+    <description>Pick any two pawns on the map and make them kiss.</description>
     <workerClass>Mwah.MainButtonWorker_KissDirector</workerClass>
     <order>900</order>
     <closesWorldView>true</closesWorldView>

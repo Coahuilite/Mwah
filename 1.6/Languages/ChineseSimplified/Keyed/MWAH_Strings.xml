@@ -25,8 +25,8 @@
   <MWAH.Fail.CooldownPair>{PAWN} 和 {OTHER} 刚亲过（{TIME}）</MWAH.Fail.CooldownPair>
 
   <!-- 亲吻导演台 -->
-  <MWAH.Director.PickFirst>啵嘴导演台：点选第一个小人（右键取消）</MWAH.Director.PickFirst>
-  <MWAH.Director.PickSecond>啵嘴导演台：再点 {PAWN} 要亲的人（右键取消）</MWAH.Director.PickSecond>
+  <MWAH.Director.PickFirst>谁要发起啵嘴？</MWAH.Director.PickFirst>
+  <MWAH.Director.PickSecond>{PAWN} 想要和谁啵嘴？</MWAH.Director.PickSecond>
 
   <MWAH.Director.Started>{PAWN} 去亲 {OTHER}。</MWAH.Director.Started>
 
@@ -57,6 +57,8 @@
   <MWAH.Settings.MoodMultiplier>心情强度</MWAH.Settings.MoodMultiplier>
   <MWAH.Settings.MoodMultiplierDesc>缩放最终心情加成。实际数值 = 想法基准值 × 本倍率 × 该小人自身的社交影响，所以会说话的人亲一次更赚，闷葫芦收益更低。</MWAH.Settings.MoodMultiplierDesc>
 
+  <MWAH.Settings.DirectorButton>啵嘴导演台按钮</MWAH.Settings.DirectorButton>
+  <MWAH.Settings.DirectorButtonDesc>在底栏放上「啵嘴导演台」。点一下，再点要发起啵嘴的小人，然后点他想啵的对象——地图上任意两个都行，包括你控制不了的那些。右键或再点一次按钮取消。</MWAH.Settings.DirectorButtonDesc>
   <MWAH.Settings.PairScope>谁能亲谁</MWAH.Settings.PairScope>
   <MWAH.Settings.PairScopeDesc>门开多大。拖到最右就是不限阵营、不限种族——这本模组要的就是这个。想要撮合殖民地的玩法就往左拖。双方都必须在范围内；档位只会越往右越宽，每格多加一类人。</MWAH.Settings.PairScopeDesc>
   <MWAH.Settings.Scope.FreeColonists>只限自由殖民者</MWAH.Settings.Scope.FreeColonists>

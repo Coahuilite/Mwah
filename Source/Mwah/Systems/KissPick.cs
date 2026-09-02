@@ -46,6 +46,12 @@ public class KissPick : GameComponent
         {
             return;
         }
+        if (MwahMod.Settings != null && !MwahMod.Settings.DirectorEnabled)
+        {
+            // 设置页里把按钮关掉时，正在进行的点选也要一起结束。
+            KissPickMode.End();
+            return;
+        }
         if (Find.WindowStack.NonImmediateDialogWindowOpen)
         {
             // 有对话框压上来就退出，避免"看不见却还在收点击"。

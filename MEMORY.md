@@ -68,6 +68,8 @@
 - 2026-09-02 三次硬崩溃`**已归因到环境，不是本模组**`：`0xC0000005` 读 `0x1000000000000000` @ `ntdll!RtlDosApplyFileIsolationRedirection_Ustr+0x387`（Windows 正在惰性加载 `TextShaping.dll`），进程内同时注入 Steam 覆盖层与 Defender `MpOAV`。本模组零 DllImport、零原生加载，最多是"让新中文文本第一次上屏"的触发者。取证方法见跨项目排查指南 §6.5–6.6。
 - 导演台形态（2026-09-02）= 底栏按钮 + **两步点选**：' + BT + 'MainButtonWorker_KissDirector.Activate()' + BT + ' 开关 ' + BT + 'KissPickMode' + BT + '，' + BT + 'KissPick : GameComponent' + BT + ' 在 ' + BT + 'GameComponentOnGUI' + BT + ' 里取点并画提示条，派发走 ' + BT + 'KissUtility.BeginDirected' + BT + '。
   点选挂 GameComponent 而不是自建全屏窗口：全屏窗口才收得到地图点击，而它会连带吞掉底栏与殖民者栏的输入。取点用原版同一支 ' + BT + 'GenUI.ThingsUnderMouse(pos, 0.8f, ForPawns())' + BT + '，叠格优先级与右键菜单一致。
+  显隐由设置项 ' + BT + 'directorButton' + BT + '（默认开）控制，落点是覆写 ' + BT + 'MainButtonWorker.Visible' + BT + '（' + BT + 'MainButtonDef.buttonVisible' + BT + ' 是静态 XML 值，做不到跟着设置走）。关掉时正在进行的点选也会被 ' + BT + 'KissPick' + BT + ' 主动结束。
+  提示语按维护者钦定：' + BT + '谁要发起啵嘴？' + BT + ' → ' + BT + '{PAWN} 想要和谁啵嘴？' + BT + '；取消方式（右键 / 再点一次按钮）不占提示语，放按钮 tooltip 与设置项说明里。
   代价（维护者已认）：点选模式没有"灰按钮"，可行性只能在点完之后用消息告知。
 - 打点裁定（2026-09-02 维护者）：**只走 Player.log**，不建自定义文件、不做环形缓冲与按需导出（为"亲亲"引入这些是过度设计）；**每行必带双方身份**（`doer=` 与 `recv=`），不允许靠 cid 回查上一行。方案与依据见 `docs/kiss-trace-logging-design-zh.md`。
 - 允许性面 = **七档 `KissScope` 滑条**（`pairScope`，0 只自由殖民者 → 6 万物互亲，出厂 6）。每档 = 前一档 ∨ 一类人群，双方都要在档内，谓词全取自原版（`IsFreeNonSlaveColonist`/`IsColonist`/`IsPrisoner`/`IsColony*`/`Humanlike`/`IsFlesh`/`HostileTo`）。它取代了 `allowHostileTargets` 与 `allowMoodless` 两个布尔开关（见 `OBLIVIONIS.md`）；档位名键由枚举拼接，靠 `verify-local` 的门反向核对双语与范围常量。
