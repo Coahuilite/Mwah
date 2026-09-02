@@ -20,8 +20,8 @@
 改实现前必读：这几条是本模组形态成立的依据。
 
 - **右键入口自动注册**：`FloatMenuMakerMap.Init()` 对 `typeof(FloatMenuOptionProvider).AllSubclassesNonAbstract()` 反射实例化 → MOD 的 provider 无需 Def/XML/patch 即进菜单链。基类闸门：`Drafted/Undrafted/Multiselect/RequiresManipulation/MechanoidCanDo/CanSelfTarget/CanTargetDespawned/IgnoreFogged` + `SelectedPawnValid/TargetThingValid/TargetPawnValid/Applies/GetOptionsFor(Thing|Pawn)`。
-- **`SelectedPawnValid` 的坑**：base 首句用 `MutantDef.whitelistedFloatMenuProviders` 静默屏蔽未登记的 mutant/亚人 → 本模组 override 时**故意不调 base**；`MechanoidCanDo => true` 因此只是声明意图。
-- **原版硬闸门（provider 层绕不过）**：`ShouldGenerateFloatMenuForPawn` 在遍历 provider 前剔除「不在当前地图 / `Downed` / `Deathresting` / `Lord.AllowsFloatMenu` 否决」；`GetOptions` 首行要求点击落在 `Find.CurrentMap` 内 → **倒地者不能当发起方**，但可当目标。
+- **`SelectedPawnValid` 的坑**：本模组 override 时**故意不调 base**（base 会按 mutant 白名单一刀切，机制见「谁能亲：三层边界」末条）；`MechanoidCanDo => true` 因此只是声明意图，不是能力。
+- **原版硬闸门（provider 层绕不过）**：`GetOptions` 首行要求点击落在 `Find.CurrentMap` 内；`ShouldGenerateFloatMenuForPawn` 的剔除清单见「谁能亲：三层边界」表 → **倒地者不能当发起方**，但可当目标。
 - **`ability` 路线被否决的依据**：`PawnComponentsUtility.AddComponentsForSpawn` 只在 `Humanlike || IsMechanoid` 时建 `pawn.abilities`；Odyssey 的 `FleshType.Drone`（`isOrganic=false`）也没有 `interactions` tracker。故 Ability/`InteractionDef` 都不能覆盖"所有 pawn"，只有 FloatMenu provider 可以。
 - **贴近/相对**：`pather.StartPath(target, PathEndMode.Touch)`、`SocialInteractionUtility.BestInteractableCell/IsGoodPositionForInteraction(≤6 格 + LineOfSight)`、`rotationTracker.FaceTarget(...)`、`GenAdj.AdjacentTo8WayOrInside(Thing,Thing)`（多格体型正确）。1.6 **已无 `Pawn.CanMove`**，移动能力读法是 `health.capacities.CapableOf(PawnCapacityDefOf.Moving)` + `RaceProps.doesntMove` 特例。
 - **爱心特效**：就是 `FleckMaker.ThrowMetaIcon(cell, map, FleckDefOf.Heart)`（`JobDriver_Lovin` 常量 100 tick）。`Heart` 是 **FleckDef**（`Things/Mote/Heart`，`MetaOverlays`），不存在 `Mote_Heart`。
@@ -55,6 +55,7 @@
 ## 工程决定
 
 - `AGENTS.md` 每轮注入，是成本：只放记忆协定、不可漂移的身份、漏看即做错的硬边界；**禁止易变内容**（目录结构、文件清单、命令行、版本目录字面量、进度矩阵）——那些写在本文件与 `TODO.md`。预算 ≤ 35 行（2026-09-02 维护者规则）。
+- 菜单被拒必须说真原因：`KissProposal` 即使 `Visible=false` 也带 `BlockedReason`，点下过期菜单项时回显该原因；没有原因的那条路径（自亲，已被 `CanSelfTarget` 挡）说"这个亲吻已经不成立了"，不再谎报"已经在亲了"。
 - 设置项 `allowNonHumanlike` → **`allowMoodless`**（2026-09-02 边界收敛）：旧名按种族判，会把"种族是人形但没有心情"的 mutant 漏进来；新名的判据是运行时 `needs.mood`。Scribe key 同步改名，未发布版本不做旧 key 兼容。
 - 冷却（单人 + 成对）为**会话内内存态**，不落盘、不占 tick，只在结算时顺带清过期项；读档后归零是接受取舍（与 `let_me_gnaw_on_you` 的 `CooldownManager` 同一口径）。
 - 默认 `changeOpinion=false`：用普通 `Thought_Memory`，不写好感度、不喂原版恋爱链；开启后切换到 `Thought_MemorySocial` 变体。
@@ -105,7 +106,7 @@ every_pawn_kiss_each_other/
 
 ## 验证状态
 
-- 已绿（离线）：`dotnet build` Debug/Release 均 **0 警告 0 错误**；`scripts/verify-local.ps1` 15 项全 `[ok]`（8 个 XML 良构、Keyed 中英各 46 键且集合一致、C# 引用的 46 个键双语齐备、DefOf↔defName 无孤儿、`driverClass` 与 `namespace.type` 一致、DLL 含 13 个关键符号、DLL 无 Harmony 符号、版本与 packageId 三处一致、无绝对本地路径、设置项字段↔Scribe key↔`Constants` 三处锁死共 11 项）。
+- 已绿（离线）：`dotnet build` Debug/Release 均 **0 警告 0 错误**；`scripts/verify-local.ps1` 15 项全 `[ok]`（8 个 XML 良构、Keyed 中英各 48 键且集合一致、C# 引用的 48 个键双语齐备、DefOf↔defName 无孤儿、`driverClass` 与 `namespace.type` 一致、DLL 含 13 个关键符号、DLL 无 Harmony 符号、版本与 packageId 三处一致、无绝对本地路径、设置项字段↔Scribe key↔`Constants` 三处锁死共 11 项）。
 - 边界收敛（`KissBoundary` 三层、`allowMoodless` 改名）目前**只有离线证据**：编译期 API 存在性与静态门已绿，运行时行为（灰项文案、动物不可主动、机械族可主动、mutant 被参与层挡住）全部未在游戏内观测，见 `TODO.md` 矩阵新增项。
 - 「定义了却没人引用」的反向键检查是有价值的闸门：它在开发过程中抓到 `Mod.cs` 丢失 `SettingsCategory()` override —— 该方法返回非空是设置页出现在「模式选项」里的唯一条件，丢了就等于整个设置面不可达。删掉这条检查前必须先想清楚。
 - 产物：`scripts/build-dev.ps1` 出 `dist/dev/Mwah-dev-v<VERSION>-EXP-<shortsha>[-dirty].zip`（当前 commit `89bf4ee`），包内 `version.txt` 三行 = 名称+标签 / build / commit；`dist/` 与 DLL 全 gitignored。
