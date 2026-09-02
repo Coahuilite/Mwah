@@ -4,6 +4,7 @@
 
 - RimWorld 1.6 模组，`packageId` `coahuilite.mwah`，产品版本 **0.1.0**（csproj `<Version>` 为主源，About `<modVersion>` 跟随）。尚未发布、无远端仓库、无创意工坊条目。
 - 功能面：**仅 live map、仅单机、零 Harmony**。选中任意 pawn 右键另一 pawn → `kiss`；能走的一方走过去，双方 `FaceTarget` 相对、贴脸（`PathEndMode.Touch`）、按间隔抛原版爱心，结束后各自 `JobDefOf.Goto` 回原位。有 `needs.mood` 的按**自己**的 `SocialImpact` 拿心情，没有的什么都不加。
+- 设计取向：**纯娱乐零门槛**——能选中就能亲，不限阵营、不限种族、不要求可控、不要求征召；收益面保守（见「工程决定」）。工作区目录名 `every_pawn_kiss_each_other/` 是历史值，不构成身份。
 - 明确不做（不是待办）：世界地图/商队途中、RimWorld Multiplayer 同步、AI 自主亲吻（`InteractionDef` 二期候选）、真·贴合亲吻动画、Downed 者当发起方（需 Harmony 放开原版闸门）。
 - **不做 junction**：`Mods/` 与 `Mods/*` 一律不建、不校验、不假设存在；复制模组与实机测试由维护者本人执行（2026-09-02 维护者指令）。
 
@@ -33,6 +34,7 @@
 
 ## 工程决定
 
+- `AGENTS.md` 每轮注入，是成本：只放记忆协定、不可漂移的身份、漏看即做错的硬边界；**禁止易变内容**（目录结构、文件清单、命令行、版本目录字面量、进度矩阵）——那些写在本文件与 `TODO.md`。预算 ≤ 35 行（2026-09-02 维护者规则）。
 - 冷却（单人 + 成对）为**会话内内存态**，不落盘、不占 tick，只在结算时顺带清过期项；读档后归零是接受取舍（与 `let_me_gnaw_on_you` 的 `CooldownManager` 同一口径）。
 - 默认 `changeOpinion=false`：用普通 `Thought_Memory`，不写好感度、不喂原版恋爱链；开启后切换到 `Thought_MemorySocial` 变体。
 - 心情发放只由**发起方**结算一次，被动方只负责自己的回原位；`isPassivePartner` 是这条不变量的载体。
@@ -41,6 +43,43 @@
 - 时长存储单位统一 tick；`thoughtDurationGameHours` 按 1/4 游戏小时量化，避免脏小数进配置文件。
 - 本仓库的骨架、四件套记忆文件与四份脚本已抽象上收为通用指南：`modding_documents/RimWorld_Mod_RepoInit_AgentMemory_And_Packaging_Guide_zh.md`（占位符版，无项目身份）。同类新工程先读它，不要重新发明。注意 `modding_documents/` 本身不在任何 git 仓库下，改它不产生提交。
 - 骨架照 `RimWorld_Mod_Skeleton_Guide_bilingual.md` Level 2 + `let_me_gnaw_on_you`/`squeaky_ratkin` 现行做法：版本化 `1.6/`、`.slnx` only、`net472` + `Krafs.Rimworld.Ref 1.6.*`、语言目录用 `ChineseSimplified`（`LanguageDatabase` 硬编码名录里的真实名字）。
+
+## 仓库结构与导航
+
+```text
+every_pawn_kiss_each_other/
+├── AGENTS.md / MEMORY.md / TODO.md / OBLIVIONIS.md
+├── About/About.xml
+├── LoadFolders.xml                     <li>/</li><li>1.6</li>
+├── Mwah.slnx                           只用 .slnx，不建 .sln
+├── 1.6/
+│   ├── Assemblies/                     构建产物（gitignored，.gitkeep 占位）
+│   ├── Defs/Kiss/                      MWAH_JobDefs.xml, MWAH_ThoughtDefs.xml
+│   └── Languages/{English,ChineseSimplified}/
+├── Source/Mwah/
+│   ├── Mod.cs / MwahSettings.cs / Constants.cs / MwahTime.cs / MwahLog.cs
+│   └── DefOf/ Actions/Kiss/ Jobs/ Rewards/ Systems/
+└── scripts/                            stage-package / pack-dev / build-dev / verify-local
+```
+
+| 要看什么 | 位置 |
+|---|---|
+| 右键入口 | `Source/…/Actions/Kiss/FloatMenuOptionProvider_Kiss.cs`（原版反射发现，无需注册） |
+| 谁去亲 / 能不能亲 | `Source/…/Actions/Kiss/KissUtility.cs`（`KissProposal` 三态） |
+| 亲吻表演与结算 | `Source/…/Jobs/JobDriver_Kiss.cs`（双人镜像 job） |
+| 心情与社交缩放 | `Source/…/Rewards/KissMoodReward.cs`（无 `needs.mood` 者静默） |
+| 冷却 | `Source/…/Systems/KissCooldown.cs`（会话内内存态） |
+| 单位换算唯一入口 | `Source/…/MwahTime.cs` |
+| 设置项与生命周期 | `Source/…/MwahSettings.cs` + `Mod.cs`（即时生效 + 防抖落盘） |
+| 打包与门 | `scripts/`；跨项目通用骨架见 `../modding_documents/RimWorld_Mod_RepoInit_AgentMemory_And_Packaging_Guide_zh.md` |
+
+## 提交与命令实践
+
+- Conventional Commits 1.0.0；主题英文祈使句，正文可中文写动机与取舍。
+- 原子划分：骨架/metadata → gameplay 代码 + Defs → 本地化 → 打包工具 → 记忆文档。Defs 与代码同一条（拆开会留下构建失败的中间态），本地化可分开。
+- 改名类变更走"改动后新建提交"，不回写历史。
+- 不入库：`dist/`、`1.6/Assemblies/*.{dll,pdb,xml}`、`Source/**/{obj,bin}`、`About/PublishedFileId.txt`、`.idea/`、`.vs/`。
+- 命令：`dotnet build Source/Mwah/Mwah.csproj -nologo`；`pwsh -NoProfile -File scripts/verify-local.ps1`（14 项静态与产物门）；`scripts/build-dev.ps1`（构建 + 出包）；`scripts/pack-dev.ps1`（只打包，需已有产物与 HEAD）。无测试工程；实机面见 `TODO.md`。
 
 ## 验证状态
 
