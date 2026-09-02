@@ -1,6 +1,6 @@
 # Mwah 日志设计：保留意见、依据与更优雅的做法
 
-> 状态：**设计文档，未实现**。代码里的实际打点仍然只有 `Mod.cs` 的三条（装载横幅、`dev: settings saved`、设置落盘失败）。
+> 状态：**设计文档，未实现**。2026-09-02 维护者裁定：**输出只走 Player.log**，环形缓冲 + 按需导出 + 自定义文件判为过度设计（"这只是个亲亲而已"）；**每行必须能看出谁发起、谁接受**。代码里的实际打点仍然只有 `Mod.cs` 的三条（装载横幅、`dev: settings saved`、设置落盘失败）。
 > 本文记录 2026-09-02 与维护者达成的一条保留意见（一次亲吻的日志行形状），以及为"更优雅"而探索出的备选路线与代价。
 > 判据始终是维护者给的那句：**日志以 agent 能还原路径为准**。
 > 引擎侧事实（上限、折叠、路径、持久化）逐条经 RimSage 1.6 源码核验，标了文件与行号；本文不复制 `MEMORY.md` 的结论，只写日志这一面。
@@ -64,7 +64,7 @@
 
 代价：约 150–200 行样板（注册表 + 格式化器 + once 键），以及"字段序是兼容面"的长期纪律。
 
-**评价：值得，但可以在第二轮做；第一轮先把事件集合定对，格式留 `fmt=1` 余地。**
+**裁定：第二轮再说。**第一轮先把事件集合与身份字段跑稳，未验证的字段序不该变成兼容面。
 
 ### C. 环形缓冲 + 按需导出（`[DebugAction]`）
 
@@ -74,7 +74,7 @@
 
 代价：崩溃/强退丢现场 ⇒ 需要 write-through 的兜底档；依赖 DevMode；"去哪拿文件"要显示给维护者（但按 B 的纪律不能进日志，只能在设置页/Debug 菜单显示）。
 
-**评价：trace 档（菜单判定，量最大价值最低）应该走这条，而不是往 Player.log 里灌。**
+**裁定：不做。**为"亲亲"引入环形缓冲、导出按钮与 DevMode 依赖，成本高于它省下的额度。trace 需求改为一个复选框（见 §5）。
 
 ### D. 独立文件 `Mwah-trace.log`，与 Player.log 同目录
 
@@ -82,7 +82,7 @@
 
 代价：文件 I/O（3 写/次亲吻，可忽略但要 try/catch + 失败降级为一条 Warning）；多一个"要拿的文件"；写失败本身要可见。
 
-**评价：与 C 组合——C 决定何时写，D 决定写到哪。**
+**裁定：不做。**多一个文件就多一处"去哪拿、要不要脱敏、写失败怎么办"，而 Player.log 的量级本来就够（2 行/次）。
 
 ### E. 用游戏内事件日志（`Find.PlayLog`）代替文件
 
@@ -92,31 +92,39 @@
 
 代价：自定义 `LogEntry` 子类会成为**存档里的新类型** ⇒ 卸载残留面扩大（矩阵第 25 行本来就要测这个）；150 条与原版事件共享，会被冲掉；`LogEntry` 需要 `LabelReadable`/`Concerns` 等实现。
 
-**评价：作为"结果证据"很优雅，但它替代不了负证据（菜单判定不进存档），所以是补充而非主路径。暂不做。**
+**裁定：不做。**存档已经带 `otherPawn`/moodPowerFactor/age，再加一类持久 `LogEntry` 只是把卸载残留面扩大一遍。
 
-## 5. 推荐落地形状（第一轮）
+## 5. 落地形状（裁定后）
+
+全部走 Player.log，用 `Log.Message` / `Log.Warning`，没有自定义文件、没有缓冲、没有导出按钮。
+
+**硬要求：每一行都自带双方身份。**`kiss.end` 不再靠 cid 回查 `kiss.order`——单独 grep 到一行就得能答出"谁亲谁"。身份写成 `thingIDNumber:标签:raceDefName`，双方各自的冷却与结算也挂在同一行。
 
 ```
-[MWAH] kiss.order t=<tick> cid=<doerID@tick> doer=<...> recv=<...> dur=<n>t cd=<a>/<b> reach=<ok|no>
-[MWAH] kiss.end   t=<tick> cid=<cid> role=<initiator|passive> cond=<JobCondition> walk=<n>t motes=<n>
-                     partner=<accepted|solo|already> settle=<A:+x(SI y) B:+z(SI w)> | skipped=no-mood
-[MWAH] kiss.reject t=<tick> layer=<structure|participate|initiate|availability> code=<Key> pair=<idA,idB>
-[MWAH] kiss.abnormal t=<tick> cid=<cid> site=<reservation|toil|load> why=<sanitized>
+[MWAH] kiss.order   t=<tick> doer=<id:label:race> recv=<id:label:race> dur=<n>t cd=<pawn>/<pair> reach=<ok|no>
+[MWAH] kiss.end     t=<tick> doer=<id:label:race> recv=<id:label:race> role=<initiator|passive> cond=<JobCondition> walk=<n>t motes=<n> partner=<accepted|solo|already> settle=<A:+x(SI y) B:+z(SI w)>
+[MWAH] kiss.reject  t=<tick> doer=<...> recv=<...> layer=<structure|participate|initiate|availability> code=<Key>
+[MWAH] kiss.abnormal t=<tick> doer=<...> recv=<...> site=<reservation|toil|load> why=<sanitized>
 [MWAH] settings.saved t=<tick> changed=<field:old->new,...> gen=<n>
 ```
 
-- 常规一次亲吻 **2 行**（A 案），被动方多 1 行；`kiss.reject` 只在点击执行后仍失败时出现。
-- `code=<Key>` 用**稳定的原因键名**（`Unconscious` / `Burning` / `NoMouth` / `TooYoung` / `SociallyIncapable` / `RitualAbsorbed` / `NoMood` / `Hostile` / `Immobile` / `ImmobilePair` / `CannotReach` / `Busy` / `CooldownPawn` / `CooldownPair` / `Disabled` / `Gone`），译文只在 UI 侧生成 ⇒ 这是"原因码化"那条待决项，日志是它的硬需求方。
-- 三档可见性：`off` / `play`（上面这些） / `trace`（菜单级判定，走 C+D，不进 Player.log）。
-- 不记：设置快照、结算后的世界状态、DLC 列表（改由 `kiss.*` 行的字段隐含 + banner 一行）。
+- 常规一次亲吻 **3 行**：`kiss.order`、主动方的 `kiss.end`（带 `settle=` 两人结果）、被动方的 `kiss.end`。对方没接住 job 时只有 2 行（`partner=solo`）。被动方那条也写全双方身份，代价是几个字符，换来"任意一行自解释"。
+- `settle=` 记的是"我们做了什么决定、依据哪些输入"，不是"世界最后怎样"——后者由存档 XML 证明（`otherPawn`/moodPowerFactor/age），两条证据可互相核对。没心情的一方写成 `settle=<who>=skipped-no-mood`。
+- **trace 降级为一个复选框**（默认关）：勾上后每次右键对每个 (选中, 被点) 组合多打一行 `kiss.menu`，用来抓负证据（灰项/不出现）。不做缓冲，量由 10000 条上限自己兜住——上限触发时原版会打 `Reached max messages limit.'，一眼可见。
+- 原因码 `code=<Key>` 用稳定键名（`Unconscious` / `Burning` / `NoMouth` / `TooYoung` / `SociallyIncapable` / `RitualAbsorbed` / `NoMood` / `Hostile` / `Immobile` / `ImmobilePair` / `CannotReach` / `Busy` / `CooldownPawn` / `CooldownPair` / `Disabled` / `Gone`），译文只在 UI 侧生成。
+- 不记：设置快照、DLC 列表、结算后的世界状态。
 
-## 6. 待决策
+## 6. 决策状态
 
-- [ ] 原因码化（`KissBoundary` 返回 `(layer, code)`）：日志可解析的前提，约 30 行 + 一道"每个 code 都有双语键"的静态门。**建议做。**
-- [ ] `MWAH.LogLevel` 三档设置项（进 Scribe ⇒ 多一个字段与一对双语键）vs 编译符号。**建议设置项**，理由：矩阵在 dev 包里跑，编译期那条路对可分发版本永远是哑的。
-- [ ] 第一轮是否就引入 B 的闭集注册表。**建议不引入**，先用上面的固定行式跑一轮矩阵，字段序稳定后第二轮再升级为 `fmt=1` 协议，避免把未验证的格式锁成兼容面。
-- [ ] 是否引入 C+D（环形缓冲 + Debug 菜单导出到独立文件）。**建议与第一轮同做**，因为 trace 档没有它就只能灌 Player.log。
-- [ ] E（`PlayLog` 条目）留待卸载残留测试（矩阵第 25 行）有结论后再议。
+| 项 | 状态 |
+|---|---|
+| 输出目的地 = Player.log（不建文件、不做缓冲与导出） | **已决（维护者）** |
+| 每行必带双方身份（不靠 cid 回查） | **已决（维护者）** |
+| A：T1 折进 T2，常规 3 行 | **采纳** |
+| 原因码化（`KissBoundary` 返回 `(layer, code)`） | **待做**，日志与"每个 code 有双语键"的静态门都依赖它 |
+| trace 复选框（设置项，默认关） | **待做**，与原因码化同批 |
+| B：闭集事件注册表 + 机器后缀协议 | **推迟到第二轮** |
+| E：`Find.PlayLog` 条目 | **不做** |
 
 ## 7. 本文与仓库红线的关系
 
