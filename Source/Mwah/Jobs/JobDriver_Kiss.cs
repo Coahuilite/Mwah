@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using RimWorld;
+using UnityEngine;
 using Verse;
 using Verse.AI;
 
@@ -8,7 +9,12 @@ namespace Mwah;
 /// <summary>
 /// 站立版"滚床单"双人镜像 job（骨架照原版 JobDriver_Lovin，去掉床）：
 /// TargetIndex.A = 对方；双方各自跑同名 job，互相把对方拉进 job 里锁住，
-/// 期间彼此 FaceTarget 相对、按间隔抛原版爱心 Fleck，结束时由发起方统一结算心情。
+/// 期间彼此相对、按间隔抛原版爱心 Fleck，结束时由发起方统一结算心情。
+///
+/// 站位刻意只走 X 轴（一左一右）：3/4 视角下上下相邻会互相遮挡，看不出"面对面"。
+/// 朝向刻意走 <see cref="Toil.handlingFacing"/>：Pawn_RotationTracker.UpdateRotation
+/// 每个视觉 tick 都会重算朝向，而且 pawn.Drafted 那一支会把朝向强制成 Rot4.South
+/// （它在 curJob 分支之后没有 return），手动 FaceTarget 必然被覆盖。
 /// </summary>
 public class JobDriver_Kiss : JobDriver
 {
@@ -28,6 +34,13 @@ public class JobDriver_Kiss : JobDriver
     private Pawn Partner => (Pawn)job.GetTarget(partnerInd).Thing;
 
     private IntVec3 HomeCell => homeX == InvalidHome ? IntVec3.Invalid : new IntVec3(homeX, 0, homeZ);
+
+    /// <summary>
+    /// 谁负责绕到对方侧面：固定让 thingIDNumber 小的一方走位，另一方原地不动。
+    /// 两方都试图绕到对方侧面会互相追着走（A 去东边时 B 也正往 A 的东边挪），
+    /// 用 ID 破这个对称，零状态、跨存档稳定。
+    /// </summary>
+    private bool ArrangesPosition => pawn.thingIDNumber < Partner.thingIDNumber;
 
     public override void ExposeData()
     {
@@ -57,7 +70,7 @@ public class JobDriver_Kiss : JobDriver
         yield return ToilKiss();
     }
 
-    /// <summary>走到贴脸邻格；已经贴着就直接进入下一步。</summary>
+    /// <summary>走到对方左/右侧的邻格；已经并排就直接进入下一步。</summary>
     private Toil ToilGotoTouch()
     {
         var toil = ToilMaker.MakeToil(nameof(ToilGotoTouch));
@@ -65,47 +78,69 @@ public class JobDriver_Kiss : JobDriver
         {
             homeX = base.pawn.Position.x;
             homeZ = base.pawn.Position.z;
-            if (base.pawn.AdjacentTo8WayOrInside(Partner))
+            if (Settled())
             {
                 ReadyForNextToil();
             }
-            else if (KissUtility.CanMoveNow(base.pawn))
-            {
-                base.pawn.pather.StartPath(Partner, PathEndMode.Touch);
-            }
-            else
+            else if (!KissUtility.CanMoveNow(base.pawn) || !StartApproach())
             {
                 EndJobWith(JobCondition.Incompletable);
             }
         };
         toil.tickIntervalAction = delegate
         {
-            if (base.pawn.pather == null)
+            if (base.pawn.pather == null || base.pawn.pather.Moving)
             {
                 return;
             }
-            if (base.pawn.AdjacentTo8WayOrInside(Partner) && !base.pawn.pather.Moving)
+            if (Settled())
             {
                 base.pawn.pather.StopDead();
                 ReadyForNextToil();
                 return;
             }
-            if (!base.pawn.pather.Moving)
+            if (!KissUtility.CanMoveNow(base.pawn) || !StartApproach())
             {
-                IntVec3 cell = SocialInteractionUtility.BestInteractableCell(base.pawn, Partner);
-                if (cell.IsValid)
-                {
-                    base.pawn.pather.StartPath(cell, PathEndMode.OnCell);
-                }
-                else
-                {
-                    EndJobWith(JobCondition.Incompletable);
-                }
+                EndJobWith(JobCondition.Incompletable);
             }
         };
         toil.socialMode = RandomSocialMode.Off;
         toil.defaultCompleteMode = ToilCompleteMode.Never;
         return toil;
+    }
+
+    /// <summary>
+    /// 位置是否已经到位：并排即算完成。
+    /// 不负责走位的那一方只要已经贴到对方身上（哪怕是上下方向）就停手，
+    /// 让负责走位的那一方绕过去——这是"两人互相绕圈"的唯一解。
+    /// </summary>
+    private bool Settled()
+    {
+        if (SideBySide(base.pawn, Partner))
+        {
+            return true;
+        }
+        return !ArrangesPosition && base.pawn.AdjacentTo8WayOrInside(Partner);
+    }
+
+    /// <summary>起一段走向侧面格；侧面不可用时退回原版的贴脸寻路。</summary>
+    private bool StartApproach()
+    {
+        if (ArrangesPosition)
+        {
+            IntVec3 cell = HorizontalCell(base.pawn, Partner);
+            if (cell.IsValid)
+            {
+                base.pawn.pather.StartPath(cell, PathEndMode.OnCell);
+                return true;
+            }
+        }
+        if (!base.pawn.CanReach(Partner.Position, PathEndMode.Touch, Danger.Deadly))
+        {
+            return false;
+        }
+        base.pawn.pather.StartPath(Partner, PathEndMode.Touch);
+        return true;
     }
 
     /// <summary>把对方拉进同一个 job；对方已经在亲别人/已在 job 里则本次仍由我方独自完成。</summary>
@@ -131,6 +166,7 @@ public class JobDriver_Kiss : JobDriver
     private Toil ToilKiss()
     {
         var toil = ToilMaker.MakeToil(nameof(ToilKiss));
+        toil.handlingFacing = true;
         toil.initAction = delegate
         {
             FaceEachOther();
@@ -173,16 +209,62 @@ public class JobDriver_Kiss : JobDriver
         return toil;
     }
 
+    /// <summary>
+    /// 双方各按自己的位置挑一个四向朝向；并排时必然是 East/West。
+    /// 这里也顺手把对方的朝向摆正：被动方可能已经先一步结束并交回控制权。
+    /// </summary>
     private void FaceEachOther()
     {
-        Pawn partner = Partner;
-        if (base.pawn.rotationTracker != null)
+        SetFacing(base.pawn, Partner);
+        SetFacing(Partner, base.pawn);
+    }
+
+    private static void SetFacing(Pawn looker, Pawn looked)
+    {
+        if (looker == null || looked == null || looker.rotationTracker == null)
         {
-            base.pawn.rotationTracker.FaceTarget(new LocalTargetInfo(partner));
+            return;
         }
-        if (partner.rotationTracker != null)
+        Vector3 d = looked.DrawPos - looker.DrawPos;
+        looker.Rotation = Mathf.Abs(d.x) >= Mathf.Abs(d.z)
+            ? (d.x > 0f ? Rot4.East : Rot4.West)
+            : (d.z > 0f ? Rot4.North : Rot4.South);
+    }
+
+    /// <summary>并排 = 站在对方占格矩形的左右两侧、同一排（z 落在矩形内）。叠格不算。</summary>
+    private static bool SideBySide(Pawn a, Pawn b)
+    {
+        CellRect rect = b.OccupiedRect();
+        if (rect.Contains(a.Position))
         {
-            partner.rotationTracker.FaceTarget(new LocalTargetInfo(base.pawn));
+            return false;
         }
+        return a.Position.z >= rect.minZ && a.Position.z <= rect.maxZ
+            && (a.Position.x == rect.minX - 1 || a.Position.x == rect.maxX + 1);
+    }
+
+    /// <summary>
+    /// 对方占格矩形的左/右邻格里挑一个能站、能到、不迷雾的；
+    /// 先挑与自己同排（z 相同）的那一侧，否则绕远路。都不可用时返回 Invalid。
+    /// </summary>
+    private static IntVec3 HorizontalCell(Pawn me, Pawn other)
+    {
+        CellRect rect = other.OccupiedRect();
+        int z = Mathf.Clamp(me.Position.z, rect.minZ, rect.maxZ);
+        IntVec3 west = new IntVec3(rect.minX - 1, 0, z);
+        IntVec3 east = new IntVec3(rect.maxX + 1, 0, z);
+        IntVec3 first = me.Position.x <= rect.minX ? west : east;
+        IntVec3 second = first == west ? east : west;
+        if (Usable(me, first))
+        {
+            return first;
+        }
+        return Usable(me, second) ? second : IntVec3.Invalid;
+    }
+
+    private static bool Usable(Pawn me, IntVec3 c)
+    {
+        return c.InBounds(me.Map) && c.Standable(me.Map) && !c.Fogged(me.Map)
+            && me.CanReach(c, PathEndMode.OnCell, Danger.Deadly);
     }
 }
