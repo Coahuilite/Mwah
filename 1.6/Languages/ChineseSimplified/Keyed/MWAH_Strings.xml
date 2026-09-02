@@ -3,13 +3,21 @@
   <!-- 右键菜单 -->
   <MWAH.FloatMenu.Kiss>亲吻{TARGET}</MWAH.FloatMenu.Kiss>
   <MWAH.FloatMenu.KissTooltip>走过去、与{TARGET}面对面、亲一个，然后各自回到刚才站的地方。</MWAH.FloatMenu.KissTooltip>
+  <MWAH.FloatMenu.KissNoMood>（没有心情系统，只是做做样子）</MWAH.FloatMenu.KissNoMood>
 
   <!-- 不可用原因 -->
   <MWAH.Fail.Disabled>设置里已关闭亲吻</MWAH.Fail.Disabled>
-  <MWAH.Fail.Self>不能亲自己</MWAH.Fail.Self>
   <MWAH.Fail.Hostile>对方正处于敌对状态</MWAH.Fail.Hostile>
-  <MWAH.Fail.NonHumanlike>设置里未开放非人类目标</MWAH.Fail.NonHumanlike>
+  <MWAH.Fail.Gone>有一个已经不在了</MWAH.Fail.Gone>
+  <MWAH.Fail.Immobile>{PAWN} 现在动不了</MWAH.Fail.Immobile>
   <MWAH.Fail.ImmobilePair>两个都动不了</MWAH.Fail.ImmobilePair>
+  <MWAH.Fail.Unconscious>{PAWN} 在睡着或不清醒</MWAH.Fail.Unconscious>
+  <MWAH.Fail.Burning>{PAWN} 正在燃烧</MWAH.Fail.Burning>
+  <MWAH.Fail.NoMouth>{PAWN} 没有能用来亲的嘴</MWAH.Fail.NoMouth>
+  <MWAH.Fail.TooYoung>{PAWN} 还太小，不会主动亲</MWAH.Fail.TooYoung>
+  <MWAH.Fail.SociallyIncapable>{PAWN} 已经顾不上这种细腻的东西了</MWAH.Fail.SociallyIncapable>
+  <MWAH.Fail.RitualAbsorbed>{PAWN} 正沉浸在仪式里</MWAH.Fail.RitualAbsorbed>
+  <MWAH.Fail.NoMood>有一个没有心情系统（设置里未开放）</MWAH.Fail.NoMood>
   <MWAH.Fail.CannotReach>够不到{TARGET}</MWAH.Fail.CannotReach>
   <MWAH.Fail.Busy>已经在亲了</MWAH.Fail.Busy>
   <MWAH.Fail.CooldownPawn>{PAWN} 还得缓缓才能再亲（{TIME}）</MWAH.Fail.CooldownPawn>
@@ -45,8 +53,8 @@
   <MWAH.Settings.AllowHostile>允许敌对小人</MWAH.Settings.AllowHostile>
   <MWAH.Settings.AllowHostileDesc>允许你对正在敌对的单位下亲吻命令。对方的回应可能是……物理层面的。</MWAH.Settings.AllowHostileDesc>
 
-  <MWAH.Settings.AllowNonHumanlike>允许动物、机械与无人机</MWAH.Settings.AllowNonHumanlike>
-  <MWAH.Settings.AllowNonHumanlikeDesc>让任何 pawn 都能参与，包括动物、机械族、无人机与异象实体。它们没有心情系统，所以只能收获这份心意本身。</MWAH.Settings.AllowNonHumanlikeDesc>
+  <MWAH.Settings.AllowMoodless>纳入没有心情的生物</MWAH.Settings.AllowMoodless>
+  <MWAH.Settings.AllowMoodlessDesc>也让动物、机械族、无人机、虚空实体与复活的尸体参与。它们没有心情系统，所以亲吻对它们纯粹是动作：爱心照冒，收益为零。关掉后这个选项只留给真的能因此心情变好的小人。</MWAH.Settings.AllowMoodlessDesc>
 
   <MWAH.Settings.ChangeOpinion>亲吻留下痕迹</MWAH.Settings.ChangeOpinion>
   <MWAH.Settings.ChangeOpinionDesc>同时改变两人对彼此的观感。这会接入原版恋爱链——只想要无厘头亲亲就别开。</MWAH.Settings.ChangeOpinionDesc>

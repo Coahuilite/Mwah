@@ -17,7 +17,7 @@ public class MwahSettings : ModSettings
     // 出厂默认来自 Constants；玩家改动只落在这些字段上，Scribe key 与字段名一致。
     public bool modEnabled = Constants.ModEnabled;
     public bool allowHostileTargets = Constants.AllowHostileTargets;
-    public bool allowNonHumanlike = Constants.AllowNonHumanlike;
+    public bool allowMoodless = Constants.AllowMoodless;
     public bool changeOpinion = Constants.ChangeOpinion;
     public bool returnHomeAfterKiss = Constants.ReturnHomeAfterKiss;
     public int kissDurationTicks = Constants.KissDurationTicks;
@@ -32,7 +32,7 @@ public class MwahSettings : ModSettings
     // 读侧统一 canonicalize：脏配置或手改的 XML 不能把运行时带进非法区间。
     public bool Enabled => modEnabled;
     public bool HostileAllowed => allowHostileTargets;
-    public bool NonHumanlikeAllowed => allowNonHumanlike;
+    public bool MoodlessAllowed => allowMoodless;
     public bool OpinionAffected => changeOpinion;
     public bool ReturnsHome => returnHomeAfterKiss;
     public int DurationTicks => Mathf.Clamp(kissDurationTicks, Constants.DurationTicksRange.min, Constants.DurationTicksRange.max);
@@ -48,7 +48,7 @@ public class MwahSettings : ModSettings
         base.ExposeData();
         Scribe_Values.Look(ref modEnabled, "modEnabled", Constants.ModEnabled);
         Scribe_Values.Look(ref allowHostileTargets, "allowHostileTargets", Constants.AllowHostileTargets);
-        Scribe_Values.Look(ref allowNonHumanlike, "allowNonHumanlike", Constants.AllowNonHumanlike);
+        Scribe_Values.Look(ref allowMoodless, "allowMoodless", Constants.AllowMoodless);
         Scribe_Values.Look(ref changeOpinion, "changeOpinion", Constants.ChangeOpinion);
         Scribe_Values.Look(ref returnHomeAfterKiss, "returnHomeAfterKiss", Constants.ReturnHomeAfterKiss);
         Scribe_Values.Look(ref kissDurationTicks, "kissDurationTicks", Constants.KissDurationTicks);
@@ -78,7 +78,7 @@ public class MwahSettings : ModSettings
     {
         modEnabled = Constants.ModEnabled;
         allowHostileTargets = Constants.AllowHostileTargets;
-        allowNonHumanlike = Constants.AllowNonHumanlike;
+        allowMoodless = Constants.AllowMoodless;
         changeOpinion = Constants.ChangeOpinion;
         returnHomeAfterKiss = Constants.ReturnHomeAfterKiss;
         kissDurationTicks = Constants.KissDurationTicks;
@@ -116,7 +116,7 @@ public class MwahSettings : ModSettings
 
         list.GapLine();
         changed |= Checkbox(list, ref allowHostileTargets, "MWAH.Settings.AllowHostile", "MWAH.Settings.AllowHostileDesc");
-        changed |= Checkbox(list, ref allowNonHumanlike, "MWAH.Settings.AllowNonHumanlike", "MWAH.Settings.AllowNonHumanlikeDesc");
+        changed |= Checkbox(list, ref allowMoodless, "MWAH.Settings.AllowMoodless", "MWAH.Settings.AllowMoodlessDesc");
         changed |= Checkbox(list, ref changeOpinion, "MWAH.Settings.ChangeOpinion", "MWAH.Settings.ChangeOpinionDesc");
         changed |= Checkbox(list, ref returnHomeAfterKiss, "MWAH.Settings.ReturnHome", "MWAH.Settings.ReturnHomeDesc");
 

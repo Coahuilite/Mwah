@@ -3,13 +3,21 @@
   <!-- 右键菜单 -->
   <MWAH.FloatMenu.Kiss>kiss {TARGET}</MWAH.FloatMenu.Kiss>
   <MWAH.FloatMenu.KissTooltip>Walk over, face {TARGET}, share a kiss, then both return to where they stood.</MWAH.FloatMenu.KissTooltip>
+  <MWAH.FloatMenu.KissNoMood>(no mood system - gesture only)</MWAH.FloatMenu.KissNoMood>
 
   <!-- 不可用原因 -->
   <MWAH.Fail.Disabled>kissing is disabled in mod settings</MWAH.Fail.Disabled>
-  <MWAH.Fail.Self>cannot kiss themselves</MWAH.Fail.Self>
   <MWAH.Fail.Hostile>they are actively hostile</MWAH.Fail.Hostile>
-  <MWAH.Fail.NonHumanlike>non-humanlike targets are disabled in mod settings</MWAH.Fail.NonHumanlike>
+  <MWAH.Fail.Gone>one of them is no longer here</MWAH.Fail.Gone>
+  <MWAH.Fail.Immobile>{PAWN} can't move right now</MWAH.Fail.Immobile>
   <MWAH.Fail.ImmobilePair>neither of them can move</MWAH.Fail.ImmobilePair>
+  <MWAH.Fail.Unconscious>{PAWN} is asleep or out of it</MWAH.Fail.Unconscious>
+  <MWAH.Fail.Burning>{PAWN} is on fire</MWAH.Fail.Burning>
+  <MWAH.Fail.NoMouth>{PAWN} has no working mouth to kiss with</MWAH.Fail.NoMouth>
+  <MWAH.Fail.TooYoung>{PAWN} is not old enough to start a kiss</MWAH.Fail.TooYoung>
+  <MWAH.Fail.SociallyIncapable>{PAWN} is past anything as subtle as affection</MWAH.Fail.SociallyIncapable>
+  <MWAH.Fail.RitualAbsorbed>{PAWN} is wrapped up in the ritual</MWAH.Fail.RitualAbsorbed>
+  <MWAH.Fail.NoMood>one of them has no mood to affect (disabled in mod settings)</MWAH.Fail.NoMood>
   <MWAH.Fail.CannotReach>cannot reach {TARGET}</MWAH.Fail.CannotReach>
   <MWAH.Fail.Busy>already in the middle of a kiss</MWAH.Fail.Busy>
   <MWAH.Fail.CooldownPawn>{PAWN} needs a moment between kisses ({TIME})</MWAH.Fail.CooldownPawn>
@@ -45,8 +53,8 @@
   <MWAH.Settings.AllowHostile>Allow hostile pawns</MWAH.Settings.AllowHostile>
   <MWAH.Settings.AllowHostileDesc>Let you order a kiss at pawns that are currently hostile. They may react... physically.</MWAH.Settings.AllowHostileDesc>
 
-  <MWAH.Settings.AllowNonHumanlike>Allow animals, mechs and drones</MWAH.Settings.AllowNonHumanlike>
-  <MWAH.Settings.AllowNonHumanlikeDesc>Let any pawn be involved, including animals, mechanoids, drones and entities. They have no mood, so they gain nothing but the gesture.</MWAH.Settings.AllowNonHumanlikeDesc>
+  <MWAH.Settings.AllowMoodless>Include creatures with no mood</MWAH.Settings.AllowMoodless>
+  <MWAH.Settings.AllowMoodlessDesc>Also let animals, mechanoids, drones, void entities and the reanimated take part. They have no mood system, so for them a kiss is pure gesture: the animation happens, nothing is gained. Off keeps the option to pawns who can actually feel better about it.</MWAH.Settings.AllowMoodlessDesc>
 
   <MWAH.Settings.ChangeOpinion>Affection leaves a mark</MWAH.Settings.ChangeOpinion>
   <MWAH.Settings.ChangeOpinionDesc>Also shift how the two pawns feel about each other. This feeds the vanilla romance chain - keep it off if you just want silly kissing.</MWAH.Settings.ChangeOpinionDesc>

@@ -26,7 +26,7 @@ public static class Constants
     // 允许性开关的出厂默认：胡逼模式全开。
     public const bool ModEnabled = true;
     public const bool AllowHostileTargets = true;
-    public const bool AllowNonHumanlike = true;
+    public const bool AllowMoodless = true;
     public const bool ChangeOpinion = false;           // 默认不接入原版恋爱/好感链
     public const bool ReturnHomeAfterKiss = true;
 

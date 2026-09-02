@@ -4,8 +4,11 @@ using Verse;
 namespace Mwah;
 
 /// <summary>
-/// 亲吻奖励：只有带心情系统（needs.mood）的 pawn 才拿得到。
-/// 动物、机械族、无人机、异象实体没有 mood —— 按设计"什么都不加"，不做任何替代收益。
+/// 亲吻奖励：只有带心情系统（needs.mood）的 pawn 才拿得到 —— 判据是运行时 need 实例，
+/// 不是种族：动物、机械族、无人机、异象实体本来就没有 mood，而 Anomaly 的蹒跚者/尸鬼/唤醒尸体
+/// 种族是 Human（Humanlike 为真）却被 MutantDef.disableNeeds 摘掉了全部需求，同样拿不到。
+/// 拿不到就是什么都不加，不做任何替代收益（结构层的开关会提前挡掉这种配对，
+/// 见 <see cref="KissBoundary.CheckStructure"/>；这里的判空只是兜住中途状态变化）。
 /// 强度 = ThoughtStage.baseMoodEffect × (自身 SocialImpact) × 设置倍率，
 /// 由 Thought_Memory.moodPowerFactor 承载（原版 AddInteractionThought 同源机制）。
 /// </summary>
@@ -32,8 +35,13 @@ public static class KissMoodReward
             return;
         }
 
-        // SocialImpact 由社交技能 + 说话/听觉容量决定；没有 skills 的 pawn 取不到有效值时按 1 处理。
+        // SocialImpact 由社交技能 + 说话/听觉容量决定；取不到有效值时按 1 处理，
+        // 而不是把收益静默乘成 0（NaN/负数同样兜住）。
         float social = pawn.GetStatValue(StatDefOf.SocialImpact);
+        if (float.IsNaN(social) || social <= 0f)
+        {
+            social = 1f;
+        }
         memory.moodPowerFactor = social * settings.MoodMult;
         if (settings.OpinionAffected && memory is Thought_MemorySocial socialMemory)
         {

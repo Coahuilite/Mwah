@@ -6,7 +6,8 @@ namespace Mwah;
 
 /// <summary>
 /// 一次"要不要在右键菜单里出现"的完整判定结果。
-/// Visible=false 表示连灰项都不给（例如敌对、物种被排除、总开关关闭），
+/// Visible=false 表示连灰项都不给（结构层不可能：总开关关闭、对象已不在、
+/// 有一方没有心情系统且设置未放行、敌对且设置未放行），
 /// 避免每次右键殖民地都糊一屏灰色亲吻。
 /// </summary>
 public readonly struct KissProposal
@@ -34,15 +35,14 @@ public readonly struct KissProposal
 }
 
 /// <summary>
-/// 亲吻的判定与发起：只决定"谁走过去"和"现在能不能亲"，
-/// 表演（贴近、相对、爱心）与结算在 <see cref="JobDriver_Kiss"/>。
+/// 亲吻的发起：判定顺序是 结构层 → 参与层 → 主动层（谁去亲）→ 即时可用性。
+/// 前三层的定义与源码依据都在 <see cref="KissBoundary"/>；表演与结算在 <see cref="JobDriver_Kiss"/>。
 /// </summary>
 public static class KissUtility
 {
     /// <summary>
-    /// 谁当发起方：被选中的那位优先主动；
-    /// 选中的动不了（缺 Moving 容量、倒地、doesntMove、无 pather）而对方能动，就让对方过来亲它。
-    /// 两人已经贴在一起时不做换位，保持"谁点谁主动"。
+    /// 谁当发起方：被选中的那位优先主动；它主动不了（动不了 / 没嘴 / 生命阶段不允许）
+    /// 而对方能，就让对方过来亲它。结构性不可能 → 连灰项都不给；即时状态 → 灰项带原因。
     /// </summary>
     public static KissProposal Propose(Pawn selected, Pawn target)
     {
@@ -51,19 +51,35 @@ public static class KissUtility
             return KissProposal.Hidden;
         }
 
-        AcceptanceReport eligibility = CheckEligibility(selected, target);
-        if (!eligibility.Accepted)
+        if (!KissBoundary.CheckStructure(selected, target).Accepted)
         {
             return KissProposal.Hidden;
         }
 
+        AcceptanceReport selectedState = KissBoundary.CanParticipate(selected);
+        if (!selectedState.Accepted)
+        {
+            return KissProposal.Blocked(selectedState.Reason);
+        }
+        AcceptanceReport targetState = KissBoundary.CanParticipate(target);
+        if (!targetState.Accepted)
+        {
+            return KissProposal.Blocked(targetState.Reason);
+        }
+
+        bool selectedImmobile;
+        AcceptanceReport initiator = KissBoundary.CanInitiate(selected, out selectedImmobile);
         Pawn doer = selected;
         Pawn receiver = target;
-        if (!selected.AdjacentTo8WayOrInside(target) && !CanMoveNow(selected))
+        if (!initiator.Accepted)
         {
-            if (!CanMoveNow(target))
+            bool targetImmobile;
+            AcceptanceReport other = KissBoundary.CanInitiate(target, out targetImmobile);
+            if (!other.Accepted)
             {
-                return KissProposal.Blocked("MWAH.Fail.ImmobilePair".Translate());
+                return KissProposal.Blocked(selectedImmobile && targetImmobile
+                    ? "MWAH.Fail.ImmobilePair".Translate()
+                    : (!selectedImmobile ? initiator.Reason : other.Reason));
             }
             doer = target;
             receiver = selected;
@@ -73,29 +89,6 @@ public static class KissUtility
         return availability.Accepted
             ? KissProposal.Allow(doer, receiver)
             : KissProposal.Blocked(availability.Reason);
-    }
-
-    /// <summary>静态资格：与"此刻忙不忙、够不够得到"无关的过滤。</summary>
-    private static AcceptanceReport CheckEligibility(Pawn a, Pawn b)
-    {
-        MwahSettings? settings = MwahMod.Settings;
-        if (settings == null || !settings.Enabled)
-        {
-            return new AcceptanceReport("MWAH.Fail.Disabled".Translate());
-        }
-        if (a.Dead || b.Dead || !a.Spawned || !b.Spawned)
-        {
-            return new AcceptanceReport("MWAH.Fail.Self".Translate());
-        }
-        if (!settings.NonHumanlikeAllowed && (!a.RaceProps.Humanlike || !b.RaceProps.Humanlike))
-        {
-            return new AcceptanceReport("MWAH.Fail.NonHumanlike".Translate());
-        }
-        if (!settings.HostileAllowed && a.HostileTo(b))
-        {
-            return new AcceptanceReport("MWAH.Fail.Hostile".Translate());
-        }
-        return AcceptanceReport.WasAccepted;
     }
 
     /// <summary>即时可用性：正在亲、冷却中、够不到。</summary>

@@ -8,7 +8,9 @@ namespace Mwah;
 /// <summary>
 /// 右键菜单入口。FloatMenuMakerMap.Init() 用 AllSubclassesNonAbstract() 反射发现所有
 /// FloatMenuOptionProvider 子类，所以这个类不需要 Def、不需要 XML、也不需要 Harmony 补丁。
-/// 目标是"能选中就能亲"：不限制种族、不要求是殖民者、也不要求征召。
+/// 取向仍是"能下令就能亲"，但边界收敛后写清了前提：发起方得是原版允许下令的 pawn
+/// （CanTakeOrder + 未倒地 + 无 Lord 限制，这三条在 provider 之前就把关，绕不过），
+/// 并且双方都满足 <see cref="KissBoundary"/> 的参与层。
 /// </summary>
 public class FloatMenuOptionProvider_Kiss : FloatMenuOptionProvider
 {
@@ -26,8 +28,9 @@ public class FloatMenuOptionProvider_Kiss : FloatMenuOptionProvider
     protected override bool CanSelfTarget => false;
 
     /// <summary>
-    /// 故意不调用 base：base 开头就用 MutantDef.whitelistedFloatMenuProviders
-    /// 把所有未登记的 mutant/亚人静默屏蔽，而"每个小人都能亲"正是本模组的存在理由。
+    /// 故意不调用 base：base 开头用 MutantDef.whitelistedFloatMenuProviders（原版三个 mutant 都是空表）
+    /// 把所有 mutant 一刀切屏蔽。本模组改由参与层逐条判：只有
+    /// <c>incapableOfSocialInteractions</c> 的（蹒跚者/尸鬼/唤醒尸体）被挡，别的照旧放行。
     /// </summary>
     public override bool SelectedPawnValid(Pawn pawn, FloatMenuContext context)
     {
@@ -68,6 +71,11 @@ public class FloatMenuOptionProvider_Kiss : FloatMenuOptionProvider
         }
 
         string label = "MWAH.FloatMenu.Kiss".Translate(clickedPawn.Named("TARGET"));
+        // 有一方没有心情系统时写进标签：亲是亲了，收益为零 —— 不让人事后猜为什么没弹心情。
+        if (KissBoundary.AnyMoodless(selected, clickedPawn))
+        {
+            label += " " + "MWAH.FloatMenu.KissNoMood".Translate();
+        }
         if (context.IsMultiselect)
         {
             // 多选时不写"谁去亲"，否则一屏"kiss 张三"分不清主体。
