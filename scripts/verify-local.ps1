@@ -15,6 +15,7 @@ $ErrorActionPreference = "Stop"
 #   6   DLL 符号审计 + 零 Harmony 断言
 #   7   版本纪律：csproj <Version> == About.xml <modVersion>
 #   8   分发卫生与隐私红线：无 PublishedFileId、无绝对本地路径
+#   9   设置项三处锁死：字段名 ↔ Scribe key ↔ Constants 默认值
 # 全部通过后 -PackDev 才出 dev 包。
 
 $root = [System.IO.Path]::GetFullPath($ProjectRoot)
@@ -92,7 +93,7 @@ Assert-True 'driverClass uses the real namespace.type' (($driverRefs.Count -eq 1
 
 # 6. DLL symbol audit + zero Harmony
 $text = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes($assemblyPath))
-$symbols = @('FloatMenuOptionProvider_Kiss','JobDriver_Kiss','KissUtility','KissMoodReward','KissCooldown',
+$symbols = @('FloatMenuOptionProvider_Kiss','JobDriver_Kiss','KissUtility','KissBoundary','KissMoodReward','KissCooldown',
     'MwahSettings','MwahMod','MWAH_JobDefOf','MWAH_ThoughtDefOf',"$modName.JobDriver_Kiss",'MWAH_Kiss','MWAH_KissedBond')
 $missingSyms = @($symbols | Where-Object { -not $text.Contains($_) })
 Assert-True ("DLL contains all $($symbols.Count) key symbols") ($missingSyms.Count -eq 0) ($missingSyms -join ', ')
@@ -115,6 +116,21 @@ $textFiles = Get-ChildItem -LiteralPath $root -Recurse -File -Include *.cs, *.xm
     Where-Object { $_.FullName -notmatch '\\(obj|bin|dist|\.git)\\' }
 $privacyHits = @($textFiles | Select-String -Pattern '[A-Za-z]:\\' | Where-Object { $_.Line -notmatch '^\s*#' })
 Assert-True 'no absolute local paths in tracked text files' ($privacyHits.Count -eq 0) (($privacyHits | Select-Object -First 3 | ForEach-Object { "$($_.Path):$($_.LineNumber)" }) -join ' | ')
+
+# 9. Settings fields, Scribe keys and Constants defaults must name the same thing.
+#    改设置项字段名时最容易只改一半：字段改了、Scribe key 没改，老存档的值就静默回到默认。
+$settingsCs = Get-Content -Raw -LiteralPath (Join-Path $root "Source\$modName\MwahSettings.cs")
+$constantsCs = Get-Content -Raw -LiteralPath (Join-Path $root "Source\$modName\Constants.cs")
+$decls = @([regex]::Matches($settingsCs, 'public\s+(?:bool|int|float)\s+(\w+)\s*=\s*Constants\.(\w+)\s*;'))
+$badSettings = @()
+foreach ($d in $decls) {
+    $field = $d.Groups[1].Value
+    $const = $d.Groups[2].Value
+    $look = 'Scribe_Values\.Look\(ref ' + $field + ', "' + $field + '", Constants\.' + $const + '\)'
+    if ($settingsCs -notmatch $look) { $badSettings += "$field : Scribe key mismatch" }
+    if ($constantsCs -notmatch ('\b' + $const + '\b')) { $badSettings += "$field : Constants.$const missing" }
+}
+Assert-True ("settings fields locked to Scribe keys and Constants ($($decls.Count) fields)") ($badSettings.Count -eq 0) ($badSettings -join ' | ')
 
 if ($failures.Count -gt 0) {
     Write-Host ''
