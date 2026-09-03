@@ -103,6 +103,24 @@ Assert-True ("DefOf fields all resolve to an XML defName ($($defOfFields.Count)/
 $driverRefs = @([regex]::Matches($defXml, '<driverClass>([^<]+)</driverClass>') | ForEach-Object { $_.Groups[1].Value })
 Assert-True 'driverClass uses the real namespace.type' (($driverRefs.Count -eq 1) -and $driverRefs[0] -eq "$modName.JobDriver_Kiss")
 
+# 5b. DefInjected 结构检查：每个 <LanguageData> 直接子元素必须是真实 defName。
+# 曾经把 JobDef 的注入多套了一层 <MWAH_JobDef> 外壳，引擎去找名为 MWAH_JobDef 的 JobDef、
+# 找不到就静默进翻译错误——Keyed 检查完全看不见这类错，所以单独设一道。
+$injBad = @()
+foreach ($langDir in @('English', 'ChineseSimplified')) {
+    $injRoot = Join-Path $root "1.6\Languages\$langDir\DefInjected"
+    if (-not (Test-Path $injRoot)) { continue }
+    foreach ($f in Get-ChildItem $injRoot -Recurse -Filter *.xml) {
+        [xml]$x = Get-Content -Raw -LiteralPath $f.FullName
+        foreach ($node in $x.LanguageData.ChildNodes) {
+            if ($node.NodeType -eq 'Element' -and $xmlDefs -notcontains $node.Name) {
+                $injBad += "$langDir/$($f.Name): outer element '$($node.Name)' is not a defName (must be the def's own name, not a type wrapper)"
+            }
+        }
+    }
+}
+Assert-True 'DefInjected outer elements all resolve to a defName' ($injBad.Count -eq 0) ($injBad -join ' | ')
+
 # 6. DLL symbol audit + zero Harmony
 $text = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes($assemblyPath))
 $symbols = @('FloatMenuOptionProvider_Kiss','JobDriver_Kiss','KissUtility','KissBoundary','KissScope','KissScopeUtility','KissAmbient',

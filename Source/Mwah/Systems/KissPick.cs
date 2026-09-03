@@ -63,13 +63,8 @@ public class KissPick : GameComponent
             KissPickMode.End();
             return;
         }
-        // 有对话框压上来时让位，但**不退出模式**：对话框一关立刻恢复点选。
-        // 旧写法在这里直接 End()，于是任何常驻的 Dialog 层窗口（不少 mod 都留着一个）
-        // 会让导演台"点了没反应"——刚 Begin 就被下一个事件关掉，永远走不到绘制。
-        if (Find.WindowStack.NonImmediateDialogWindowOpen)
-        {
-            return;
-        }
+        // 绘制不受任何窗口影响：Dev palette 之类常驻窗口开着时提示条照样要出现。
+        // 让位只发生在"点击落点"上（见下面 GetWindowAt），而不是整帧跳过。
 
         Event e = Event.current;
         if (e.type == EventType.Repaint)
@@ -156,6 +151,8 @@ public class KissPick : GameComponent
             : "MWAH.Director.PickSecond".Translate(KissPickMode.First.Named("PAWN"));
         Text.Font = GameFont.Small;
         Vector2 size = Text.CalcSize(text) + new Vector2(26f, 14f);
-        GUI.Box(new Rect((UI.screenWidth - size.x) * 0.5f, 66f, size.x, size.y), text);
+        // 顶部正中会压在殖民者头像栏下面看不见；放到底栏之上、屏幕正中，四周是开阔地图。
+        float y = UI.screenHeight - 95f;
+        GUI.Box(new Rect((UI.screenWidth - size.x) * 0.5f, y, size.x, size.y), text);
     }
 }
