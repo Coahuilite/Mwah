@@ -63,10 +63,11 @@ public class KissPick : GameComponent
             KissPickMode.End();
             return;
         }
+        // 有对话框压上来时让位，但**不退出模式**：对话框一关立刻恢复点选。
+        // 旧写法在这里直接 End()，于是任何常驻的 Dialog 层窗口（不少 mod 都留着一个）
+        // 会让导演台"点了没反应"——刚 Begin 就被下一个事件关掉，永远走不到绘制。
         if (Find.WindowStack.NonImmediateDialogWindowOpen)
         {
-            // 有对话框压上来就退出，避免"看不见却还在收点击"。
-            KissPickMode.End();
             return;
         }
 
@@ -86,7 +87,13 @@ public class KissPick : GameComponent
             e.Use();
             return;
         }
-        if (e.button != 0 || e.mousePosition.y > UI.screenHeight - BottomReserved)
+        if (e.button != 0)
+        {
+            return;
+        }
+        // 光标压在底栏或任何窗口（含浮出菜单这类 ImmediateWindow）上时，那一下归原主。
+        if (e.mousePosition.y > UI.screenHeight - BottomReserved
+            || Find.WindowStack.GetWindowAt(e.mousePosition) != null)
         {
             return;
         }
