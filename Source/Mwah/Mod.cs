@@ -37,6 +37,9 @@ public class MwahMod : Mod
     {
         Instance = this;
         Settings = GetSettings<MwahSettings>();
+#if MWAH_DEV
+        KissTrace.Start();
+#endif
         MwahLog.Info($"loaded [{BuildFlavor} {VersionString()}]");
     }
 

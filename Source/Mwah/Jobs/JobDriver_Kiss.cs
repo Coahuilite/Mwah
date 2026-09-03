@@ -51,6 +51,33 @@ public class JobDriver_Kiss : JobDriver
 
     private int partnerStageZ = InvalidCell;
 
+    /// <summary>job 起步时目标 B 是否已被填好：被填好说明自己是被动方（发起方写进来的）。</summary>
+    private bool bornPassive;
+
+#if MWAH_DEV
+    private static void TraceSet(bool passive, string phase) => KissTrace.Set(passive, phase);
+
+    private static void TraceTicks(bool passive, int ticks)
+    {
+        if (passive)
+        {
+            KissTrace.TicksB = ticks;
+        }
+        else
+        {
+            KissTrace.TicksA = ticks;
+        }
+    }
+#else
+    private static void TraceSet(bool passive, string phase)
+    {
+    }
+
+    private static void TraceTicks(bool passive, int ticks)
+    {
+    }
+#endif
+
     private IntVec3 lastWalkTarget = IntVec3.Invalid;
     private int walkAttempts;
 
@@ -104,6 +131,8 @@ public class JobDriver_Kiss : JobDriver
         var toil = ToilMaker.MakeToil(nameof(ToilTakeStage));
         toil.initAction = delegate
         {
+            bornPassive = StageCell.IsValid;
+            TraceSet(bornPassive, "stage");
             homeX = base.pawn.Position.x;
             homeZ = base.pawn.Position.z;
             if (StageCell.IsValid || !TryFindStage(out IntVec3 mine, out IntVec3 theirs))
@@ -128,6 +157,7 @@ public class JobDriver_Kiss : JobDriver
         var toil = ToilMaker.MakeToil(nameof(ToilGotoStage));
         toil.initAction = delegate
         {
+            TraceSet(bornPassive, "walk");
             if (InPosition())
             {
                 base.pawn.pather?.StopDead();
@@ -167,6 +197,7 @@ public class JobDriver_Kiss : JobDriver
         toil.initAction = delegate
         {
             isPassivePartner = Partner.CurJob != null && Partner.CurJob.def == MWAH_JobDefOf.MWAH_Kiss;
+            TraceSet(isPassivePartner, "lock");
             if (!isPassivePartner)
             {
                 var partnerJob = JobMaker.MakeJob(MWAH_JobDefOf.MWAH_Kiss, base.pawn);
@@ -193,6 +224,7 @@ public class JobDriver_Kiss : JobDriver
         toil.initAction = delegate
         {
             base.pawn.pather?.StopDead();
+            TraceSet(isPassivePartner, "perform");
             MwahLog.Dev("kiss perform: " + base.pawn.LabelShort + " at " + base.pawn.Position + ", partner at " + Partner.Position + ", ticks=" + ticksLeft);
             FaceEachOther();
         };
@@ -201,6 +233,7 @@ public class JobDriver_Kiss : JobDriver
             // 每 tick 钉回原地：台位是算好的，被别的 job 插一步就走开就前功尽弃。
             base.pawn.pather?.StopDead();
             ticksLeft -= delta;
+            TraceTicks(isPassivePartner, ticksLeft);
             if (ticksLeft <= 0)
             {
                 completed = true;
@@ -226,6 +259,7 @@ public class JobDriver_Kiss : JobDriver
         });
         toil.AddFinishAction(delegate
         {
+            TraceSet(isPassivePartner, "end");
             MwahLog.Dev("kiss end: " + base.pawn.LabelShort + " completed=" + completed + " passive=" + isPassivePartner);
             if (completed && !isPassivePartner)
             {
