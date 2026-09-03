@@ -95,8 +95,10 @@ public class KissPick : GameComponent
         if (KissPickMode.First == null)
         {
             KissPickMode.First = picked;
+            MwahLog.Dev("pick 1: " + picked.LabelShort);
             return;
         }
+        MwahLog.Dev("pick 2: " + picked.LabelShort);
         Dispatch(KissPickMode.First, picked);
         KissPickMode.End();
     }

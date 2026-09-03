@@ -7,6 +7,8 @@
     按钮行为走 workerClass，点选走 GameComponentOnGUI，派发直接对目标起 job，不碰下令链。
     注意：右下角那排显示开关（PlaySettings.DoMapControls）是硬编码的，没有可扩展点，
     想挂进那一排必须 Harmony —— 已按零 Harmony 红线放弃。
+    order=200：原版底栏顺序是 Architect=1…Factions=90、Ideos=100、Menu(齿轮)=500，
+    200 落在"所有标签之后、齿轮之前"。底栏没有分组概念，order 就是唯一的位置旋钮。
     按钮文本走 DefInjected/MainButtonDef/，不写在这里。
   -->
   <MainButtonDef>
@@ -14,7 +16,7 @@
     <label>kiss director</label>
     <description>Pick any two pawns on the map and make them kiss.</description>
     <workerClass>Mwah.MainButtonWorker_KissDirector</workerClass>
-    <order>900</order>
+    <order>200</order>
     <closesWorldView>true</closesWorldView>
   </MainButtonDef>
 </Defs>

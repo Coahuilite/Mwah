@@ -177,6 +177,7 @@ public class JobDriver_Kiss : JobDriver
                 }
                 Partner.jobs.StartJob(partnerJob, JobCondition.InterruptForced);
             }
+            MwahLog.Dev("kiss lock: " + base.pawn.LabelShort + " -> " + Partner.LabelShort + (isPassivePartner ? " (passive)" : " (initiator)"));
             ticksLeft = MwahMod.Settings.DurationTicks;
         };
         toil.socialMode = RandomSocialMode.Off;
@@ -192,6 +193,7 @@ public class JobDriver_Kiss : JobDriver
         toil.initAction = delegate
         {
             base.pawn.pather?.StopDead();
+            MwahLog.Dev("kiss perform: " + base.pawn.LabelShort + " at " + base.pawn.Position + ", partner at " + Partner.Position + ", ticks=" + ticksLeft);
             FaceEachOther();
         };
         toil.AddPreTickIntervalAction(delegate (int delta)
@@ -224,6 +226,7 @@ public class JobDriver_Kiss : JobDriver
         });
         toil.AddFinishAction(delegate
         {
+            MwahLog.Dev("kiss end: " + base.pawn.LabelShort + " completed=" + completed + " passive=" + isPassivePartner);
             if (completed && !isPassivePartner)
             {
                 KissMoodReward.Settle(base.pawn, Partner);

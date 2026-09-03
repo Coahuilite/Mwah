@@ -19,8 +19,10 @@ public class MainButtonWorker_KissDirector : MainButtonWorker
         if (KissPickMode.Active)
         {
             KissPickMode.End();
+            MwahLog.Dev("director off");
             return;
         }
         KissPickMode.Begin();
+        MwahLog.Dev("director on");
     }
 }
