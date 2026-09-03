@@ -91,9 +91,10 @@ public class KissPick : GameComponent
             return;
         }
 
-        Pawn? picked = PickUnder(e.mousePosition);
+        Pawn? picked = PickUnder();
         if (picked == null)
         {
+            MwahLog.Dev("pick miss at " + UI.MouseMapPosition());
             return;
         }
         e.Use();
@@ -113,9 +114,11 @@ public class KissPick : GameComponent
     /// 取鼠标下的 pawn：与原版右键菜单同一支 GenUI.ThingsUnderMouse，
     /// 所以"狗站在人身上"这种叠格由原版决定优先级，不自造一套。
     /// </summary>
-    private static Pawn? PickUnder(Vector3 mousePos)
+    private static Pawn? PickUnder()
     {
-        List<Thing> under = GenUI.ThingsUnderMouse(mousePos, 0.8f, TargetingParameters.ForPawns());
+        // ThingsUnderMouse 拿点击位置去和 pawn.DrawPos 比距离，要的是**世界坐标**；
+        // 传屏幕像素进去的话 IntVec3.FromVector3 会落到地图外，列表永远为空 —— 上一版就是这个错。
+        List<Thing> under = GenUI.ThingsUnderMouse(UI.MouseMapPosition(), 0.8f, TargetingParameters.ForPawns());
         for (int i = 0; i < under.Count; i++)
         {
             if (under[i] is Pawn p && p.Spawned && !p.Dead)

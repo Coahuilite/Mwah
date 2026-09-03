@@ -58,6 +58,8 @@
   <MWAH.Settings.MoodMultiplierDesc>缩放最终心情加成。实际数值 = 想法基准值 × 本倍率 × 该小人自身的社交影响，所以会说话的人亲一次更赚，闷葫芦收益更低。</MWAH.Settings.MoodMultiplierDesc>
 
   <MWAH.Settings.DirectorButton>啵嘴导演台按钮</MWAH.Settings.DirectorButton>
+  <MWAH.Settings.NoCooldowns>无视啵嘴冷却</MWAH.Settings.NoCooldowns>
+  <MWAH.Settings.NoCooldownsDesc>导演台的手是超凡智能的手：单人冷却与成对冷却都不再生效，想立刻再撮合同一对或换一对都行。正在啵嘴的仍会先亲完，镜像 job 不容第三者。</MWAH.Settings.NoCooldownsDesc>
   <MWAH.Settings.DirectorButtonDesc>在底栏放上「啵嘴导演台」。点一下，再点要发起啵嘴的小人，然后点他想啵的对象——地图上任意两个都行，包括你控制不了的那些。右键或再点一次按钮取消。</MWAH.Settings.DirectorButtonDesc>
   <MWAH.Settings.PairScope>谁能亲谁</MWAH.Settings.PairScope>
   <MWAH.Settings.PairScopeDesc>门开多大。拖到最右就是不限阵营、不限种族——这本模组要的就是这个。想要撮合殖民地的玩法就往左拖。双方都必须在范围内；档位只会越往右越宽，每格多加一类人。</MWAH.Settings.PairScopeDesc>

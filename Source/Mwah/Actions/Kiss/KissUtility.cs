@@ -110,6 +110,12 @@ public static class KissUtility
             return new AcceptanceReport("MWAH.Fail.Busy".Translate());
         }
 
+        if (MwahMod.Settings.CooldownsIgnored)
+        {
+            // 超凡智能的大手：冷却两条都跳过。"正在亲"不跳 —— 镜像 job 不允许三方。
+            return AcceptanceReport.WasAccepted;
+        }
+
         int pawnRemaining = KissCooldown.PawnRemaining(doer);
         if (pawnRemaining > 0)
         {

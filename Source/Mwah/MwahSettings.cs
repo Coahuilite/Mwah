@@ -24,6 +24,7 @@ public class MwahSettings : ModSettings
     public int pawnCooldownTicks = Constants.PawnCooldownTicks;
     public int pairCooldownTicks = Constants.PairCooldownTicks;
     public bool directorButton = Constants.DirectorButton;
+    public bool noCooldowns = Constants.NoCooldowns;
     public bool autonomousKissing = Constants.AutonomousKissing;
     public int autonomousIntervalTicks = Constants.AutonomousIntervalTicks;
     public int autonomousRadiusCells = Constants.AutonomousRadiusCells;
@@ -45,6 +46,7 @@ public class MwahSettings : ModSettings
     public float MoodMult => Mathf.Clamp(moodMultiplier, Constants.MoodMultiplierRange.min, Constants.MoodMultiplierRange.max);
     public int ThoughtDurationTicks => MwahTime.FromGameHours(ThoughtDurationHours);
     public bool DirectorEnabled => directorButton;
+    public bool CooldownsIgnored => noCooldowns;
     public bool AutonomousEnabled => autonomousKissing;
     public int AutonomousIntervalTicks => Mathf.Clamp(autonomousIntervalTicks, Constants.AutonomousIntervalTicksRange.min, Constants.AutonomousIntervalTicksRange.max);
     public int AutonomousRadius => Mathf.Clamp(autonomousRadiusCells, Constants.AutonomousRadiusRange.min, Constants.AutonomousRadiusRange.max);
@@ -61,6 +63,7 @@ public class MwahSettings : ModSettings
         Scribe_Values.Look(ref pawnCooldownTicks, "pawnCooldownTicks", Constants.PawnCooldownTicks);
         Scribe_Values.Look(ref pairCooldownTicks, "pairCooldownTicks", Constants.PairCooldownTicks);
         Scribe_Values.Look(ref directorButton, "directorButton", Constants.DirectorButton);
+        Scribe_Values.Look(ref noCooldowns, "noCooldowns", Constants.NoCooldowns);
         Scribe_Values.Look(ref autonomousKissing, "autonomousKissing", Constants.AutonomousKissing);
         Scribe_Values.Look(ref autonomousIntervalTicks, "autonomousIntervalTicks", Constants.AutonomousIntervalTicks);
         Scribe_Values.Look(ref autonomousRadiusCells, "autonomousRadiusCells", Constants.AutonomousRadiusCells);
@@ -97,6 +100,7 @@ public class MwahSettings : ModSettings
         pawnCooldownTicks = Constants.PawnCooldownTicks;
         pairCooldownTicks = Constants.PairCooldownTicks;
         directorButton = Constants.DirectorButton;
+        noCooldowns = Constants.NoCooldowns;
         autonomousKissing = Constants.AutonomousKissing;
         autonomousIntervalTicks = Constants.AutonomousIntervalTicks;
         autonomousRadiusCells = Constants.AutonomousRadiusCells;
@@ -131,6 +135,7 @@ public class MwahSettings : ModSettings
 
         list.GapLine();
         changed |= Checkbox(list, ref directorButton, "MWAH.Settings.DirectorButton", "MWAH.Settings.DirectorButtonDesc");
+        changed |= Checkbox(list, ref noCooldowns, "MWAH.Settings.NoCooldowns", "MWAH.Settings.NoCooldownsDesc");
         changed |= ScopeSlider(list);
         changed |= Checkbox(list, ref autonomousKissing, "MWAH.Settings.Autonomous", "MWAH.Settings.AutonomousDesc");
         changed |= TickSlider(list, ref autonomousIntervalTicks, "MWAH.Settings.AutonomousInterval", "MWAH.Settings.AutonomousIntervalDesc",

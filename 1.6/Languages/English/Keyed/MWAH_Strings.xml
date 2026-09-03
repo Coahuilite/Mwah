@@ -58,6 +58,8 @@
   <MWAH.Settings.MoodMultiplierDesc>Scales the final mood bonus. Actual bonus = thought base x this x the pawn's own social impact, so a smooth talker gets more out of a kiss than a mute grump.</MWAH.Settings.MoodMultiplierDesc>
 
   <MWAH.Settings.DirectorButton>Kiss director button</MWAH.Settings.DirectorButton>
+  <MWAH.Settings.NoCooldowns>Ignore kiss cooldowns</MWAH.Settings.NoCooldowns>
+  <MWAH.Settings.NoCooldownsDesc>The director's hand is an archotech hand: per-pawn and per-pair cooldowns no longer apply, so you can pair anyone again immediately. Pawns already kissing still finish first.</MWAH.Settings.NoCooldownsDesc>
   <MWAH.Settings.DirectorButtonDesc>Puts the kiss director on the bottom bar. Click it, click whoever starts the kiss, then click who they kiss - any two pawns on the map, including ones you do not control.</MWAH.Settings.DirectorButtonDesc>
   <MWAH.Settings.PairScope>Who may kiss whom</MWAH.Settings.PairScope>
   <MWAH.Settings.PairScopeDesc>How wide the door stands. Fully right means no limit on faction or species - that is the point of the mod. Drag left to narrow it to your colony if you want a matchmaking toy instead. Both sides must be inside the range; it only ever widens, so each step adds exactly one group.</MWAH.Settings.PairScopeDesc>
