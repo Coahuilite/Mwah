@@ -144,7 +144,7 @@ public static class KissUtility
     }
 
     /// <summary>
-    /// 代发亲吻：由 <see cref="Window_KissDirector"/> 点名，或由 <see cref="KissAmbient"/> 定时促成。
+    /// 代发亲吻：由 <see cref="KissPick"/> 两步点选点名，或由 <see cref="KissAmbient"/> 定时促成。
     /// 与右键那条的差别只有两点：不弹拒绝提示（没人点东西），以及 job 打 playerForced ——
     /// 否则 pawn 自己的 think tree 会在下一个 override 检查点把它拽回去，变成"起步即取消"。
     /// 走这条路的前提正是"原版不给玩家下令权"，所以它天然绕开 CanTakeOrder，判定仍全复用 Propose。
