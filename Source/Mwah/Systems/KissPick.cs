@@ -34,9 +34,14 @@ public static class KissPickMode
 /// 为什么挂在 GameComponentOnGUI 而不是自建窗口：窗口要覆盖全屏才收得到地图点击，
 /// 而全屏窗口会连带吞掉底栏与殖民者栏的输入；GameComponentOnGUI 本来就在游戏 UI 层
 /// 每事件跑一次，既能读鼠标，也能在有对话框压上来时让位。
+/// 构造器签名必须是 (Game)：Game.FillComponents 用 Activator.CreateInstance(type, this)。
 /// </summary>
 public class KissPick : GameComponent
 {
+    public KissPick(Game game) : base()
+    {
+    }
+
     /// <summary>底栏那一条的高度：点在它上面属于正常 UI 操作，不抢。</summary>
     private const float BottomReserved = 40f;
 

@@ -13,11 +13,17 @@ namespace Mwah;
 /// 而 CanTakeOrder 只放行玩家殖民者、己方机械族与可征召 subhuman；敌人的 pawn 连"被选中"都做不到。
 /// 零 Harmony 下没法把下令权发给非己方单位，所以改由游戏自己发起。
 ///
-/// 注册方式：GameComponent 由原版自动发现并实例化（1.6 的 GameComponent 无构造参数，
-/// 也不需要 Def、XML 或补丁）。GameComponentTick 只在地图内运行，符合"仅游戏内地图"的边界。
+/// 注册方式：GameComponent 由原版自动发现，但 Game.FillComponents 用的是
+/// ' + BT + 'Activator.CreateInstance(type, this)' + BT + '，' + BT + 'this' + BT + ' 是 ' + BT + 'Game' + BT + ' ——
+/// 所以**必须有 (Game) 构造器**，没有就只会在日志里留一条 MissingMethodException，组件静静缺席。
+/// 不需要 Def、XML 或补丁。GameComponentTick 只在地图内运行，符合"仅游戏内地图"的边界。
 /// </summary>
 public class KissAmbient : GameComponent
 {
+    public KissAmbient(Game game) : base()
+    {
+    }
+
     /// <summary>每个周期最多促成一桩；0 = 下次 tick 就可以试一次。</summary>
     private int nextCheckTick;
 
