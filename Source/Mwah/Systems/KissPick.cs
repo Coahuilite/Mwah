@@ -45,6 +45,12 @@ public class KissPick : GameComponent
     /// <summary>底栏那一条的高度：点在它上面属于正常 UI 操作，不抢。</summary>
     private const float BottomReserved = 40f;
 
+    public override void GameComponentTick()
+    {
+        // 回原位请求在这里发放：上一个 tick 的 job 收尾栈已经退干净了。
+        KissUtility.DrainReturns();
+    }
+
     public override void GameComponentOnGUI()
     {
         if (!KissPickMode.Active)

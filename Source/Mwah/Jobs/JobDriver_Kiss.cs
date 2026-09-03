@@ -40,6 +40,9 @@ public class JobDriver_Kiss : JobDriver
     /// <summary>倒计时真的走完过。只有走完才发心情：中途散场不该有奖励。</summary>
     private bool completed;
 
+    /// <summary>finish action 幂等闸：收尾栈被重入时只结算一次。</summary>
+    private bool finished;
+
     /// <summary>被动方 = 被对方拉进 job 的那个；结算只由发起方做一次，避免发两份心情。</summary>
     private bool isPassivePartner;
 
@@ -259,13 +262,18 @@ public class JobDriver_Kiss : JobDriver
         });
         toil.AddFinishAction(delegate
         {
+            if (finished)
+            {
+                return;
+            }
+            finished = true;
             TraceSet(isPassivePartner, "end");
-            MwahLog.Dev("kiss end: " + base.pawn.LabelShort + " completed=" + completed + " passive=" + isPassivePartner);
+            MwahLog.Dev("kiss end: " + base.pawn.LabelShort + " completed=" + completed + " passive=" + isPassivePartner + " t=" + Find.TickManager.TicksGame);
             if (completed && !isPassivePartner)
             {
                 KissMoodReward.Settle(base.pawn, Partner);
             }
-            KissUtility.RequestReturnHome(base.pawn, HomeCell);
+            KissUtility.QueueReturnHome(base.pawn, HomeCell);
         });
         toil.socialMode = RandomSocialMode.Off;
         toil.defaultCompleteMode = ToilCompleteMode.Never;

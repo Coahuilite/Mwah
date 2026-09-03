@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using RimWorld;
 using Verse;
 using Verse.AI;
@@ -208,6 +209,39 @@ public static class KissUtility
             return false;
         }
         return pawn.health?.capacities != null && pawn.health.capacities.CapableOf(PawnCapacityDefOf.Moving);
+    }
+
+    /// <summary>
+    /// 待发放的"回原位"请求。
+    /// 为什么排队而不是在 toil 的 finish action 里直接发：finish action 跑在 job 收尾的调用栈里，
+    /// 而 TryTakeOrderedJob 在 pawn 空闲时会**同步**起新 job，新 job 的 StartJob 又会回头结束
+    /// 正在收尾的旧 job ⇒ 旧 job 的 finish action 再发一次 ⇒ 同一 tick 内无限递归。
+    /// 实测表现就是日志里同一条 kiss end 刷到折叠上限、主线程卡死数秒、进程直接消失。
+    /// 排到下一个 tick 发，递归链就断了。
+    /// </summary>
+    private static readonly List<(Pawn pawn, IntVec3 cell)> PendingReturns = new();
+
+    public static void QueueReturnHome(Pawn pawn, IntVec3 homeCell)
+    {
+        if (MwahMod.Settings.ReturnsHome && pawn != null && homeCell.IsValid && pawn.Position != homeCell)
+        {
+            PendingReturns.Add((pawn, homeCell));
+        }
+    }
+
+    /// <summary>下一 tick 由 GameComponent 调用：此时不在任何 job 的收尾栈里，起 job 是安全的。</summary>
+    public static void DrainReturns()
+    {
+        if (PendingReturns.Count == 0)
+        {
+            return;
+        }
+        List<(Pawn pawn, IntVec3 cell)> batch = new(PendingReturns);
+        PendingReturns.Clear();
+        for (int i = 0; i < batch.Count; i++)
+        {
+            RequestReturnHome(batch[i].pawn, batch[i].cell);
+        }
     }
 
     /// <summary>结束后回被下令时站的位置。只是礼貌请求：紧急需求与排班仍会插队。</summary>

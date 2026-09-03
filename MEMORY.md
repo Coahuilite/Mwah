@@ -73,6 +73,7 @@
   显隐由设置项 `directorButton`（默认开）控制，落点是覆写 `MainButtonWorker.Visible`（`MainButtonDef.buttonVisible` 是静态 XML 值，做不到跟着设置走）。关掉时正在进行的点选也会被 `KissPick` 主动结束。
   提示语按维护者钦定：`谁要发起啵嘴？` → `{PAWN} 想要和谁啵嘴？`；取消方式（右键 / 再点一次按钮）不占提示语，放按钮 tooltip 与设置项说明里。
   代价（维护者已认）：点选模式没有"灰按钮"，可行性只能在点完之后用消息告知。
+- **toil 的 finish action 里禁止同步起 job（2026-09-04 实测定罪）**：`TryTakeOrderedJob` 在 pawn 空闲时**同步** StartJob，而新 job 的 StartJob 会回头结束正在收尾的旧 job ⇒ 旧 job 的 finish action 重入 ⇒ 同一 tick 内无限递归。现场特征：日志同一条文本刷到 Unity 折叠上限 99、`Mwah-trace.log` 停行、主线程卡数秒、进程没有"未响应"直接消失、转储栈深到 ntdll 里踩空。本模组的"回原位"因此改为排队（`KissUtility.QueueReturnHome`），下一 tick 由 `KissPick.GameComponentTick` 发放；所有 finish action 加幂等闸。**任何 finish action 都不得直接 StartJob/TryTakeOrderedJob。**
 - **调试器选型（2026-09-03 实测结论）**：dnSpy 一类 .NET 调试器 attach 走 ICorDebug，只认 CLR；RimWorld 是 MonoBleedingEdge ⇒ **活体 attach 拿不到托管栈**，dnSpy 只剩反编译价值。Mono 软调试器要启动时带 `--debugger-agent` 参数，对已装好的 Steam 版不现实。故 dev 构建自带旁路采样器 `KissTrace`：后台线程 1Hz 把主线程写的阶段戳（stage/walk/lock/perform/end + 剩余 tick）抄进 savedata 目录的 `Mwah-trace.log`；主线程卡死 ⇒ 文件停行，崩溃 ⇒ 看尾巴。release 构建里该类与调用点整体编译消失。
 - 亲吻站位 = **定台**（2026-09-03）：发起方在 job 开头一次性选定一对左右相邻的静态格，双方各走各的（自己那一格存进 `job` 的 `TargetIndex.B`，被动方沿用不再自己挑），台位两格都由发起方 `Reserve` 住。动不了的一方钉在它当前格，于是站着的那个绕到它侧面 —— "亲倒地的人"也因此是左右对向。放弃的旧写法是"被动方用 `PathEndMode.Touch` 贴上去 + 主动方每 tick 重算对方侧面格"：Touch 不区分方向，被动方常先停在正上/正下方，主动方目标又随对方漂移，两人变成前后站位，朝向只能是 North/South。2x2 及以上体型不适用该模型，退回 Touch 兜底。
 - 打点裁定（2026-09-02 维护者）：**只走 Player.log**，不建自定义文件、不做环形缓冲与按需导出（为"亲亲"引入这些是过度设计）；**每行必带双方身份**（`doer=` 与 `recv=`），不允许靠 cid 回查上一行。方案与依据见 `docs/kiss-trace-logging-design-zh.md`。
