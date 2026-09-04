@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
-  <MWAH_KissDirector>
-    <label>kiss director</label>
-    <description>Pick any two pawns on the map and make them kiss - including pawns you do not control. Click it, then click the pawns; right-click or clicking it again cancels.</description>
-  </MWAH_KissDirector>
+  <MWAH_KissDirector.label>kiss director</MWAH_KissDirector.label>
+  <MWAH_KissDirector.description>Pick any two pawns on the map and make them kiss.</MWAH_KissDirector.description>
 </LanguageData>

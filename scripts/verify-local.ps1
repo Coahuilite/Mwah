@@ -103,9 +103,10 @@ Assert-True ("DefOf fields all resolve to an XML defName ($($defOfFields.Count)/
 $driverRefs = @([regex]::Matches($defXml, '<driverClass>([^<]+)</driverClass>') | ForEach-Object { $_.Groups[1].Value })
 Assert-True 'driverClass uses the real namespace.type' (($driverRefs.Count -eq 1) -and $driverRefs[0] -eq "$modName.JobDriver_Kiss")
 
-# 5b. DefInjected 结构检查：每个 <LanguageData> 直接子元素必须是真实 defName。
-# 曾经把 JobDef 的注入多套了一层 <MWAH_JobDef> 外壳，引擎去找名为 MWAH_JobDef 的 JobDef、
-# 找不到就静默进翻译错误——Keyed 检查完全看不见这类错，所以单独设一道。
+# 5b. DefInjected 结构检查：顶层元素必须是扁平键 `DefName.字段路径`（原版格式），
+# 不是嵌套 def 格式。引擎 SetDefFieldAtPath 用 path.Split('.')[0] 当 defName，
+# 写成 <MWAH_KissDirector><label>…</label></MWAH_KissDirector> 会让顶层名变成裸 defName、
+# 找不到字段路径，静默丢进翻译报告的 "missing" 节——本项目踩过，Keyed 检查看不见。
 $injBad = @()
 foreach ($langDir in @('English', 'ChineseSimplified')) {
     $injRoot = Join-Path $root "1.6\Languages\$langDir\DefInjected"
@@ -113,13 +114,19 @@ foreach ($langDir in @('English', 'ChineseSimplified')) {
     foreach ($f in Get-ChildItem $injRoot -Recurse -Filter *.xml) {
         [xml]$x = Get-Content -Raw -LiteralPath $f.FullName
         foreach ($node in $x.LanguageData.ChildNodes) {
-            if ($node.NodeType -eq 'Element' -and $xmlDefs -notcontains $node.Name) {
-                $injBad += "$langDir/$($f.Name): outer element '$($node.Name)' is not a defName (must be the def's own name, not a type wrapper)"
+            if ($node.NodeType -ne 'Element') { continue }
+            if ($node.Name -notmatch '\.') {
+                $injBad += "$langDir/$($f.Name): '$($node.Name)' has no '.field' suffix (nested-def form; must be flat DefName.path)"
+                continue
+            }
+            $defPart = $node.Name.Split('.')[0]
+            if ($xmlDefs -notcontains $defPart) {
+                $injBad += "$langDir/$($f.Name): '$($node.Name)' -> def '$defPart' is not a known defName"
             }
         }
     }
 }
-Assert-True 'DefInjected outer elements all resolve to a defName' ($injBad.Count -eq 0) ($injBad -join ' | ')
+Assert-True 'DefInjected uses flat DefName.path keys' ($injBad.Count -eq 0) ($injBad -join ' | ')
 
 # 6. DLL symbol audit + zero Harmony
 $text = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes($assemblyPath))

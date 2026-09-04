@@ -1,20 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
-  <MWAH_Kissed>
-    <stages>
-      <li>
-        <label>被{0}亲吻过</label>
-        <description>有人啵了我，我也啵了回去。脸到现在还是热的。</description>
-      </li>
-    </stages>
-  </MWAH_Kissed>
-  <MWAH_KissedBond>
-    <stages>
-      <li>
-        <label>被{0}亲吻过</label>
-        <labelSocial>我们的那一啵</labelSocial>
-        <description>有人啵了我，我也啵了回去。脸到现在还是热的。</description>
-      </li>
-    </stages>
-  </MWAH_KissedBond>
+  <MWAH_Kissed.stages.0.label>被{0}亲吻过</MWAH_Kissed.stages.0.label>
+  <MWAH_Kissed.stages.0.description>有人啵了我，我也啵了回去。脸到现在还是热的。</MWAH_Kissed.stages.0.description>
+  <MWAH_KissedBond.stages.0.label>被{0}亲吻过</MWAH_KissedBond.stages.0.label>
+  <MWAH_KissedBond.stages.0.labelSocial>我们的那一啵</MWAH_KissedBond.stages.0.labelSocial>
+  <MWAH_KissedBond.stages.0.description>有人啵了我，我也啵了回去。脸到现在还是热的。</MWAH_KissedBond.stages.0.description>
 </LanguageData>
