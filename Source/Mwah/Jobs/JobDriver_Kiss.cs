@@ -235,13 +235,24 @@ public class JobDriver_Kiss : JobDriver
         {
             // 每 tick 钉回原地：台位是算好的，被别的 job 插一步就走开就前功尽弃。
             base.pawn.pather?.StopDead();
-            ticksLeft -= delta;
-            TraceTicks(isPassivePartner, ticksLeft);
-            if (ticksLeft <= 0)
+            // 时钟只归发起方：被动方不自己倒数，只靠下面的失败判定在发起方离场时结束。
+            // 若两边各数各的，同一 tick 里谁先被处理谁先 completed=True 并结束 job，
+            // 另一方的失败判定立刻把它踢成 completed=False —— 而 Settle 要求"发起方且
+            // completed=True"，于是被动方先结束的那一半概率里谁都没心情（实测非 100% 的根因）。
+            if (!isPassivePartner)
             {
-                completed = true;
-                ReadyForNextToil();
-                return;
+                ticksLeft -= delta;
+                TraceTicks(false, ticksLeft);
+                if (ticksLeft <= 0)
+                {
+                    completed = true;
+                    ReadyForNextToil();
+                    return;
+                }
+            }
+            else
+            {
+                TraceTicks(true, ticksLeft);
             }
             FaceEachOther();
             int interval = MwahMod.Settings.FleckIntervalTicks;
