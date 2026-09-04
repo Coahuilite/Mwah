@@ -3,7 +3,7 @@
   <MWAH_Kissed>
     <stages>
       <li>
-        <label>被{0}啵过</label>
+        <label>被{0}亲吻过</label>
         <description>有人啵了我，我也啵了回去。脸到现在还是热的。</description>
       </li>
     </stages>
@@ -11,7 +11,7 @@
   <MWAH_KissedBond>
     <stages>
       <li>
-        <label>被{0}啵过</label>
+        <label>被{0}亲吻过</label>
         <labelSocial>我们的那一啵</labelSocial>
         <description>有人啵了我，我也啵了回去。脸到现在还是热的。</description>
       </li>
