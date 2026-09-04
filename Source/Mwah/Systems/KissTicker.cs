@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using RimWorld;
 using Verse;
 
 namespace Mwah;
@@ -25,4 +27,20 @@ public class KissTicker : GameComponent
             KissDirector.Stop();
         }
     }
+
+#if MWAH_DEV
+    /// <summary>
+    /// 翻译自证：FinalizeInit 在所有 Def 与语言注入都加载完之后运行，这里读回引擎
+    /// "实际解析到"的 label，直接区分两种失败：打出中文 ⇒ 注入生效（屏幕英文另有原因）；
+    /// 打出英文 ⇒ 注入没套上（安装目录缺 DefInjected 子树，或 apply 时找不到 def）。
+    /// </summary>
+    public override void FinalizeInit()
+    {
+        base.FinalizeInit();
+        MainButtonDef mb = DefDatabase<MainButtonDef>.GetNamedSilentFail("MWAH_KissDirector");
+        ThoughtDef th = DefDatabase<ThoughtDef>.GetNamedSilentFail("MWAH_Kissed");
+        string thoughtLabel = th?.stages != null && th.stages.Count > 0 ? th.stages[0].label.ToString() : "<none>";
+        MwahLog.Dev("i18n check: button='" + (mb?.LabelCap ?? "<none>") + "' thought='" + thoughtLabel + "'");
+    }
+#endif
 }
