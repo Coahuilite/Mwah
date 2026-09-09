@@ -48,8 +48,11 @@ public static class KissUtility
     /// <summary>
     /// 谁当发起方：被选中的那位优先主动；它主动不了（动不了 / 没嘴 / 生命阶段不允许）
     /// 而对方能，就让对方过来亲它。总开关与"已经不在了" → 连灰项都不给；门禁越界与即时状态 → 灰项带原因。
+    /// <paramref name="allowRoleSwap"/> 只对右键路径为真：那是 About.xml 明文承诺的"选中方走不动
+    /// 就换对方走过来"。代发路径（导演台点名、自主派发）必须传 false —— 导演台的消息要按点选
+    /// 顺序说话；自主派发更不能借 swap 把玩家侧的小人拉起来当发起方。
     /// </summary>
-    public static KissProposal Propose(Pawn selected, Pawn target)
+    public static KissProposal Propose(Pawn selected, Pawn target, bool allowRoleSwap)
     {
         if (selected == null || target == null || selected == target)
         {
@@ -84,6 +87,10 @@ public static class KissUtility
         Pawn receiver = target;
         if (!initiator.Accepted)
         {
+            if (!allowRoleSwap)
+            {
+                return KissProposal.Blocked(initiator.Reason);
+            }
             bool targetImmobile;
             AcceptanceReport other = KissBoundary.CanInitiate(target, out targetImmobile);
             if (!other.Accepted)
@@ -140,7 +147,7 @@ public static class KissUtility
     /// <summary>点击菜单项后重新判定一次再发起：菜单可能已经开着好几秒，状态会变。</summary>
     public static void BeginKiss(Pawn selected, Pawn target)
     {
-        KissProposal proposal = Propose(selected, target);
+        KissProposal proposal = Propose(selected, target, allowRoleSwap: true);
         if (!proposal.Allowed || proposal.Doer == null || proposal.Receiver == null)
         {
             Messages.Message(proposal.BlockedReason ?? "MWAH.Fail.Stale".Translate(),
@@ -151,20 +158,23 @@ public static class KissUtility
     }
 
     /// <summary>
-    /// 代发亲吻：由 <see cref="KissPick"/> 两步点选点名，或由 <see cref="KissAmbient"/> 定时促成。
+    /// 代发亲吻：由 <see cref="KissDirector"/> 两步点选点名，或由 <see cref="KissAmbient"/> 定时促成。
     /// 与右键那条的差别只有两点：不弹拒绝提示（没人点东西），以及 job 打 playerForced ——
     /// 否则 pawn 自己的 think tree 会在下一个 override 检查点把它拽回去，变成"起步即取消"。
-    /// 走这条路的前提正是"原版不给玩家下令权"，所以它天然绕开 CanTakeOrder，判定仍全复用 Propose。
+    /// 走这条路的前提正是"原版不给玩家下令权"，所以它天然绕开 CanTakeOrder，判定仍全复用 Propose，
+    /// 但**不做角色互换**：点谁就是谁去亲（<see cref="KissDirector"/> 的消息按点选顺序说话），
+    /// 自主派发也绝不把玩家侧小人拉起来当发起方。
     /// </summary>
-    public static bool BeginDirected(Pawn doer, Pawn receiver)
+    /// <returns>发起成功后解析出的真实双方（与入参同序），失败返回 null。</returns>
+    public static (Pawn doer, Pawn receiver)? BeginDirected(Pawn doer, Pawn receiver)
     {
-        KissProposal proposal = Propose(doer, receiver);
+        KissProposal proposal = Propose(doer, receiver, allowRoleSwap: false);
         if (!proposal.Allowed || proposal.Doer == null || proposal.Receiver == null)
         {
-            return false;
+            return null;
         }
         Start(proposal, forced: true);
-        return true;
+        return (proposal.Doer, proposal.Receiver);
     }
 
     /// <summary>
@@ -173,7 +183,7 @@ public static class KissUtility
     /// </summary>
     public static string? DirectPreview(Pawn a, Pawn b)
     {
-        KissProposal proposal = Propose(a, b);
+        KissProposal proposal = Propose(a, b, allowRoleSwap: false);
         return proposal.Allowed ? null : proposal.BlockedReason;
     }
 
@@ -184,16 +194,15 @@ public static class KissUtility
     public static bool PairLooksKissable(Pawn a, Pawn b)
     {
         return KissBoundary.CheckStructure(a, b).Accepted
+            && KissBoundary.CheckScope(a, b).Accepted
             && KissBoundary.CanParticipate(a).Accepted
             && KissBoundary.CanParticipate(b).Accepted;
     }
 
-    /// <summary>共用的落地动作：消耗冷却 + 起 job。冷却在发起瞬间记，避免同一 tick 反复排队刷爱心。</summary>
+    /// <summary>共用的落地动作：起 job。冷却由 <see cref="JobDriver_Kiss"/> 的定台 toil 记 ——
+    /// 预订失败（对方被抢）时 job 根本没成，发起瞬间记账等于空罚一轮冷却。</summary>
     private static void Start(KissProposal proposal, bool forced)
     {
-        MwahSettings settings = MwahMod.Settings;
-        KissCooldown.Mark(proposal.Doer!, proposal.Receiver!, settings.PawnCooldown, settings.PairCooldown);
-
         var job = JobMaker.MakeJob(MWAH_JobDefOf.MWAH_Kiss, proposal.Receiver);
         if (forced)
         {

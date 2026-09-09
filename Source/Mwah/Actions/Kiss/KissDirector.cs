@@ -127,9 +127,11 @@ public static class KissDirector
 
     private static void Dispatch(Pawn a, Pawn b)
     {
-        if (KissUtility.BeginDirected(a, b))
+        (Pawn doer, Pawn receiver)? started = KissUtility.BeginDirected(a, b);
+        if (started != null)
         {
-            Messages.Message("MWAH.Director.Started".Translate(a.Named("PAWN"), b.Named("OTHER")),
+            // 无角色互换 ⇒ 返回值就是点选的两位；消息按点选顺序说话，不再说谎。
+            Messages.Message("MWAH.Director.Started".Translate(started.Value.doer.Named("PAWN"), started.Value.receiver.Named("OTHER")),
                 new LookTargets(a, b), MessageTypeDefOf.PositiveEvent, historical: false);
             return;
         }

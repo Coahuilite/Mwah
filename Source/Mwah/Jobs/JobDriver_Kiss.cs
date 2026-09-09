@@ -138,6 +138,13 @@ public class JobDriver_Kiss : JobDriver
             TraceSet(bornPassive, "stage");
             homeX = base.pawn.Position.x;
             homeZ = base.pawn.Position.z;
+            // 冷却在这里记，而不是在 StartJob 之前：TryMakePreToilReservations 失败（对方
+            // 同 tick 被别的亲吻抢走）时这个 job 根本没落地，提前记账就是空罚一轮冷却。
+            if (!bornPassive)
+            {
+                MwahSettings settings = MwahMod.Settings;
+                KissCooldown.Mark(base.pawn, Partner, settings.PawnCooldown, settings.PairCooldown);
+            }
             if (StageCell.IsValid || !TryFindStage(out IntVec3 mine, out IntVec3 theirs))
             {
                 return;

@@ -72,18 +72,19 @@ public class KissAmbient : GameComponent
                 continue;
             }
             Pawn? receiver = NearestWilling(doer, pawns, settings);
-            if (receiver != null && KissUtility.BeginDirected(doer, receiver))
+            if (receiver == null || KissUtility.BeginDirected(doer, receiver) == null)
             {
-                return;
+                continue;
             }
+            return;
         }
     }
 
     /// <summary>
-    /// 就近找一个"判定通过"的对象。被亲的一方不做玩家控制限制——
-    /// 袭击者来亲你的殖民者正是这模组的看点。
-    /// 距离上限是刻意的：不设上限的话袭击者会穿过整张地图去亲另一端的人，
-    /// 那不是搞笑，那是把战斗 AI 打断成观光团。
+    /// 就近找一个"判定通过"的对象。被亲的一方不做玩家管理限制——
+    /// 袭击者来亲你的殖民者正是这模组的看点；唯一例外是**正被你征召指挥的殖民者**：
+    /// 把交火中的小人拽去亲人是把战斗 AI 打断成观光团，与"不追全图"同理，属距离纪律的延伸。
+    /// 距离上限是刻意的：不设上限的话袭击者会穿过整张地图去亲另一端的人。
     /// </summary>
     private static Pawn? NearestWilling(Pawn doer, IReadOnlyList<Pawn> candidates, MwahSettings settings)
     {
@@ -93,6 +94,11 @@ public class KissAmbient : GameComponent
         {
             Pawn other = candidates[i];
             if (other == doer || other.Dead || !other.Spawned)
+            {
+                continue;
+            }
+            // 征召中的玩家小人正在听你的指挥，不为自主亲吻让路。
+            if (other.IsPlayerControlled && other.Drafted)
             {
                 continue;
             }

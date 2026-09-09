@@ -64,7 +64,7 @@ public class FloatMenuOptionProvider_Kiss : FloatMenuOptionProvider
 
     private static FloatMenuOption? BuildOption(Pawn selected, Pawn clickedPawn, FloatMenuContext context)
     {
-        KissProposal proposal = KissUtility.Propose(selected, clickedPawn);
+        KissProposal proposal = KissUtility.Propose(selected, clickedPawn, allowRoleSwap: true);
         if (!proposal.Visible)
         {
             return null;
