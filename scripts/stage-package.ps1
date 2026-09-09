@@ -34,7 +34,7 @@ if (-not [string]::IsNullOrWhiteSpace($VersionLabel)) {
     if ($null -eq $modVersionNode -or [string]::IsNullOrWhiteSpace($modVersionNode.InnerText)) {
         throw "About.xml is missing <modVersion>; product version source must stay in sync."
     }
-    # 预发布标签（0.1.0-EXP）的基准版本取 - 之前的部分。
+    # 标签里若带预发布尾缀（如 0.1.0-beta），基准版本取 - 之前的部分。
     $labelBase = ($VersionLabel -replace '-.*$', '')
     if ($modVersionNode.InnerText.Trim() -ne $labelBase) {
         throw "About.xml <modVersion> ($($modVersionNode.InnerText.Trim())) does not match package base version ($labelBase) from label ($VersionLabel)."

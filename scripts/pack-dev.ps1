@@ -18,8 +18,8 @@ if ($null -eq $versionNode -or [string]::IsNullOrWhiteSpace($versionNode.InnerTe
 }
 $version = $versionNode.InnerText.Trim()
 
-# Dev 实验包统一带 -EXP 尾缀；About.xml/csproj 基准版本不变，stage-package 按基准校验。
-$versionLabel = "$version-EXP"
+# dev 包标签 = csproj <Version> 原样，无预发布尾缀；stage-package 按基准校验。
+$versionLabel = $version
 
 try {
     $null = Get-Command -Name git -CommandType Application -ErrorAction Stop

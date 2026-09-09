@@ -130,7 +130,7 @@
 - 已绿（离线）：`dotnet build` Debug/Release 均 **0 警告 0 错误**；`scripts/verify-local.ps1` 21 项全 `[ok]`（11 个 XML 良构、Keyed 中英各 65 键且集合一致、C# 引用的键双语齐备、DefOf↔defName 无孤儿、`driverClass` 与 `namespace.type` 一致、**DefInjected 顶层键必须是扁平 `DefName.字段`**、DLL 含 19 个关键符号、DLL 无 Harmony 符号、版本与 packageId 三处一致、无绝对本地路径、设置项字段↔Scribe key↔`Constants` 三处锁死共 15 项）。
 - 实机进度（截至 2026-09-04）：**基本流、导演台两步点选、定台走位、爱心、回原位、崩溃递归修复**都已由 `Player.log`/`Mwah-trace.log` 观测到生效；**仍未逐条确认**的是：七档门禁逐档收窄、非人/mutant/仪式灰项文案、心情数值与 `SocialImpact` 缩放、左右对向的实际观感、翻译扁平键修复后的中文显示。矩阵见 `TODO.md`。
 - 「定义了却没人引用」的反向键检查是有价值的闸门：它在开发过程中抓到 `Mod.cs` 丢失 `SettingsCategory()` override —— 该方法返回非空是设置页出现在「模式选项」里的唯一条件，丢了就等于整个设置面不可达。删掉这条检查前必须先想清楚。
-- 产物：`scripts/build-dev.ps1` 出 `dist/dev/Mwah-dev-v<VERSION>-EXP-<shortsha>[-dirty].zip`（commit 见 `git log --oneline -1`，本文件不钉死哈希），包内 `version.txt` 三行 = 名称+标签 / build / commit；`dist/` 与 DLL 全 gitignored。
+- 产物：`scripts/build-dev.ps1` 出 `dist/dev/Mwah-dev-v<VERSION>-<shortsha>[-dirty].zip`（commit 见 `git log --oneline -1`，本文件不钉死哈希；`-EXP` 尾缀 2026-09-10 应维护者要求废止，dev 标签 = csproj `<Version>` 原样），包内 `version.txt` 三行 = 名称+标签 / build / commit；`dist/` 与 DLL 全 gitignored。
 - 未做（阻塞在维护者实机）：门禁逐档收窄、非人/mutant/仪式灰项、心情数值与 SocialImpact 缩放、左右对向观感、翻译中文显示、存读档含 `MWAH_Kiss` job、卸载残留。矩阵见 `TODO.md`。
 - 已知待确认：卸载本模组后，存档里残留的 `MWAH_Kissed*` 记忆与 `MWAH_Kiss` job 会成为未知 Def；具体表现（静默丢弃 or 红字）尚未实测，见 `TODO.md`。
 
