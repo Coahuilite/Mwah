@@ -92,6 +92,13 @@
 - 时长存储单位统一 tick；`thoughtDurationGameHours` 按 1/4 游戏小时量化，避免脏小数进配置文件。
 - 本仓库的骨架、四件套记忆文件与四份脚本已抽象上收为通用指南：`modding_documents/RimWorld_Mod_RepoInit_AgentMemory_And_Packaging_Guide_zh.md`（占位符版，无项目身份）。同类新工程先读它，不要重新发明。注意 `modding_documents/` 本身不在任何 git 仓库下，改它不产生提交。
 - 骨架照 `RimWorld_Mod_Skeleton_Guide_bilingual.md` Level 2 + `let_me_gnaw_on_you`/`squeaky_ratkin` 现行做法：版本化 `1.6/`、`.slnx` only、`net472` + `Krafs.Rimworld.Ref 1.6.*`、语言目录用 `ChineseSimplified`（`LanguageDatabase` 硬编码名录里的真实名字）。
+- **静态状态跨局泄漏（2026-09-10 修复）**：`KissCooldown` 两张表、`KissUtility.PendingReturns`、`KissDirector.Active` 都是 static，而 `TicksGame` 与 `thingIDNumber` 每局从 0 重新分配 ⇒ 上一局的冷却 `until` 会把新局撞键的 pawn 判成超长冷却，回位队列持有旧局 pawn 引用，Active 残留触发误收点。清零点 = `KissTicker` 的 `(Game)` 构造器（`Game.FillComponents` 每次建局/读档都重新实例化组件，构造器即"每局必跑"钩子）。教训：**static 的寿命默认是进程，不是游戏局；任何按局语义的 static 必须在 GameComponent 构造器里重置**。
+- **链式 Targeting 的 cleanup 竞态（2026-09-10 修复）**：原版 Targeter 事件顺序是 action → StopTargeting → actionWhenFinished，所以第一跳的 actionWhenFinished 会在第二跳 `BeginSecondPick` 已开跑**之后**执行；两跳都直接 `Active = false` 会让第二跳整个窗口里 Active 是假的（KissTicker 自动收点与按钮 Toggle 全部失灵）。解法 = `targetingGeneration` 代号：每跳自增，cleanup 只在代号仍是自己时清位。凡是"链式起跳 + 共享开关"的组合都要走这条路。
+- **角色互换只归右键路径（2026-09-10）**：`Propose(selected, target, allowRoleSwap)`，右键传 true（About.xml 承诺"选中方走不动就换对方走"），`BeginDirected`（导演台/自主派发）恒 false —— 无 swap 才能保证"点谁谁亲"、导演台消息与事实一致、自主派发绝不把玩家侧小人拉起来当发起方。`NearestWilling` 另跳过 `IsPlayerControlled && Drafted` 的接收者：交火中的征召小人不为自主亲吻让路。
+- **冷却记账位置（2026-09-10）**：`KissCooldown.Mark` 从 `Start()` 挪进 `JobDriver_Kiss.ToilTakeStage.initAction` 且只记发起方 —— 预订失败（对方同 tick 被抢）时 job 没落地，提前记账就是空罚一轮 2.4 游戏时的成对冷却。
+- **定台寻路预算（2026-09-10）**：`Usable` 末步是 `CanReach`（A*），140 径向候选 × 2 分配理论最坏 ~280 次 A* 同 tick 烧完 = 密集废墟里的可感卡顿（"亲一会卡住"矩阵项头号嫌疑）。现在失败计数到 `ReachCheckBudget=24` 即放弃定台走贴脸兜底 —— 失败路径本来就要走兜底，只省时间不换行为。
+- 设置页自动测高：`viewRect.height = list.CurHeight + 16f` 回写（1.6 的 `Listing_Standard` **没有** `BeginScrollView/EndScrollView` 实例方法，别想当然）。verify-local 门 9b：`RestoreDefaults` 必须逐字段 `= Constants.*`，新增设置项漏写恢复默认会直接红。
+- 主动派发（导演台/自主）与右键共用 `Propose` 但语义不同的地方清单：swap（见上）、拒绝提示（右键弹 Message，派发静默/事后弹）、`playerForced`（派发打，右键不打）。
 
 ## 仓库结构与导航
 
