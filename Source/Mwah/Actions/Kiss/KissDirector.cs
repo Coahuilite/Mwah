@@ -18,11 +18,20 @@ namespace Mwah;
 /// 两次选点靠链式 BeginTargeting 串起来：BeginTargeting 会把 needsStopTargetingCall
 /// 重置为 false，所以在第一次的 action 里发起第二次选点，不会被随后的 StopTargeting 抹掉
 /// （原版 DestinationSelector 就是这个套路）。
+///
+/// 但链式起跳有代价：原版的事件顺序是 action → StopTargeting → actionWhenFinished，
+/// 所以第一跳的 actionWhenFinished 会在第二跳已经开跑**之后**才执行。若两跳都直接
+/// Active = false，第二跳的整个窗口里 Active 是假的 —— KissTicker 的"设置关闭即收点"
+/// 和按钮的 Toggle 取消全都失灵。因此用 targeting 代号区分：每跳自增，cleanup 只在
+/// "代号仍是自己"时清位；被链式后续抢走的 cleanup 静默让位。
 /// </summary>
 public static class KissDirector
 {
     /// <summary>是否有我们发起的选点正在进行，供底栏按钮做开/关切换。</summary>
     public static bool Active;
+
+    /// <summary>当前链式选点的代号；每跳自增，cleanup 凭代号识别"这次收尾属于自己的那一跳"。</summary>
+    private static int targetingGeneration;
 
     public static void Toggle()
     {
@@ -45,7 +54,8 @@ public static class KissDirector
 
     private static void BeginFirstPick()
     {
-        Active = true;
+        int generation = ++targetingGeneration;
+        MwahLog.Dev("director on (generation " + generation + ")");
         Find.Targeter.BeginTargeting(
             targetParams: PawnParams(),
             action: delegate (LocalTargetInfo ti)
@@ -59,7 +69,7 @@ public static class KissDirector
             highlightAction: null,
             targetValidator: delegate (LocalTargetInfo ti) { return ti.Thing is Pawn; },
             caster: null,
-            actionWhenFinished: delegate { Active = false; },
+            actionWhenFinished: delegate { CleanupPick(generation); },
             mouseAttachment: null,
             playSoundOnAction: false,
             onGuiAction: delegate (LocalTargetInfo ti)
@@ -70,6 +80,7 @@ public static class KissDirector
 
     private static void BeginSecondPick(Pawn first)
     {
+        int generation = ++targetingGeneration;
         Find.Targeter.BeginTargeting(
             targetParams: PawnParams(),
             action: delegate (LocalTargetInfo ti)
@@ -83,13 +94,28 @@ public static class KissDirector
             highlightAction: null,
             targetValidator: delegate (LocalTargetInfo ti) { return ti.Thing is Pawn p && p != first; },
             caster: null,
-            actionWhenFinished: delegate { Active = false; },
+            actionWhenFinished: delegate { CleanupPick(generation); },
             mouseAttachment: null,
             playSoundOnAction: false,
             onGuiAction: delegate (LocalTargetInfo ti)
             {
                 Widgets.MouseAttachedLabel("MWAH.Director.PickSecond".Translate(first.Named("PAWN")));
             });
+    }
+
+    /// <summary>一跳的收尾。链式起跳后，第一跳的 cleanup 会晚于第二跳的 BeginTargeting 执行；
+    /// 此时代号已换代 ⇒ 这次收尾不属于仍在进行的选点，静默让位。</summary>
+    private static void CleanupPick(int generation)
+    {
+        if (generation != targetingGeneration)
+        {
+            return;
+        }
+        if (Active)
+        {
+            Active = false;
+            MwahLog.Dev("director off (generation " + generation + ")");
+        }
     }
 
     private static TargetingParameters PawnParams()
