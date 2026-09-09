@@ -71,6 +71,11 @@ public class KissAmbient : GameComponent
             {
                 continue;
             }
+            // 单人冷却还挂着就别进 O(N) 的对象扫描了：小间隔 + 大地图时这一层全是在烧空转。
+            if (KissCooldown.PawnRemaining(doer) > 0)
+            {
+                continue;
+            }
             Pawn? receiver = NearestWilling(doer, pawns, settings);
             if (receiver == null || KissUtility.BeginDirected(doer, receiver) == null)
             {

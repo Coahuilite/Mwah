@@ -26,6 +26,13 @@ public class JobDriver_Kiss : JobDriver
     /// <summary>台位格离各自原位的最大容忍距离；超出就当找不到台，退回贴脸兜底。</summary>
     private const int StageRadius = 8;
 
+    /// <summary>
+    /// 定台期间允许的寻路查询失败上限。Usable 的最后一步是 CanReach（A*），140 个径向候选
+    /// 理论最坏能烧 ~280 次：密集废墟里这一 tick 就是可感卡顿。超过预算直接放弃定台走贴脸兜底
+    /// ——失败路径本来就要走兜底，所以只省时间、不换行为。
+    /// </summary>
+    private const int ReachCheckBudget = 24;
+
     /// <summary>GenRadial 是无限发散的，这里只扫中点附近这么多格，保证开场只付一次小代价。</summary>
     private const int StageSearchLimit = 140;
 
@@ -265,12 +272,9 @@ public class JobDriver_Kiss : JobDriver
             int interval = MwahMod.Settings.FleckIntervalTicks;
             if (interval > 0 && base.pawn.IsHashIntervalTick(interval, delta))
             {
-                // 与原版滚床单完全同一支调用；两边各来一次，比原版更热闹。
+                // 每人只抛自己头顶的爱心：双方相位错开，同一间隔内两个位置各有一颗，
+                // 观感不变、粒子总量减半（旧写法每人替对方也抛一次，总量是原版四倍）。
                 FleckMaker.ThrowMetaIcon(base.pawn.Position, base.pawn.Map, FleckDefOf.Heart);
-                if (!Partner.Dead)
-                {
-                    FleckMaker.ThrowMetaIcon(Partner.Position, base.pawn.Map, FleckDefOf.Heart);
-                }
             }
         });
         toil.AddFailCondition(delegate
@@ -330,6 +334,7 @@ public class JobDriver_Kiss : JobDriver
         IntVec3 a = base.pawn.Position;
         IntVec3 b = partner.Position;
         IntVec3 mid = new IntVec3((a.x + b.x) / 2, 0, (a.z + b.z) / 2);
+        int reachBudget = ReachCheckBudget;
         int limit = Mathf.Min(StageSearchLimit, GenRadial.RadialPattern.Length);
         for (int i = 0; i < limit; i++)
         {
@@ -337,14 +342,14 @@ public class JobDriver_Kiss : JobDriver
             IntVec3 east = west + IntVec3.East;
             // 两种分配都试：谁离哪格近就踩哪格，另一格归对方。
             if (west.DistanceTo(a) <= StageRadius && east.DistanceTo(b) <= StageRadius
-                && Usable(west, base.pawn, partner, iMove) && Usable(east, partner, base.pawn, theyMove))
+                && Usable(west, base.pawn, partner, iMove, ref reachBudget) && Usable(east, partner, base.pawn, theyMove, ref reachBudget))
             {
                 mine = west;
                 theirs = east;
                 return true;
             }
             if (east.DistanceTo(a) <= StageRadius && west.DistanceTo(b) <= StageRadius
-                && Usable(east, base.pawn, partner, iMove) && Usable(west, partner, base.pawn, theyMove))
+                && Usable(east, base.pawn, partner, iMove, ref reachBudget) && Usable(west, partner, base.pawn, theyMove, ref reachBudget))
             {
                 mine = east;
                 theirs = west;
@@ -359,7 +364,8 @@ public class JobDriver_Kiss : JobDriver
     /// 这一格能不能归这位用。能动的一方要求"能站、不迷雾、没有别人、到得了"；
     /// 动不了的一方只接受它自己当前那格 —— 它没法走过去，把它排到别处等于判这个 job 死刑。
     /// </summary>
-    private static bool Usable(IntVec3 c, Pawn who, Pawn other, bool whoMoves)
+
+    private static bool Usable(IntVec3 c, Pawn who, Pawn other, bool whoMoves, ref int reachBudget)
     {
         if (!whoMoves)
         {
@@ -379,7 +385,18 @@ public class JobDriver_Kiss : JobDriver
                 return false;
             }
         }
-        return who.CanReach(c, PathEndMode.OnCell, Danger.Deadly);
+        // 预算耗尽后不再做 A*，只接受"人已经在格上"这种零成本确认；这次定台多半会失败，
+        // 但失败本来就走贴脸兜底，省下的是同一 tick 里几十次寻路。
+        if (reachBudget <= 0)
+        {
+            return c == who.Position;
+        }
+        bool reachable = who.CanReach(c, PathEndMode.OnCell, Danger.Deadly);
+        if (!reachable)
+        {
+            reachBudget--;
+        }
+        return reachable;
     }
 
     /// <summary>位置是否已经到位：有台位就要求踩中它；没台位时贴到对方身上即算到位。</summary>
