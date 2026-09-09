@@ -21,7 +21,6 @@ public static class Constants
     public const float ThoughtDurationGameHours = 6f;  // 与 MWAH_Kissed 的 durationDays 0.25 对齐
 
     public const float MoodMultiplier = 1f;
-    public const int MaxSelectionReach = 9999;
 
     // 允许性开关的出厂默认：不限阵营、不限种族，门禁滑条停在最右档。
     public const bool ModEnabled = true;

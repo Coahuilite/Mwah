@@ -30,6 +30,7 @@
     <stackLimit>3</stackLimit>
     <stackLimitForSameOtherPawn>1</stackLimitForSameOtherPawn>
     <stackedEffectMultiplier>0.6</stackedEffectMultiplier>
+    <nullifiedIfNotColonist>false</nullifiedIfNotColonist>
     <stages>
       <li>
         <label>kissed by {0}</label>

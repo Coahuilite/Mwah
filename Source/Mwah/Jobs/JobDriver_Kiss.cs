@@ -291,6 +291,7 @@ public class JobDriver_Kiss : JobDriver
             finished = true;
             TraceSet(isPassivePartner, "end");
             MwahLog.Dev("kiss end: " + base.pawn.LabelShort + " completed=" + completed + " passive=" + isPassivePartner + " t=" + Find.TickManager.TicksGame);
+            KissTrace.Clear();
             if (completed && !isPassivePartner)
             {
                 KissMoodReward.Settle(base.pawn, Partner);

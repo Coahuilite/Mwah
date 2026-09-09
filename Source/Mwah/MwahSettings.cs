@@ -12,7 +12,6 @@ namespace Mwah;
 /// </summary>
 public class MwahSettings : ModSettings
 {
-    private const float ContentHeight = 1160f;
 
     // 出厂默认来自 Constants；玩家改动只落在这些字段上，Scribe key 与字段名一致。
     public bool modEnabled = Constants.ModEnabled;
@@ -111,7 +110,9 @@ public class MwahSettings : ModSettings
     public void DoSettingsWindowContents(Rect inRect)
     {
         bool changed = false;
-        var viewRect = new Rect(0f, 0f, inRect.width - 16f, ContentHeight);
+        var viewRect = new Rect(0f, 0f, inRect.width - 16f, inRect.height);
+        // 自动测高：先用窗口高度开滚动，list 结束后用真实内容高度回写 viewRect。
+        // 固定 ContentHeight 的写法在控件增删或译文变长后会截断底部控件。
         Widgets.BeginScrollView(inRect, ref scrollPos, viewRect);
         var list = new Listing_Standard(GameFont.Small);
         list.ColumnWidth = viewRect.width - 24f;
@@ -153,8 +154,8 @@ public class MwahSettings : ModSettings
             RestoreDefaults();
             changed = true;
         }
-
         list.End();
+        viewRect.height = list.CurHeight + 16f;
         Widgets.EndScrollView();
         if (changed)
         {

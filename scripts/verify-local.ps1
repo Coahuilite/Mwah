@@ -169,6 +169,12 @@ foreach ($d in $decls) {
 }
 Assert-True ("settings fields locked to Scribe keys and Constants ($($decls.Count) fields)") ($badSettings.Count -eq 0) ($badSettings -join ' | ')
 
+# 9b. RestoreDefaults 必须覆盖全部设置字段：字段加进声明区却漏掉恢复按钮，是"恢复默认值"
+#     对新项静默失效的头号路径。这里按方法体逐字段核对，缺一个就红。
+$restoreBody = [regex]::Match($settingsCs, '(?s)public void RestoreDefaults\(\)\s*\{(.*?)\n    \}').Groups[1].Value
+$missRestore = @($decls | Where-Object { $restoreBody -notmatch ('\b' + $_.Groups[1].Value + '\s*=\s*Constants\.') })
+Assert-True ("RestoreDefaults covers all $($decls.Count) settings fields") ($missRestore.Count -eq 0) (($missRestore | ForEach-Object { $_.Groups[1].Value }) -join ', ')
+
 # 10. 门禁每加一档就得同时有双语档位名，且范围与默认常量跟着改；漏一处就是滑条上出现裸键名。
 #     枚举在门 3/4 之前已解析成 $scopeRungs，这里只做断言，不重复解析。
 Assert-True ("kiss scope enum parsed ($($scopeRungs.Count) rungs)") ($scopeRungs.Count -ge 2)

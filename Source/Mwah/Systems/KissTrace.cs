@@ -81,7 +81,14 @@ public static class KissTrace
     {
         try
         {
-            int tick = Find.TickManager?.TicksGame ?? -1;
+            // 主菜单/世界地图下 TicksGame 恒为 0 且不动，写了只是噪音；用游戏 tick 是否
+            // 已经走过（>0）当"在局内"的判据。开局前 1 秒的空白无关紧要。
+            TickManager? tm = Find.TickManager;
+            if (tm == null || tm.TicksGame <= 0)
+            {
+                return;
+            }
+            int tick = tm.TicksGame;
             string line = DateTime.Now.ToString("HH:mm:ss") + " t=" + tick
                 + " A=" + PhaseA + ":" + TicksA + " B=" + PhaseB + ":" + TicksB;
             lock (Gate)
