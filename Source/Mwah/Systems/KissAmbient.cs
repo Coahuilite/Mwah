@@ -14,7 +14,7 @@ namespace Mwah;
 /// 零 Harmony 下没法把下令权发给非己方单位，所以改由游戏自己发起。
 ///
 /// 注册方式：GameComponent 由原版自动发现，但 Game.FillComponents 用的是
-/// ' + BT + 'Activator.CreateInstance(type, this)' + BT + '，' + BT + 'this' + BT + ' 是 ' + BT + 'Game' + BT + ' ——
+/// `Activator.CreateInstance(type, this)`（this 是 Game）。
 /// 所以**必须有 (Game) 构造器**，没有就只会在日志里留一条 MissingMethodException，组件静静缺席。
 /// 不需要 Def、XML 或补丁。GameComponentTick 只在地图内运行，符合"仅游戏内地图"的边界。
 /// </summary>

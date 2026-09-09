@@ -250,6 +250,15 @@ public static class KissUtility
         }
     }
 
+    /// <summary>
+    /// 每局清空回位队列。队列是 static：跨局持有旧局的 pawn 引用既阻止回收，
+    /// 又会在新局的第一个 tick 对无图对象发起 Goto。
+    /// </summary>
+    public static void ResetPendingReturns()
+    {
+        PendingReturns.Clear();
+    }
+
     /// <summary>结束后回被下令时站的位置。只是礼貌请求：紧急需求与排班仍会插队。</summary>
     public static void RequestReturnHome(Pawn pawn, IntVec3 homeCell)
     {

@@ -5,8 +5,8 @@ using Verse;
 namespace Mwah;
 
 /// <summary>
-/// 亲吻冷却。会话内内存态（与 Let Me Gnaw On You 的 CooldownManager 同一取舍）：
-/// 不落盘、不占 tick，只在结算时顺带清过期项，避免字典无界增长。
+/// 亲吻冷却。进程内内存态，每局由 KissTicker 构造器清零（与 Let Me Gnaw On You 的
+/// CooldownManager 同一取舍）：不落盘、不占 tick，只在结算时顺带清过期项，避免字典无界增长。
 /// 读档后冷却归零是可接受的取舍：这是一个纯娱乐动作，不是经济系统。
 /// </summary>
 public static class KissCooldown
@@ -53,6 +53,17 @@ public static class KissCooldown
             PairReadyAtTick[PairKey(a, b)] = now + pairTicks;
         }
         PruneExpired(now);
+    }
+
+    /// <summary>
+    /// 每局清零。GameComponent 构造器在每次建局与读档时都会重新跑（Game.FillComponents），
+    /// 而本表是 static：TicksGame 每局从 0 重新计数，thingIDNumber 也从小号重新分配，
+    /// 上局残留的键值会把新局的 pawn 按上局的 until 判成超长冷却。
+    /// </summary>
+    public static void Reset()
+    {
+        PawnReadyAtTick.Clear();
+        PairReadyAtTick.Clear();
     }
 
     private static int Remaining<T>(int now, Dictionary<T, int> map, T key)
