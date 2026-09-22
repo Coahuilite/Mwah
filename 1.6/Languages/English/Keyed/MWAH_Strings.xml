@@ -28,26 +28,57 @@
   <MWAH.Fail.CooldownPair>{PAWN} and {OTHER} already kissed recently ({TIME})</MWAH.Fail.CooldownPair>
   <MWAH.KissWall.Fail.NoStandCell>{PAWN} can't find a standable, reachable spot to kiss that {WALL}</MWAH.KissWall.Fail.NoStandCell>
 
-  <!-- 亲墙天意五档（结算消息；墙名走 {WALL}） -->
-  <MWAH.KissWall.Result.Weird>{PAWN} leaned in and kissed {WALL}. The instant lips met stone, {PAWN} froze.</MWAH.KissWall.Result.Weird>
-  <MWAH.KissWall.Result.Nothing>{PAWN} kissed {WALL}. Nothing happened — exactly as {PAWN} hoped.</MWAH.KissWall.Result.Nothing>
-  <MWAH.KissWall.Result.Slight>{PAWN} kissed {WALL}. The stone was just the right temperature.</MWAH.KissWall.Result.Slight>
-  <MWAH.KissWall.Result.Moved>{PAWN} shared a long kiss with {WALL}. {PAWN} swears the wind answered.</MWAH.KissWall.Result.Moved>
-  <MWAH.KissWall.Result.Devoted>{PAWN} kissed {WALL} with true devotion, then lingered. Love need not be mutual.</MWAH.KissWall.Result.Devoted>
-
-  <!-- 亲墙结算旁白池：每次结算随机播一条，拼在结果句之后（墙学观察，中英逐条对译） -->
-  <MWAH.KissWall.Flavor.0>The wall said nothing — which already makes it the best colleague anyone has ever had.</MWAH.KissWall.Flavor.0>
-  <MWAH.KissWall.Flavor.1>A witness has decided, for the good of everyone, to pretend this didn't happen.</MWAH.KissWall.Flavor.1>
-  <MWAH.KissWall.Flavor.2>Structural integrity: unaffected. Reputation: a different kind of damage.</MWAH.KissWall.Flavor.2>
-  <MWAH.KissWall.Flavor.3>The spider in the corner has recorded the whole thing in its web.</MWAH.KissWall.Flavor.3>
-  <MWAH.KissWall.Flavor.4>After years of bearing loads, the wall is being weighed in an entirely new way.</MWAH.KissWall.Flavor.4>
-  <MWAH.KissWall.Flavor.5>The warden wrote "on duty" in the log, then rubbed their eyes.</MWAH.KissWall.Flavor.5>
-  <MWAH.KissWall.Flavor.6>No lipstick on the plaster — but something else got left behind.</MWAH.KissWall.Flavor.6>
-  <MWAH.KissWall.Flavor.7>Someone heard a kiss from the next room. It was a wall.</MWAH.KissWall.Flavor.7>
-  <MWAH.KissWall.Flavor.8>The wall, for the record, says it can hold this weight.</MWAH.KissWall.Flavor.8>
-  <MWAH.KissWall.Flavor.9>Mechanically, nothing was gained. Emotionally, everything was.</MWAH.KissWall.Flavor.9>
-  <MWAH.KissWall.Flavor.10>No repair bill will ever mention this one.</MWAH.KissWall.Flavor.10>
-  <MWAH.KissWall.Flavor.11>The silence of stone, they say, is deafening.</MWAH.KissWall.Flavor.11>
+  <!-- 亲墙天意五档 × 每档 10 条叙述式旁白（墙不开口；结算时从对应档的池子里随机播一条） -->
+  <MWAH.KissWall.Line.Weird.0>{PAWN} kissed {WALL}. Nothing then — and, uncomfortably, something three minutes later.</MWAH.KissWall.Line.Weird.0>
+  <MWAH.KissWall.Line.Weird.1>Now every route walks {PAWN} past that wall, and every pass replays the moment.</MWAH.KissWall.Line.Weird.1>
+  <MWAH.KissWall.Line.Weird.2>The doctor mentioned that people do this too. {PAWN} would rather not have learned that.</MWAH.KissWall.Line.Weird.2>
+  <MWAH.KissWall.Line.Weird.3>{PAWN} tried to explain it away as a momentary impulse, and by the second telling had stopped believing it.</MWAH.KissWall.Line.Weird.3>
+  <MWAH.KissWall.Line.Weird.4>Since that day {PAWN} has been reading up on load-bearing structures, not entirely by choice.</MWAH.KissWall.Line.Weird.4>
+  <MWAH.KissWall.Line.Weird.5>{PAWN} dreamt about the wall, and keeps a professional silence about the plot.</MWAH.KissWall.Line.Weird.5>
+  <MWAH.KissWall.Line.Weird.6>Someone asked why {PAWN} keeps staring at that wall. {PAWN} had no answer that would survive saying it aloud.</MWAH.KissWall.Line.Weird.6>
+  <MWAH.KissWall.Line.Weird.7>The regret arrived right after the kiss and stayed far longer than the kiss itself.</MWAH.KissWall.Line.Weird.7>
+  <MWAH.KissWall.Line.Weird.8>On the psych eval form, the box marked "recent unusual impulses" took a long time to answer.</MWAH.KissWall.Line.Weird.8>
+  <MWAH.KissWall.Line.Weird.9>{PAWN} now walks faster past {WALL}, as if the cell required routing around.</MWAH.KissWall.Line.Weird.9>
+  <MWAH.KissWall.Line.Nothing.0>{PAWN} kissed {WALL}. Nothing happened, and that was that.</MWAH.KissWall.Line.Nothing.0>
+  <MWAH.KissWall.Line.Nothing.1>{PAWN} kissed {WALL}, returned to work, and never lost a beat.</MWAH.KissWall.Line.Nothing.1>
+  <MWAH.KissWall.Line.Nothing.2>If the kiss had to be filed as a report, the body would read simply: "done".</MWAH.KissWall.Line.Nothing.2>
+  <MWAH.KissWall.Line.Nothing.3>{PAWN} feels about {WALL} exactly what {PAWN} feels about every other wall.</MWAH.KissWall.Line.Nothing.3>
+  <MWAH.KissWall.Line.Nothing.4>The entire meaning of the kiss: lips confirmed a temperature.</MWAH.KissWall.Line.Nothing.4>
+  <MWAH.KissWall.Line.Nothing.5>Someone asked what {PAWN} was doing. {PAWN} answered honestly, and the conversation ended out of mercy.</MWAH.KissWall.Line.Nothing.5>
+  <MWAH.KissWall.Line.Nothing.6>{PAWN} kissed {WALL} and left without looking back. Not once.</MWAH.KissWall.Line.Nothing.6>
+  <MWAH.KissWall.Line.Nothing.7>No mood shift, no schedule change, not even a mark on the tile where {PAWN} stood.</MWAH.KissWall.Line.Nothing.7>
+  <MWAH.KissWall.Line.Nothing.8>The kiss's one redeeming quality is that it did, in fact, occur.</MWAH.KissWall.Line.Nothing.8>
+  <MWAH.KissWall.Line.Nothing.9>To {PAWN}, kissing a wall turned out to be like breathing: done, and instantly forgotten.</MWAH.KissWall.Line.Nothing.9>
+  <MWAH.KissWall.Line.Slight.0>{PAWN} kissed {WALL}. The stone was just the right temperature, and the next two hours went smoothly.</MWAH.KissWall.Line.Slight.0>
+  <MWAH.KissWall.Line.Slight.1>The wall faces west and holds the afternoon sun. {PAWN} considers this a good use of a mouth.</MWAH.KissWall.Line.Slight.1>
+  <MWAH.KissWall.Line.Slight.2>{PAWN} can't say what was nice about it, only that footsteps got lighter passing {WALL}.</MWAH.KissWall.Line.Slight.2>
+  <MWAH.KissWall.Line.Slight.3>After one kiss, {PAWN} developed a plain appreciation for colonial masonry.</MWAH.KissWall.Line.Slight.3>
+  <MWAH.KissWall.Line.Slight.4>{PAWN} kissed {WALL}, felt good, and worked a little harder. The wall contributed nothing and objected to less.</MWAH.KissWall.Line.Slight.4>
+  <MWAH.KissWall.Line.Slight.5>Nothing special happened, except {PAWN}'s mouth stayed slightly up for a while.</MWAH.KissWall.Line.Slight.5>
+  <MWAH.KissWall.Line.Slight.6>{PAWN} mentioned the kiss to someone else, and the tone came out almost like a recommendation.</MWAH.KissWall.Line.Slight.6>
+  <MWAH.KissWall.Line.Slight.7>The wall stood very steadily, and some of that steadiness caught.</MWAH.KissWall.Line.Slight.7>
+  <MWAH.KissWall.Line.Slight.8>{PAWN} was thinking about something else during the kiss, and finished thinking in a better mood.</MWAH.KissWall.Line.Slight.8>
+  <MWAH.KissWall.Line.Slight.9>If satisfaction had a volume, the footsteps leaving {WALL} would be the measurement.</MWAH.KissWall.Line.Slight.9>
+  <MWAH.KissWall.Line.Moved.0>{PAWN} shared a long kiss with {WALL}. Draft came through the door; {PAWN} has decided to call it a reply.</MWAH.KissWall.Line.Moved.0>
+  <MWAH.KissWall.Line.Moved.1>There was a hint of moss-moisture in the seam, and {PAWN} insists it was not ordinary water.</MWAH.KissWall.Line.Moved.1>
+  <MWAH.KissWall.Line.Moved.2>{PAWN} stood there long after the kiss, long enough for bystanders to start exchanging glances.</MWAH.KissWall.Line.Moved.2>
+  <MWAH.KissWall.Line.Moved.3>Someone said the wall seemed warmer. Then they noticed there was no evidence.</MWAH.KissWall.Line.Moved.3>
+  <MWAH.KissWall.Line.Moved.4>{PAWN} told a close friend about the kiss and teared up halfway through telling it.</MWAH.KissWall.Line.Moved.4>
+  <MWAH.KissWall.Line.Moved.5>{PAWN} slept badly that night; the causes were complex, and one wall featured prominently.</MWAH.KissWall.Line.Moved.5>
+  <MWAH.KissWall.Line.Moved.6>{PAWN} has started taking the long way around, on purpose, past {WALL}, and calls it a walk.</MWAH.KissWall.Line.Moved.6>
+  <MWAH.KissWall.Line.Moved.7>The wall changed nothing. The way {PAWN} looks at it changed everything available to look at.</MWAH.KissWall.Line.Moved.7>
+  <MWAH.KissWall.Line.Moved.8>Since that kiss, {PAWN} walks softer indoors, as if afraid of waking something.</MWAH.KissWall.Line.Moved.8>
+  <MWAH.KissWall.Line.Moved.9>The warden wrote "on duty" in the log, then rubbed their eyes.</MWAH.KissWall.Line.Moved.9>
+  <MWAH.KissWall.Line.Devoted.0>{PAWN} kissed {WALL} with true devotion, then lingered. Love need not be mutual.</MWAH.KissWall.Line.Devoted.0>
+  <MWAH.KissWall.Line.Devoted.1>It doesn't speak, doesn't leave, doesn't judge — {PAWN} considers these three facts to beat most coworkers.</MWAH.KissWall.Line.Devoted.1>
+  <MWAH.KissWall.Line.Devoted.2>{PAWN} announced a perfect partner to everyone, then noticed there was no everyone.</MWAH.KissWall.Line.Devoted.2>
+  <MWAH.KissWall.Line.Devoted.3>{PAWN} now sleeps at the foot of {WALL}, and insists this is a bedding issue, not a romance issue.</MWAH.KissWall.Line.Devoted.3>
+  <MWAH.KissWall.Line.Devoted.4>Asked what {WALL} has going for it, {PAWN} began with load-bearing and talked about silence for a long time.</MWAH.KissWall.Line.Devoted.4>
+  <MWAH.KissWall.Line.Devoted.5>{PAWN} has started dusting that wall, gently, the way one fixes someone's hair.</MWAH.KissWall.Line.Devoted.5>
+  <MWAH.KissWall.Line.Devoted.6>The kiss gained nothing mechanically and completed, apparently, the most important stress analysis of {PAWN}'s life.</MWAH.KissWall.Line.Devoted.6>
+  <MWAH.KissWall.Line.Devoted.7>{PAWN} no longer looks at other walls. The commitment has begun to worry the architects.</MWAH.KissWall.Line.Devoted.7>
+  <MWAH.KissWall.Line.Devoted.8>No repair bill will ever carry this line: {WALL} requires gentle handling.</MWAH.KissWall.Line.Devoted.8>
+  <MWAH.KissWall.Line.Devoted.9>The silence of stone is said to be deafening; {PAWN} has learned to hear vows in it.</MWAH.KissWall.Line.Devoted.9>
 
   <!-- 亲吻导演台 -->
   <MWAH.Director.PickFirst>Who is starting the kiss?</MWAH.Director.PickFirst>

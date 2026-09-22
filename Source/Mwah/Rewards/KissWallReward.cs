@@ -26,21 +26,48 @@ public static class KissWallReward
     /// <summary>权重和 = 100：怪 20 / 无感 30 / 小暖 25 / 中动 17 / 真爱 8。</summary>
     private static readonly int[] TierWeights = { 20, 30, 25, 17, 8 };
 
-    private static readonly string[] TierMessageKeys =
+    /// <summary>
+    /// 每档 10 条叙述式旁白（墙全程不开口，只被观察）。键 = MWAH.KissWall.Line.{档}.{0..9}，
+    /// 中英各 50 条逐条对译；结算时从命中档的池子里随机播一条。
+    /// 全部写成字面量：反向键门要求"每个被定义的键都能在代码里找到引用"，拼接出来的键名它看不见。
+    /// </summary>
+    private static readonly string[][] TierLineKeys =
     {
-        "MWAH.KissWall.Result.Weird",
-        "MWAH.KissWall.Result.Nothing",
-        "MWAH.KissWall.Result.Slight",
-        "MWAH.KissWall.Result.Moved",
-        "MWAH.KissWall.Result.Devoted",
-    };
-
-    /// <summary>结算旁白池：与五档结果句拼成一条消息，每次随机播一条（"墙学观察"12 则）。</summary>
-    private static readonly string[] FlavorKeys =
-    {
-        "MWAH.KissWall.Flavor.0", "MWAH.KissWall.Flavor.1", "MWAH.KissWall.Flavor.2", "MWAH.KissWall.Flavor.3",
-        "MWAH.KissWall.Flavor.4", "MWAH.KissWall.Flavor.5", "MWAH.KissWall.Flavor.6", "MWAH.KissWall.Flavor.7",
-        "MWAH.KissWall.Flavor.8", "MWAH.KissWall.Flavor.9", "MWAH.KissWall.Flavor.10", "MWAH.KissWall.Flavor.11",
+        new[]
+        {
+            "MWAH.KissWall.Line.Weird.0", "MWAH.KissWall.Line.Weird.1", "MWAH.KissWall.Line.Weird.2",
+            "MWAH.KissWall.Line.Weird.3", "MWAH.KissWall.Line.Weird.4", "MWAH.KissWall.Line.Weird.5",
+            "MWAH.KissWall.Line.Weird.6", "MWAH.KissWall.Line.Weird.7", "MWAH.KissWall.Line.Weird.8",
+            "MWAH.KissWall.Line.Weird.9",
+        },
+        new[]
+        {
+            "MWAH.KissWall.Line.Nothing.0", "MWAH.KissWall.Line.Nothing.1", "MWAH.KissWall.Line.Nothing.2",
+            "MWAH.KissWall.Line.Nothing.3", "MWAH.KissWall.Line.Nothing.4", "MWAH.KissWall.Line.Nothing.5",
+            "MWAH.KissWall.Line.Nothing.6", "MWAH.KissWall.Line.Nothing.7", "MWAH.KissWall.Line.Nothing.8",
+            "MWAH.KissWall.Line.Nothing.9",
+        },
+        new[]
+        {
+            "MWAH.KissWall.Line.Slight.0", "MWAH.KissWall.Line.Slight.1", "MWAH.KissWall.Line.Slight.2",
+            "MWAH.KissWall.Line.Slight.3", "MWAH.KissWall.Line.Slight.4", "MWAH.KissWall.Line.Slight.5",
+            "MWAH.KissWall.Line.Slight.6", "MWAH.KissWall.Line.Slight.7", "MWAH.KissWall.Line.Slight.8",
+            "MWAH.KissWall.Line.Slight.9",
+        },
+        new[]
+        {
+            "MWAH.KissWall.Line.Moved.0", "MWAH.KissWall.Line.Moved.1", "MWAH.KissWall.Line.Moved.2",
+            "MWAH.KissWall.Line.Moved.3", "MWAH.KissWall.Line.Moved.4", "MWAH.KissWall.Line.Moved.5",
+            "MWAH.KissWall.Line.Moved.6", "MWAH.KissWall.Line.Moved.7", "MWAH.KissWall.Line.Moved.8",
+            "MWAH.KissWall.Line.Moved.9",
+        },
+        new[]
+        {
+            "MWAH.KissWall.Line.Devoted.0", "MWAH.KissWall.Line.Devoted.1", "MWAH.KissWall.Line.Devoted.2",
+            "MWAH.KissWall.Line.Devoted.3", "MWAH.KissWall.Line.Devoted.4", "MWAH.KissWall.Line.Devoted.5",
+            "MWAH.KissWall.Line.Devoted.6", "MWAH.KissWall.Line.Devoted.7", "MWAH.KissWall.Line.Devoted.8",
+            "MWAH.KissWall.Line.Devoted.9",
+        },
     };
 
     private static readonly MessageTypeDef[] TierMessageTypes =
@@ -75,9 +102,9 @@ public static class KissWallReward
         {
             pawn.needs.mood.thoughts.memories.TryGainMemory(memory, null);
         }
-        string text = TierMessageKeys[tier].Translate(pawn.Named("PAWN"), wall.Named("WALL"))
-            + "\n" + FlavorKeys[Rand.Range(0, FlavorKeys.Length - 1)].Translate();
-        Messages.Message(text, new LookTargets(wall), TierMessageTypes[tier], historical: false);
+        string line = TierLineKeys[tier][Rand.Range(0, TierLineKeys[tier].Length - 1)]
+            .Translate(pawn.Named("PAWN"), wall.Named("WALL"));
+        Messages.Message(line, new LookTargets(wall), TierMessageTypes[tier], historical: false);
         MwahLog.Dev("wall kiss settle: " + pawn.LabelShort + " -> " + wall.LabelCap + " tier=" + tier);
     }
 }
