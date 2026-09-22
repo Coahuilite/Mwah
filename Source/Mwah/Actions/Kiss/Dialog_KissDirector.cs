@@ -105,20 +105,19 @@ public class Dialog_KissDirector : Window
     private static float CaptionWidth => Mathf.Max(SlotSize + Gap, 122f);
     private static float CaptionHeight => 46f; // 两行 Tiny：长名字换行也接得住
     private static float ButtonHeight => 30f * Scale;
+    // 基类 Window.OnGUI：optionalTitle 非空时内容矩形再让出 Margin + 25f（反编译 rect3.yMin +=
+    // Margin + 25f 实证）。高度公式漏掉这一行，底部按钮整体上移压进 caption 第二行 —— 图证的真正根因。
+    private float TitleRow => Margin + 25f; // Window.Margin 是实例字段，不能进静态成员
 
     public override Vector2 InitialSize
     {
         get
         {
             float w = CaptionWidth * 2f + HeartSize + Gap * 2f + Margin * 2f;
-            float h = SlotSize + 4f * Scale + CaptionHeight + Gap + ButtonHeight + Margin * 2f;
-            // 兜底：极小逻辑画布（高分屏高 UIScale）下不超过约束屏宽的 62%。
-            float maxW = UI.screenWidth * 0.62f;
-            if (w > maxW)
-            {
-                h *= maxW / w;
-                w = maxW;
-            }
+            float h = TitleRow + SlotSize + 4f * Scale + CaptionHeight + Gap + ButtonHeight + Margin * 2f;
+            // 不再按"屏宽 62%"回缩：caption 宽度已是不随 k 的下限，整块面板最宽约 350 逻辑像素，
+            // 连 UIScale 2 的 512 逻辑宽画布都放得下；旧的比例回缩反而破坏垂直节奏（标题行/定高
+            // caption 都不跟着缩），是上一版遮挡的帮凶。
             return new Vector2(w, h);
         }
     }
@@ -263,11 +262,30 @@ public class Dialog_KissDirector : Window
 
     private void DrawHeart(Rect rect)
     {
-        bool ready = pawnA != null && pawnB != null;
+        bool leftReady = pawnA != null;
+        bool rightReady = pawnB != null;
+        bool ready = leftReady && rightReady;
         heartTex ??= ContentFinder<Texture2D>.Get("Things/Mote/Heart", reportFailure: false);
-        GUI.color = ready ? Color.white : new Color(0.42f, 0.42f, 0.42f, 0.9f);
-        GUI.DrawTexture(rect, heartTex ?? Texture2D.whiteTexture);
+        Texture2D tex = heartTex ?? Texture2D.whiteTexture;
+        // 半心填充（用户设计）：底图整颗灰；选了一边就把那一半盖回原色，两边都选上即整颗红
+        // = 可派发的高亮态。
+        GUI.color = new Color(0.42f, 0.42f, 0.42f, 0.9f);
+        GUI.DrawTexture(rect, tex);
+        float half = rect.width / 2f;
         GUI.color = Color.white;
+        if (leftReady)
+        {
+            // 该 Unity 版本没有带 sourceRect 的 DrawTexture 重载：整颗画出来、用裁剪只露左半。
+            GUI.BeginClip(new Rect(rect.x, rect.y, half, rect.height));
+            GUI.DrawTexture(new Rect(0f, 0f, rect.width, rect.height), tex);
+            GUI.EndClip();
+        }
+        if (rightReady)
+        {
+            GUI.BeginClip(new Rect(rect.x + half, rect.y, half, rect.height));
+            GUI.DrawTexture(new Rect(-half, 0f, rect.width, rect.height), tex);
+            GUI.EndClip();
+        }
         if (Mouse.IsOver(rect))
         {
             GUI.tooltip = ready
@@ -288,9 +306,9 @@ public class Dialog_KissDirector : Window
         GameFont fontBefore = Text.Font;
         Text.Anchor = TextAnchor.UpperCenter;
         Text.Font = GameFont.Tiny;
-        Text.WordWrap = true; // 名字再长也只是多占一行，不裁字 —— 槽宽本来就只有逻辑宽的零头
+        // WordWrap 的原版契约是"帧末必须为 true"（Verse.Text 帧末哨兵会 ErrorOnce）。
+        // 这里本来就想要折行，画完把 Tiny/锚点还原即可，别碰 WordWrap。
         GUI.Label(rect, text);
-        Text.WordWrap = false;
         Text.Anchor = TextAnchor.UpperLeft;
         Text.Font = fontBefore;
     }
