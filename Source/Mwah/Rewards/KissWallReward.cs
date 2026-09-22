@@ -35,6 +35,14 @@ public static class KissWallReward
         "MWAH.KissWall.Result.Devoted",
     };
 
+    /// <summary>结算旁白池：与五档结果句拼成一条消息，每次随机播一条（"墙学观察"12 则）。</summary>
+    private static readonly string[] FlavorKeys =
+    {
+        "MWAH.KissWall.Flavor.0", "MWAH.KissWall.Flavor.1", "MWAH.KissWall.Flavor.2", "MWAH.KissWall.Flavor.3",
+        "MWAH.KissWall.Flavor.4", "MWAH.KissWall.Flavor.5", "MWAH.KissWall.Flavor.6", "MWAH.KissWall.Flavor.7",
+        "MWAH.KissWall.Flavor.8", "MWAH.KissWall.Flavor.9", "MWAH.KissWall.Flavor.10", "MWAH.KissWall.Flavor.11",
+    };
+
     private static readonly MessageTypeDef[] TierMessageTypes =
     {
         MessageTypeDefOf.NegativeEvent, MessageTypeDefOf.NegativeEvent,
@@ -67,8 +75,9 @@ public static class KissWallReward
         {
             pawn.needs.mood.thoughts.memories.TryGainMemory(memory, null);
         }
-        Messages.Message(TierMessageKeys[tier].Translate(pawn.Named("PAWN"), wall.Named("WALL")),
-            new LookTargets(wall), TierMessageTypes[tier], historical: false);
+        string text = TierMessageKeys[tier].Translate(pawn.Named("PAWN"), wall.Named("WALL"))
+            + "\n" + FlavorKeys[Rand.Range(0, FlavorKeys.Length - 1)].Translate();
+        Messages.Message(text, new LookTargets(wall), TierMessageTypes[tier], historical: false);
         MwahLog.Dev("wall kiss settle: " + pawn.LabelShort + " -> " + wall.LabelCap + " tier=" + tier);
     }
 }

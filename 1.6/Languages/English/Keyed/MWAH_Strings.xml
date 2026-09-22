@@ -35,6 +35,20 @@
   <MWAH.KissWall.Result.Moved>{PAWN} shared a long kiss with {WALL}. {PAWN} swears the wind answered.</MWAH.KissWall.Result.Moved>
   <MWAH.KissWall.Result.Devoted>{PAWN} kissed {WALL} with true devotion, then lingered. Love need not be mutual.</MWAH.KissWall.Result.Devoted>
 
+  <!-- 亲墙结算旁白池：每次结算随机播一条，拼在结果句之后（墙学观察，中英逐条对译） -->
+  <MWAH.KissWall.Flavor.0>The wall said nothing — which already makes it the best colleague anyone has ever had.</MWAH.KissWall.Flavor.0>
+  <MWAH.KissWall.Flavor.1>A witness has decided, for the good of everyone, to pretend this didn't happen.</MWAH.KissWall.Flavor.1>
+  <MWAH.KissWall.Flavor.2>Structural integrity: unaffected. Reputation: a different kind of damage.</MWAH.KissWall.Flavor.2>
+  <MWAH.KissWall.Flavor.3>The spider in the corner has recorded the whole thing in its web.</MWAH.KissWall.Flavor.3>
+  <MWAH.KissWall.Flavor.4>After years of bearing loads, the wall is being weighed in an entirely new way.</MWAH.KissWall.Flavor.4>
+  <MWAH.KissWall.Flavor.5>The warden wrote "on duty" in the log, then rubbed their eyes.</MWAH.KissWall.Flavor.5>
+  <MWAH.KissWall.Flavor.6>No lipstick on the plaster — but something else got left behind.</MWAH.KissWall.Flavor.6>
+  <MWAH.KissWall.Flavor.7>Someone heard a kiss from the next room. It was a wall.</MWAH.KissWall.Flavor.7>
+  <MWAH.KissWall.Flavor.8>The wall, for the record, says it can hold this weight.</MWAH.KissWall.Flavor.8>
+  <MWAH.KissWall.Flavor.9>Mechanically, nothing was gained. Emotionally, everything was.</MWAH.KissWall.Flavor.9>
+  <MWAH.KissWall.Flavor.10>No repair bill will ever mention this one.</MWAH.KissWall.Flavor.10>
+  <MWAH.KissWall.Flavor.11>The silence of stone, they say, is deafening.</MWAH.KissWall.Flavor.11>
+
   <!-- 亲吻导演台 -->
   <MWAH.Director.PickFirst>Who is starting the kiss?</MWAH.Director.PickFirst>
   <MWAH.Director.PickSecond>Who does {PAWN} want to kiss?</MWAH.Director.PickSecond>

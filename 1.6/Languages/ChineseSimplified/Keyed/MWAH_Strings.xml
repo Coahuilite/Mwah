@@ -35,6 +35,20 @@
   <MWAH.KissWall.Result.Moved>{PAWN} 与 {WALL} 久久相吻。{PAWN} 发誓感觉到了一丝回应的风声。</MWAH.KissWall.Result.Moved>
   <MWAH.KissWall.Result.Devoted>{PAWN} 深情亲吻了 {WALL}，并在原地伫立良久。爱情不需要双向奔赴。</MWAH.KissWall.Result.Devoted>
 
+  <!-- 亲墙结算旁白池：每次结算随机播一条，拼在结果句之后（墙学观察，中英逐条对译） -->
+  <MWAH.KissWall.Flavor.0>那堵墙一言不发——单这一点，它就已经是最好的同事了。</MWAH.KissWall.Flavor.0>
+  <MWAH.KissWall.Flavor.1>有目击者决定，为了大家好，假装什么都没发生。</MWAH.KissWall.Flavor.1>
+  <MWAH.KissWall.Flavor.2>结构完整性毫发无损，名誉是另一回事了。</MWAH.KissWall.Flavor.2>
+  <MWAH.KissWall.Flavor.3>墙角的蜘蛛把这一幕完完整整记进了网里。</MWAH.KissWall.Flavor.3>
+  <MWAH.KissWall.Flavor.4>承重多年，这堵墙第一次被人用完全不同的方式掂量。</MWAH.KissWall.Flavor.4>
+  <MWAH.KissWall.Flavor.5>监工在记录里写下"工作中"，然后揉了揉眼睛。</MWAH.KissWall.Flavor.5>
+  <MWAH.KissWall.Flavor.6>灰泥上没有唇印，但留下了别的什么。</MWAH.KissWall.Flavor.6>
+  <MWAH.KissWall.Flavor.7>隔壁听见了吻的声音，赶过来，发现是墙。</MWAH.KissWall.Flavor.7>
+  <MWAH.KissWall.Flavor.8>墙表个态：这点重量，撑得住。</MWAH.KissWall.Flavor.8>
+  <MWAH.KissWall.Flavor.9>力学上什么都没得到，感情上好像什么都完成了。</MWAH.KissWall.Flavor.9>
+  <MWAH.KissWall.Flavor.10>维修清单上永远不会写这一条。</MWAH.KissWall.Flavor.10>
+  <MWAH.KissWall.Flavor.11>石头的沉默，据说震耳欲聋。</MWAH.KissWall.Flavor.11>
+
   <!-- 亲吻导演台 -->
   <MWAH.Director.PickFirst>谁要发起亲吻？</MWAH.Director.PickFirst>
   <MWAH.Director.PickSecond>{PAWN} 想要和谁亲吻？</MWAH.Director.PickSecond>
