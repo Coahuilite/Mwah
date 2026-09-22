@@ -15,7 +15,7 @@
 ## 项目身份（不可漂移）
 
 - RimWorld mod，品牌短名 **`Mwah!`**，全称 **`Every Pawn Kisses Each Other`**；两者不翻译、不归一化、不改写。中文显示名 **`所有Pawn都给我啵嘴！`**（2026-09-02 定名；1.6 的 `About.xml` 没有按语言改名的机制，所以中文名只活在中文语言包里，模组列表仍显示英文名）。
-- `packageId` = `coahuilite.mwah`，发布后不可改。工程身份标识为 `Mwah`（命名空间、程序集、源码目录与解决方案同名同源）。
+- `packageId` = `coahuilite.mwah`，发布后不可改。工程身份标识为 `Mwah`（命名空间、程序集与源码目录同名同源；无解决方案文件）。
 - 命名前缀：Def 用 `MWAH_`，Keyed 键用 `MWAH.`，日志用 `[MWAH] `（硬编码英文，不本地化、不用占位键）。
 - 版本单一主源是 csproj 的 `<Version>`，`About.xml` 的 `modVersion` 只跟随；产品版本是 SemVer。
 

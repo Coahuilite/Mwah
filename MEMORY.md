@@ -3,17 +3,18 @@
 ## 当前耐久状态
 
 - RimWorld 1.6 模组，`packageId` `coahuilite.mwah`，产品版本 **0.1.0**（csproj `<Version>` 为主源，About `<modVersion>` 跟随）。尚未发布、无远端仓库、无创意工坊条目。
-- 功能面：**仅 live map、仅单机、零 Harmony**。三条发起路径：①选中可下令的 pawn 右键另一 pawn；②底栏「啵嘴导演台」→ 原版 `Find.Targeter` 两步点选，可指定地图上任意两个 pawn（含玩家管不着的）；③`KissAmbient` 定时促成玩家管不着的单位（默认关）。三层判定见「谁能亲：三层边界」。表演 = **定台左右对向**（见「工程决定」，已取代旧的 `PathEndMode.Touch` 贴脸）+ 按间隔抛原版爱心，结束各自回原位。有 `needs.mood` 的按**自己**的 `SocialImpact` 拿心情，没有的什么都不加。
+- 功能面：**仅 live map、仅单机、零 Harmony**。三条发起路径：①选中可下令的 pawn 右键另一 pawn；②底栏「亲吻导演台」→ 原版 `Find.Targeter` 两步点选，可指定地图上任意两个 pawn（含玩家管不着的）；③`KissAmbient` 定时促成玩家管不着的单位（默认关）。三层判定见「谁能亲：三层边界」。表演 = **定台左右对向**（见「工程决定」，已取代旧的 `PathEndMode.Touch` 贴脸）+ 按间隔抛原版爱心，结束各自回原位。有 `needs.mood` 的按**自己**的 `SocialImpact` 拿心情，没有的什么都不加。
 - 设计取向：**纯娱乐、门槛尽量低**——不限阵营、不限种族、不要求征召。这是维护者的立场，2026-09-02 明确重申过：玩家反馈"想要只撮合殖民地"用**门禁滑条**承接（出厂停在最右档 = 双不限），**不改默认值**。但"零门槛"从来不是事实，也不该假装是：原版 `CanTakeOrder` 与 `ShouldGenerateFloatMenuForPawn` 在 provider 之前就把关，动物与中立者当不了发起方、倒地者连菜单都不生成。2026-09-02 边界收敛后，本模组自己的前提写成 `KissBoundary` 三层，不再用"种族"近似"能力"。收益面保守（见「工程决定」）。工作区目录名 `every_pawn_kiss_each_other/` 是历史值，不构成身份。
 - 明确不做（不是待办）：世界地图/商队途中、RimWorld Multiplayer 同步、真·贴合亲吻动画、Downed 者当发起方（需 Harmony 放开原版闸门）。
 - **不做 junction**：`Mods/` 与 `Mods/*` 一律不建、不校验、不假设存在；复制模组与实机测试由维护者本人执行（2026-09-02 维护者指令）。
 
 ## 命名决定（2026-09-02 定稿）
 
-- 品牌短名 **`Mwah!`**，全称 **`Every Pawn Kisses Each Other`**，中文显示名 **`所有Pawn都给我啵嘴！`**（2026-09-02 定名；英文侧一律照旧。1.6 `ModMetaData.Init` 只读 `About/About.xml`，无按语言改名机制 ⇒ `About.xml <name>` 保持英文，中文名落在中文 Keyed 的分类名与门禁最右档），`packageId` = `coahuilite.mwah`，前缀 `MWAH_` / 键前缀 `MWAH.` / 日志 `[MWAH]`。工作区目录名保留 `every_pawn_kiss_each_other/`，工程身份一律 `Mwah`。
+- 品牌短名 **`Mwah!`**，全称 **`Every Pawn Kisses Each Other`**，中文显示名 **`所有Pawn都给我啵嘴！`**（2026-09-02 定名；英文侧一律照旧。1.6 `ModMetaData.Init` 只读 `About/About.xml`，无按语言改名机制 ⇒ `About.xml <name>` 保持英文；中文名在中文语言包里只活在一个地方——Keyed 的分类名 `MWAH.SettingsCategory`。门禁最右档 2026-09-02 当日定的是品牌名，现已改普通文案 `每个小人都互相亲吻`，见下方文案裁定），`packageId` = `coahuilite.mwah`，前缀 `MWAH_` / 键前缀 `MWAH.` / 日志 `[MWAH]`。工作区目录名保留 `every_pawn_kiss_each_other/`，工程身份一律 `Mwah`。
 - 候选与淘汰理由（已核实部分标注依据）：`KISS_` 全称最直白但作为通用前缀撞车概率与工坊检索噪音最高（**注意：并非原版占用**——rimsage 核实原版无任何含 `kiss` 的 defName，仅 `Tales_DoublePawn_Relationships.xml` 有 "deeply kissing" 文案）；`PECK_` 是真词"轻吻"但被"鸟啄/轻敲"次要义稀释，且 `PECK_` 无法由全称首字母正向拼出；`CHUU_`（ちゅっ）对中文/ACG 受众有效但英文玩家不直觉；`XOXO_` 的 X 与"处决/取消"视觉混淆且含我们未实现的拥抱语义；`SMOOCH_` 前缀过长。
 - 原版 token 占用核查结论：`Mwah / Peck / Chuu / Snog / Xoxo / Smooch` 在 1.6+Odyssey 的 defName、`Defs/Core/Names` 人名部件中**均无占用**（rimsage 检索为空）。
 - `MWAH` 明确**不**做全称首字母展开，它是拟声词；全称负责"指示所有小人互亲"的语义，缩写负责菜单与日志里的嘴声。
+- **文案裁定（2026-09-22 维护者指令，覆盖 2026-09-02 的提示语钦定）**："啵嘴"只允许出现在中文显示名 `所有Pawn都给我啵嘴！`（`MWAH.SettingsCategory` 一处）；**一切游戏内文案统一用"亲吻/吻"措辞**——底栏按钮 `亲吻导演台`、点选提示 `谁要发起亲吻？` / `{PAWN} 想要和谁亲吻？`、门禁灰项 `…不想和 …亲吻`、想法条目 `被{0}亲吻过` / 意见栏 `我们的那一吻` / 描述 `有人吻了我，我也吻了回去。`、工作条 `亲吻TargetA。`、设置项 `自主亲吻` / `亲吻冲动间隔` / `无视亲吻冷却` / `亲吻导演台按钮`。英文侧不变（本来就是 kiss 措辞）。历史上引用过旧提示语的矩阵行（`TODO.md`）与本文件已同步；`MEMORY.md` 里"维护者要求『所有 pawn 都啵嘴』"那处是需求原话的引用，保留。
 
 ## 原版能力边界（RimSage 1.6 + Odyssey 源码核验，2026-09-02）
 
@@ -32,13 +33,23 @@
 - **`GameComponent` 必须有 `(Game)` 构造器**：`Game.FillComponents` 用 `Activator.CreateInstance(item2, this)`（`this` 是 `Game`）。缺它不编译失败、不弹窗，只在 Player.log 留一条 `Could not instantiate a GameComponent of type X: MissingMethodException`，组件从此静静缺席，`GameComponentTick/OnGUI` 一次都不跑 —— "代码写了却完全不生效"的头号成因。加任何组件类前先查它的实例化契约。
 - **爱心特效**：就是 `FleckMaker.ThrowMetaIcon(cell, map, FleckDefOf.Heart)`（`JobDriver_Lovin` 常量 100 tick）。`Heart` 是 **FleckDef**（`Things/Mote/Heart`，`MetaOverlays`），不存在 `Mote_Heart`。
 - **双人锁定**：`JobDriver_Lovin` 的镜像 job 手法（给对方 `StartJob(同 def, 自己, InterruptForced)`）；`TryTakeOrderedJob(job, JobTag.Misc)` 用于回原位这类礼貌请求；`Pawn_JobTracker` 在 job 成功后自动接 `Wait_MaintainPosture`。
-- **心情缩放**：`Thought_Memory.MoodOffset() = stage.baseMoodEffect × moodPowerFactor + moodOffset`；`Thought_Memory.durationTicksOverride` 可逐实例改时长；`ThoughtDef.DurationTicks = durationDays × 60000`（0.25 日 = 6 游戏时）。原版 `Pawn_InteractionsTracker.AddInteractionThought` 是 public static 但乘的是**对方**的 `SocialImpact`，且前置要求 `Talking` 容量与 `interactions` tracker → 本模组自己写，取**自己**的 `SocialImpact`。
+- **心情缩放**：`Thought_Memory.MoodOffset() = stage.baseMoodEffect × moodPowerFactor + moodOffset`；`Thought_Memory.durationTicksOverride` 可逐实例改时长；`ThoughtDef.DurationTicks = durationDays × 60000`（1 日 = 24 游戏时；本模组的 durationDays 与"心情持续"出厂默认都是 1 日，两边必须对齐）。原版 `Pawn_InteractionsTracker.AddInteractionThought` 是 public static 但乘的是**对方**的 `SocialImpact`（并且把同一个值也乘进意见），且前置要求 `Talking` 容量与 `interactions` tracker → 本模组自己写，取**自己**的 `SocialImpact`，心情与意见共用一个倍率。
 - **不炸的边界**：`SkillNeed_BaseBonus.ValueFor` 对 `pawn.skills == null` 返回 `1f`，且 `SocialImpact` 标了 `neverDisabled` → 无技能单位取该属性安全。
 - **社会语义副作用开关**：`Thought_MemorySocial.Init()` 在 `ThoughtMaker.MakeThought` 内被调用并写入 `opinionOffset = stage.baseOpinionOffset` → MakeThought 之后再乘倍率才有效；`ShouldDiscard` 要求 `otherPawn != null && opinionOffset != 0`。
 - **底栏按钮可扩、右下角开关条不可扩**：`MainButtonDef` 是普通 Def（`workerClass/tabWindowClass/order/minimized/buttonVisible/defaultHotKey`），mod 纯 XML 就能加底栏按钮；`MainButtonsRoot.DoButtons()` 每帧按 `Worker.Visible` 决定显隐 ⇒ 自定义 worker 覆写 `Visible` 即可动态显隐，零 Harmony。但右下角那排显示开关**不是数据驱动的**：`PlaySettings.DoMapControls(WidgetRow)` 里是一串硬编码 `row.ToggleableIcon(...)`，无 Def 无列表 ⇒ 想加一格必须 Harmony（红线禁止）。底栏顺序就是各 Def 的 `order`（原版 Architect=1…Factions=90、Mechs=45、Ideos=100、**Menu 齿轮=500**），没有分组概念；**最后一个可见按钮吃掉剩余宽度**。底栏也**没有折叠/展开态**：按钮多了只是变窄（宽度 = 屏宽 ÷ 可见数，`minimized` 占半宽），1.5 的 archon ring 在 1.6 源码零命中。
 - **日志基础设施的上限**：Player.log 无逐行时间戳、全局 10000 条 Unity 日志上限（到顶后 `Debug.unityLogger.logEnabled = false`，我们的 `Log.*` 全被吞）、连续相同文本折叠到 99 次后不再写入 ⇒ 任何打点必须自带 `t=<tick>` 与唯一字段。设置文件只写非默认值（是 diff 不是快照），结算结果由存档 XML 自带证据。**细节与取舍见 `docs/kiss-trace-logging-design-zh.md`。**
 - **单位常量**：`GenTicks.TicksPerRealSecond = 60`、`GenDate.TicksPerDay = 60000` → 1 游戏小时 = 2500 tick。
 - 灰项惯例：`new FloatMenuOption(label, null, priority…)`（action 传 null 即禁用），原因写进 label 括号；可用 `FloatMenuUtility.DecoratePrioritizedTask` 标"会抢占"。菜单优先级有现成的 `MenuOptionPriority.InitiateSocial`。
+
+
+### 心情阶梯、归零名单、SocialImpact 的组成与玩家 HUD 可用面（2026-09-21 复核）
+
+- **原版正向社会心情的锚点**（`baseMoodEffect` / 存活游戏日 / 意见；官方简中名取自本机安装 `Data/Core/Languages/ChineseSimplified (简体中文).tar`，数值取自 `Data/Core/Defs/ThoughtDefs/*.xml`，2026-09-22 在 1.6.4871 rev590 直查）：`GotSomeLovin`（简中**滚床单**）**+8 / 3日**（意见 +6，stackLimit 10 ×0.6；`JobDriver_Lovin` 直接给，**不乘 SocialImpact**，只有 `LoveEnhancer` hediff 把 `moodPowerFactor` 提到 1.5）> `KindWordsMood`（简中**美言**）+5 / 2日（由 `KindWords` 社交记忆的 `thoughtToMake` 自动带出；`KindWords` 本体只有意见 +15/20日，`showBubble`）> `Nuzzled`（简中**被亲昵**，被 bonded 动物蹭）+4 / 1日 stackLimit 3 ×0.5，二档 +6（`stagesStack`，挂 `Psychopath` + `Inhumanized`）> `AteFineMeal`（简中**吃了精致食物**）+5 / 1日。`DeepTalk`（简中**深入交流**）/ `Chitchat`（简中**闲谈**）是**纯意见零心情**（+15/20日；闲谈按 +0.66/次累计、上限 +10）⇒ "会说话"在原版的载体是意见不是心情。`GotMarried`（简中**和{0}结婚**）+40/30日 是里程碑级；`AttendedParty`（简中**参加聚会**）+8/10日。**没有**"Got some rest"/"Saw beautiful"/"Social temperature"这类 def（beauty 走情境想法与 `SleptInBedroom` 系）。⇒ 本模组定档 **+5 / 1 游戏日 / stackLimit 2 ×0.5**（连亲两人上限 7.5，仍低于一次滚床单），依据钉在 `1.6/Defs/Kiss/MWAH_ThoughtDefs.xml` 的注释里。
+- **"这类人吃这套没用"只有名单式归零，没有数值式增减**：`ThoughtDef.nullifyingTraits` / `nullifyingTraitDegrees` / `neverNullifyIfAnyTrait` / `nullifyingHediffs` / `nullifyingGenes` / `nullifyingPrecepts` / `requiredTraits` / `requiredGenes` / `requiredHediffs`（全是 XML，零 Harmony）。归零点在**读取**：`Thought.MoodOffset()` 与 `Thought_Memory.MoodOffset()`（`Thought_Memory.cs:168`）首行都 `if (ThoughtUtility.ThoughtNullified(pawn, def)) return 0f;`，而 `TryGainMemory` 走的 `CanGetThought(pawn, def)` 默认 `checkIfNullified=false` **不挡存** ⇒ 条目仍进记忆表，只是被 `ThoughtHandler.GetAllMoodThoughts`（`MoodOffset() != 0f`）与意见分组过滤掉，面板不显示。原版实例：`Nuzzled` 挂 `Psychopath`，`KindWordsMood` 挂 `Inhumanized`（`MayRequire` Anomaly）。**没有任何原版特质/基因给社交心情做加减**。
+- **`SocialImpact` 就是原版唯一的"社交效果缩放"载体**（`Defs/Core/Stats/Stats_Pawns_Social.xml`）：`defaultBaseValue 1`、`minValue 0.2`、`neverDisabled`；社交技能 `SkillNeed_BaseBonus` baseValue **0.82** + **0.0275/级**（0 级 82% → 10 级 ≈109.5% → 20 级 137%）；容量因子 **Talking 权重 0.9**（`allowedDefect 0.05`）+ **Hearing 权重 0.3**；帽子类 `equippedStatOffsets` +10%~20%。施加点在 `Pawn_InteractionsTracker.AddInteractionThought`：`moodPowerFactor = otherPawn.GetStatValue(SocialImpact)`，且 social 变体**同时**把意见 `opinionOffset *= ` 同一个值 —— 即"乘的是**发起方**的影响"，且心情与意见共用一个倍率（本模组乘自己的 SocialImpact，是刻意的口径差异，见 About 文案）。
+- **异族（xenotype）在 1.6 不带任何数值口子**：`XenotypeDef` 只有基因清单与生成/战斗元数据，**没有** `statOffsets`（老维基那格是 `XenotypeBase` 时代的race侧数据）；带 stat 偏移的是 `GeneDef`，而原版**没有一个基因动 `SocialImpact`**（`<SocialImpact>` 只出现在帽子与仪式结局里）。基因能动的社交杠杆全是频率或意见：`lovinMTBFactor`（Libido_Low 2 / _High 0.5）、`socialFightChanceFactor`（DeadCalm 0 / Aggressive 2 / Hyper 3）、`missingGeneRomanceChanceFactor` 0.2（Furskin 等外观基因）、`statOffsets PawnBeauty`（Beauty_* ±1/±2 →  Pretty/Ugly 情境意见 ±20/±40）。
+- 备选缩放口子（本模组刻意不用）：`ThoughtDef.effectMultiplyingStat` + `effectMultiplyingStatCurve` 能在 XML 里按属性缩放心情（`Thought.cs:124-126`，memory 也吃），但它读的是**持有者自己**的属性、且**不碰 memory 变体的意见**；要用"发起方的魅力"缩放仍然只能像 `AddInteractionThought` 那样在代码里赋 `moodPowerFactor`。原版用它的实例是 `PsychicSensitivity` 一类，没有 `SocialImpact`。
+- **1.6 玩家 HUD 的可用面**（逐条对着 `Krafs.Rimworld.Ref 1.6.4871` 元数据 + 反编译源码核过；完整清单与成本评估在 `docs/hud-ui-surfaces-1.6.md`）：零 Harmony = 底栏 `MainButtonDef`、右键 `FloatMenuOptionProvider`（两者已在用）、选中后的 **gizmo 条**（钩子是 `public virtual ThingComp.CompGetGizmosExtra()` 与 `Hediff.GetGizmos()`；1.6 **没有** `CompGetGizmoExtra` 接口类型，挂给 pawn 要用 XML `<comps>` 把 comp 加到 `Human` 的 ThingDef 上）、检视面板页签（`ThingDef.inspectorTabs` 是 `List<Type>`，XML `<Operation>` 补进 vanilla def 即可）、建筑菜单分类 `DesignationCategoryDef.specialDesignatorClasses`、右侧警报列 `Alert`（`AlertsReadout.allAlertTypesCached` 扫子类 ⇒ 连 Def 都不用写）、`GameComponent/MapComponent.MapComponentOnGUI`、**游戏提示窗 `TipSetDef`（`TipSetDefOf.GameplayTips`，纯 XML）**、`KeyBindingDef`、`HediffDef/GeneDef.renderNodeProperties` 头顶叠加、`ITab_Pawn_Log` + `PlayLogEntry_Interaction`、`RoomStatDef` 行、`PawnColumnDef` 列。只能 Harmony（判为不做）= 右下角显示开关条（`PlaySettings.DoMapControls` 元数据里就是 **Private**，公开的只有 `DoPlaySettingsGlobalControls`）、殖民者栏格子（`ColonistBar.cachedEntries` + `ColonistBarColonistDrawer` 的 `Icon_*` 硬编码字段表）。**1.6 不存在的名字**（别再按它们规划）：`GameUIRootDef`/`GameUITabDef`/`UIDataFolderDef`、`MainTabDef`/`ITabWindow`/`Dialog_InspectTab`、`ArchitectGridDef`/`ArchitectPatternDef`、`TipDef`/`TipTransmitter`、`PlayLogUtility`、`MainDialogCrossMap`。
 
 ## 谁能亲：三层边界（RimSage 1.6 源码核验，2026-09-02）
 
@@ -75,9 +86,9 @@
 - 导演台形态（2026-09-04 重写）= 底栏按钮 + 原版 `Find.Targeter` 两步点选：`MainButtonWorker_KissDirector.Activate()` → `KissDirector.Toggle()`，`KissDirector`（静态）链式 `BeginTargeting` 选 A、选 B，派发走 `KissUtility.BeginDirected`。此前手搓 `KissPick : GameComponent` 收 MouseDown + 画提示条的两版都有 bug（坐标系、常驻窗口掐绘制），已废弃。
   取点与目标高亮全部交给原版 `Targeter`（`ForPawns()` 参数、跟随指针高亮、左键取点、右键/Esc 取消），不再自己调 `GenUI.ThingsUnderMouse`、不再手搓绘制/输入。叠格优先级由 `Targeter` 内部按原版规则决定，与右键菜单一致。
   显隐由设置项 `directorButton`（默认开）控制，落点是覆写 `MainButtonWorker.Visible`（`MainButtonDef.buttonVisible` 是静态 XML 值，做不到跟着设置走）。关掉时正在进行的点选由 `KissDirector` 结束（`Find.Targeter.StopTargeting`）。
-  提示语按维护者钦定：`谁要发起啵嘴？` → `{PAWN} 想要和谁啵嘴？`；取消方式（右键 / 再点一次按钮）不占提示语，放按钮 tooltip 与设置项说明里。
+  提示语按维护者钦定：`谁要发起亲吻？` → `{PAWN} 想要和谁亲吻？`；取消方式（右键 / 再点一次按钮）不占提示语，放按钮 tooltip 与设置项说明里。
   代价（维护者已认）：点选模式没有"灰按钮"，可行性只能在点完之后用消息告知。
-- **toil 的 finish action 里禁止同步起 job（2026-09-04 实测定罪）**：`TryTakeOrderedJob` 在 pawn 空闲时**同步** StartJob，而新 job 的 StartJob 会回头结束正在收尾的旧 job ⇒ 旧 job 的 finish action 重入 ⇒ 同一 tick 内无限递归。现场特征：日志同一条文本刷到 Unity 折叠上限 99、`Mwah-trace.log` 停行、主线程卡数秒、进程没有"未响应"直接消失、转储栈深到 ntdll 里踩空。本模组的"回原位"因此改为排队（`KissUtility.QueueReturnHome`），下一 tick 由 `KissTicker.GameComponentTick` 发放；所有 finish action 加幂等闸。**任何 finish action 都不得直接 StartJob/TryTakeOrderedJob。**
+- **toil 的 finish action 里禁止同步起 job（2026-09-04 实测定罪）**：`TryTakeOrderedJob` 在 pawn 空闲时**同步** StartJob，而新 job 的 StartJob 会回头结束正在收尾的旧 job ⇒ 旧 job 的 finish action 重入 ⇒ 同一 tick 内无限递归。现场特征：日志同一条文本刷到 Unity 折叠上限 99、`Mwah-trace.log` 停行、主线程卡数秒、进程没有"未响应"直接消失、转储栈深到 ntdll 里踩空。本模组的"回原位"因此改为排队（`KissReturnQueue.Enqueue`），下一 tick 由 `KissTicker.GameComponentTick` 发放；所有 finish action 加幂等闸。**任何 finish action 都不得直接 StartJob/TryTakeOrderedJob。**
 - **调试器选型（2026-09-03 实测结论）**：dnSpy 一类 .NET 调试器 attach 走 ICorDebug，只认 CLR；RimWorld 是 MonoBleedingEdge ⇒ **活体 attach 拿不到托管栈**，dnSpy 只剩反编译价值。Mono 软调试器要启动时带 `--debugger-agent` 参数，对已装好的 Steam 版不现实。故 dev 构建自带旁路采样器 `KissTrace`：后台线程 1Hz 把主线程写的阶段戳（stage/walk/lock/perform/end + 剩余 tick）抄进 savedata 目录的 `Mwah-trace.log`；主线程卡死 ⇒ 文件停行，崩溃 ⇒ 看尾巴。release 构建里该类与调用点整体编译消失。
 - **门禁豁免开关**（2026-09-04 维护者）：设置项 `noCooldowns`（默认关）跳过单人/成对冷却两条；"正在亲"不跳 —— 镜像 job 结构上不容第三者。维护者的理由：玩家是超凡智能的大手，想撮合谁就撮合谁。
 - 亲吻时钟 = **只归发起方**（2026-09-04 实测定罪）：双方各数各的 150 tick 时，同一 tick 里谁先被 tick 循环处理谁先 completed=True 并结束 job，另一方的对称失败判定立刻把发起方踢成 completed=False；而 Settle 要求"发起方且 completed=True"，于是被动方先结束的那一半概率里谁都没心情（实测"有心情的 pawn 也不是 100%"）。现在被动方不倒数，只靠失败判定在发起方离场时结束 ⇒ 每桩跑满的亲吻必定双方各结算一次。
@@ -89,20 +100,28 @@
 - 默认 `changeOpinion=false`：用普通 `Thought_Memory`，不写好感度、不喂原版恋爱链；开启后切换到 `Thought_MemorySocial` 变体。
 - 散场判定 = **双向对称**（2026-09-04 时钟重写后）：任一方掉出 kiss job，另一方立刻 `completed=False` 结束、**不**结算心情（对齐 TODO「中途散场不发心情」）。旧的"主动方不设失败条件、对象接不下 job 时发起方独自完成亲吻"已随之作废——倒地但清醒、有 jobs 的对象会被定台钉在自己格上、照样进入 kiss job，所以"接不下 job"对过了门禁的配对基本不可达。**待决策**：是否还要保留"对象完全接不下镜像 job 时发起方独角戏"这条兜底（要则主动方失败条件需按 `partnerTookJob` 之类标志豁免）。
 - 设置生命周期：内存即时生效 + 磁盘 0.35 s 防抖合并 + 关窗强制 flush + 失败保留 dirty 并 2 s 重试（依据 `modding_documents/draft/modsettings-value-lifecycle-decision-tree-zh.md`）。
-- 时长存储单位统一 tick；`thoughtDurationGameHours` 按 1/4 游戏小时量化，避免脏小数进配置文件。
+- 时长存储单位统一 tick（硬边界）。心情持续原先存的是浮点游戏小时 `thoughtDurationGameHours`（靠 1/4 小时量化遮脏小数），2026-09-21 改成整数 `thoughtDurationTicks` + 滑条 `step=625`（=1/4 游戏时）量化 ⇒ 全部时长项走同一条路：`MwahTime.FormatTicks` 一次给出 tick / 现实秒 / 游戏时。`MwahTime` 同时删掉反换算（秒/游戏时 → tick）——"先按别的单位表达再换算回来"正是配置漂移的来路。老 Settings.xml 的这个 key 读不到 ⇒ 回出厂默认；0.1.0 未发布，不留兼容层（与 09-02 删两个旧开关同一口径）。
 - 本仓库的骨架、四件套记忆文件与四份脚本已抽象上收为通用指南：`modding_documents/RimWorld_Mod_RepoInit_AgentMemory_And_Packaging_Guide_zh.md`（占位符版，无项目身份）。同类新工程先读它，不要重新发明。注意 `modding_documents/` 本身不在任何 git 仓库下，改它不产生提交。
-- 骨架照 `RimWorld_Mod_Skeleton_Guide_bilingual.md` Level 2 + `let_me_gnaw_on_you`/`squeaky_ratkin` 现行做法：版本化 `1.6/`、`.slnx` only、`net472` + `Krafs.Rimworld.Ref 1.6.*`、语言目录用 `ChineseSimplified`（`LanguageDatabase` 硬编码名录里的真实名字）。
-- **静态状态跨局泄漏（2026-09-10 修复）**：`KissCooldown` 两张表、`KissUtility.PendingReturns`、`KissDirector.Active` 都是 static，而 `TicksGame` 与 `thingIDNumber` 每局从 0 重新分配 ⇒ 上一局的冷却 `until` 会把新局撞键的 pawn 判成超长冷却，回位队列持有旧局 pawn 引用，Active 残留触发误收点。清零点 = `KissTicker` 的 `(Game)` 构造器（`Game.FillComponents` 每次建局/读档都重新实例化组件，构造器即"每局必跑"钩子）。教训：**static 的寿命默认是进程，不是游戏局；任何按局语义的 static 必须在 GameComponent 构造器里重置**。
+- 骨架照 `RimWorld_Mod_Skeleton_Guide_bilingual.md` Level 2 + `let_me_gnaw_on_you`/`squeaky_ratkin` 现行做法：版本化 `1.6/`、`net472` + `Krafs.Rimworld.Ref 1.6.*`、语言目录用 `ChineseSimplified`（`LanguageDatabase` 硬编码名录里的真实名字）。**没有解决方案文件**：2026-09-21 删掉 `Mwah.slnx`（IDE 直接开 csproj 就够；解决方案是第二份要人同步的清单，而构建与打包脚本本来就只指 csproj）。
+- **静态状态跨局泄漏（2026-09-10 修复）**：`KissCooldown` 两张表、`KissReturnQueue.Pending`（2026-09-21 起在这个类里，原先是 `KissUtility.PendingReturns`）、`KissDirector.Active` 都是 static，而 `TicksGame` 与 `thingIDNumber` 每局从 0 重新分配 ⇒ 上一局的冷却 `until` 会把新局撞键的 pawn 判成超长冷却，回位队列持有旧局 pawn 引用，Active 残留触发误收点。清零点 = `KissTicker` 的 `(Game)` 构造器（`Game.FillComponents` 每次建局/读档都重新实例化组件，构造器即"每局必跑"钩子）。教训：**static 的寿命默认是进程，不是游戏局；任何按局语义的 static 必须在 GameComponent 构造器里重置**。
 - **链式 Targeting 的 cleanup 竞态（2026-09-10 修复）**：原版 Targeter 事件顺序是 action → StopTargeting → actionWhenFinished，所以第一跳的 actionWhenFinished 会在第二跳 `BeginSecondPick` 已开跑**之后**执行；两跳都直接 `Active = false` 会让第二跳整个窗口里 Active 是假的（KissTicker 自动收点与按钮 Toggle 全部失灵）。解法 = `targetingGeneration` 代号：每跳自增，cleanup 只在代号仍是自己时清位。凡是"链式起跳 + 共享开关"的组合都要走这条路。
 - **角色互换只归右键路径（2026-09-10）**：`Propose(selected, target, allowRoleSwap)`，右键传 true（About.xml 承诺"选中方走不动就换对方走"），`BeginDirected`（导演台/自主派发）恒 false —— 无 swap 才能保证"点谁谁亲"、导演台消息与事实一致、自主派发绝不把玩家侧小人拉起来当发起方。`NearestWilling` 另跳过 `IsPlayerControlled && Drafted` 的接收者：交火中的征召小人不为自主亲吻让路。
 - **冷却记账位置（2026-09-10）**：`KissCooldown.Mark` 从 `Start()` 挪进 `JobDriver_Kiss.ToilTakeStage.initAction` 且只记发起方 —— 预订失败（对方同 tick 被抢）时 job 没落地，提前记账就是空罚一轮 2.4 游戏时的成对冷却。
 - **定台寻路预算（2026-09-10）**：`Usable` 末步是 `CanReach`（A*），140 径向候选 × 2 分配理论最坏 ~280 次 A* 同 tick 烧完 = 密集废墟里的可感卡顿（"亲一会卡住"矩阵项头号嫌疑）。现在失败计数到 `ReachCheckBudget=24` 即放弃定台走贴脸兜底 —— 失败路径本来就要走兜底，只省时间不换行为。
+- **渠道构建纪律（2026-09-21 修）**：`MWAHBuildFlavor`（Dev/Steam/GitHub）决定 `MWAH_DEV` 是否存在，而 dev 打点类 `KissTrace` 整体包在 `#if MWAH_DEV` 里 —— `JobDriver_Kiss` 有一行没包 #if 的 `KissTrace.Clear()`，于是 **Steam / GitHub 渠道根本编译不过**，而默认（Dev）渠道一路绿、`verify-local` 也绿（它只建默认渠道）。修法 = `#if/#else` 整条收进 `KissTrace.cs` 自己：dev 侧是真采样器，release 侧是同签名空壳且每个方法打 `[Conditional("MWAH_DEV")]` ⇒ 调用点在 release 编译期消失，而 JobDriver / Mod.cs 里不再有预处理噪音（打点位置就是表演位置，读代码的人不用在 #if 之间跳）。`verify-local` 门 1b 从此把三个渠道各编一遍。教训：**"条件编译的东西"必须自带 release 侧替身，且门必须真去编那个渠道**。
+- **`MwahMod.Settings` 永不为 null（2026-09-21）**：静态配置项出厂就是一个装着默认值的实例，Mod 构造时被 `GetSettings<MwahSettings>()` 整个替换。此前 6 处判空（`KissBoundary` 两条结构/门禁分支、`MainButtonWorker.Visible` 的 `?.`/`?? true`、`KissTicker`、`KissAmbient`）与另外十几处**直接解引用**的写法并存 —— 判空既保护不了任何东西（同一条判定链下游本来就裸读），又给"配置没读到"编出一条没人能复现的假原因。任何静态状态：要么保证非 null 并删光判空，要么处处都判，别留半套。
+- **一次判定拿到原因（2026-09-21）**：`KissUtility.BeginDirected` 返回 `KissProposal`（不再只回 `null`），`KissDirector.Dispatch` 直接用 `Allowed` / `BlockedReason`；删掉 `DirectPreview` —— 它存在的唯一理由是"发起那条路只回 bool，拒绝时想知道原因只能再判一次"，而 `Propose` 末尾的 `CanReach` 是 A*，等于每次被拒白烧一次寻路，还可能两次结论不一致。不变式（`Allowed ⇒ 双方非空`）收在 `KissProposal.TryGetPair()` 一处。
+- **自主派发有上限（2026-09-21）**：`KissAmbient` 一个周期内最多真正发起 `MaxDispatchAttemptsPerCycle = 6` 次。没有这层上限时，一张"谁都亲不成"的图（全体冷却、或隔着一道河）会在同一个 tick 里把每个非玩家 pawn 都拿来 `Propose` 一遍，而每次 `Propose` 末尾都是 A*。起点本来就是随机扫，上限只把剩下的机会推到下一个周期，不改公平性。
+- **`KissBoundary` 两层不再互相重跑（2026-09-21）**：`CanInitiate` 只查主动层三条（能走、有嘴、生命阶段），参与层由调用方按顺序先查。旧写法里 `Propose` 对同一个 pawn 跑两遍 `Awake()/IsBurning()/IsMutant/IsInteractionBlocked`（后者还要遍历 hediff），而这条链在自主派发的候选扫描里是 O(N²)。前提写在方法注释里：走完整链的入口只有 `Propose` 与 `PairLooksKissable`。
+- **回原位独立成类（2026-09-21）**：`Systems/KissReturnQueue.cs` —— `Enqueue` / `Drain` / `Reset` 三件事，递归成因与"为什么要换出队列再遍历"都写在类注释里。原先这四个成员挤在 `KissUtility` 中后段，把"该不该亲 / 谁去亲"的判定与 job 收尾簿记混在一个 280 行的文件里；`KissUtility` 现在只剩判定与发起。发放侧的 `Request` 转私有（只有 `Drain` 调）。
+- **心情数值定档（2026-09-21，重标）**：`MWAH_Kissed` = **+5 心情 / 1 游戏日 / stackLimit 2 ×0.5**，`MWAH_KissedBond` 再加 **+6 意见**（同一时长，同一对最多 1 条）；两个 def 都挂 `nullifyingTraits: Psychopath` + `nullifyingHediffs: Inhumanized`（后者 `MayRequire` Anomaly）。缩放仍是代码里一行 `moodPowerFactor = 自己 SocialImpact × 设置倍率`，但 2026-09-21 起**意见也乘同一个倍率**（原版 `AddInteractionThought` 就是心情与意见共用一个 `statValue`；早先只乘心情是半套）。取舍与整条原版阶梯钉在 `1.6/Defs/Kiss/MWAH_ThoughtDefs.xml` 的注释里。
+- **不做的事：按特质/异族自造一张亲吻数值表**。原版的载体只有三类 —— ①`SocialImpact`（技能 + 嘴耳容量 + 帽子，任何 mod 的基因 statOffsets 想接就自动接上）②ThoughtDef 上的 `nullifying*` / `required*` 名单（本次只用了这一条）③`lovinMTBFactor` / `socialFightChanceFactor` 这类**频率**因子，不是心情。异族本身（`XenotypeDef`）在 1.6 不带任何 stat，谈"异族加成"必须落到基因上，而原版没有一个基因动 `SocialImpact` ⇒ 我们要加的就是自造机制，与"纯娱乐、门槛低、收益保守"的立场没冲突但也无先例支撑。**二期若要做差异化，正确的轴是关系**（`pawn.relations` + `ThoughtDef.stages` 自选 stageIndex：路人 / 朋友 / 情人三档），那才是原版给"这个吻值多少"准备的载体。
 - 设置页自动测高：`viewRect.height = list.CurHeight + 16f` 回写（1.6 的 `Listing_Standard` **没有** `BeginScrollView/EndScrollView` 实例方法，别想当然）。verify-local 门 9b：`RestoreDefaults` 必须逐字段 `= Constants.*`，新增设置项漏写恢复默认会直接红。
 - 主动派发（导演台/自主）与右键共用 `Propose` 但语义不同的地方清单：swap（见上）、拒绝提示（右键弹 Message，派发静默/事后弹）、`playerForced`（派发打，右键不打）。
 
 ## 仓库结构与导航
 
-运行内容全部在版本目录 `1.6/` 下（`Defs/Kiss/`、`Languages/{English,ChineseSimplified}/`、`Assemblies/` 为构建产物）；`LoadFolders.xml` 映射 `/` 与 `1.6`；解决方案只有 `Mwah.slnx`，不建 `.sln`；C# 源在 `Source/Mwah/`（`DefOf/ Actions/Kiss/ Jobs/ Rewards/ Systems/`）。目录细节以 `ls` 为准，本节不维护树状图。
+运行内容全部在版本目录 `1.6/` 下（`Defs/Kiss/`、`Languages/{English,ChineseSimplified}/`、`Assemblies/` 为构建产物）；`LoadFolders.xml` 映射 `/` 与 `1.6`；无解决方案文件（见「工程决定」）；C# 源在 `Source/Mwah/`（`DefOf/ Actions/Kiss/ Jobs/ Rewards/ Systems/`）。目录细节以 `ls` 为准，本节不维护树状图。
 | 要看什么 | 位置 |
 |---|---|
 | 右键入口 | `Source/…/Actions/Kiss/FloatMenuOptionProvider_Kiss.cs`（原版反射发现，无需注册） |
@@ -111,9 +130,11 @@
 | 心情与社交缩放 | `Source/…/Rewards/KissMoodReward.cs`（无 `needs.mood` 者静默） |
 | 谁能亲谁（范围档位） | `Source/…/Actions/Kiss/KissScope.cs` | 七档累积析取，出厂最右档 |
 | 冷却 | `Source/…/Systems/KissCooldown.cs`（会话内内存态） |
+| 亲完回哪去 | `Source/…/Systems/KissReturnQueue.cs`（换队列发放，挡住同 tick 递归） |
 | 单位换算唯一入口 | `Source/…/MwahTime.cs` |
 | 设置项与生命周期 | `Source/…/MwahSettings.cs` + `Mod.cs`（即时生效 + 防抖落盘） |
 | 日志/打点设计与引擎上限 | `docs/kiss-trace-logging-design-zh.md` | 未实现，含保留意见与待决策 |
+| 玩家 HUD 还能挂在哪（1.6 全清单） | `docs/hud-ui-surfaces-1.6.md` | 零 Harmony 可用面 / 只能 Harmony 的面 / 结论：底栏仍做主入口 |
 | 打包与门 | `scripts/`；跨项目通用骨架见 `../modding_documents/RimWorld_Mod_RepoInit_AgentMemory_And_Packaging_Guide_zh.md`；原生崩溃（日志无栈的突发崩溃）排查见 `../modding_documents/RimWorld_NativeHeapCrash_Triage_Guide_zh.md`；本项目踩过的"静默失效"（引擎契约/输入层/Job 时钟，含 DefInjected 扁平键复发坑）汇总在 `../modding_documents/RimWorld_Mod_Silent_Failures_Engine_Contracts_zh.md` |
 
 ## 提交与命令实践
@@ -123,11 +144,11 @@
 - 改名类变更走"改动后新建提交"，不回写历史。
 - 分支模型：**原子提交落在 `dev`**，`main` 只在发布时前进（对应指南里的"main 保护 / dev 原子"）。2026-09-02 之前的 9 条提交实际全落在 `main`，`dev` 停摆 7 条 —— 已用纯 fast-forward 把 `dev` 指到 `main` 并切到 `dev` 工作，未动任何提交。远端与分支保护建立前，`main` 只是发布锚点。
 - 不入库：`dist/`、`1.6/Assemblies/*.{dll,pdb,xml}`、`Source/**/{obj,bin}`、`About/PublishedFileId.txt`、`.idea/`、`.vs/`。
-- 命令：`dotnet build Source/Mwah/Mwah.csproj -nologo`；`pwsh -NoProfile -File scripts/verify-local.ps1`（21 项静态与产物门）；`scripts/build-dev.ps1`（构建 + 出包）；`scripts/pack-dev.ps1`（只打包，需已有产物与 HEAD）。无测试工程；实机面见 `TODO.md`。
+- 命令：`dotnet build Source/Mwah/Mwah.csproj -nologo`；`pwsh -NoProfile -File scripts/verify-local.ps1`（24 项静态与产物门）；`scripts/build-dev.ps1`（构建 + 出包）；`scripts/pack-dev.ps1`（只打包，需已有产物与 HEAD）。无测试工程；实机面见 `TODO.md`。
 
 ## 验证状态
 
-- 已绿（离线）：`dotnet build` Debug/Release 均 **0 警告 0 错误**；`scripts/verify-local.ps1` 21 项全 `[ok]`（11 个 XML 良构、Keyed 中英各 65 键且集合一致、C# 引用的键双语齐备、DefOf↔defName 无孤儿、`driverClass` 与 `namespace.type` 一致、**DefInjected 顶层键必须是扁平 `DefName.字段`**、DLL 含 19 个关键符号、DLL 无 Harmony 符号、版本与 packageId 三处一致、无绝对本地路径、设置项字段↔Scribe key↔`Constants` 三处锁死共 15 项）。
+- 已绿（离线）：`dotnet build` Debug/Release 均 **0 警告 0 错误**；`scripts/verify-local.ps1` 24 项全 `[ok]`（11 个 XML 良构、Keyed 中英各 65 键且集合一致、C# 引用的键双语齐备、DefOf↔defName 无孤儿、`driverClass` 与 `namespace.type` 一致、**DefInjected 顶层键必须是扁平 `DefName.字段`**、DLL 含 19 个关键符号、DLL 无 Harmony 符号、**Steam / GitHub 两个渠道各自单独编译过**、版本与 packageId 三处一致、无绝对本地路径、设置项字段↔Scribe key↔`Constants` 三处锁死共 15 项）。
 - 实机进度（截至 2026-09-04）：**基本流、导演台两步点选、定台走位、爱心、回原位、崩溃递归修复**都已由 `Player.log`/`Mwah-trace.log` 观测到生效；**仍未逐条确认**的是：七档门禁逐档收窄、非人/mutant/仪式灰项文案、心情数值与 `SocialImpact` 缩放、左右对向的实际观感、翻译扁平键修复后的中文显示。矩阵见 `TODO.md`。
 - 「定义了却没人引用」的反向键检查是有价值的闸门：它在开发过程中抓到 `Mod.cs` 丢失 `SettingsCategory()` override —— 该方法返回非空是设置页出现在「模式选项」里的唯一条件，丢了就等于整个设置面不可达。删掉这条检查前必须先想清楚。
 - 产物：`scripts/build-dev.ps1` 出 `dist/dev/Mwah-dev-v<VERSION>-<shortsha>[-dirty].zip`（commit 见 `git log --oneline -1`，本文件不钉死哈希；`-EXP` 尾缀 2026-09-10 应维护者要求废止，dev 标签 = csproj `<Version>` 原样），包内 `version.txt` 三行 = 名称+标签 / build / commit；`dist/` 与 DLL 全 gitignored。

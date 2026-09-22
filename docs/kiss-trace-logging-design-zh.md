@@ -40,7 +40,7 @@
 |---|---|---|
 | **T0 下令** | `BeginKiss` → `jobs.StartJob` → `TryMakePreToilReservations` → `SetupToils()` → `ReadyForNextToil()` → `ToilGotoTouch.initAction`（记 home；已贴脸则直接 `ReadyForNextToil()`，否则 `StartPath`） | `order` + `start` + `toil:goto` |
 | **T1 到达** | `pather` 停止 → `ToilLockPartner`（`defaultCompleteMode = Instant`，同 tick 过）→ `ToilKiss.initAction` 面对面、`ticksLeft = DurationTicks` | `toil:lock` + `toil:kiss begin` |
-| **T2 = T1 + 时长** | `ticksLeft <= 0` → 末 toil → `EndCurrentJob(Succeeded)` → `AddFinishAction` 里 `Settle()` + `RequestReturnHome()` | `end` + `settle×2` |
+| **T2 = T1 + 时长** | `ticksLeft <= 0` → 末 toil → `EndCurrentJob(Succeeded)` → `AddFinishAction` 里 `Settle()` + `KissReturnQueue.Enqueue()` | `end` + `settle×2` |
 
 补充：`Settle` 一次调用算两人 ⇒ 该是一行两列；双方通常同 tick 结束但是两次独立调用 ⇒ 被动方另有一行 `role=passive`（对方接不下 job 时只有主动方一行，`partner=solo`）；已贴脸时 T1 == T0。
 
