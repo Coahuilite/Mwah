@@ -3,7 +3,7 @@
 ## 当前耐久状态
 
 - RimWorld 1.6 模组，`packageId` `coahuilite.mwah`，产品版本 **0.1.0**（csproj `<Version>` 为主源，About `<modVersion>` 跟随）。尚未发布、无远端仓库、无创意工坊条目。
-- 功能面：**仅 live map、仅单机、零 Harmony**。三条发起路径：①选中可下令的 pawn 右键另一 pawn；②底栏「亲吻导演台」→ 原版 `Find.Targeter` 两步点选，可指定地图上任意两个 pawn（含玩家管不着的）；③`KissAmbient` 定时促成玩家管不着的单位（默认关）。三层判定见「谁能亲：三层边界」。表演 = **定台左右对向**（见「工程决定」，已取代旧的 `PathEndMode.Touch` 贴脸）+ 按间隔抛原版爱心，结束各自回原位。有 `needs.mood` 的按**自己**的 `SocialImpact` 拿心情，没有的什么都不加。
+- 功能面：**仅 live map、仅单机、零 Harmony**。三条发起路径：①选中可下令的 pawn 右键另一 pawn；②底栏「亲吻导演台」开一块**非模态面板**（左/右头像框各走原版 `Find.Targeter` 单段点选，或「快速发配」两段链选完即派），可指定地图上任意两个 pawn（含玩家管不着的）；③`KissAmbient` 定时促成玩家管不着的单位（默认关）。三层判定见「谁能亲:三层边界」。表演 = **定台左右对向**（见「工程决定」，已取代旧的 `PathEndMode.Touch` 贴脸）+ 按间隔抛原版爱心，结束各自回原位。有 `needs.mood` 的按**自己**的 `SocialImpact` 拿心情，没有的什么都不加。
 - 设计取向：**纯娱乐、门槛尽量低**——不限阵营、不限种族、不要求征召。这是维护者的立场，2026-09-02 明确重申过：玩家反馈"想要只撮合殖民地"用**门禁滑条**承接（出厂停在最右档 = 双不限），**不改默认值**。但"零门槛"从来不是事实，也不该假装是：原版 `CanTakeOrder` 与 `ShouldGenerateFloatMenuForPawn` 在 provider 之前就把关，动物与中立者当不了发起方、倒地者连菜单都不生成。2026-09-02 边界收敛后，本模组自己的前提写成 `KissBoundary` 三层，不再用"种族"近似"能力"。收益面保守（见「工程决定」）。工作区目录名 `every_pawn_kiss_each_other/` 是历史值，不构成身份。
 - 明确不做（不是待办）：世界地图/商队途中、RimWorld Multiplayer 同步、真·贴合亲吻动画、Downed 者当发起方（需 Harmony 放开原版闸门）。
 - **不做 junction**：`Mods/` 与 `Mods/*` 一律不建、不校验、不假设存在；复制模组与实机测试由维护者本人执行（2026-09-02 维护者指令）。
@@ -51,6 +51,14 @@
 - 备选缩放口子（本模组刻意不用）：`ThoughtDef.effectMultiplyingStat` + `effectMultiplyingStatCurve` 能在 XML 里按属性缩放心情（`Thought.cs:124-126`，memory 也吃），但它读的是**持有者自己**的属性、且**不碰 memory 变体的意见**；要用"发起方的魅力"缩放仍然只能像 `AddInteractionThought` 那样在代码里赋 `moodPowerFactor`。原版用它的实例是 `PsychicSensitivity` 一类，没有 `SocialImpact`。
 - **1.6 玩家 HUD 的可用面**（逐条对着 `Krafs.Rimworld.Ref 1.6.4871` 元数据 + 反编译源码核过；完整清单与成本评估在 `docs/hud-ui-surfaces-1.6.md`）：零 Harmony = 底栏 `MainButtonDef`、右键 `FloatMenuOptionProvider`（两者已在用）、选中后的 **gizmo 条**（钩子是 `public virtual ThingComp.CompGetGizmosExtra()` 与 `Hediff.GetGizmos()`；1.6 **没有** `CompGetGizmoExtra` 接口类型，挂给 pawn 要用 XML `<comps>` 把 comp 加到 `Human` 的 ThingDef 上）、检视面板页签（`ThingDef.inspectorTabs` 是 `List<Type>`，XML `<Operation>` 补进 vanilla def 即可）、建筑菜单分类 `DesignationCategoryDef.specialDesignatorClasses`、右侧警报列 `Alert`（`AlertsReadout.allAlertTypesCached` 扫子类 ⇒ 连 Def 都不用写）、`GameComponent/MapComponent.MapComponentOnGUI`、**游戏提示窗 `TipSetDef`（`TipSetDefOf.GameplayTips`，纯 XML）**、`KeyBindingDef`、`HediffDef/GeneDef.renderNodeProperties` 头顶叠加、`ITab_Pawn_Log` + `PlayLogEntry_Interaction`、`RoomStatDef` 行、`PawnColumnDef` 列。只能 Harmony（判为不做）= 右下角显示开关条（`PlaySettings.DoMapControls` 元数据里就是 **Private**，公开的只有 `DoPlaySettingsGlobalControls`）、殖民者栏格子（`ColonistBar.cachedEntries` + `ColonistBarColonistDrawer` 的 `Icon_*` 硬编码字段表）。**1.6 不存在的名字**（别再按它们规划）：`GameUIRootDef`/`GameUITabDef`/`UIDataFolderDef`、`MainTabDef`/`ITabWindow`/`Dialog_InspectTab`、`ArchitectGridDef`/`ArchitectPatternDef`、`TipDef`/`TipTransmitter`、`PlayLogUtility`、`MainDialogCrossMap`。
 
+### 面板与分辨率：游戏怎么管 UI 缩放（2026-09-22 反编译 1.6.4871 `Assembly-CSharp.dll` 实证）
+
+- **`Verse.UI.ApplyUIScale()`**（每帧由 UIRoot 调）：`UI.screenWidth/screenHeight = Screen.width/height ÷ Prefs.UIScale`，同时把 `GUI.matrix` 乘上 UIScale —— **物理分辨率只管渲染，IMGUI 与窗口全部活在"逻辑画布"里**，`Window.windowRect`、`Widgets.*`、`Mouse.IsOver` 都在这个空间。自适应的唯一正确姿势：**一切几何从 `UI.screenWidth/screenHeight` 推导**（比例 + 夹上下限），永远不读 `Screen.width`、永远不写死绝对像素。窗口基类自己的 `SetInitialSizeAndPosition()` 就是按 `UI.screenWidth` 居中的 —— 跟着它。
+- **分辨率/UIScale 变化钩子**：`Verse.Window.Notify_ResolutionChanged()`（WindowStack 逐个喊；面板内再每帧比对 `UI.screen*` 兜底）。默认实现=重新 `SetInitialSizeAndPosition()`。我们的策略：没拖过→按锚点重摆；拖过→旧相对位置等比映射 + 夹回屏内（`draggable=true` 时基类对整窗挂 `GUI.DragWindow()`，控件自己 `Use()` 过的区域不互吃；与"上次自动位置"一比即知被没被拖走）。
+- **非模态三件套**（全 public 字段，零 Harmony）：`forcePause=false`（不暂停）、`absorbInputAroundWindow=false`（面板外不吞输入，地图照常可操作）、`layer=WindowLayer.GameUI`（不占 Dialog 层，别家"有对话框就退出"的启发式也不会误伤）。`closeOnCancel=false` 把 Esc 留给 Targeter 取消点选；`doCloseX=true` 走基类小×。
+- 绘制钩子与素材（都核过）：内容覆写 **`public override void DoWindowContents(Rect inRect)`**（不是 OnGUI；基类已 BeginGroup 到内容矩形、自画 optionalTitle 与×，inRect 是**内容局部坐标**，直接画、别再 BeginGroup）；关闭钩子是 **`PostClose()`**（`OnClose` 不存在，CS0115 教你做人）；头像用 **`PortraitsCache.Get(pawn, size, Rot4.North)`**（1.6 无 `Pawn_PortraitCache`/gutter 老名）；hover 高亮 **`Widgets.DrawHighlight(IfMouseover)`**（`DrawLightening` 不存在）；`ContentFinder<Texture2D>.Get(path, reportFailure)` 第二参名是 `reportFailure`；字号存/取走 **`Text.Font` 属性**（`Text.font` 字段不可见）。
+- **导演台面板（0.1.0 新增）**：`Dialog_KissDirector` —— 左头像框/心形/右头像框三件套 + 每框下方一行状态文案 + 底部「快速发配」；整体尺寸按 `UI.screenHeight/1080` 推比例（k 夹 0.55~1.35），宽再夹到逻辑画布宽的 62% 兜底。**用户裁定五则**：右框占位=`（先选发起方）`；派发成功**不清槽**（成对冷却自动让再点变成带原因的弹信）；左键已选框=换人重选、右键=清空（清左连清右，指代前提变了）；快速发配=现两段链、选完即派发**且回显头像槽**；默认位置=底栏上方居中（`y = UI.screenHeight - 高 - MainButtonDef.ButtonHeight - 6k`）+ 可拖。`KissDirector` 随之降级为**点选原语层**：`BeginPick`（单段，头像框用）/ `QuickChain`（两段链，快速发配用）/ `Dispatch`（公开，心形与链共用派发+弹信路径）；底栏 `Activate()` 只 `OpenOrClose()` 面板；设置关导演台时 `KissTicker` 连面板一起收（`Current?.Close()`）；`Current` 在 ctor 置、`PostClose` 断、`KissTicker` 构造器按局清零。dev 日志 token：`pick start/ok/end (generation N)`（旧 `director on/off`、`pick 1/2` 作废）。
+
 ## 谁能亲：三层边界（RimSage 1.6 源码核验，2026-09-02）
 
 挂 job 与种族无关，心情与种族**不**完全同构，"能下令"才是发起方的真天花板。
@@ -83,11 +91,11 @@
   三个新设置项：`autonomousKissing`（默认**关**，`Constants.AutonomousKissing=false`，第三优先级）、`autonomousIntervalTicks`（默认 250 = 1 游戏时一次机会）、`autonomousRadiusCells`（默认 10 格，防止穿越全图去亲、把战斗变成观光团）。
 - 菜单被拒必须说真原因：`KissProposal` 即使 `Visible=false` 也带 `BlockedReason`，点下过期菜单项时回显该原因；没有原因的那条路径（自亲，已被 `CanSelfTarget` 挡）说"这个亲吻已经不成立了"，不再谎报"已经在亲了"。
 - **崩溃归因更正（2026-09-04，重要）**：早先"2026-09-02 三次硬崩溃归因环境（Steam 覆盖层 / Defender 惰性加载 `TextShaping.dll`）"的结论**已被证伪**。真凶是本模组自己的 finish-action 同步起 job 递归（见下下条「toil 的 finish action 里禁止同步起 job」）。教训：`Player.log` 无托管异常 **≠** 排除托管责任——深栈递归会栈耗尽崩在原生层；"崩溃时正在做 X"既不能证明 X 有罪、也不能反过来证明 X 无罪。取证方法见 `RimWorld_NativeHeapCrash_Triage_Guide_zh.md` §6.5–6.6 与 `RimWorld_Mod_Silent_Failures_Engine_Contracts_zh.md`。
-- 导演台形态（2026-09-04 重写）= 底栏按钮 + 原版 `Find.Targeter` 两步点选：`MainButtonWorker_KissDirector.Activate()` → `KissDirector.Toggle()`，`KissDirector`（静态）链式 `BeginTargeting` 选 A、选 B，派发走 `KissUtility.BeginDirected`。此前手搓 `KissPick : GameComponent` 收 MouseDown + 画提示条的两版都有 bug（坐标系、常驻窗口掐绘制），已废弃。
+- 导演台形态（2026-09-04 重写；2026-09-22 面板化，细节见「面板与分辨率」条）= 底栏按钮开合 `Dialog_KissDirector` 非模态面板；地图点选仍走原版 `Find.Targeter`，由 `KissDirector` 提供两种消费方式：头像框的单段 `BeginPick` 与「快速发配」的两段 `QuickChain`，派发统一走公开的 `KissDirector.Dispatch` → `KissUtility.BeginDirected`。此前手搓 `KissPick : GameComponent` 收 MouseDown + 画提示条的两版都有 bug（坐标系、常驻窗口掐绘制），已废弃。
   取点与目标高亮全部交给原版 `Targeter`（`ForPawns()` 参数、跟随指针高亮、左键取点、右键/Esc 取消），不再自己调 `GenUI.ThingsUnderMouse`、不再手搓绘制/输入。叠格优先级由 `Targeter` 内部按原版规则决定，与右键菜单一致。
   显隐由设置项 `directorButton`（默认开）控制，落点是覆写 `MainButtonWorker.Visible`（`MainButtonDef.buttonVisible` 是静态 XML 值，做不到跟着设置走）。关掉时正在进行的点选由 `KissDirector` 结束（`Find.Targeter.StopTargeting`）。
-  提示语按维护者钦定：`谁要发起亲吻？` → `{PAWN} 想要和谁亲吻？`；取消方式（右键 / 再点一次按钮）不占提示语，放按钮 tooltip 与设置项说明里。
-  代价（维护者已认）：点选模式没有"灰按钮"，可行性只能在点完之后用消息告知。
+  文案按维护者钦定：`谁要发起亲吻？` → `{PAWN} 想要和谁亲吻？`——头像框下方的标题与地图点选的鼠标挂件共用这两个键；取消方式（右键 / 再点一次底栏按钮）不占提示语，放按钮 tooltip 与设置项说明里。
+  代价（维护者已认）：地图点选没有"灰按钮"，可行性在派发那一刻用消息告知；面板心形也不预先 A* 试算（两边选好即红）。
 - **toil 的 finish action 里禁止同步起 job（2026-09-04 实测定罪）**：`TryTakeOrderedJob` 在 pawn 空闲时**同步** StartJob，而新 job 的 StartJob 会回头结束正在收尾的旧 job ⇒ 旧 job 的 finish action 重入 ⇒ 同一 tick 内无限递归。现场特征：日志同一条文本刷到 Unity 折叠上限 99、`Mwah-trace.log` 停行、主线程卡数秒、进程没有"未响应"直接消失、转储栈深到 ntdll 里踩空。本模组的"回原位"因此改为排队（`KissReturnQueue.Enqueue`），下一 tick 由 `KissTicker.GameComponentTick` 发放；所有 finish action 加幂等闸。**任何 finish action 都不得直接 StartJob/TryTakeOrderedJob。**
 - **调试器选型（2026-09-03 实测结论）**：dnSpy 一类 .NET 调试器 attach 走 ICorDebug，只认 CLR；RimWorld 是 MonoBleedingEdge ⇒ **活体 attach 拿不到托管栈**，dnSpy 只剩反编译价值。Mono 软调试器要启动时带 `--debugger-agent` 参数，对已装好的 Steam 版不现实。故 dev 构建自带旁路采样器 `KissTrace`：后台线程 1Hz 把主线程写的阶段戳（stage/walk/lock/perform/end + 剩余 tick）抄进 savedata 目录的 `Mwah-trace.log`；主线程卡死 ⇒ 文件停行，崩溃 ⇒ 看尾巴。release 构建里该类与调用点整体编译消失。
 - **门禁豁免开关**（2026-09-04 维护者）：设置项 `noCooldowns`（默认关）跳过单人/成对冷却两条；"正在亲"不跳 —— 镜像 job 结构上不容第三者。维护者的理由：玩家是超凡智能的大手，想撮合谁就撮合谁。
@@ -124,6 +132,7 @@
 运行内容全部在版本目录 `1.6/` 下（`Defs/Kiss/`、`Languages/{English,ChineseSimplified}/`、`Assemblies/` 为构建产物）；`LoadFolders.xml` 映射 `/` 与 `1.6`；无解决方案文件（见「工程决定」）；C# 源在 `Source/Mwah/`（`DefOf/ Actions/Kiss/ Jobs/ Rewards/ Systems/`）。目录细节以 `ls` 为准，本节不维护树状图。
 | 要看什么 | 位置 |
 |---|---|
+| 底栏入口与面板 | `Source/…/Actions/Kiss/MainButtonWorker_KissDirector.cs` → `Dialog_KissDirector.cs`（非模态：头像框 + 心形 + 快速发配；点选原语在 `KissDirector.cs`） |
 | 右键入口 | `Source/…/Actions/Kiss/FloatMenuOptionProvider_Kiss.cs`（原版反射发现，无需注册） |
 | 谁去亲 / 能不能亲 | `Source/…/Actions/Kiss/KissUtility.cs`（`KissProposal` 三态） |
 | 亲吻表演与结算 | `Source/…/Jobs/JobDriver_Kiss.cs`（双人镜像 job） |
@@ -148,7 +157,7 @@
 
 ## 验证状态
 
-- 已绿（离线）：`dotnet build` Debug/Release 均 **0 警告 0 错误**；`scripts/verify-local.ps1` 24 项全 `[ok]`（11 个 XML 良构、Keyed 中英各 65 键且集合一致、C# 引用的键双语齐备、DefOf↔defName 无孤儿、`driverClass` 与 `namespace.type` 一致、**DefInjected 顶层键必须是扁平 `DefName.字段`**、DLL 含 19 个关键符号、DLL 无 Harmony 符号、**Steam / GitHub 两个渠道各自单独编译过**、版本与 packageId 三处一致、无绝对本地路径、设置项字段↔Scribe key↔`Constants` 三处锁死共 15 项）。
+- 已绿（离线）：`dotnet build` Debug/Release 均 **0 警告 0 错误**；`scripts/verify-local.ps1` 24 项全 `[ok]`（11 个 XML 良构、Keyed 中英各 73 键且集合一致、C# 引用的键双语齐备、DefOf↔defName 无孤儿、`driverClass` 与 `namespace.type` 一致、**DefInjected 顶层键必须是扁平 `DefName.字段`**、DLL 含 21 个关键符号、DLL 无 Harmony 符号、**Steam / GitHub 两个渠道各自单独编译过**、版本与 packageId 三处一致、无绝对本地路径、设置项字段↔Scribe key↔`Constants` 三处锁死共 15 项）。
 - 实机进度（截至 2026-09-04）：**基本流、导演台两步点选、定台走位、爱心、回原位、崩溃递归修复**都已由 `Player.log`/`Mwah-trace.log` 观测到生效；**仍未逐条确认**的是：七档门禁逐档收窄、非人/mutant/仪式灰项文案、心情数值与 `SocialImpact` 缩放、左右对向的实际观感、翻译扁平键修复后的中文显示。矩阵见 `TODO.md`。
 - 「定义了却没人引用」的反向键检查是有价值的闸门：它在开发过程中抓到 `Mod.cs` 丢失 `SettingsCategory()` override —— 该方法返回非空是设置页出现在「模式选项」里的唯一条件，丢了就等于整个设置面不可达。删掉这条检查前必须先想清楚。
 - 产物：`scripts/build-dev.ps1` 出 `dist/dev/Mwah-dev-v<VERSION>-<shortsha>[-dirty].zip`（commit 见 `git log --oneline -1`，本文件不钉死哈希；`-EXP` 尾缀 2026-09-10 应维护者要求废止，dev 标签 = csproj `<Version>` 原样），包内 `version.txt` 三行 = 名称+标签 / build / commit；`dist/` 与 DLL 全 gitignored。
