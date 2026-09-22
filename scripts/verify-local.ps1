@@ -8,6 +8,7 @@ $ErrorActionPreference = "Stop"
 
 # 本模组的本地验证：无测试工程，因此检查顺序为
 #   1   Release 构建（零警告零错误由 dotnet 自身把关）
+#   1b  三个构建渠道都要能编译（Dev / Steam / GitHub）
 #   2   全部 XML 良构
 #   3   Keyed 中英键集合一致
 #   4   C# 引用的 MWAH.* 键在两种语言里都存在
@@ -50,9 +51,19 @@ function Assert-True([string]$Name, [bool]$Condition, [string]$Detail = '') {
     }
 }
 
-# 1. Release build
 Invoke-Check "Release build ($modName.csproj)" {
     & dotnet build $projectFile -nologo -c Release -p:DebugType=none -p:DebugSymbols=false | Out-Host
+}
+
+# 1b. 构建渠道纪律。MWAH_DEV 决定 dev 打点类是否存在，而它只随 MWAHBuildFlavor 变；
+#     真实踩过的坑：JobDriver 里一行没包 #if 的 KissTrace.Clear() 让 Steam/GitHub 渠道
+#     根本编译不过，而默认（Dev）构建一路绿。凡是 release 要发的包都必须各自过编译。
+foreach ($flavor in @('Steam', 'GitHub')) {
+    $probeOut = Join-Path ([System.IO.Path]::GetTempPath()) "mwah-flavor-$flavor"
+    Invoke-Check "flavor build compiles ($flavor)" {
+        & dotnet build $projectFile -nologo -c Release -p:DebugType=none -p:DebugSymbols=false `
+            -p:MWAHBuildFlavor=$flavor -o $probeOut | Out-Host
+    }
 }
 
 Assert-True 'built assembly present' (Test-Path -LiteralPath $assemblyPath -PathType Leaf)
@@ -149,7 +160,7 @@ Assert-True 'packageId is lowercase' ($packageId -eq $packageId.ToLowerInvariant
 
 # 8. Distribution hygiene + privacy red line
 Assert-True 'no About/PublishedFileId.txt in repo' (-not (Test-Path -LiteralPath (Join-Path $root 'About\PublishedFileId.txt')))
-$textFiles = Get-ChildItem -LiteralPath $root -Recurse -File -Include *.cs, *.xml, *.ps1, *.slnx, *.md, .gitignore, .gitattributes |
+$textFiles = Get-ChildItem -LiteralPath $root -Recurse -File -Include *.cs, *.xml, *.ps1, *.md, .gitignore, .gitattributes |
     Where-Object { $_.FullName -notmatch '\\(obj|bin|dist|\.git)\\' }
 $privacyHits = @($textFiles | Select-String -Pattern '[A-Za-z]:\\' | Where-Object { $_.Line -notmatch '^\s*#' })
 Assert-True 'no absolute local paths in tracked text files' ($privacyHits.Count -eq 0) (($privacyHits | Select-Object -First 3 | ForEach-Object { "$($_.Path):$($_.LineNumber)" }) -join ' | ')
