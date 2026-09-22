@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
   <MWAH_KissDirector.label>kiss director</MWAH_KissDirector.label>
-  <MWAH_KissDirector.description>Pick any two pawns on the map and make them kiss.</MWAH_KissDirector.description>
+  <MWAH_KissDirector.description>Opens the kiss director panel: fill the left slot with whoever starts the kiss, the right slot with whoever gets kissed - any two pawns on the map, including ones you do not control - then press the heart. Quick send skips the slots and picks both sides on the map in one go.</MWAH_KissDirector.description>
 </LanguageData>

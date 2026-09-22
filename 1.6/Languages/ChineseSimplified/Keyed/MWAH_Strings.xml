@@ -28,6 +28,15 @@
   <MWAH.Director.PickFirst>谁要发起亲吻？</MWAH.Director.PickFirst>
   <MWAH.Director.PickSecond>{PAWN} 想要和谁亲吻？</MWAH.Director.PickSecond>
 
+  <MWAH.Director.Title>亲吻导演台</MWAH.Director.Title>
+  <MWAH.Director.LeftPicked>{PAWN} 要发起亲吻。</MWAH.Director.LeftPicked>
+  <MWAH.Director.RightWait>（先选发起方）</MWAH.Director.RightWait>
+  <MWAH.Director.PairDone>{PAWN} 想要和 {OTHER} 亲吻。</MWAH.Director.PairDone>
+  <MWAH.Director.HeartReady>{PAWN} 想要和 {OTHER} 亲吻 —— 点这里派发。</MWAH.Director.HeartReady>
+  <MWAH.Director.HeartWaiting>两边都选好，心形就亮。</MWAH.Director.HeartWaiting>
+  <MWAH.Director.QuickSend>快速发配</MWAH.Director.QuickSend>
+  <MWAH.Director.QuickSendDesc>跳过头像框直接进地图点选：第一段点发起方，第二段点对象，第二段落点即派发；选完的双方照样回显到头像框里。</MWAH.Director.QuickSendDesc>
+
   <MWAH.Director.Started>{PAWN} 去亲 {OTHER}。</MWAH.Director.Started>
 
   <!-- 设置页 -->

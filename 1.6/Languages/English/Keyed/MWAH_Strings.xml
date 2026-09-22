@@ -28,6 +28,15 @@
   <MWAH.Director.PickFirst>Who is starting the kiss?</MWAH.Director.PickFirst>
   <MWAH.Director.PickSecond>Who does {PAWN} want to kiss?</MWAH.Director.PickSecond>
 
+  <MWAH.Director.Title>kiss director</MWAH.Director.Title>
+  <MWAH.Director.LeftPicked>{PAWN} is going to start the kiss.</MWAH.Director.LeftPicked>
+  <MWAH.Director.RightWait>(pick who starts first)</MWAH.Director.RightWait>
+  <MWAH.Director.PairDone>{PAWN} wants to kiss {OTHER}.</MWAH.Director.PairDone>
+  <MWAH.Director.HeartReady>{PAWN} wants to kiss {OTHER} - click to send them.</MWAH.Director.HeartReady>
+  <MWAH.Director.HeartWaiting>Fill both slots and the heart turns red.</MWAH.Director.HeartWaiting>
+  <MWAH.Director.QuickSend>quick send</MWAH.Director.QuickSend>
+  <MWAH.Director.QuickSendDesc>Skip the slots: click one pawn on the map to start, click the other to be kissed - dispatched the moment the second pick lands, and the slots show what was sent.</MWAH.Director.QuickSendDesc>
+
   <MWAH.Director.Started>{PAWN} goes to kiss {OTHER}.</MWAH.Director.Started>
 
   <!-- 设置页 -->

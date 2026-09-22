@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using RimWorld;
 using Verse;
 
@@ -10,9 +9,9 @@ namespace Mwah;
 /// 为什么需要它：toil 的 finish action 里直接 TryTakeOrderedJob 会在 job 收尾栈里同步起新 job，
 /// 新 job 又反过来结束正在收尾的旧 job ⇒ 同 tick 无限递归（实测日志同文刷到折叠上限、进程直接消失）。
 /// 排到下一个 tick、由这里发放，栈早就退干净了。1.6 没有 LateTickManager 之类的现成延迟队列，
-/// 所以这个组件不是轮子，是最小的必要落点。选点本身在 KissDirector，走原版 Find.Targeter。
+/// 所以这个组件不是轮子，是最小的必要落点。选点原语在 KissDirector，面板在 Dialog_KissDirector。
 /// 每局生命周期：Game.FillComponents 在建局与读档时都会重新实例化组件，构造器因此是
-/// "每局必跑"的钩子。冷却表、回位队列、导演台开关都是 static，而 TicksGame 与
+/// "每局必跑"的钩子。冷却表、回位队列、导演台代号/开关、面板静态引用都是 static，而 TicksGame 与
 /// thingIDNumber 每局重新从 0 分配，不在这里清零就会让新局继承上一局的残留。
 /// </summary>
 public class KissTicker : GameComponent
@@ -22,15 +21,20 @@ public class KissTicker : GameComponent
         KissCooldown.Reset();
         KissReturnQueue.Reset();
         KissDirector.Active = false;
+        Dialog_KissDirector.ResetForNewGame();
     }
 
     public override void GameComponentTick()
     {
         KissReturnQueue.Drain();
-        // 设置里关掉导演台时，正在进行的选点也一起结束（按钮已经看不见了，模式不能留着）。
-        if (KissDirector.Active && !MwahMod.Settings.DirectorEnabled)
+        // 设置里关掉导演台时：正在点选的收掉，开着的面板也关掉（入口都看不见了）。
+        if (!MwahMod.Settings.DirectorEnabled)
         {
-            KissDirector.Stop();
+            if (KissDirector.Active)
+            {
+                KissDirector.Stop();
+            }
+            Dialog_KissDirector.Current?.Close();
         }
     }
 
