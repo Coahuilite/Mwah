@@ -35,6 +35,7 @@ public static class Constants
     public const bool ChangeOpinion = false;           // 默认不接入原版恋爱/好感链
     public const bool ReturnHomeAfterKiss = true;
     public const bool DirectorButton = true;             // 底栏「亲吻导演台」按钮
+    public const bool WallKissing = true;                // 亲墙：默认开（内容开关，刻意不挨着门禁滑条）
     public const bool NoCooldowns = false;                 // 超凡智能的大手：无视冷却
     public const bool AutonomousKissing = false;      // 第三优先级，先不默认开
     public const int AutonomousIntervalTicks = 250;      // 1 游戏小时促成一桩

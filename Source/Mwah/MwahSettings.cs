@@ -23,6 +23,7 @@ public class MwahSettings : ModSettings
     public int pawnCooldownTicks = Constants.PawnCooldownTicks;
     public int pairCooldownTicks = Constants.PairCooldownTicks;
     public bool directorButton = Constants.DirectorButton;
+    public bool wallKissing = Constants.WallKissing;
     public bool noCooldowns = Constants.NoCooldowns;
     public bool autonomousKissing = Constants.AutonomousKissing;
     public int autonomousIntervalTicks = Constants.AutonomousIntervalTicks;
@@ -31,6 +32,14 @@ public class MwahSettings : ModSettings
     public float moodMultiplier = Constants.MoodMultiplier;
 
     private Vector2 scrollPos;
+
+    // 数值输入框的编辑态：同一时刻最多一个框在编辑（IMGUI 的 keyboardControl 本来就互斥）。
+    private string? editingField;
+    private string editBuf = "";
+
+    /// <summary>滑条行里右侧数值框的宽度与间距（逻辑像素，不随分辨率缩）。</summary>
+    private const float FieldWidth = 74f;
+    private const float FieldGap = 6f;
 
     /// <summary>滑条标签/控件的分栏宽度（控件占 62%，标签占剩下的）。</summary>
     private const float SliderLabelWidth = 0.62f;
@@ -48,6 +57,7 @@ public class MwahSettings : ModSettings
     public int ThoughtDurationTicks => Mathf.Clamp(thoughtDurationTicks, Constants.ThoughtDurationTicksRange.min, Constants.ThoughtDurationTicksRange.max);
     public float MoodMult => Mathf.Clamp(moodMultiplier, Constants.MoodMultiplierRange.min, Constants.MoodMultiplierRange.max);
     public bool DirectorEnabled => directorButton;
+    public bool WallKissingEnabled => wallKissing;
     public bool CooldownsIgnored => noCooldowns;
     public bool AutonomousEnabled => autonomousKissing;
     public int AutonomousIntervalTicks => Mathf.Clamp(autonomousIntervalTicks, Constants.AutonomousIntervalTicksRange.min, Constants.AutonomousIntervalTicksRange.max);
@@ -65,6 +75,7 @@ public class MwahSettings : ModSettings
         Scribe_Values.Look(ref pawnCooldownTicks, "pawnCooldownTicks", Constants.PawnCooldownTicks);
         Scribe_Values.Look(ref pairCooldownTicks, "pairCooldownTicks", Constants.PairCooldownTicks);
         Scribe_Values.Look(ref directorButton, "directorButton", Constants.DirectorButton);
+        Scribe_Values.Look(ref wallKissing, "wallKissing", Constants.WallKissing);
         Scribe_Values.Look(ref noCooldowns, "noCooldowns", Constants.NoCooldowns);
         Scribe_Values.Look(ref autonomousKissing, "autonomousKissing", Constants.AutonomousKissing);
         Scribe_Values.Look(ref autonomousIntervalTicks, "autonomousIntervalTicks", Constants.AutonomousIntervalTicks);
@@ -102,6 +113,7 @@ public class MwahSettings : ModSettings
         pawnCooldownTicks = Constants.PawnCooldownTicks;
         pairCooldownTicks = Constants.PairCooldownTicks;
         directorButton = Constants.DirectorButton;
+        wallKissing = Constants.WallKissing;
         noCooldowns = Constants.NoCooldowns;
         autonomousKissing = Constants.AutonomousKissing;
         autonomousIntervalTicks = Constants.AutonomousIntervalTicks;
@@ -141,10 +153,14 @@ public class MwahSettings : ModSettings
             Constants.MoodMultiplierRange, Constants.MoodMultiplierStep, v => v.ToString("0.##") + "x");
 
         list.GapLine();
+        // 亲墙开关刻意放在门禁滑条（pairScope，在下面几行）之外的独立位置：
+        // 它管的是"墙算不算可亲对象"，与"谁能亲谁"的七档范围是两回事。
+        changed |= Checkbox(list, ref wallKissing, "MWAH.Settings.WallKissing", "MWAH.Settings.WallKissingDesc");
         changed |= Checkbox(list, ref directorButton, "MWAH.Settings.DirectorButton", "MWAH.Settings.DirectorButtonDesc");
         changed |= Checkbox(list, ref noCooldowns, "MWAH.Settings.NoCooldowns", "MWAH.Settings.NoCooldownsDesc");
-        changed |= IntSlider(list, ref pairScope, "MWAH.Settings.PairScope", "MWAH.Settings.PairScopeDesc",
-            Constants.PairScopeRange, raw => KissScopeUtility.Label(KissScopeUtility.Clamp(raw)));
+        // 范围档位是"档"不是"量"：输入 3 没有意义，所以这一条滑条刻意不带数值框。
+        changed |= IntSliderRow(list, ref pairScope, "MWAH.Settings.PairScope", "MWAH.Settings.PairScopeDesc",
+            Constants.PairScopeRange, raw => KissScopeUtility.Label(KissScopeUtility.Clamp(raw)), withField: false);
         changed |= Checkbox(list, ref autonomousKissing, "MWAH.Settings.Autonomous", "MWAH.Settings.AutonomousDesc");
         changed |= IntSlider(list, ref autonomousIntervalTicks, "MWAH.Settings.AutonomousInterval",
             "MWAH.Settings.AutonomousIntervalDesc", Constants.AutonomousIntervalTicksRange, MwahTime.FormatTicks);
@@ -178,31 +194,97 @@ public class MwahSettings : ModSettings
     }
 
     /// <summary>
-    /// 整数滑条。值的显示口径由 <paramref name="showAs"/> 决定：tick 项给三读法，
-    /// 格数项给裸数字，门禁项给档位名 —— 控件形状相同，不必一份份抄。
+    /// 整数滑条（带数值框）。tick 项的框编辑的就是 tick —— 存储单位即输入单位，
+    /// 三读法只出现在标签上，符合"时长只以 tick 为存储单位"的硬边界。
     /// </summary>
-    private static bool IntSlider(Listing_Standard list, ref int value, string labelKey, string tipKey,
+    private bool IntSlider(Listing_Standard list, ref int value, string labelKey, string tipKey,
         IntRange range, Func<int, string> showAs, int step = 1)
+        => IntSliderRow(list, ref value, labelKey, tipKey, range, showAs, withField: true, step);
+
+    private bool IntSliderRow(Listing_Standard list, ref int value, string labelKey, string tipKey,
+        IntRange range, Func<int, string> showAs, bool withField, int step = 1)
     {
         int before = value;
         string label = labelKey.Translate() + ": " + showAs(value);
-        float raw = list.SliderLabeled(label, value, range.min, range.max, SliderLabelWidth, tipKey.Translate());
-        // step 是允许的刻度：滑条本身是连续的，落值量化到 step 的整数倍才进存档。
-        value = Mathf.RoundToInt(raw / step) * step;
+        string tip = tipKey.Translate();
+        if (!withField)
+        {
+            float rawScope = list.SliderLabeled(label, value, range.min, range.max, SliderLabelWidth, tip);
+            value = Mathf.RoundToInt(rawScope);
+            return before != value;
+        }
+        Rect row = list.GetRect(46f);
+        DrawSliderLabel(row, label, tip);
+        Rect slider = new Rect(row.x, row.y + 24f, row.width - FieldWidth - FieldGap, 20f);
+        float raw = Widgets.HorizontalSlider(slider, value, range.min, range.max);
+        value = Mathf.RoundToInt(raw / step) * step; // 滑条连续、落值量化：step 才是允许的刻度
+        value = (int)NumericField(labelKey, new Rect(row.xMax - FieldWidth, row.y + 22f, FieldWidth, 24f),
+            value, range.min, range.max, step);
         return before != value;
     }
 
     /// <summary>
-    /// 小数滑条，落值量化到 <paramref name="step"/> 的整数倍：小于这个跨度的改动体感上没有区别，
+    /// 小数滑条（带数值框），落值量化到 <paramref name="step"/> 的整数倍：小于这个跨度的改动体感上没有区别，
     /// 却会在配置文件里留下无意义的长小数（0.25 游戏时、0.05 倍都是这么定的）。
     /// </summary>
-    private static bool FloatSlider(Listing_Standard list, ref float value, string labelKey, string tipKey,
+    private bool FloatSlider(Listing_Standard list, ref float value, string labelKey, string tipKey,
         FloatRange range, float step, Func<float, string> showAs)
     {
         float before = value;
         string label = labelKey.Translate() + ": " + showAs(value);
-        float raw = list.SliderLabeled(label, value, range.min, range.max, SliderLabelWidth, tipKey.Translate());
+        Rect row = list.GetRect(46f);
+        DrawSliderLabel(row, label, tipKey.Translate());
+        Rect slider = new Rect(row.x, row.y + 24f, row.width - FieldWidth - FieldGap, 20f);
+        float raw = Widgets.HorizontalSlider(slider, value, range.min, range.max);
         value = Mathf.Round(raw / step) * step;
+        value = NumericField(labelKey, new Rect(row.xMax - FieldWidth, row.y + 22f, FieldWidth, 24f),
+            value, range.min, range.max, step);
         return !Mathf.Approximately(before, value);
+    }
+
+    private static void DrawSliderLabel(Rect row, string label, string tip)
+    {
+        Rect labelRect = new Rect(row.x, row.y, row.width, 20f);
+        Widgets.Label(labelRect, label);
+        TooltipHandler.TipRegion(labelRect, tip);
+    }
+
+    /// <summary>
+    /// 数值输入框：点进即编辑（IMGUI 自己管焦点），回车或失焦提交；提交按 step 量化并夹进量程，
+    /// 解析失败（空串、乱码）则整次编辑作废、回显当前值。解析用不变文化（InvariantCulture），
+    /// 与 Settings.xml 的写法同一口径，不受系统小数点逗号影响。
+    /// </summary>
+    private float NumericField(string key, Rect rect, float value, float min, float max, float step)
+    {
+        string controlName = "MWAH_Field_" + key;
+        GUI.SetNextControlName(controlName);
+        string shown = editingField == key ? editBuf
+            : value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        string text = Widgets.TextField(rect, shown, 12);
+        bool focused = GUI.GetNameOfFocusedControl() == controlName;
+        if (focused && editingField != key)
+        {
+            editingField = key; // 用户点进来了：以当前值起编
+            editBuf = shown;
+        }
+        if (editingField != key)
+        {
+            return value;
+        }
+        editBuf = text;
+        bool enter = Event.current.type == EventType.KeyDown
+            && (Event.current.keyCode == KeyCode.Return || Event.current.keyCode == KeyCode.KeypadEnter);
+        if (enter || !focused)
+        {
+            editingField = null;
+            GUI.FocusControl(null);
+            if (float.TryParse(editBuf, System.Globalization.NumberStyles.Float,
+                    System.Globalization.CultureInfo.InvariantCulture, out float parsed))
+            {
+                value = Mathf.Round(parsed / step) * step;
+                value = Mathf.Clamp(value, min, max);
+            }
+        }
+        return value;
     }
 }

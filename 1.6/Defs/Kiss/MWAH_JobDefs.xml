@@ -14,4 +14,19 @@
     <allowOpportunisticPrefix>false</allowOpportunisticPrefix>
     <alwaysShowReport>true</alwaysShowReport>
   </JobDef>
+
+  <!--
+    单人亲墙 job。TargetIndex.A = 墙（人造墙 / 天然岩壁 / 压埋矿脉，判定见 KissWallUtility.IsWallLike）。
+    没有定台与回原位：只挑一格站定面向墙；结算走 KissWallReward 的天意五档。
+  -->
+  <JobDef>
+    <defName>MWAH_KissWall</defName>
+    <driverClass>Mwah.JobDriver_KissWall</driverClass>
+    <reportString>kissing TargetA.</reportString>
+    <casualInterruptible>false</casualInterruptible>
+    <playerInterruptible>true</playerInterruptible>
+    <checkOverrideOnDamage>Always</checkOverrideOnDamage>
+    <allowOpportunisticPrefix>false</allowOpportunisticPrefix>
+    <alwaysShowReport>true</alwaysShowReport>
+  </JobDef>
 </Defs>

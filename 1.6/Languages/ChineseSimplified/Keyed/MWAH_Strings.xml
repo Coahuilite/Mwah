@@ -4,6 +4,9 @@
   <MWAH.FloatMenu.Kiss>亲吻{TARGET}</MWAH.FloatMenu.Kiss>
   <MWAH.FloatMenu.KissTooltip>走过去、与{TARGET}面对面、亲一个，然后各自回到刚才站的地方。</MWAH.FloatMenu.KissTooltip>
   <MWAH.FloatMenu.KissNoMood>（没有心情系统，只是做做样子）</MWAH.FloatMenu.KissNoMood>
+  <MWAH.KissWall.Option>亲吻{0}</MWAH.KissWall.Option>
+  <MWAH.KissWall.OptionHumanlike>亲吻{0}…?!</MWAH.KissWall.OptionHumanlike>
+  <MWAH.KissWall.OptionTooltip>走过去，对着{WALL}亲一个。墙不会回应，心情全凭天意。</MWAH.KissWall.OptionTooltip>
 
   <!-- 不可用原因 -->
   <MWAH.Fail.Disabled>设置里已关闭亲吻</MWAH.Fail.Disabled>
@@ -23,6 +26,14 @@
   <MWAH.Fail.Busy>已经在亲了</MWAH.Fail.Busy>
   <MWAH.Fail.CooldownPawn>{PAWN} 还得缓缓才能再亲（{TIME}）</MWAH.Fail.CooldownPawn>
   <MWAH.Fail.CooldownPair>{PAWN} 和 {OTHER} 刚亲过（{TIME}）</MWAH.Fail.CooldownPair>
+  <MWAH.KissWall.Fail.NoStandCell>{PAWN} 找不到能站下、又够得着的地方去亲那堵 {WALL}</MWAH.KissWall.Fail.NoStandCell>
+
+  <!-- 亲墙天意五档（结算消息；墙名走 {WALL}） -->
+  <MWAH.KissWall.Result.Weird>{PAWN} 凑过去亲吻了 {WALL}。嘴唇触到石头的瞬间，{PAWN} 愣住了。</MWAH.KissWall.Result.Weird>
+  <MWAH.KissWall.Result.Nothing>{PAWN} 亲吻了 {WALL}。什么也没有发生——这正是 {PAWN} 想要的。</MWAH.KissWall.Result.Nothing>
+  <MWAH.KissWall.Result.Slight>{PAWN} 亲吻了 {WALL}。石头的温度刚刚好，{PAWN} 心情不错。</MWAH.KissWall.Result.Slight>
+  <MWAH.KissWall.Result.Moved>{PAWN} 与 {WALL} 久久相吻。{PAWN} 发誓感觉到了一丝回应的风声。</MWAH.KissWall.Result.Moved>
+  <MWAH.KissWall.Result.Devoted>{PAWN} 深情亲吻了 {WALL}，并在原地伫立良久。爱情不需要双向奔赴。</MWAH.KissWall.Result.Devoted>
 
   <!-- 亲吻导演台 -->
   <MWAH.Director.PickFirst>谁要发起亲吻？</MWAH.Director.PickFirst>
@@ -78,7 +89,7 @@
   <MWAH.Settings.Scope.NonHostileHumanlike>＋非敌对人形（访客、商人、盟友）</MWAH.Settings.Scope.NonHostileHumanlike>
   <MWAH.Settings.Scope.AllHumanlike>＋所有人形（加上袭击者与古人）</MWAH.Settings.Scope.AllHumanlike>
   <MWAH.Settings.Scope.AllFlesh>＋所有血肉（加上野生动物、昆虫、血肉兽）</MWAH.Settings.Scope.AllFlesh>
-  <MWAH.Settings.Scope.Everything>每个小人都互相亲吻</MWAH.Settings.Scope.Everything>
+  <MWAH.Settings.Scope.Everything>所有 Pawn 都互相亲吻</MWAH.Settings.Scope.Everything>
 
   <MWAH.Settings.Autonomous>自主亲吻</MWAH.Settings.Autonomous>
   <MWAH.Settings.AutonomousDesc>你管不着的小人——袭击者、访客、野生动物、机械族——会自己发起亲吻。玩家控制的小人永远不会被自动下令，它们照旧等你右键。这是不打补丁就能做到"所有 Pawn"的唯一路子。</MWAH.Settings.AutonomousDesc>
@@ -93,4 +104,6 @@
   <MWAH.Settings.ReturnHomeDesc>结束后两人都回到被下令时站的位置。这只是个礼貌请求——紧急需求和排班工作仍然会插队。</MWAH.Settings.ReturnHomeDesc>
 
   <MWAH.Settings.Reset>恢复默认值</MWAH.Settings.Reset>
+  <MWAH.Settings.WallKissing>允许亲吻墙壁</MWAH.Settings.WallKissing>
+  <MWAH.Settings.WallKissingDesc>右键可以亲吻墙：人造墙、天然岩壁、连压埋的矿脉都算。墙不会回应，所以心情全凭天意——可能越想越怪，也可能当场爱上。这一条与"谁能亲谁"无关，不受门禁滑条管。</MWAH.Settings.WallKissingDesc>
 </LanguageData>

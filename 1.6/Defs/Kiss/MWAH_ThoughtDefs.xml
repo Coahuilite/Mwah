@@ -81,4 +81,88 @@
       </li>
     </stages>
   </ThoughtDef>
+
+  <!--
+    ===== 亲墙天意五档（互斥，权重 20/30/25/17/8，见 KissWallReward）=====
+    锚点同上一条：滚床单 +8/3日 > 美言 +5/2日 > 被蹭 +4/1日；双人吻 +5/1日。
+    亲墙是"没有回应的单向多情"：期望 ≈ +0.84/次（远低于双人吻），方差全社交最大 —— 笑点即方差。
+    "毫无感觉"档 moodOffset 0 也保留 thought：心情列表挂着"亲了一堵墙（毫无感觉）"比什么都不加更有戏。
+    刻意不挂 nullifyingTraits：Psychopath 归零的是"对方接住你"的社交温度；墙本来无人回应，
+    反社会人格恰恰是全场最适合亲墙的人 —— 归零反而会误伤笑点。
+    时长刻意用 XML 固定值、不吃"心情持续"设置：那条管的是双人吻的记忆，五档各有戏剧节拍。
+  -->
+  <ThoughtDef>
+    <defName>MWAH_KissedWall_Weird</defName>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>0.5</durationDays>
+    <stackLimit>1</stackLimit>
+    <nullifiedIfNotColonist>false</nullifiedIfNotColonist>
+    <stages>
+      <li>
+        <label>kissed a wall; feels wrong now</label>
+        <description>The kiss itself felt like nothing. The thinking-afterwards is what unsettles me. Why did I kiss a wall? It didn't even flinch.</description>
+        <baseMoodEffect>-2</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>MWAH_KissedWall_Nothing</defName>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>0.25</durationDays>
+    <stackLimit>1</stackLimit>
+    <nullifiedIfNotColonist>false</nullifiedIfNotColonist>
+    <stages>
+      <li>
+        <label>kissed a wall; felt nothing</label>
+        <description>Cold stone, honest silence. No flutter, no regret — this page can simply be turned.</description>
+        <baseMoodEffect>0</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>MWAH_KissedWall_Slight</defName>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>0.5</durationDays>
+    <stackLimit>1</stackLimit>
+    <nullifiedIfNotColonist>false</nullifiedIfNotColonist>
+    <stages>
+      <li>
+        <label>kissed a wall, and it was nice</label>
+        <description>The wall did nothing at all. It just stood there. Strangely, that was comforting.</description>
+        <baseMoodEffect>1</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>MWAH_KissedWall_Moved</defName>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>1</durationDays>
+    <stackLimit>1</stackLimit>
+    <nullifiedIfNotColonist>false</nullifiedIfNotColonist>
+    <stages>
+      <li>
+        <label>a deep kiss with a wall</label>
+        <description>There was a hint of moss-moisture in the seam. I choose to call that an answer.</description>
+        <baseMoodEffect>3</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>MWAH_KissedWall_Devoted</defName>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>1</durationDays>
+    <stackLimit>1</stackLimit>
+    <nullifiedIfNotColonist>false</nullifiedIfNotColonist>
+    <stages>
+      <li>
+        <label>I fell in love with a wall</label>
+        <description>It doesn't speak, doesn't leave, doesn't judge — it simply caught all of my affection. Today it felt closer to love than any coworker.</description>
+        <baseMoodEffect>6</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
 </Defs>

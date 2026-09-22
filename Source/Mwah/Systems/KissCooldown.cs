@@ -28,7 +28,7 @@ public static class KissCooldown
         return Remaining(Find.TickManager.TicksGame, PawnReadyAtTick, pawn.thingIDNumber);
     }
 
-    public static int PairRemaining(Pawn a, Pawn b)
+    public static int PairRemaining(Pawn a, Thing b)
     {
         if (a == null || b == null)
         {
@@ -37,7 +37,11 @@ public static class KissCooldown
         return Remaining(Find.TickManager.TicksGame, PairReadyAtTick, PairKey(a, b));
     }
 
-    public static void Mark(Pawn a, Pawn b, int pawnTicks, int pairTicks)
+    /// <summary>
+    /// b 泛化为 Thing：双人亲吻传 pawn，亲墙传墙 —— 成对键只吃 thingIDNumber，
+    /// 天然兼容；单人冷却表则只登记 pawn（墙不进 PawnReadyAtTick，登记了也没人查）。
+    /// </summary>
+    public static void Mark(Pawn a, Thing b, int pawnTicks, int pairTicks)
     {
         int now = Find.TickManager.TicksGame;
         if (pawnTicks > 0)
@@ -46,9 +50,9 @@ public static class KissCooldown
             {
                 PawnReadyAtTick[a.thingIDNumber] = now + pawnTicks;
             }
-            if (b != null)
+            if (b is Pawn bp)
             {
-                PawnReadyAtTick[b.thingIDNumber] = now + pawnTicks;
+                PawnReadyAtTick[bp.thingIDNumber] = now + pawnTicks;
             }
         }
         if (pairTicks > 0 && a != null && b != null)
@@ -83,8 +87,8 @@ public static class KissCooldown
         return until - now;
     }
 
-    /// <summary>成对键与单人键分表存放，这里只需要保证同一对人不论谁亲谁都同键。</summary>
-    private static long PairKey(Pawn a, Pawn b)
+    /// <summary>成对键与单人键分表存放，这里只需要保证同一对（人或墙）不论谁亲谁都同键。</summary>
+    private static long PairKey(Thing a, Thing b)
     {
         int lo = Mathf.Min(a.thingIDNumber, b.thingIDNumber);
         int hi = Mathf.Max(a.thingIDNumber, b.thingIDNumber);

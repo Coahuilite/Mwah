@@ -4,6 +4,9 @@
   <MWAH.FloatMenu.Kiss>kiss {TARGET}</MWAH.FloatMenu.Kiss>
   <MWAH.FloatMenu.KissTooltip>Walk over, face {TARGET}, share a kiss, then both return to where they stood.</MWAH.FloatMenu.KissTooltip>
   <MWAH.FloatMenu.KissNoMood>(no mood system - gesture only)</MWAH.FloatMenu.KissNoMood>
+  <MWAH.KissWall.Option>kiss {0}</MWAH.KissWall.Option>
+  <MWAH.KissWall.OptionHumanlike>kiss {0}...?!</MWAH.KissWall.OptionHumanlike>
+  <MWAH.KissWall.OptionTooltip>Walk over and kiss the {WALL}. The wall won't answer — the mood is pure fate.</MWAH.KissWall.OptionTooltip>
 
   <!-- 不可用原因 -->
   <MWAH.Fail.Disabled>kissing is disabled in mod settings</MWAH.Fail.Disabled>
@@ -23,6 +26,14 @@
   <MWAH.Fail.Busy>already in the middle of a kiss</MWAH.Fail.Busy>
   <MWAH.Fail.CooldownPawn>{PAWN} needs a moment between kisses ({TIME})</MWAH.Fail.CooldownPawn>
   <MWAH.Fail.CooldownPair>{PAWN} and {OTHER} already kissed recently ({TIME})</MWAH.Fail.CooldownPair>
+  <MWAH.KissWall.Fail.NoStandCell>{PAWN} can't find a standable, reachable spot to kiss that {WALL}</MWAH.KissWall.Fail.NoStandCell>
+
+  <!-- 亲墙天意五档（结算消息；墙名走 {WALL}） -->
+  <MWAH.KissWall.Result.Weird>{PAWN} leaned in and kissed {WALL}. The instant lips met stone, {PAWN} froze.</MWAH.KissWall.Result.Weird>
+  <MWAH.KissWall.Result.Nothing>{PAWN} kissed {WALL}. Nothing happened — exactly as {PAWN} hoped.</MWAH.KissWall.Result.Nothing>
+  <MWAH.KissWall.Result.Slight>{PAWN} kissed {WALL}. The stone was just the right temperature.</MWAH.KissWall.Result.Slight>
+  <MWAH.KissWall.Result.Moved>{PAWN} shared a long kiss with {WALL}. {PAWN} swears the wind answered.</MWAH.KissWall.Result.Moved>
+  <MWAH.KissWall.Result.Devoted>{PAWN} kissed {WALL} with true devotion, then lingered. Love need not be mutual.</MWAH.KissWall.Result.Devoted>
 
   <!-- 亲吻导演台 -->
   <MWAH.Director.PickFirst>Who is starting the kiss?</MWAH.Director.PickFirst>
@@ -93,4 +104,6 @@
   <MWAH.Settings.ReturnHomeDesc>Afterwards both pawn go back to where the kiss was ordered. A polite request - urgent needs and work still win.</MWAH.Settings.ReturnHomeDesc>
 
   <MWAH.Settings.Reset>Restore defaults</MWAH.Settings.Reset>
+  <MWAH.Settings.WallKissing>Allow kissing walls</MWAH.Settings.WallKissing>
+  <MWAH.Settings.WallKissingDesc>Right-click to kiss a wall — built walls, natural rock, even buried ore veins. The wall never answers, so the mood is pure fate: it may haunt you, or you may fall in love on the spot. Independent of the "who kisses whom" scope slider.</MWAH.Settings.WallKissingDesc>
 </LanguageData>

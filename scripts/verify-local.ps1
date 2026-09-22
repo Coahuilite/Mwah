@@ -112,7 +112,7 @@ $defOfFields = @([regex]::Matches((Get-ChildItem (Join-Path $root "Source\$modNa
 $orphanFields = @($defOfFields | Where-Object { $xmlDefs -notcontains $_ })
 Assert-True ("DefOf fields all resolve to an XML defName ($($defOfFields.Count)/$($xmlDefs.Count))") ($orphanFields.Count -eq 0) ($orphanFields -join ', ')
 $driverRefs = @([regex]::Matches($defXml, '<driverClass>([^<]+)</driverClass>') | ForEach-Object { $_.Groups[1].Value })
-Assert-True 'driverClass uses the real namespace.type' (($driverRefs.Count -eq 1) -and $driverRefs[0] -eq "$modName.JobDriver_Kiss")
+Assert-True 'driverClass uses the real namespace.type' (@($driverRefs | Where-Object { $_ -notin @("$modName.JobDriver_Kiss","$modName.JobDriver_KissWall") }).Count -eq 0 -and $driverRefs.Count -eq 2)
 
 # 5b. DefInjected 结构检查：顶层元素必须是扁平键 `DefName.字段路径`（原版格式），
 # 不是嵌套 def 格式。引擎 SetDefFieldAtPath 用 path.Split('.')[0] 当 defName，
@@ -142,7 +142,7 @@ Assert-True 'DefInjected uses flat DefName.path keys' ($injBad.Count -eq 0) ($in
 # 6. DLL symbol audit + zero Harmony
 $text = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes($assemblyPath))
 $symbols = @('FloatMenuOptionProvider_Kiss','JobDriver_Kiss','KissUtility','KissBoundary','KissScope','KissScopeUtility','KissAmbient',
-    'KissDirector','Dialog_KissDirector','KissTicker','MainButtonWorker_KissDirector','KissMoodReward','KissCooldown','KissReturnQueue','MwahSettings','MwahMod','MWAH_JobDefOf','MWAH_ThoughtDefOf',"$modName.JobDriver_Kiss",'MWAH_Kiss','MWAH_KissedBond')
+    'KissDirector','Dialog_KissDirector','KissTicker','MainButtonWorker_KissDirector','KissMoodReward','KissCooldown','KissReturnQueue','MwahSettings','MwahMod','MWAH_JobDefOf','MWAH_ThoughtDefOf',"$modName.JobDriver_Kiss",'MWAH_Kiss','MWAH_KissedBond',"$modName.JobDriver_KissWall",'KissWallUtility','KissWallReward','FloatMenuOptionProvider_KissWall','MWAH_KissWall','MWAH_KissedWall_Devoted')
 $missingSyms = @($symbols | Where-Object { -not $text.Contains($_) })
 Assert-True ("DLL contains all $($symbols.Count) key symbols") ($missingSyms.Count -eq 0) ($missingSyms -join ', ')
 Assert-True 'zero-Harmony: no Harmony/HarmonyLib reference in DLL' (-not ($text.Contains('HarmonyLib') -or $text.Contains('Harmony')))
