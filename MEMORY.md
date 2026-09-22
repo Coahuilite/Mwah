@@ -3,7 +3,7 @@
 ## 当前耐久状态
 
 - RimWorld 1.6 模组，`packageId` `coahuilite.mwah`，产品版本 **0.1.0**（csproj `<Version>` 为主源，About `<modVersion>` 跟随）。尚未发布、无远端仓库、无创意工坊条目。
-- 功能面：**仅 live map、仅单机、零 Harmony**。三条发起路径：①选中可下令的 pawn 右键另一 pawn；②底栏「亲吻导演台」开一块**非模态面板**（左/右头像框各走原版 `Find.Targeter` 单段点选，或「快速发配」两段链选完即派），可指定地图上任意两个 pawn（含玩家管不着的）；③`KissAmbient` 定时促成玩家管不着的单位（默认关）。三层判定见「谁能亲:三层边界」。表演 = **定台左右对向**（见「工程决定」，已取代旧的 `PathEndMode.Touch` 贴脸）+ 按间隔抛原版爱心，结束各自回原位。有 `needs.mood` 的按**自己**的 `SocialImpact` 拿心情，没有的什么都不加。
+- 功能面：**仅 live map、仅单机、零 Harmony**。四条发起路径：①选中可下令的 pawn 右键另一 pawn；②底栏「亲吻导演台」开一块**非模态面板**（左/右头像框各走原版 `Find.Targeter` 单段点选，或「快速发配」两段链选完即派；心形随两边选择**半颗半颗地填红**），可指定地图上任意两个 pawn（含玩家管不着的）；③`KissAmbient` 定时促成玩家管不着的单位（默认关）；④右键**墙**亲墙（默认开，独立开关，不受门禁滑条管；人造墙/天然岩壁/压埋矿脉全算，人形发起方菜单文案「亲吻{0}…?!」）。三层判定见「谁能亲:三层边界」。双人表演 = **定台左右对向** + 按间隔抛原版爱心，结束各自回原位；亲墙 = 走到贴墙格面向墙闭眼若干 tick，不回原位（自己走过去的）。有 `needs.mood` 的按**自己**的 `SocialImpact` 拿心情，没有的什么都不加；亲墙走**天意五档**（见「工程决定」）。
 - 设计取向：**纯娱乐、门槛尽量低**——不限阵营、不限种族、不要求征召。这是维护者的立场，2026-09-02 明确重申过：玩家反馈"想要只撮合殖民地"用**门禁滑条**承接（出厂停在最右档 = 双不限），**不改默认值**。但"零门槛"从来不是事实，也不该假装是：原版 `CanTakeOrder` 与 `ShouldGenerateFloatMenuForPawn` 在 provider 之前就把关，动物与中立者当不了发起方、倒地者连菜单都不生成。2026-09-02 边界收敛后，本模组自己的前提写成 `KissBoundary` 三层，不再用"种族"近似"能力"。收益面保守（见「工程决定」）。工作区目录名 `every_pawn_kiss_each_other/` 是历史值，不构成身份。
 - 明确不做（不是待办）：世界地图/商队途中、RimWorld Multiplayer 同步、真·贴合亲吻动画、Downed 者当发起方（需 Harmony 放开原版闸门）。
 - **不做 junction**：`Mods/` 与 `Mods/*` 一律不建、不校验、不假设存在；复制模组与实机测试由维护者本人执行（2026-09-02 维护者指令）。
@@ -60,6 +60,8 @@
 - **导演台面板（0.1.0 新增）**：`Dialog_KissDirector` —— 左头像框/心形/右头像框三件套 + 每框下方一行状态文案 + 底部「快速发配」；整体尺寸按 `UI.screenHeight/1080` 推比例（k 夹 0.55~1.35），宽再夹到逻辑画布宽的 62% 兜底。**用户裁定五则**：右框占位=`（先选发起方）`；派发成功**不清槽**（成对冷却自动让再点变成带原因的弹信）；左键已选框=换人重选、右键=清空（清左连清右，指代前提变了）；快速发配=现两段链、选完即派发**且回显头像槽**；默认位置=底栏上方居中（`y = UI.screenHeight - 高 - MainButtonDef.ButtonHeight - 6k`）+ 可拖。`KissDirector` 随之降级为**点选原语层**：`BeginPick`（单段，头像框用）/ `QuickChain`（两段链，快速发配用）/ `Dispatch`（公开，心形与链共用派发+弹信路径）；底栏 `Activate()` 只 `OpenOrClose()` 面板；设置关导演台时 `KissTicker` 连面板一起收（`Current?.Close()`）；`Current` 在 ctor 置、`PostClose` 断、`KissTicker` 构造器按局清零。dev 日志 token：`pick start/ok/end (generation N)`（旧 `director on/off`、`pick 1/2` 作废）。
 - 非模态面板还有一件必关的事：**`Window.preventCameraMotion` 基类默认 true**——`CameraDriver.AnythingPreventsCameraMotion` 遍历 WindowStack 上所有窗口的这个字段，有一个 true 就整体掐掉方向键平移、边推、滚轮缩放（`Dialog_KissDirector` 首版实机踩中，已显式置 false）。另外原版启动扫描 `StaticConstructorOnStartupUtility.ReportProbablyMissingAttributes` 只看"类型有静态 Texture/Material 字段且无 `[StaticConstructorOnStartup]`"，**不认惰性加载**，照挂 attribute 消警。
 - **文字不跟着比例因子缩**：字体（Tiny=16、Small=26 逻辑像素）与我们的 `k = screenHeight/1080` 是两套尺度——凡"框宽按 k 推、框里放定字号文字"的地方，小 k 下必然折行溢出。带文字的框（面板 caption）要有**不乘 k 的硬下限宽**（`CaptionWidth = max(slot+gap, 122f)`），行高按"两行 Tiny=46 逻辑像素"预留。原版 `Dialog_Options` 本体是**固定 650×600 逻辑像素且基类 `SetInitialSizeAndPosition` 不夹屏**（反编译证实），小逻辑画布下上下出屏，mod 侧无 Harmony 无解。
+- 面板二次实机修正（2026-09-22 图证）：①高度公式必须算上**标题行**——基类 `Window.OnGUI` 在 `optionalTitle` 非空时把内容矩形再让出 `Margin + 25f`，漏了它底部按钮整体上移压进 caption；②`Text.WordWrap` 的原版契约是**帧末必须为 true**（`Verse.Text` 帧末哨兵 `ErrorOnce("Word wrap was false at end of frame")`），DrawCaption 里"画完设 false"是错的，默认就是 true 别碰；③心形 = **半颗半颗填**（用户设计）：底图整颗灰，选定一边就把那一半盖回原色（该 Unity 版本没有带 sourceRect 的 `GUI.DrawTexture` 重载，用 `GUI.BeginClip` 裁左右半实现），两边齐 = 整颗红可派发。
+- 设置页滑条全部带**右侧数值输入框**（2026-09-22 维护者要求"准确输入"）：行式改为"标签行 + 滑条 + 74px 定宽框"；点进即编辑、回车/失焦提交、按 step 量化并夹量程、解析失败作废回显；tick 项编辑的**就是 tick**（存储单位即输入单位）；`pairScope` 刻意不带框（档位不是量）。IMGUI 焦点判据用 `GUI.GetNameOfFocusedControl()`（`GUIUtility.keyboardControl` 是 int ID，不能和名字比）。
 
 ## 谁能亲：三层边界（RimSage 1.6 源码核验，2026-09-02）
 
@@ -101,6 +103,7 @@
 - **toil 的 finish action 里禁止同步起 job（2026-09-04 实测定罪）**：`TryTakeOrderedJob` 在 pawn 空闲时**同步** StartJob，而新 job 的 StartJob 会回头结束正在收尾的旧 job ⇒ 旧 job 的 finish action 重入 ⇒ 同一 tick 内无限递归。现场特征：日志同一条文本刷到 Unity 折叠上限 99、`Mwah-trace.log` 停行、主线程卡数秒、进程没有"未响应"直接消失、转储栈深到 ntdll 里踩空。本模组的"回原位"因此改为排队（`KissReturnQueue.Enqueue`），下一 tick 由 `KissTicker.GameComponentTick` 发放；所有 finish action 加幂等闸。**任何 finish action 都不得直接 StartJob/TryTakeOrderedJob。**
 - **调试器选型（2026-09-03 实测结论）**：dnSpy 一类 .NET 调试器 attach 走 ICorDebug，只认 CLR；RimWorld 是 MonoBleedingEdge ⇒ **活体 attach 拿不到托管栈**，dnSpy 只剩反编译价值。Mono 软调试器要启动时带 `--debugger-agent` 参数，对已装好的 Steam 版不现实。故 dev 构建自带旁路采样器 `KissTrace`：后台线程 1Hz 把主线程写的阶段戳（stage/walk/lock/perform/end + 剩余 tick）抄进 savedata 目录的 `Mwah-trace.log`；主线程卡死 ⇒ 文件停行，崩溃 ⇒ 看尾巴。release 构建里该类与调用点整体编译消失。
 - **门禁豁免开关**（2026-09-04 维护者）：设置项 `noCooldowns`（默认关）跳过单人/成对冷却两条；"正在亲"不跳 —— 镜像 job 结构上不容第三者。维护者的理由：玩家是超凡智能的大手，想撮合谁就撮合谁。
+- **亲墙（2026-09-22 好友提案，维护者采纳）**：右键任意墙（人造 `def.IsWall` ∨ 天然岩 `building.isNaturalRock`；压埋矿物 `Mineable*` 全继承 `RockBase` 故一并命中 —— rimsage 对 Core XML 实证），发起方独自满足参与层（墙当不了发起方，无 swap），复用双人冷却（成对键泛化为 `Thing`）。**天意五档**互斥随机：越想越怪 −2/0.5日(20%) / 毫无感觉 0/0.25日(30%) / 感觉还不错 +1/0.5日(25%) / 深吻 +3/1日(17%) / 爱上这堵墙 +6/1日(8%)；期望 ≈ +0.84 压在双人吻(+5×impact)之下、方差全社交最大 —— 笑点即方差。**刻意不乘 SocialImpact**（那是"对方如何接住你"的量，墙的回应恒为零）、**刻意不挂 nullifyingTraits**（Psychopath 归零的是双向社交温度；墙无人回应，反社会人格恰恰最适合亲墙）。"毫无感觉"也发 moodOffset 0 的 thought：面板挂着比什么都不加更有戏。开关 `wallKissing` **默认开**、位置刻意与门禁滑条分开（它管"墙算不算可亲对象"，七档管"谁能亲谁"）。人形发起方（`RaceProps.Humanlike`，覆盖智人/har/任何 mod 人形种）菜单文案「亲吻{0}…?!」迟疑版，非人形普通版。表演 = 走到贴墙格（8 周候选按距离升序、A* 预算 3 次）面向墙 `DurationTicks`，爱心照抛，**不回原位**（自己走过去的，原版对抵达目标干完活的人不送回）。
 - 亲吻时钟 = **只归发起方**（2026-09-04 实测定罪）：双方各数各的 150 tick 时，同一 tick 里谁先被 tick 循环处理谁先 completed=True 并结束 job，另一方的对称失败判定立刻把发起方踢成 completed=False；而 Settle 要求"发起方且 completed=True"，于是被动方先结束的那一半概率里谁都没心情（实测"有心情的 pawn 也不是 100%"）。现在被动方不倒数，只靠失败判定在发起方离场时结束 ⇒ 每桩跑满的亲吻必定双方各结算一次。
 - **归因纪律（本项目反复验证，跨项目适用）**：能拿到引擎权威输出（翻译报告、崩溃转储、`FinalizeInit` 自证日志）就别停在推测；**别拿"用户装的是旧包"当默认解释**（本项目两次这样误判，最后都是自己的 bug）；打点必带唯一字段（`t=`/计数器），否则 Unity 折叠到 99 条恰好掩盖"同一次调用被重入 N 次"这种关键信号。
 - 亲吻站位 = **定台**（2026-09-03）：发起方在 job 开头一次性选定一对左右相邻的静态格，双方各走各的（自己那一格存进 `job` 的 `TargetIndex.B`，被动方沿用不再自己挑），台位两格都由发起方 `Reserve` 住。动不了的一方钉在它当前格，于是站着的那个绕到它侧面 —— "亲倒地的人"也因此是左右对向。放弃的旧写法是"被动方用 `PathEndMode.Touch` 贴上去 + 主动方每 tick 重算对方侧面格"：Touch 不区分方向，被动方常先停在正上/正下方，主动方目标又随对方漂移，两人变成前后站位，朝向只能是 North/South。2x2 及以上体型不适用该模型，退回 Touch 兜底。
@@ -141,8 +144,8 @@
 | 心情与社交缩放 | `Source/…/Rewards/KissMoodReward.cs`（无 `needs.mood` 者静默） |
 | 谁能亲谁（范围档位） | `Source/…/Actions/Kiss/KissScope.cs` | 七档累积析取，出厂最右档 |
 | 冷却 | `Source/…/Systems/KissCooldown.cs`（会话内内存态） |
-| 亲完回哪去 | `Source/…/Systems/KissReturnQueue.cs`（换队列发放，挡住同 tick 递归） |
 | 单位换算唯一入口 | `Source/…/MwahTime.cs` |
+| 亲墙（判定/表演/结算） | `Source/…/Actions/Kiss/KissWallUtility.cs` + `Jobs/JobDriver_KissWall.cs` + `Rewards/KissWallReward.cs` |
 | 设置项与生命周期 | `Source/…/MwahSettings.cs` + `Mod.cs`（即时生效 + 防抖落盘） |
 | 日志/打点设计与引擎上限 | `docs/kiss-trace-logging-design-zh.md` | 未实现，含保留意见与待决策 |
 | 玩家 HUD 还能挂在哪（1.6 全清单） | `docs/hud-ui-surfaces-1.6.md` | 零 Harmony 可用面 / 只能 Harmony 的面 / 结论：底栏仍做主入口 |
@@ -159,7 +162,7 @@
 
 ## 验证状态
 
-- 已绿（离线）：`dotnet build` Debug/Release 均 **0 警告 0 错误**；`scripts/verify-local.ps1` 24 项全 `[ok]`（11 个 XML 良构、Keyed 中英各 73 键且集合一致、C# 引用的键双语齐备、DefOf↔defName 无孤儿、`driverClass` 与 `namespace.type` 一致、**DefInjected 顶层键必须是扁平 `DefName.字段`**、DLL 含 21 个关键符号、DLL 无 Harmony 符号、**Steam / GitHub 两个渠道各自单独编译过**、版本与 packageId 三处一致、无绝对本地路径、设置项字段↔Scribe key↔`Constants` 三处锁死共 15 项）。
+- 已绿（离线）：`dotnet build` Debug/Release 均 **0 警告 0 错误**；`scripts/verify-local.ps1` 24 项全 `[ok]`（11 个 XML 良构、Keyed 中英各 84 键且集合一致、C# 引用的键双语齐备、DefOf↔defName 无孤儿、`driverClass` 与 `namespace.type` 一致（白名单含 `JobDriver_KissWall`）、**DefInjected 顶层键必须是扁平 `DefName.字段`**、DLL 含 27 个关键符号、DLL 无 Harmony 符号、**Steam / GitHub 两个渠道各自单独编译过**、版本与 packageId 三处一致、无绝对本地路径、设置项字段↔Scribe key↔`Constants` 三处锁死共 16 项）。
 - 实机进度（截至 2026-09-04）：**基本流、导演台两步点选、定台走位、爱心、回原位、崩溃递归修复**都已由 `Player.log`/`Mwah-trace.log` 观测到生效；**仍未逐条确认**的是：七档门禁逐档收窄、非人/mutant/仪式灰项文案、心情数值与 `SocialImpact` 缩放、左右对向的实际观感、翻译扁平键修复后的中文显示。矩阵见 `TODO.md`。
 - 「定义了却没人引用」的反向键检查是有价值的闸门：它在开发过程中抓到 `Mod.cs` 丢失 `SettingsCategory()` override —— 该方法返回非空是设置页出现在「模式选项」里的唯一条件，丢了就等于整个设置面不可达。删掉这条检查前必须先想清楚。
 - 产物：`scripts/build-dev.ps1` 出 `dist/dev/Mwah-dev-v<VERSION>-<shortsha>[-dirty].zip`（commit 见 `git log --oneline -1`，本文件不钉死哈希；`-EXP` 尾缀 2026-09-10 应维护者要求废止，dev 标签 = csproj `<Version>` 原样），包内 `version.txt` 三行 = 名称+标签 / build / commit；`dist/` 与 DLL 全 gitignored。
