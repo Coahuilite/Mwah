@@ -41,19 +41,38 @@ public static class KissDirector
     }
 
     /// <summary>
-    /// 一段地图拾取：选到一个 pawn 就交给 <paramref name="onPicked"/>，到此为止 —— 不链式、不派发。
+    /// 一段地图拾取（只收 pawn）：头像框左槽与快速发配第一跳用。
     /// <paramref name="prompt"/> 是已经算好参数的鼠标挂件文案。
     /// </summary>
     public static void BeginPick(Action<Pawn> onPicked, Func<Pawn, bool>? extraAccept, string prompt)
+    {
+        BeginPickThing(
+            t => { if (t is Pawn p) { onPicked(p); } },
+            extraAccept == null ? null : new Func<Thing, bool>(th => th is Pawn pp && extraAccept(pp)),
+            prompt,
+            pawnsOnly: true);
+    }
+
+    /// <summary>
+    /// 一段地图拾取（pawn 或墙）：右槽与快速发配第二跳用。墙只在"允许亲吻墙壁"开着时可选，
+    /// 且必须不在迷雾里 —— 未知的部分不能提前选中（维护者裁定）。能不能亲仍不在这里判，
+    /// 交给派发时的完整门禁。
+    /// </summary>
+    public static void BeginPickThing(Action<Thing> onPicked, Func<Thing, bool>? extraAccept, string prompt)
+    {
+        BeginPickThing(onPicked, extraAccept, prompt, pawnsOnly: false);
+    }
+
+    private static void BeginPickThing(Action<Thing> onPicked, Func<Thing, bool>? extraAccept, string prompt, bool pawnsOnly)
     {
         int generation = ++targetingGeneration;
         Active = true;
         MwahLog.Dev("pick start (generation " + generation + ")");
         Find.Targeter.BeginTargeting(
-            targetParams: TargetingParameters.ForPawns(),
+            targetParams: pawnsOnly ? TargetingParameters.ForPawns() : PawnAndWallParams,
             action: delegate (LocalTargetInfo ti)
             {
-                if (ti.Thing is Pawn picked && (extraAccept == null || extraAccept(picked)))
+                if (ti.Thing is Thing picked && (extraAccept == null || extraAccept(picked)))
                 {
                     MwahLog.Dev("pick ok (generation " + generation + "): " + picked.LabelShort);
                     onPicked(picked);
@@ -62,7 +81,7 @@ public static class KissDirector
             highlightAction: null,
             targetValidator: delegate (LocalTargetInfo ti)
             {
-                return ti.Thing is Pawn p && (extraAccept == null || extraAccept(p));
+                return ti.Thing is Thing t && (extraAccept == null || extraAccept(t));
             },
             caster: null,
             actionWhenFinished: delegate { CleanupPick(generation); },
@@ -74,21 +93,38 @@ public static class KissDirector
             });
     }
 
+    /// <summary>pawn 全放行（能不能亲由派发判定），墙要过 IsWallLike + 迷雾两道。</summary>
+    private static TargetingParameters PawnAndWallParams => new()
+    {
+        canTargetPawns = true,
+        canTargetBuildings = true,
+        validator = delegate (TargetInfo ti)
+        {
+            if (ti.Thing is Pawn)
+            {
+                return true;
+            }
+            return MwahMod.Settings.WallKissingEnabled
+                && KissWallUtility.IsWallLike(ti.Thing)
+                && !ti.Thing.Position.Fogged(ti.Thing.Map);
+        },
+    };
+
     /// <summary>
-    /// 快速发配：老版导演台的两段链 —— 第一点发起方、第二点对象，选完立即派发。
-    /// <paramref name="onBoth"/> 只是给面板回显头像槽用的钩子，派发不经过它。
+    /// 快速发配：老版导演台的两段链 —— 第一点发起方、第二点对象（pawn 或墙），选完立即派发。
+    /// <paramref name="onBoth"/> 只是给面板回显槽位用的钩子，派发不经过它。
     /// </summary>
-    public static void QuickChain(Action<Pawn, Pawn>? onBoth)
+    public static void QuickChain(Action<Pawn, Thing>? onBoth)
     {
         BeginPick(first =>
         {
-            BeginPick(
+            BeginPickThing(
                 second =>
                 {
                     onBoth?.Invoke(first, second);
                     Dispatch(first, second);
                 },
-                p => p != first,
+                t => t != first,
                 "MWAH.Director.PickSecond".Translate(first.Named("PAWN")));
         }, null, "MWAH.Director.PickFirst".Translate());
     }
@@ -108,22 +144,34 @@ public static class KissDirector
         }
     }
 
-    // 取点参数用 ForPawns：任何 spawn 的 pawn 都能点，敌人也不例外 —— 这里只管"是个 pawn"，
-    // 能不能亲交给 Dispatch 里 KissUtility.BeginDirected 的完整门禁判定（BeginPick 内联使用）。
+    // 取点参数只管"是不是个可选的东西"，能不能亲交给派发时的完整门禁
+    // （双人走 KissUtility.BeginDirected，亲墙走 KissWallUtility.BeginDirected）。
 
-    public static void Dispatch(Pawn a, Pawn b)
+    public static void Dispatch(Pawn a, Thing b)
     {
-        // 一次判定拿到结果与原因（早先失败时要再跑一遍 Propose，连 A* 寻路都白烧）。
-        KissProposal proposal = KissUtility.BeginDirected(a, b);
-        if (proposal.Allowed)
+        if (b is Pawn partner)
         {
-            // 无角色互换 ⇒ 点选顺序就是实际双方；消息按点选顺序说话，不再说谎。
+            // 一次判定拿到结果与原因（早先失败时要再跑一遍 Propose，连 A* 寻路都白烧）。
+            KissProposal proposal = KissUtility.BeginDirected(a, partner);
+            if (proposal.Allowed)
+            {
+                Messages.Message("MWAH.Director.Started".Translate(a.Named("PAWN"), partner.Named("OTHER")),
+                    new LookTargets(a, partner), MessageTypeDefOf.PositiveEvent, historical: false);
+                return;
+            }
+            Messages.Message(proposal.BlockedReason ?? "MWAH.Fail.Busy".Translate(),
+                new LookTargets(a, partner), MessageTypeDefOf.RejectInput, historical: false);
+            return;
+        }
+
+        KissWallUtility.WallKissProposal wallProposal = KissWallUtility.BeginDirected(a, b);
+        if (wallProposal.Allowed)
+        {
             Messages.Message("MWAH.Director.Started".Translate(a.Named("PAWN"), b.Named("OTHER")),
                 new LookTargets(a, b), MessageTypeDefOf.PositiveEvent, historical: false);
             return;
         }
-        // 选点模式没有"灰按钮"，可行性只能在点完之后用消息告知。
-        Messages.Message(proposal.BlockedReason ?? "MWAH.Fail.Busy".Translate(),
+        Messages.Message(wallProposal.BlockedReason ?? "MWAH.Fail.Busy".Translate(),
             new LookTargets(a, b), MessageTypeDefOf.RejectInput, historical: false);
     }
 }

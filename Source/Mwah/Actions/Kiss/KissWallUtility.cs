@@ -108,8 +108,31 @@ public static class KissWallUtility
                 new LookTargets(wall), MessageTypeDefOf.RejectInput, historical: false);
             return;
         }
+        StartWallJob(selected, wall, forced: false);
+    }
+
+    /// <summary>
+    /// 导演台/快速发配点出来的墙：与右键同一条 Propose，但 job 打 playerForced
+    /// （与双人代发同理 —— 否则 pawn 的 think tree 会在下一个 override 检查点把它拽回去）。
+    /// </summary>
+    public static WallKissProposal BeginDirected(Pawn first, Thing wall)
+    {
+        WallKissProposal proposal = Propose(first, wall);
+        if (proposal.Allowed && proposal.Doer != null)
+        {
+            StartWallJob(first, wall, forced: true);
+        }
+        return proposal;
+    }
+
+    private static void StartWallJob(Pawn doer, Thing wall, bool forced)
+    {
         var job = JobMaker.MakeJob(MWAH_JobDefOf.MWAH_KissWall, wall);
-        selected.jobs.StartJob(job, JobCondition.InterruptForced);
+        if (forced)
+        {
+            job.playerForced = true;
+        }
+        doer.jobs.StartJob(job, JobCondition.InterruptForced);
     }
 
     public static bool IsKissingWall(Pawn pawn) => pawn.CurJobDef == MWAH_JobDefOf.MWAH_KissWall;

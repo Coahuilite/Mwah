@@ -35,7 +35,7 @@ public class Dialog_KissDirector : Window
     private enum PickSlot : byte { None, Left, Right }
 
     private Pawn? pawnA;
-    private Pawn? pawnB;
+    private Thing? targetB; // 右槽：pawn 或墙（导演台也能点墙）
     private PickSlot picking;
     private bool userMoved;
     private Rect lastAutoRect;
@@ -176,9 +176,9 @@ public class Dialog_KissDirector : Window
         {
             pawnA = null;
         }
-        if (!IsLive(pawnB))
+        if (!IsAlive(targetB))
         {
-            pawnB = null;
+            targetB = null;
         }
 
         float slot = SlotSize;
@@ -192,16 +192,16 @@ public class Dialog_KissDirector : Window
             inRect.width * 0.56f, ButtonHeight);
 
         DrawSlot(left, pawnA, active: picking == PickSlot.Left, isLeft: true);
-        DrawSlot(right, pawnB, active: picking == PickSlot.Right, isLeft: false);
+        DrawSlot(right, targetB, active: picking == PickSlot.Right, isLeft: false);
         DrawHeart(heart);
         DrawCaption(leftCaption, pawnA == null
             ? "MWAH.Director.PickFirst".Translate()
             : "MWAH.Director.LeftPicked".Translate(pawnA.Named("PAWN")));
         DrawCaption(rightCaption, pawnA == null
             ? "MWAH.Director.RightWait".Translate()
-            : pawnB == null
+            : targetB == null
                 ? "MWAH.Director.PickSecond".Translate(pawnA.Named("PAWN"))
-                : "MWAH.Director.PairDone".Translate(pawnA.Named("PAWN"), pawnB.Named("OTHER")));
+                : "MWAH.Director.PairDone".Translate(pawnA.Named("PAWN"), targetB.Named("OTHER")));
         if (Widgets.ButtonText(quick, "MWAH.Director.QuickSend".Translate()))
         {
             QuickSend();
@@ -214,16 +214,31 @@ public class Dialog_KissDirector : Window
 
     private static bool IsLive(Pawn? pawn) => pawn is { Dead: false, Spawned: true };
 
-    private void DrawSlot(Rect rect, Pawn? pawn, bool active, bool isLeft)
+    private static bool IsAlive(Thing? thing) => thing switch
+    {
+        null => false,
+        Pawn pawn => IsLive(pawn),
+        _ => thing.Spawned && !thing.Destroyed,
+    };
+
+    private void DrawSlot(Rect rect, Thing? thing, bool active, bool isLeft)
     {
         if (!active)
         {
             Widgets.DrawHighlightIfMouseover(rect);
         }
         Rect inner = rect.ContractedBy(3f * Scale);
-        if (pawn != null)
+        if (thing is Pawn pawn)
         {
             GUI.DrawTexture(inner, PortraitsCache.Get(pawn, inner.size * 1.25f, Rot4.North));
+        }
+        else if (thing != null)
+        {
+            // 墙：uiIcon 在 ResolveReferences 里保证填充（无 iconPath 时退到材质主纹理），
+            // 按原版惯例乘 uiIconColor 再 ScaleToFit。
+            GUI.color = thing.def.uiIconColor;
+            GUI.DrawTexture(inner, thing.def.uiIcon ?? Texture2D.whiteTexture, ScaleMode.ScaleToFit);
+            GUI.color = Color.white;
         }
         else
         {
@@ -244,16 +259,16 @@ public class Dialog_KissDirector : Window
             {
                 StartPick(right: !isLeft);
             }
-            else if (Event.current.button == 1 && pawn != null && (isLeft || pawnA != null))
+            else if (Event.current.button == 1 && thing != null && (isLeft || pawnA != null))
             {
                 if (isLeft)
                 {
                     pawnA = null;
-                    pawnB = null; // 换/清发起方后原来的对象不再有指代，整个右半归零
+                    targetB = null; // 换/清发起方后原来的对象不再有指代，整个右半归零
                 }
                 else
                 {
-                    pawnB = null;
+                    targetB = null;
                 }
             }
             Event.current.Use();
@@ -263,7 +278,7 @@ public class Dialog_KissDirector : Window
     private void DrawHeart(Rect rect)
     {
         bool leftReady = pawnA != null;
-        bool rightReady = pawnB != null;
+        bool rightReady = targetB != null;
         bool ready = leftReady && rightReady;
         heartTex ??= ContentFinder<Texture2D>.Get("Things/Mote/Heart", reportFailure: false);
         Texture2D tex = heartTex ?? Texture2D.whiteTexture;
@@ -289,14 +304,14 @@ public class Dialog_KissDirector : Window
         if (Mouse.IsOver(rect))
         {
             GUI.tooltip = ready
-                ? "MWAH.Director.HeartReady".Translate(pawnA!.Named("PAWN"), pawnB!.Named("OTHER"))
+                ? "MWAH.Director.HeartReady".Translate(pawnA!.Named("PAWN"), targetB!.Named("OTHER"))
                 : "MWAH.Director.HeartWaiting".Translate();
         }
         if (ready && Event.current.type == EventType.MouseDown && Event.current.button == 0
             && rect.Contains(Event.current.mousePosition))
         {
             Event.current.Use();
-            KissDirector.Dispatch(pawnA!, pawnB!);
+            KissDirector.Dispatch(pawnA!, targetB!);
             // 决定：派发后不清槽。成对冷却自动把下一次点击变成带原因的弹信，槽位保留即"还是这俩"。
         }
     }
@@ -313,7 +328,8 @@ public class Dialog_KissDirector : Window
         Text.Font = fontBefore;
     }
 
-    /// <summary>点头像框 = 进该槽的单段点选；换左发起方会清空右框（文案的指代前提变了）。</summary>
+    /// <summary>点框 = 进该槽的单段点选；换左发起方会清空右框（文案的指代前提变了）。
+    /// 右槽收 pawn 也收墙（墙要开着亲墙开关、不在迷雾里 —— 过滤在 KissDirector 的取点参数里）。</summary>
     private void StartPick(bool right)
     {
         if (right && pawnA == null)
@@ -325,21 +341,26 @@ public class Dialog_KissDirector : Window
         string prompt = right
             ? "MWAH.Director.PickSecond".Translate(first!.Named("PAWN"))
             : "MWAH.Director.PickFirst".Translate();
+        if (right)
+        {
+            KissDirector.BeginPickThing(
+                thing =>
+                {
+                    targetB = thing;
+                    picking = PickSlot.None;
+                },
+                t => t != first,
+                prompt);
+            return;
+        }
         KissDirector.BeginPick(
             pawn =>
             {
-                if (right)
-                {
-                    pawnB = pawn;
-                }
-                else
-                {
-                    pawnA = pawn;
-                    pawnB = null;
-                }
+                pawnA = pawn;
+                targetB = null;
                 picking = PickSlot.None;
             },
-            right ? (Func<Pawn, bool>)(p => p != first) : null,
+            null,
             prompt);
     }
 
@@ -349,7 +370,7 @@ public class Dialog_KissDirector : Window
         KissDirector.QuickChain((a, b) =>
         {
             pawnA = a;
-            pawnB = b;
+            targetB = b;
         });
     }
 }
