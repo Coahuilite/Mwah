@@ -24,6 +24,7 @@ namespace Mwah;
 /// 面板里的 pawn 引用是实例字段、随窗口死；静态只剩一个 Current 打开标记，
 /// 由 KissTicker 的 (Game) 构造器按局清零（static 寿命是进程，不是局 —— 见 MEMORY）。
 /// </summary>
+[StaticConstructorOnStartup] // 静态 Texture2D 字段会被原版启动扫描器点名（ReportProbablyMissingAttributes 只认 attribute，不认惰性加载）
 public class Dialog_KissDirector : Window
 {
     /// <summary>布局基准逻辑高（1080 参考系）。k 上下一夹：小屏不至于不可读，大屏不至于过大。</summary>
@@ -56,6 +57,10 @@ public class Dialog_KissDirector : Window
         absorbInputAroundWindow = false;
         closeOnCancel = false;
         layer = WindowLayer.GameUI;
+        // 基类默认 true：只要窗口在 WindowStack 里，CameraDriver 的
+        // AnythingPreventsCameraMotion 就整体掐掉方向键平移与滚轮缩放。
+        // 这是块常驻式非模态面板，相机必须照常能动。
+        preventCameraMotion = false;
         optionalTitle = "MWAH.Director.Title".Translate();
         lastCanvas = new Vector2(UI.screenWidth, UI.screenHeight);
     }
