@@ -100,15 +100,18 @@ public class Dialog_KissDirector : Window
     private static float SlotSize => 88f * Scale;
     private static float HeartSize => 62f * Scale;
     private static float Gap => 18f * Scale;
-    private static float CaptionHeight => 40f * Scale;
+    // 文案字号不跟着 k 缩（Tiny 恒为 16 逻辑像素），所以 caption 框宽要有"一行中文"的硬下限；
+    // 否则小 k（1024×768 实测）下文字折行溢出，戳出窗沿、撞上快速发配按钮。
+    private static float CaptionWidth => Mathf.Max(SlotSize + Gap, 122f);
+    private static float CaptionHeight => 46f; // 两行 Tiny：长名字换行也接得住
     private static float ButtonHeight => 30f * Scale;
 
     public override Vector2 InitialSize
     {
         get
         {
-            float w = SlotSize * 2f + Gap * 2f + HeartSize + Margin * 2f;
-            float h = SlotSize + CaptionHeight + ButtonHeight + Gap * 2f + Margin * 2f;
+            float w = CaptionWidth * 2f + HeartSize + Gap * 2f + Margin * 2f;
+            float h = SlotSize + 4f * Scale + CaptionHeight + Gap + ButtonHeight + Margin * 2f;
             // 兜底：极小逻辑画布（高分屏高 UIScale）下不超过约束屏宽的 62%。
             float maxW = UI.screenWidth * 0.62f;
             if (w > maxW)
@@ -184,8 +187,8 @@ public class Dialog_KissDirector : Window
         Rect left = new Rect(inRect.xMin, top, slot, slot);
         Rect right = new Rect(inRect.xMax - slot, top, slot, slot);
         Rect heart = new Rect(inRect.center.x - HeartSize / 2f, top + (slot - HeartSize) / 2f, HeartSize, HeartSize);
-        Rect leftCaption = new Rect(left.x - Gap / 2f, left.yMax + 4f * Scale, left.width + Gap, CaptionHeight);
-        Rect rightCaption = new Rect(right.x - Gap / 2f, right.yMax + 4f * Scale, right.width + Gap, CaptionHeight);
+        Rect leftCaption = new Rect(inRect.xMin, left.yMax + 4f * Scale, CaptionWidth, CaptionHeight);
+        Rect rightCaption = new Rect(inRect.xMax - CaptionWidth, right.yMax + 4f * Scale, CaptionWidth, CaptionHeight);
         Rect quick = new Rect(inRect.center.x - inRect.width * 0.28f, top + inRect.height - ButtonHeight,
             inRect.width * 0.56f, ButtonHeight);
 
