@@ -128,6 +128,9 @@ public class MwahSettings : ModSettings
         var viewRect = new Rect(0f, 0f, inRect.width - 16f, inRect.height);
         // 自动测高：先用窗口高度开滚动，list 结束后用真实内容高度回写 viewRect。
         // 固定 ContentHeight 的写法在控件增删或译文变长后会截断底部控件。
+        // 可见轨道：BeginScrollView 只画滑块、滑块在暗底上近乎隐形（实机裁定"滚动条完全看不到"），
+        // 先垫一条低透明黑轨，让"这里能滚"看得出来。
+        Widgets.DrawBoxSolid(new Rect(inRect.xMax - 15f, inRect.y, 15f, inRect.height), new Color(0f, 0f, 0f, 0.3f));
         Widgets.BeginScrollView(inRect, ref scrollPos, viewRect);
         var list = new Listing_Standard(GameFont.Small);
         list.ColumnWidth = viewRect.width - 24f;
