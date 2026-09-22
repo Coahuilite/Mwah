@@ -82,15 +82,14 @@ public class FloatMenuOptionProvider_Kiss : FloatMenuOptionProvider
             label = selected.LabelShort + ": " + label;
         }
 
-        if (!proposal.Allowed || proposal.Doer == null || proposal.Receiver == null)
+        // Allowed 为真时双方必然都在（见 KissProposal.TryGetPair），这里顺手把双方取出来用。
+        if (!proposal.TryGetPair(out Pawn doer, out Pawn receiver))
         {
             // 原版灰项惯例：action 传 null 即禁用，原因写在括号里。
             return new FloatMenuOption(label + " (" + proposal.BlockedReason + ")", null,
                 MenuOptionPriority.InitiateSocial, null, clickedPawn);
         }
 
-        Pawn doer = proposal.Doer;
-        Pawn receiver = proposal.Receiver;
         var option = new FloatMenuOption(label, delegate { KissUtility.BeginKiss(selected, clickedPawn); },
             MenuOptionPriority.InitiateSocial, null, clickedPawn)
         {

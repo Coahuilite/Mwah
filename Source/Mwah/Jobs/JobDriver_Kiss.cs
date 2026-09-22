@@ -64,30 +64,6 @@ public class JobDriver_Kiss : JobDriver
     /// <summary>job 起步时目标 B 是否已被填好：被填好说明自己是被动方（发起方写进来的）。</summary>
     private bool bornPassive;
 
-#if MWAH_DEV
-    private static void TraceSet(bool passive, string phase) => KissTrace.Set(passive, phase);
-
-    private static void TraceTicks(bool passive, int ticks)
-    {
-        if (passive)
-        {
-            KissTrace.TicksB = ticks;
-        }
-        else
-        {
-            KissTrace.TicksA = ticks;
-        }
-    }
-#else
-    private static void TraceSet(bool passive, string phase)
-    {
-    }
-
-    private static void TraceTicks(bool passive, int ticks)
-    {
-    }
-#endif
-
     private IntVec3 lastWalkTarget = IntVec3.Invalid;
     private int walkAttempts;
 
@@ -142,7 +118,7 @@ public class JobDriver_Kiss : JobDriver
         toil.initAction = delegate
         {
             bornPassive = StageCell.IsValid;
-            TraceSet(bornPassive, "stage");
+            KissTrace.Set(bornPassive, "stage");
             homeX = base.pawn.Position.x;
             homeZ = base.pawn.Position.z;
             // 冷却在这里记，而不是在 StartJob 之前：TryMakePreToilReservations 失败（对方
@@ -152,7 +128,8 @@ public class JobDriver_Kiss : JobDriver
                 MwahSettings settings = MwahMod.Settings;
                 KissCooldown.Mark(base.pawn, Partner, settings.PawnCooldown, settings.PairCooldown);
             }
-            if (StageCell.IsValid || !TryFindStage(out IntVec3 mine, out IntVec3 theirs))
+            // bornPassive 就是"目标 B 已被填好"（对方替我挑了台位）；两种情况都不再自己定台。
+            if (bornPassive || !TryFindStage(out IntVec3 mine, out IntVec3 theirs))
             {
                 return;
             }
@@ -168,43 +145,44 @@ public class JobDriver_Kiss : JobDriver
         return toil;
     }
 
-    /// <summary>走到自己那一格。目标是静态格，所以中途不需要重算，也不存在互相追着走。</summary>
+    /// <summary>
+    /// 走到自己那一格。目标是静态格，所以中途不需要重算，也不存在互相追着走。
+    /// 起步与每 tick 的检查是同一段判断，抽成 <see cref="TryReachStage"/>，免得两份逻辑各改各的。
+    /// </summary>
     private Toil ToilGotoStage()
     {
         var toil = ToilMaker.MakeToil(nameof(ToilGotoStage));
         toil.initAction = delegate
         {
-            TraceSet(bornPassive, "walk");
-            if (InPosition())
-            {
-                base.pawn.pather?.StopDead();
-                ReadyForNextToil();
-            }
-            else if (!BeginWalk())
-            {
-                EndJobWith(JobCondition.Incompletable);
-            }
+            KissTrace.Set(bornPassive, "walk");
+            TryReachStage();
         };
         toil.tickIntervalAction = delegate
         {
-            if (base.pawn.pather == null || base.pawn.pather.Moving)
+            // 还在路上就不插手；pather 没了（被别的 job 抢走或已经走完）才需要再看一眼。
+            if (base.pawn.pather != null && base.pawn.pather.Moving)
             {
                 return;
             }
-            if (InPosition())
-            {
-                base.pawn.pather.StopDead();
-                ReadyForNextToil();
-                return;
-            }
-            if (!BeginWalk())
-            {
-                EndJobWith(JobCondition.Incompletable);
-            }
+            TryReachStage();
         };
         toil.socialMode = RandomSocialMode.Off;
         toil.defaultCompleteMode = ToilCompleteMode.Never;
         return toil;
+    }
+
+    /// <summary>到位就推进到下一个 toil；迈不开步（动不了、够不到、走位止损）就判这桩亲不成了。</summary>
+    private void TryReachStage()
+    {
+        if (InPosition())
+        {
+            base.pawn.pather?.StopDead();
+            ReadyForNextToil();
+        }
+        else if (!BeginWalk())
+        {
+            EndJobWith(JobCondition.Incompletable);
+        }
     }
 
     /// <summary>把对方拉进同一个 job，并把它那一格交给它。</summary>
@@ -214,7 +192,7 @@ public class JobDriver_Kiss : JobDriver
         toil.initAction = delegate
         {
             isPassivePartner = Partner.CurJob != null && Partner.CurJob.def == MWAH_JobDefOf.MWAH_Kiss;
-            TraceSet(isPassivePartner, "lock");
+            KissTrace.Set(isPassivePartner, "lock");
             if (!isPassivePartner)
             {
                 var partnerJob = JobMaker.MakeJob(MWAH_JobDefOf.MWAH_Kiss, base.pawn);
@@ -241,7 +219,7 @@ public class JobDriver_Kiss : JobDriver
         toil.initAction = delegate
         {
             base.pawn.pather?.StopDead();
-            TraceSet(isPassivePartner, "perform");
+            KissTrace.Set(isPassivePartner, "perform");
             MwahLog.Dev("kiss perform: " + base.pawn.LabelShort + " at " + base.pawn.Position + ", partner at " + Partner.Position + ", ticks=" + ticksLeft);
             FaceEachOther();
         };
@@ -256,7 +234,7 @@ public class JobDriver_Kiss : JobDriver
             if (!isPassivePartner)
             {
                 ticksLeft -= delta;
-                TraceTicks(false, ticksLeft);
+                KissTrace.Ticks(false, ticksLeft);
                 if (ticksLeft <= 0)
                 {
                     completed = true;
@@ -266,7 +244,7 @@ public class JobDriver_Kiss : JobDriver
             }
             else
             {
-                TraceTicks(true, ticksLeft);
+                KissTrace.Ticks(true, ticksLeft);
             }
             FaceEachOther();
             int interval = MwahMod.Settings.FleckIntervalTicks;
@@ -289,14 +267,12 @@ public class JobDriver_Kiss : JobDriver
                 return;
             }
             finished = true;
-            TraceSet(isPassivePartner, "end");
-            MwahLog.Dev("kiss end: " + base.pawn.LabelShort + " completed=" + completed + " passive=" + isPassivePartner + " t=" + Find.TickManager.TicksGame);
-            KissTrace.Clear();
+            KissReturnQueue.Enqueue(base.pawn, HomeCell);
             if (completed && !isPassivePartner)
             {
                 KissMoodReward.Settle(base.pawn, Partner);
             }
-            KissUtility.QueueReturnHome(base.pawn, HomeCell);
+            KissReturnQueue.Enqueue(base.pawn, HomeCell);
         });
         toil.socialMode = RandomSocialMode.Off;
         toil.defaultCompleteMode = ToilCompleteMode.Never;

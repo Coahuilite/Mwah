@@ -57,6 +57,7 @@ public static class KissTrace
         }
     }
 
+    /// <summary>记阶段。passive 为真记被动方，否则记发起方。</summary>
     public static void Set(bool passive, string phase)
     {
         if (passive)
@@ -66,6 +67,19 @@ public static class KissTrace
         else
         {
             PhaseA = phase;
+        }
+    }
+
+    /// <summary>记剩余 tick。只有发起方真的在倒数，被动方那格写的是它上一次看到的值。</summary>
+    public static void Ticks(bool passive, int ticks)
+    {
+        if (passive)
+        {
+            TicksB = ticks;
+        }
+        else
+        {
+            TicksA = ticks;
         }
     }
 
@@ -122,6 +136,34 @@ public static class KissTrace
         string[] tail = new string[TailLines];
         Array.Copy(all, all.Length - TailLines, tail, 0, TailLines);
         File.WriteAllLines(path, tail);
+    }
+}
+#else
+using System.Diagnostics;
+
+namespace Mwah;
+
+/// <summary>
+/// 非 dev 构建下的空壳：签名与 dev 版逐条对齐，且每个方法都打
+/// <c>[Conditional("MWAH_DEV")]</c> —— 调用点在编译期整条消失，等价于旧写法在
+/// JobDriver 里套 #if，但不把预处理噪音留在表演代码中间（打点位置就是表演位置）。
+/// </summary>
+public static class KissTrace
+{
+    [Conditional("MWAH_DEV")] public static void Start()
+    {
+    }
+
+    [Conditional("MWAH_DEV")] public static void Set(bool passive, string phase)
+    {
+    }
+
+    [Conditional("MWAH_DEV")] public static void Ticks(bool passive, int ticks)
+    {
+    }
+
+    [Conditional("MWAH_DEV")] public static void Clear()
+    {
     }
 }
 #endif

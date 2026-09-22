@@ -6,10 +6,10 @@ using Verse.AI;
 namespace Mwah;
 
 /// <summary>
-/// 一次"要不要在右键菜单里出现"的完整判定结果。
-/// Visible=false 表示连灰项都不给（结构层不可能：总开关关闭、对象已不在、
-/// 有一方没有心情系统且设置未放行、敌对且设置未放行），
-/// 避免每次右键殖民地都糊一屏灰色亲吻。
+/// 一次"这个吻行不行、谁亲谁、不行是因为什么"的完整判定结果。
+/// Visible=false 表示连灰项都不给（结构层就不成立：总开关关着、人已经不在了），
+/// 免得每次右键殖民地都糊一屏灰色的亲吻；Allowed=false 才给灰项，括号里写真实原因。
+/// 三层判定的顺序与依据见 <see cref="KissBoundary"/>。
 /// </summary>
 public readonly struct KissProposal
 {
@@ -37,11 +37,22 @@ public readonly struct KissProposal
     public static KissProposal Allow(Pawn doer, Pawn receiver) => new(true, true, doer, receiver, null);
 
     public static KissProposal Blocked(string reason) => new(true, false, null, null, reason);
+
+    /// <summary>
+    /// Allowed 为真时双方必然都在（Allow 是唯一置真入口）。把这条不变式收在这里，
+    /// 调用点就只写一次判断，不必每处再补两个 `== null`。
+    /// </summary>
+    public bool TryGetPair(out Pawn doer, out Pawn receiver)
+    {
+        doer = Doer!;
+        receiver = Receiver!;
+        return Allowed && Doer != null && Receiver != null;
+    }
 }
 
 /// <summary>
-/// 亲吻的发起：判定顺序是 结构层 → 参与层 → 主动层（谁去亲）→ 即时可用性。
-/// 前三层的定义与源码依据都在 <see cref="KissBoundary"/>；表演与结算在 <see cref="JobDriver_Kiss"/>。
+/// 亲吻的发起：判定顺序是 结构层 → 门禁层 → 参与层 → 主动层（谁去亲）→ 即时可用性。
+/// 前四层的定义与源码依据都在 <see cref="KissBoundary"/>；表演与结算在 <see cref="JobDriver_Kiss"/>。
 /// </summary>
 public static class KissUtility
 {
@@ -126,20 +137,20 @@ public static class KissUtility
         int pawnRemaining = KissCooldown.PawnRemaining(doer);
         if (pawnRemaining > 0)
         {
-            return new AcceptanceReport(MwahStrings.Get("MWAH.Fail.CooldownPawn",
+            return new AcceptanceReport("MWAH.Fail.CooldownPawn".Translate(
                 doer.Named("PAWN"), MwahTime.FormatTicks(pawnRemaining).Named("TIME")));
         }
 
         int pairRemaining = KissCooldown.PairRemaining(doer, receiver);
         if (pairRemaining > 0)
         {
-            return new AcceptanceReport(MwahStrings.Get("MWAH.Fail.CooldownPair",
+            return new AcceptanceReport("MWAH.Fail.CooldownPair".Translate(
                 doer.Named("PAWN"), receiver.Named("OTHER"), MwahTime.FormatTicks(pairRemaining).Named("TIME")));
         }
 
         if (!doer.CanReach(receiver.Position, PathEndMode.Touch, Danger.Deadly))
         {
-            return new AcceptanceReport(MwahStrings.Get("MWAH.Fail.CannotReach", receiver.Named("TARGET")));
+            return new AcceptanceReport("MWAH.Fail.CannotReach".Translate(receiver.Named("TARGET")));
         }
         return AcceptanceReport.WasAccepted;
     }
@@ -148,13 +159,13 @@ public static class KissUtility
     public static void BeginKiss(Pawn selected, Pawn target)
     {
         KissProposal proposal = Propose(selected, target, allowRoleSwap: true);
-        if (!proposal.Allowed || proposal.Doer == null || proposal.Receiver == null)
+        if (!proposal.TryGetPair(out Pawn doer, out Pawn receiver))
         {
             Messages.Message(proposal.BlockedReason ?? "MWAH.Fail.Stale".Translate(),
                 new LookTargets(selected, target), MessageTypeDefOf.RejectInput, historical: false);
             return;
         }
-        Start(proposal, forced: false);
+        Start(doer, receiver, forced: false);
     }
 
     /// <summary>
@@ -165,26 +176,17 @@ public static class KissUtility
     /// 但**不做角色互换**：点谁就是谁去亲（<see cref="KissDirector"/> 的消息按点选顺序说话），
     /// 自主派发也绝不把玩家侧小人拉起来当发起方。
     /// </summary>
-    /// <returns>发起成功后解析出的真实双方（与入参同序），失败返回 null。</returns>
-    public static (Pawn doer, Pawn receiver)? BeginDirected(Pawn doer, Pawn receiver)
+    /// <returns>这次判定的完整结果：Allowed 为真时 job 已经起来，为假时 BlockedReason 就是给玩家的理由。
+    /// 结果必须交回调用方 —— 早先这里只回 null，导演台想知道"为什么不行"只能把 Propose 连着
+    /// 寻路再跑一遍（<c>CanReach</c> 是 A*，白烧一次），还可能两次结论不一致。</returns>
+    public static KissProposal BeginDirected(Pawn first, Pawn second)
     {
-        KissProposal proposal = Propose(doer, receiver, allowRoleSwap: false);
-        if (!proposal.Allowed || proposal.Doer == null || proposal.Receiver == null)
+        KissProposal proposal = Propose(first, second, allowRoleSwap: false);
+        if (proposal.TryGetPair(out Pawn doer, out Pawn receiver))
         {
-            return null;
+            Start(doer, receiver, forced: true);
         }
-        Start(proposal, forced: true);
-        return (proposal.Doer, proposal.Receiver);
-    }
-
-    /// <summary>
-    /// 导演台用的可行性预览：不发起，只返回挡住它的原因文本，可行时返回 null。
-    /// 界面要靠它把按钮置灰并写明理由，所以不能只给 bool。
-    /// </summary>
-    public static string? DirectPreview(Pawn a, Pawn b)
-    {
-        KissProposal proposal = Propose(a, b, allowRoleSwap: false);
-        return proposal.Allowed ? null : proposal.BlockedReason;
+        return proposal;
     }
 
     /// <summary>
@@ -199,16 +201,19 @@ public static class KissUtility
             && KissBoundary.CanParticipate(b).Accepted;
     }
 
-    /// <summary>共用的落地动作：起 job。冷却由 <see cref="JobDriver_Kiss"/> 的定台 toil 记 ——
-    /// 预订失败（对方被抢）时 job 根本没成，发起瞬间记账等于空罚一轮冷却。</summary>
-    private static void Start(KissProposal proposal, bool forced)
+    /// <summary>
+    /// 共用的落地动作：起 job。"亲完回哪儿"不在这里发 —— 它排在 <see cref="KissReturnQueue"/>
+    /// 里，下一个 tick 才发（原因见那个类的注释）。冷却也由 <see cref="JobDriver_Kiss"/> 的定台
+    /// toil 记：预订失败（对方被抢）时 job 根本没成，发起瞬间记账等于空罚一轮冷却。
+    /// </summary>
+    private static void Start(Pawn doer, Pawn receiver, bool forced)
     {
-        var job = JobMaker.MakeJob(MWAH_JobDefOf.MWAH_Kiss, proposal.Receiver);
+        var job = JobMaker.MakeJob(MWAH_JobDefOf.MWAH_Kiss, receiver);
         if (forced)
         {
             job.playerForced = true;
         }
-        proposal.Doer!.jobs.StartJob(job, JobCondition.InterruptForced);
+        doer.jobs.StartJob(job, JobCondition.InterruptForced);
     }
 
     public static bool IsKissing(Pawn pawn) => pawn.CurJobDef == MWAH_JobDefOf.MWAH_Kiss;
@@ -224,61 +229,5 @@ public static class KissUtility
             return false;
         }
         return pawn.health?.capacities != null && pawn.health.capacities.CapableOf(PawnCapacityDefOf.Moving);
-    }
-
-    /// <summary>
-    /// 待发放的"回原位"请求。
-    /// 为什么排队而不是在 toil 的 finish action 里直接发：finish action 跑在 job 收尾的调用栈里，
-    /// 而 TryTakeOrderedJob 在 pawn 空闲时会**同步**起新 job，新 job 的 StartJob 又会回头结束
-    /// 正在收尾的旧 job ⇒ 旧 job 的 finish action 再发一次 ⇒ 同一 tick 内无限递归。
-    /// 实测表现就是日志里同一条 kiss end 刷到折叠上限、主线程卡死数秒、进程直接消失。
-    /// 排到下一个 tick 发，递归链就断了。
-    /// </summary>
-    private static readonly List<(Pawn pawn, IntVec3 cell)> PendingReturns = new();
-
-    public static void QueueReturnHome(Pawn pawn, IntVec3 homeCell)
-    {
-        if (MwahMod.Settings.ReturnsHome && pawn != null && homeCell.IsValid && pawn.Position != homeCell)
-        {
-            PendingReturns.Add((pawn, homeCell));
-        }
-    }
-
-    /// <summary>下一 tick 由 GameComponent 调用：此时不在任何 job 的收尾栈里，起 job 是安全的。</summary>
-    public static void DrainReturns()
-    {
-        if (PendingReturns.Count == 0)
-        {
-            return;
-        }
-        List<(Pawn pawn, IntVec3 cell)> batch = new(PendingReturns);
-        PendingReturns.Clear();
-        for (int i = 0; i < batch.Count; i++)
-        {
-            RequestReturnHome(batch[i].pawn, batch[i].cell);
-        }
-    }
-
-    /// <summary>
-    /// 每局清空回位队列。队列是 static：跨局持有旧局的 pawn 引用既阻止回收，
-    /// 又会在新局的第一个 tick 对无图对象发起 Goto。
-    /// </summary>
-    public static void ResetPendingReturns()
-    {
-        PendingReturns.Clear();
-    }
-
-    /// <summary>结束后回被下令时站的位置。只是礼貌请求：紧急需求与排班仍会插队。</summary>
-    public static void RequestReturnHome(Pawn pawn, IntVec3 homeCell)
-    {
-        if (!MwahMod.Settings.ReturnsHome || pawn == null || !homeCell.IsValid || pawn.Position == homeCell)
-        {
-            return;
-        }
-        if (!CanMoveNow(pawn) || pawn.jobs == null)
-        {
-            return;
-        }
-        pawn.jobs.TryTakeOrderedJob(JobMaker.MakeJob(JobDefOf.Goto, homeCell), JobTag.Misc);
     }
 }

@@ -27,10 +27,18 @@ public class KissAmbient : GameComponent
     /// <summary>每个周期最多促成一桩；0 = 下次 tick 就可以试一次。</summary>
     private int nextCheckTick;
 
+    /// <summary>
+    /// 一个周期内最多真正发起几次。每失败一次就换下一个发起方，而每次发起都要走完整
+    /// Propose —— 末尾那条 CanReach 是 A*。没有这层上限，一张"谁都亲不成"的图
+    /// （全体在冷却、或隔着一道河）会在同一个 tick 里烧掉上百次寻路。
+    /// 上限不改变公平性：起点本来就是随机的，剩下的机会留给下一个周期。
+    /// </summary>
+    private const int MaxDispatchAttemptsPerCycle = 6;
+
     public override void GameComponentTick()
     {
-        MwahSettings? settings = MwahMod.Settings;
-        if (settings == null || !settings.Enabled || !settings.AutonomousEnabled)
+        MwahSettings settings = MwahMod.Settings;
+        if (!settings.Enabled || !settings.AutonomousEnabled)
         {
             return;
         }
@@ -59,6 +67,7 @@ public class KissAmbient : GameComponent
         }
         // 从随机位置起扫，避免永远从同一个 pawn 开始试。
         int start = Rand.Range(0, pawns.Count - 1);
+        int attempts = 0;
         for (int i = 0; i < pawns.Count; i++)
         {
             Pawn doer = pawns[(start + i) % pawns.Count];
@@ -77,11 +86,19 @@ public class KissAmbient : GameComponent
                 continue;
             }
             Pawn? receiver = NearestWilling(doer, pawns, settings);
-            if (receiver == null || KissUtility.BeginDirected(doer, receiver) == null)
+            if (receiver == null)
             {
                 continue;
             }
-            return;
+            // 成了一桩就走；没成也只允许再试这么几次，剩下的是下一个周期的事。
+            if (++attempts > MaxDispatchAttemptsPerCycle)
+            {
+                return;
+            }
+            if (KissUtility.BeginDirected(doer, receiver).Allowed)
+            {
+                return;
+            }
         }
     }
 

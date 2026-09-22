@@ -16,7 +16,12 @@ public class MwahMod : Mod
     private const float SaveDebounceSeconds = 0.35f;
     private const float SaveRetrySeconds = 2f;
 
-    public static MwahSettings Settings = null!;
+    /// <summary>
+    /// 玩家配置。出厂就是一个装着默认值的实例，**永不为 null** —— 各判定入口因此不必
+    /// 各写一遍"配置没读到就当禁用"。Mod 构造时它被 GetSettings&lt;MwahSettings&gt;()
+    /// （已从 Settings.xml 恢复的真实配置）整个替换。
+    /// </summary>
+    public static MwahSettings Settings { get; private set; } = new MwahSettings();
     public static MwahMod? Instance { get; private set; }
 
     private bool savePending;
@@ -37,9 +42,8 @@ public class MwahMod : Mod
     {
         Instance = this;
         Settings = GetSettings<MwahSettings>();
-#if MWAH_DEV
+        // 非 dev 构建下这是个空方法（KissTrace 用 [Conditional] 兜住），所以调用点不需要 #if。
         KissTrace.Start();
-#endif
         MwahLog.Info($"loaded [{BuildFlavor} {VersionString()}]");
     }
 

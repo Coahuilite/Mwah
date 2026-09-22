@@ -11,6 +11,9 @@ namespace Mwah;
 /// </summary>
 public static class KissCooldown
 {
+    /// <summary>表大到这个条数才开始扫过期项；再小直接跳过，扫的成本比省下来的还贵。</summary>
+    private const int PruneThreshold = 64;
+
     private static readonly Dictionary<int, int> PawnReadyAtTick = new();
     private static readonly Dictionary<long, int> PairReadyAtTick = new();
     private static readonly List<int> ExpiredPawnKeys = new();
@@ -88,37 +91,35 @@ public static class KissCooldown
         return ((long)lo << 32) | (uint)hi;
     }
 
+    /// <summary>
+    /// 顺带清过期项：只在写入时跑，且要过 64 条才开始扫 —— 冷却条目活不过几游戏时，
+    /// 正常情况下表本来就长不了，这个门槛是给"玩家连点导演台"那种场面兜底的。
+    /// </summary>
     private static void PruneExpired(int now)
     {
-        if (PawnReadyAtTick.Count > 64)
+        Prune(PawnReadyAtTick, ExpiredPawnKeys, now);
+        Prune(PairReadyAtTick, ExpiredPairKeys, now);
+    }
+
+    /// <summary>复用同一个 scratch 列表：这里每 Mark 一次就跑一遍，没必要再各分配一个。</summary>
+    private static void Prune<T>(Dictionary<T, int> map, List<T> scratch, int now)
+    {
+        if (map.Count <= PruneThreshold)
         {
-            ExpiredPawnKeys.Clear();
-            foreach (KeyValuePair<int, int> entry in PawnReadyAtTick)
+            return;
+        }
+        scratch.Clear();
+        foreach (KeyValuePair<T, int> entry in map)
+        {
+            if (entry.Value <= now)
             {
-                if (entry.Value <= now)
-                {
-                    ExpiredPawnKeys.Add(entry.Key);
-                }
-            }
-            for (int i = 0; i < ExpiredPawnKeys.Count; i++)
-            {
-                PawnReadyAtTick.Remove(ExpiredPawnKeys[i]);
+                scratch.Add(entry.Key);
             }
         }
-        if (PairReadyAtTick.Count > 64)
+        for (int i = 0; i < scratch.Count; i++)
         {
-            ExpiredPairKeys.Clear();
-            foreach (KeyValuePair<long, int> entry in PairReadyAtTick)
-            {
-                if (entry.Value <= now)
-                {
-                    ExpiredPairKeys.Add(entry.Key);
-                }
-            }
-            for (int i = 0; i < ExpiredPairKeys.Count; i++)
-            {
-                PairReadyAtTick.Remove(ExpiredPairKeys[i]);
-            }
+            map.Remove(scratch[i]);
         }
+        scratch.Clear();
     }
 }

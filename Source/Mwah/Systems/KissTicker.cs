@@ -20,15 +20,15 @@ public class KissTicker : GameComponent
     public KissTicker(Game game) : base()
     {
         KissCooldown.Reset();
-        KissUtility.ResetPendingReturns();
+        KissReturnQueue.Reset();
         KissDirector.Active = false;
     }
 
     public override void GameComponentTick()
     {
-        KissUtility.DrainReturns();
-        // 设置里关掉导演台时，正在进行的选点也一起结束（与旧行为一致）。
-        if (KissDirector.Active && MwahMod.Settings != null && !MwahMod.Settings.DirectorEnabled)
+        KissReturnQueue.Drain();
+        // 设置里关掉导演台时，正在进行的选点也一起结束（按钮已经看不见了，模式不能留着）。
+        if (KissDirector.Active && !MwahMod.Settings.DirectorEnabled)
         {
             KissDirector.Stop();
         }

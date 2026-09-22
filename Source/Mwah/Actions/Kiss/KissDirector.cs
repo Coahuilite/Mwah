@@ -127,16 +127,17 @@ public static class KissDirector
 
     private static void Dispatch(Pawn a, Pawn b)
     {
-        (Pawn doer, Pawn receiver)? started = KissUtility.BeginDirected(a, b);
-        if (started != null)
+        // 一次判定拿到结果与原因（早先失败时要再跑一遍 Propose，连 A* 寻路都白烧）。
+        KissProposal proposal = KissUtility.BeginDirected(a, b);
+        if (proposal.Allowed)
         {
-            // 无角色互换 ⇒ 返回值就是点选的两位；消息按点选顺序说话，不再说谎。
-            Messages.Message("MWAH.Director.Started".Translate(started.Value.doer.Named("PAWN"), started.Value.receiver.Named("OTHER")),
+            // 无角色互换 ⇒ 点选顺序就是实际双方；消息按点选顺序说话，不再说谎。
+            Messages.Message("MWAH.Director.Started".Translate(a.Named("PAWN"), b.Named("OTHER")),
                 new LookTargets(a, b), MessageTypeDefOf.PositiveEvent, historical: false);
             return;
         }
         // 选点模式没有"灰按钮"，可行性只能在点完之后用消息告知。
-        Messages.Message(KissUtility.DirectPreview(a, b) ?? "MWAH.Fail.Busy".Translate(),
+        Messages.Message(proposal.BlockedReason ?? "MWAH.Fail.Busy".Translate(),
             new LookTargets(a, b), MessageTypeDefOf.RejectInput, historical: false);
     }
 }

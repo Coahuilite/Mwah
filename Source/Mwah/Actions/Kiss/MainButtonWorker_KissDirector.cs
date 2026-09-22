@@ -12,7 +12,7 @@ namespace Mwah;
 /// </summary>
 public class MainButtonWorker_KissDirector : MainButtonWorker
 {
-    public override bool Visible => base.Visible && (MwahMod.Settings?.DirectorEnabled ?? true) && (MwahMod.Settings?.Enabled ?? true);
+    public override bool Visible => base.Visible && MwahMod.Settings.Enabled && MwahMod.Settings.DirectorEnabled;
 
     public override void Activate()
     {

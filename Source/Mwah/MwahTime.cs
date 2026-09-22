@@ -1,5 +1,4 @@
 using RimWorld;
-using UnityEngine;
 using Verse;
 
 namespace Mwah;
@@ -8,6 +7,9 @@ namespace Mwah;
 /// tick ↔ 现实秒 ↔ 游戏小时 的唯一换算入口。
 /// 依据：GenTicks.TicksPerRealSecond = 60（1 倍速），GenDate.TicksPerDay = 60000，1 日 = 24 游戏小时。
 /// 设置界面只允许以 tick 为存储单位，显示时同时给出三种单位，避免玩家猜数量级。
+///
+/// 反方向（秒/游戏时 → tick）刻意不提供：存储单位只有 tick。让某个配置项先按别的单位表达、
+/// 再换算回来，正是上一轮"浮点小时进配置文件"的来路 —— 少一个入口就少一类漂移。
 /// </summary>
 public static class MwahTime
 {
@@ -18,25 +20,12 @@ public static class MwahTime
 
     public static float ToGameHours(int ticks) => ticks / (float)TicksPerGameHour;
 
-    public static int FromRealSeconds(float seconds) => Mathf.CeilToInt(seconds * TicksPerRealSecond);
-
-    public static int FromGameHours(float hours) => Mathf.CeilToInt(hours * TicksPerGameHour);
-
-    /// <summary>以 tick 为主显示值，同时括出现实秒与游戏小时。</summary>
+    /// <summary>以 tick 为主显示值，同时括出现实秒与游戏小时。设置页与冷却提示共用这一种读法。</summary>
     public static string FormatTicks(int ticks)
     {
-        return MwahStrings.Get("MWAH.Settings.TimingFormat",
+        return "MWAH.Settings.TimingFormat".Translate(
             ticks.ToString(),
             ToRealSeconds(ticks).ToString("0.##"),
             ToGameHours(ticks).ToString("0.###"));
-    }
-
-    /// <summary>以游戏小时为主显示值（心情时长这类玩家直觉按小时想）。</summary>
-    public static string FormatGameHours(float hours)
-    {
-        return MwahStrings.Get("MWAH.Settings.TimingFormat",
-            FromGameHours(hours).ToString(),
-            ToRealSeconds(FromGameHours(hours)).ToString("0.##"),
-            hours.ToString("0.##"));
     }
 }

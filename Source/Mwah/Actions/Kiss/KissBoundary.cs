@@ -4,15 +4,16 @@ using Verse;
 namespace Mwah;
 
 /// <summary>
-/// 亲吻边界的唯一判定入口。三层，全部取自原版源码，不引入任何运行时补丁：
+/// 亲吻边界的唯一判定入口。四层顺序，判据全部取自原版源码，不引入任何运行时补丁：
 /// <list type="table">
-///   <item><term>结构层</term><description>这一局里都不会变的条件（总开关、死活、有没有心情系统、敌对放行）。不满足就连灰项都不给。</description></item>
+///   <item><term>结构层</term><description>这一局里不会变、又不该在菜单里刷屏的条件：总开关、死活与在场。不满足就连灰项都不给。</description></item>
+///   <item><term>门禁层</term><description>七档 <see cref="KissScope"/>（出厂最右档 = 万物互亲）：双方都要在档内；越界只说"谁不想亲谁"，不提设置。</description></item>
 ///   <item><term>参与层</term><description>原版 SocialInteractionUtility 对"社交对象"的通用要求：清醒、没在烧、不是社交无能的亚人、没被仪式 hediff 锁住。</description></item>
-///   <item><term>主动层</term><description>谁去亲：在参与层之上还要能走、有嘴（Talking 容量）、生命阶段被原版允许发起社交。</description></item>
+///   <item><term>主动层</term><description>谁去亲：在参与层之上还要求能走、有嘴（Talking 容量）、生命阶段被原版允许发起社交。</description></item>
 /// </list>
-/// 心情判定刻意读运行时的 <c>needs.mood</c> 而不是 <c>RaceProps.Humanlike</c>：
-/// Anomaly 的蹒跚者/尸鬼/唤醒尸体种族就是 Human（Humanlike 为真），但 MutantDef 的
-/// <c>disableNeeds</c> 让它们连 needs 都没有 —— 用种族判会误纳成"能拿到心情收益"。
+/// "有没有心情"不是准入条件而是收益条件，且刻意读运行时的 <c>needs.mood</c> 而不是
+/// <c>RaceProps.Humanlike</c>：Anomaly 的蹒跚者/尸鬼/唤醒尸体种族就是 Human（Humanlike 为真），
+/// 但 MutantDef 的 <c>disableNeeds</c> 让它们连 needs 都没有 —— 用种族判会误纳成"能拿到心情收益"。
 /// </summary>
 public static class KissBoundary
 {
@@ -60,17 +61,17 @@ public static class KissBoundary
     }
 
     /// <summary>
-    /// 主动层：能不能由 <paramref name="pawn"/> 走过去亲。
+    /// 主动层：在参与层之上还要求的三条 —— 走得动、有嘴、生命阶段允许发起社交。
     /// <paramref name="mobilityOnly"/> 为真表示"只是这会儿动不了"，用于两个都失败时改说"两个都动不了"。
+    ///
+    /// 前提：调用方已经跑过 <see cref="CanParticipate"/>。这三层是按顺序定义的（见类注释），
+    /// 主动层不再回头重跑参与层，否则一次判定里同一个 pawn 的清醒/燃烧/仪式检查要做两遍；
+    /// 走完整链的入口只有 <see cref="KissUtility.Propose"/> 与
+    /// <see cref="KissUtility.PairLooksKissable"/>，它们都已经按顺序查过。
     /// </summary>
     public static AcceptanceReport CanInitiate(Pawn pawn, out bool mobilityOnly)
     {
         mobilityOnly = false;
-        AcceptanceReport participation = CanParticipate(pawn);
-        if (!participation.Accepted)
-        {
-            return participation;
-        }
         if (!KissUtility.CanMoveNow(pawn))
         {
             mobilityOnly = true;
@@ -96,12 +97,11 @@ public static class KissBoundary
     /// <summary>结构层：这一局里不会变、且不该在右键菜单里刷屏的条件。</summary>
     public static AcceptanceReport CheckStructure(Pawn a, Pawn b)
     {
-        MwahSettings? settings = MwahMod.Settings;
-        if (settings == null || !settings.Enabled)
+        if (!MwahMod.Settings.Enabled)
         {
             return new AcceptanceReport("MWAH.Fail.Disabled".Translate());
         }
-        if (a == null || b == null || a.Dead || b.Dead || !a.Spawned || !b.Spawned)
+        if (a.Dead || b.Dead || !a.Spawned || !b.Spawned)
         {
             return new AcceptanceReport("MWAH.Fail.Gone".Translate());
         }
@@ -115,12 +115,7 @@ public static class KissBoundary
     /// </summary>
     public static AcceptanceReport CheckScope(Pawn a, Pawn b)
     {
-        MwahSettings? settings = MwahMod.Settings;
-        if (settings == null)
-        {
-            return new AcceptanceReport("MWAH.Fail.Disabled".Translate());
-        }
-        KissScope scope = settings.Scope;
+        KissScope scope = MwahMod.Settings.Scope;
         bool aIn = KissScopeUtility.InScope(a, b, scope);
         bool bIn = KissScopeUtility.InScope(b, a, scope);
         if (aIn && bIn)

@@ -10,7 +10,8 @@ namespace Mwah;
 /// 拿不到就是什么都不加，不做任何替代收益（结构层的开关会提前挡掉这种配对，
 /// 见 <see cref="KissBoundary.CheckStructure"/>；这里的判空只兜住菜单打开后的状态变化）。
 /// 强度 = ThoughtStage.baseMoodEffect × (自身 SocialImpact) × 设置倍率，
-/// 由 Thought_Memory.moodPowerFactor 承载（原版 AddInteractionThought 同源机制）。
+/// 心情由 Thought_Memory.moodPowerFactor 承载、意见由 opinionOffset 承载（原版 AddInteractionThought
+/// 对同一个倍率两边都乘，这里照做）。数值阶梯的取值依据见 1.6/Defs/Kiss/MWAH_ThoughtDefs.xml 的注释。
 /// </summary>
 public static class KissMoodReward
 {
@@ -38,10 +39,13 @@ public static class KissMoodReward
         // SocialImpact 对"有心情的 pawn"必然取到有效值：该 StatDef 标了 neverDisabled，且
         // SkillNeed_BaseBonus.ValueFor 在 pawn.skills == null 时直接返回 1f（依据见 MEMORY
         // 「原版能力边界」）。所以这里不兜 NaN/0 —— 兜不住的东西不存在。
-        memory.moodPowerFactor = pawn.GetStatValue(StatDefOf.SocialImpact) * settings.MoodMult;
-        if (settings.OpinionAffected && memory is Thought_MemorySocial socialMemory)
+        // 原版 Pawn_InteractionsTracker.AddInteractionThought 对同一个倍率既乘心情也乘意见，
+        // 这里照做：社交达人的吻在两边都更值钱，哑巴/失聪者在两边都更不值钱。
+        float impact = pawn.GetStatValue(StatDefOf.SocialImpact) * settings.MoodMult;
+        memory.moodPowerFactor = impact;
+        if (memory is Thought_MemorySocial socialMemory)
         {
-            socialMemory.opinionOffset *= settings.MoodMult;
+            socialMemory.opinionOffset *= impact;
         }
         memory.durationTicksOverride = settings.ThoughtDurationTicks;
 

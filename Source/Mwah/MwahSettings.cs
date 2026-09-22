@@ -27,12 +27,16 @@ public class MwahSettings : ModSettings
     public bool autonomousKissing = Constants.AutonomousKissing;
     public int autonomousIntervalTicks = Constants.AutonomousIntervalTicks;
     public int autonomousRadiusCells = Constants.AutonomousRadiusCells;
-    public float thoughtDurationGameHours = Constants.ThoughtDurationGameHours;
+    public int thoughtDurationTicks = Constants.ThoughtDurationTicks;
     public float moodMultiplier = Constants.MoodMultiplier;
 
     private Vector2 scrollPos;
 
+    /// <summary>滑条标签/控件的分栏宽度（控件占 62%，标签占剩下的）。</summary>
+    private const float SliderLabelWidth = 0.62f;
+
     // 读侧统一 canonicalize：脏配置或手改的 XML 不能把运行时带进非法区间。
+    // 所有时长项存的都是 tick（硬边界），界面用 MwahTime.FormatTicks 一次给出三种读法。
     public bool Enabled => modEnabled;
     public KissScope Scope => KissScopeUtility.Clamp(pairScope);
     public bool OpinionAffected => changeOpinion;
@@ -41,9 +45,8 @@ public class MwahSettings : ModSettings
     public int FleckIntervalTicks => Mathf.Clamp(heartFleckIntervalTicks, Constants.FleckIntervalTicksRange.min, Constants.FleckIntervalTicksRange.max);
     public int PawnCooldown => Mathf.Clamp(pawnCooldownTicks, Constants.CooldownTicksRange.min, Constants.CooldownTicksRange.max);
     public int PairCooldown => Mathf.Clamp(pairCooldownTicks, Constants.CooldownTicksRange.min, Constants.CooldownTicksRange.max);
-    public float ThoughtDurationHours => Mathf.Clamp(thoughtDurationGameHours, Constants.ThoughtHoursRange.min, Constants.ThoughtHoursRange.max);
+    public int ThoughtDurationTicks => Mathf.Clamp(thoughtDurationTicks, Constants.ThoughtDurationTicksRange.min, Constants.ThoughtDurationTicksRange.max);
     public float MoodMult => Mathf.Clamp(moodMultiplier, Constants.MoodMultiplierRange.min, Constants.MoodMultiplierRange.max);
-    public int ThoughtDurationTicks => MwahTime.FromGameHours(ThoughtDurationHours);
     public bool DirectorEnabled => directorButton;
     public bool CooldownsIgnored => noCooldowns;
     public bool AutonomousEnabled => autonomousKissing;
@@ -66,7 +69,7 @@ public class MwahSettings : ModSettings
         Scribe_Values.Look(ref autonomousKissing, "autonomousKissing", Constants.AutonomousKissing);
         Scribe_Values.Look(ref autonomousIntervalTicks, "autonomousIntervalTicks", Constants.AutonomousIntervalTicks);
         Scribe_Values.Look(ref autonomousRadiusCells, "autonomousRadiusCells", Constants.AutonomousRadiusCells);
-        Scribe_Values.Look(ref thoughtDurationGameHours, "thoughtDurationGameHours", Constants.ThoughtDurationGameHours);
+        Scribe_Values.Look(ref thoughtDurationTicks, "thoughtDurationTicks", Constants.ThoughtDurationTicks);
         Scribe_Values.Look(ref moodMultiplier, "moodMultiplier", Constants.MoodMultiplier);
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
@@ -81,7 +84,7 @@ public class MwahSettings : ModSettings
         heartFleckIntervalTicks = FleckIntervalTicks;
         pawnCooldownTicks = PawnCooldown;
         pairCooldownTicks = PairCooldown;
-        thoughtDurationGameHours = ThoughtDurationHours;
+        thoughtDurationTicks = ThoughtDurationTicks;
         moodMultiplier = MoodMult;
         pairScope = (int)Scope;
         autonomousIntervalTicks = AutonomousIntervalTicks;
@@ -103,7 +106,7 @@ public class MwahSettings : ModSettings
         autonomousKissing = Constants.AutonomousKissing;
         autonomousIntervalTicks = Constants.AutonomousIntervalTicks;
         autonomousRadiusCells = Constants.AutonomousRadiusCells;
-        thoughtDurationGameHours = Constants.ThoughtDurationGameHours;
+        thoughtDurationTicks = Constants.ThoughtDurationTicks;
         moodMultiplier = Constants.MoodMultiplier;
     }
 
@@ -123,26 +126,30 @@ public class MwahSettings : ModSettings
         changed |= Checkbox(list, ref modEnabled, "MWAH.Settings.Enabled", "MWAH.Settings.EnabledDesc");
         list.Gap();
 
-        changed |= TickSlider(list, ref kissDurationTicks, "MWAH.Settings.Duration", "MWAH.Settings.DurationDesc",
-            Constants.DurationTicksRange.min, Constants.DurationTicksRange.max);
-        changed |= TickSlider(list, ref heartFleckIntervalTicks, "MWAH.Settings.FleckInterval", "MWAH.Settings.FleckIntervalDesc",
-            Constants.FleckIntervalTicksRange.min, Constants.FleckIntervalTicksRange.max);
-        changed |= TickSlider(list, ref pawnCooldownTicks, "MWAH.Settings.PawnCooldown", "MWAH.Settings.PawnCooldownDesc",
-            Constants.CooldownTicksRange.min, Constants.CooldownTicksRange.max);
-        changed |= TickSlider(list, ref pairCooldownTicks, "MWAH.Settings.PairCooldown", "MWAH.Settings.PairCooldownDesc",
-            Constants.CooldownTicksRange.min, Constants.CooldownTicksRange.max);
-        changed |= HoursSlider(list);
-        changed |= MoodSlider(list);
+        changed |= IntSlider(list, ref kissDurationTicks, "MWAH.Settings.Duration", "MWAH.Settings.DurationDesc",
+            Constants.DurationTicksRange, MwahTime.FormatTicks);
+        changed |= IntSlider(list, ref heartFleckIntervalTicks, "MWAH.Settings.FleckInterval", "MWAH.Settings.FleckIntervalDesc",
+            Constants.FleckIntervalTicksRange, MwahTime.FormatTicks);
+        changed |= IntSlider(list, ref pawnCooldownTicks, "MWAH.Settings.PawnCooldown", "MWAH.Settings.PawnCooldownDesc",
+            Constants.CooldownTicksRange, MwahTime.FormatTicks);
+        changed |= IntSlider(list, ref pairCooldownTicks, "MWAH.Settings.PairCooldown", "MWAH.Settings.PairCooldownDesc",
+            Constants.CooldownTicksRange, MwahTime.FormatTicks);
+        changed |= IntSlider(list, ref thoughtDurationTicks, "MWAH.Settings.ThoughtDuration",
+            "MWAH.Settings.ThoughtDurationDesc", Constants.ThoughtDurationTicksRange, MwahTime.FormatTicks,
+            Constants.ThoughtDurationStepTicks);
+        changed |= FloatSlider(list, ref moodMultiplier, "MWAH.Settings.MoodMultiplier", "MWAH.Settings.MoodMultiplierDesc",
+            Constants.MoodMultiplierRange, Constants.MoodMultiplierStep, v => v.ToString("0.##") + "x");
 
         list.GapLine();
         changed |= Checkbox(list, ref directorButton, "MWAH.Settings.DirectorButton", "MWAH.Settings.DirectorButtonDesc");
         changed |= Checkbox(list, ref noCooldowns, "MWAH.Settings.NoCooldowns", "MWAH.Settings.NoCooldownsDesc");
-        changed |= ScopeSlider(list);
+        changed |= IntSlider(list, ref pairScope, "MWAH.Settings.PairScope", "MWAH.Settings.PairScopeDesc",
+            Constants.PairScopeRange, raw => KissScopeUtility.Label(KissScopeUtility.Clamp(raw)));
         changed |= Checkbox(list, ref autonomousKissing, "MWAH.Settings.Autonomous", "MWAH.Settings.AutonomousDesc");
-        changed |= TickSlider(list, ref autonomousIntervalTicks, "MWAH.Settings.AutonomousInterval", "MWAH.Settings.AutonomousIntervalDesc",
-            Constants.AutonomousIntervalTicksRange.min, Constants.AutonomousIntervalTicksRange.max);
-        changed |= CellSlider(list, ref autonomousRadiusCells, "MWAH.Settings.AutonomousRadius", "MWAH.Settings.AutonomousRadiusDesc",
-            Constants.AutonomousRadiusRange.min, Constants.AutonomousRadiusRange.max);
+        changed |= IntSlider(list, ref autonomousIntervalTicks, "MWAH.Settings.AutonomousInterval",
+            "MWAH.Settings.AutonomousIntervalDesc", Constants.AutonomousIntervalTicksRange, MwahTime.FormatTicks);
+        changed |= IntSlider(list, ref autonomousRadiusCells, "MWAH.Settings.AutonomousRadius",
+            "MWAH.Settings.AutonomousRadiusDesc", Constants.AutonomousRadiusRange, cells => cells.ToString());
         changed |= Checkbox(list, ref changeOpinion, "MWAH.Settings.ChangeOpinion", "MWAH.Settings.ChangeOpinionDesc");
         changed |= Checkbox(list, ref returnHomeAfterKiss, "MWAH.Settings.ReturnHome", "MWAH.Settings.ReturnHomeDesc");
 
@@ -170,52 +177,32 @@ public class MwahSettings : ModSettings
         return before != value;
     }
 
-    /// <summary>格数滑条：与时长滑条同形，但后缀是"格"而不是 tick 三读法。</summary>
-    private static bool CellSlider(Listing_Standard list, ref int cells, string labelKey, string tipKey, int min, int max)
+    /// <summary>
+    /// 整数滑条。值的显示口径由 <paramref name="showAs"/> 决定：tick 项给三读法，
+    /// 格数项给裸数字，门禁项给档位名 —— 控件形状相同，不必一份份抄。
+    /// </summary>
+    private static bool IntSlider(Listing_Standard list, ref int value, string labelKey, string tipKey,
+        IntRange range, Func<int, string> showAs, int step = 1)
     {
-        int before = cells;
-        string label = labelKey.Translate() + ": " + cells;
-        cells = Mathf.RoundToInt(list.SliderLabeled(label, cells, min, max, 0.62f, tipKey.Translate()));
-        return before != cells;
+        int before = value;
+        string label = labelKey.Translate() + ": " + showAs(value);
+        float raw = list.SliderLabeled(label, value, range.min, range.max, SliderLabelWidth, tipKey.Translate());
+        // step 是允许的刻度：滑条本身是连续的，落值量化到 step 的整数倍才进存档。
+        value = Mathf.RoundToInt(raw / step) * step;
+        return before != value;
     }
 
-    private static bool TickSlider(Listing_Standard list, ref int ticks, string labelKey, string tipKey, int min, int max)
+    /// <summary>
+    /// 小数滑条，落值量化到 <paramref name="step"/> 的整数倍：小于这个跨度的改动体感上没有区别，
+    /// 却会在配置文件里留下无意义的长小数（0.25 游戏时、0.05 倍都是这么定的）。
+    /// </summary>
+    private static bool FloatSlider(Listing_Standard list, ref float value, string labelKey, string tipKey,
+        FloatRange range, float step, Func<float, string> showAs)
     {
-        int before = ticks;
-        string label = labelKey.Translate() + ": " + MwahTime.FormatTicks(ticks);
-        ticks = Mathf.RoundToInt(list.SliderLabeled(label, ticks, min, max, 0.62f, tipKey.Translate()));
-        return before != ticks;
-    }
-
-    /// <summary>七档门禁滑条；当前档位名直接跟在标签后面，省得玩家猜刻度。</summary>
-    private bool ScopeSlider(Listing_Standard list)
-    {
-        int before = pairScope;
-        string label = "MWAH.Settings.PairScope".Translate() + ": " + KissScopeUtility.Label(Scope);
-        pairScope = Mathf.RoundToInt(list.SliderLabeled(label, pairScope,
-            Constants.PairScopeRange.min, Constants.PairScopeRange.max, 0.62f,
-            "MWAH.Settings.PairScopeDesc".Translate()));
-        return before != pairScope;
-    }
-
-    private bool HoursSlider(Listing_Standard list)
-    {
-        float before = thoughtDurationGameHours;
-        string label = "MWAH.Settings.ThoughtDuration".Translate() + ": " + MwahTime.FormatGameHours(before);
-        float raw = list.SliderLabeled(label, before, Constants.ThoughtHoursRange.min, Constants.ThoughtHoursRange.max,
-            0.62f, "MWAH.Settings.ThoughtDurationDesc".Translate());
-        // 1/4 游戏小时粒度：小于这个跨度在体感上没有区别，却会让存档里出现无意义的长小数。
-        thoughtDurationGameHours = Mathf.Round(raw * 4f) / 4f;
-        return !Mathf.Approximately(before, thoughtDurationGameHours);
-    }
-
-    private bool MoodSlider(Listing_Standard list)
-    {
-        float before = moodMultiplier;
-        string label = "MWAH.Settings.MoodMultiplier".Translate() + ": " + before.ToString("0.##") + "x";
-        float raw = list.SliderLabeled(label, before, Constants.MoodMultiplierRange.min, Constants.MoodMultiplierRange.max,
-            0.62f, "MWAH.Settings.MoodMultiplierDesc".Translate());
-        moodMultiplier = Mathf.Round(raw * 20f) / 20f; // 0.05 粒度
-        return !Mathf.Approximately(before, moodMultiplier);
+        float before = value;
+        string label = labelKey.Translate() + ": " + showAs(value);
+        float raw = list.SliderLabeled(label, value, range.min, range.max, SliderLabelWidth, tipKey.Translate());
+        value = Mathf.Round(raw / step) * step;
+        return !Mathf.Approximately(before, value);
     }
 }
