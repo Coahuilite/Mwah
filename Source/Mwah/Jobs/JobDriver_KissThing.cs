@@ -60,6 +60,18 @@ public class JobDriver_KissThing : JobDriver
         return pawn.Reserve(Target, job, 1, -1, null, errorOnFailed);
     }
 
+    /// <summary>伤害自毁闸：与双人版同判据、同时机（伤害事件本身，同步，零延迟）——
+    /// 被发配亲墙的机械体挨一枪就散场反打，playerForced 挡不住这个钩子（见 JobDriver_Kiss 的详注）。</summary>
+    public override void Notify_DamageTaken(DamageInfo dinfo)
+    {
+        base.Notify_DamageTaken(dinfo);
+        if (dinfo.Def.ExternalViolenceFor(base.pawn) && dinfo.Def.canInterruptJobs)
+        {
+            MwahLog.Dev("thing kiss broken by damage: " + base.pawn.LabelShort + " (dmg=" + dinfo.Def.defName + ")");
+            EndJobWith(JobCondition.Incompletable);
+        }
+    }
+
     public override bool CanBeginNowWhileLyingDown() => true;
 
     protected override IEnumerable<Toil> MakeNewToils()

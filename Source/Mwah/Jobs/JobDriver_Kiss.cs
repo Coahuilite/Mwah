@@ -86,6 +86,27 @@ public class JobDriver_Kiss : JobDriver
     public override bool CanBeginNowWhileLyingDown() => true;
 
     /// <summary>
+    /// 伤害自毁闸 —— 停火窗口唯一可信的打断触发点。**触发时机 = 伤害事件本身**（同步调用，
+    /// 零延迟；approach/perform/return 任何阶段吃到有效伤害都在下一拍之前散场），三条发起路径
+    /// 同一时钟。为什么必须自己掐：原版"伤害→打断 job"链（Pawn_JobTracker.Notify_DamageTaken）
+    /// 排在 `!curJob.playerForced` 与 180 tick 冷却之后 —— 而导演台/自主派发的 job 双方都带
+    /// playerForced（不带的话 think tree 起步即抢回，见 KissUtility.BeginDirected），靠原版链
+    /// "边挨枪边亲嘴"就是无敌点穴。driver 自己的这个钩子在两道闸**之前**被 job tracker 调用
+    /// （原版 JobDriver_PredatorHunt / JobDriver_TendPatient 就是靠它掐自己的 job，有先例）。
+    /// 判据照抄原版那两条闸：对外暴力（ExternalViolenceFor）且可中断 job（canInterruptJobs）——
+    /// 摔伤、饿死、友军治疗不算挨打，不掐。
+    /// </summary>
+    public override void Notify_DamageTaken(DamageInfo dinfo)
+    {
+        base.Notify_DamageTaken(dinfo);
+        if (dinfo.Def.ExternalViolenceFor(base.pawn) && dinfo.Def.canInterruptJobs)
+        {
+            MwahLog.Dev("kiss broken by damage: " + base.pawn.LabelShort + " (dmg=" + dinfo.Def.defName + ")");
+            EndJobWith(JobCondition.Incompletable);
+        }
+    }
+
+    /// <summary>
     /// "回原位"兜底的登记点。JobDriver 没有"job 收尾"钩子（1.6 的 Cleanup 挂在 ThingComp
     /// 一类，driver 上没有可重写的方法），所以登记放在 kiss 段的 finish action：它覆盖
     /// "到过表演段之后的一切出口"（正常走完、受击散场、对方死亡），与旧写法同一覆盖面；
