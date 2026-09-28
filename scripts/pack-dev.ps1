@@ -5,9 +5,10 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
+# dev 包标签 = csproj <Version> 原样 + 短 commit（工作树脏则加 -dirty）。
+# 包身份只存一份：包内 version.txt（stage-package 写），不再往 dist 里撒同名 .txt。
 $root = [System.IO.Path]::GetFullPath($ProjectRoot)
 $modName = 'Mwah'
-$devDir = Join-Path $root 'dist\dev'
 $stageDir = Join-Path $root "dist\dev\$modName"
 $projectFile = Join-Path $root "Source\$modName\$modName.csproj"
 
@@ -18,41 +19,21 @@ if ($null -eq $versionNode -or [string]::IsNullOrWhiteSpace($versionNode.InnerTe
 }
 $version = $versionNode.InnerText.Trim()
 
-# dev 包标签 = csproj <Version> 原样，无预发布尾缀；stage-package 按基准校验。
-$versionLabel = $version
-
-try {
-    $null = Get-Command -Name git -CommandType Application -ErrorAction Stop
-}
-catch {
-    throw "Git is required to label the dev package, but was not found on PATH."
-}
-
 $shortCommitOutput = @(& git -C $root rev-parse --short HEAD 2>$null)
 if ($LASTEXITCODE -ne 0 -or $shortCommitOutput.Count -ne 1) {
-    throw "Failed to determine the current Git commit for dev package labeling."
+    throw 'Failed to determine the current Git commit for dev package labeling.'
 }
 $shortCommit = ([string]$shortCommitOutput[0]).Trim()
-if ([string]::IsNullOrWhiteSpace($shortCommit)) {
-    throw "Git returned an empty commit for dev package labeling."
-}
 
 $statusOutput = @(& git -C $root status --porcelain --untracked-files=normal 2>$null)
 if ($LASTEXITCODE -ne 0) {
-    throw "Failed to determine whether the working tree is dirty for dev package labeling."
+    throw 'Failed to determine whether the working tree is dirty for dev package labeling.'
 }
-$dirtySuffix = if ($statusOutput.Count -gt 0) { '-dirty' } else { '' }
-
-if (Test-Path -LiteralPath $devDir -PathType Container) {
-    Get-ChildItem -LiteralPath $devDir -File -Filter "$modName-dev-v*.txt" | Remove-Item -Force
-}
+$commitLabel = $shortCommit + $(if ($statusOutput.Count -gt 0) { '-dirty' } else { '' })
 
 & (Join-Path $PSScriptRoot 'stage-package.ps1') -ProjectRoot $root -StageDir $stageDir `
-    -VersionLabel $versionLabel -BuildFlavor dev -CommitLabel "$shortCommit$dirtySuffix" -CreateZip
+    -VersionLabel $version -BuildFlavor dev -CommitLabel $commitLabel -CreateZip
 
-$fileCount = (Get-ChildItem -LiteralPath $stageDir -Recurse -File | Measure-Object).Count
-Write-Host "[pack-dev] Staged $fileCount files to $stageDir"
-
-$labelPath = Join-Path $devDir "$modName-dev-v$versionLabel-$shortCommit$dirtySuffix.txt"
-$null = New-Item -ItemType File -Path $labelPath -Force
-Write-Host "[pack-dev] Created dev package label $labelPath"
+# 旧版脚本遗留在 dist/dev 的 .txt 标签文件，见到就清（一次性迁移，不报错）。
+Get-ChildItem -LiteralPath (Split-Path -Parent $stageDir) -File -Filter "$modName-dev-v*.txt" -ErrorAction SilentlyContinue |
+    Remove-Item -Force

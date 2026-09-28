@@ -61,12 +61,14 @@ if (-not [string]::IsNullOrWhiteSpace($VersionLabel)) {
     [System.IO.File]::WriteAllText((Join-Path $stageDir 'version.txt'), $labelContent)
 }
 
-$fileCount = (Get-ChildItem -LiteralPath $stageDir -Recurse -File | Measure-Object).Count
-Write-Host "[stage-package] Staged $fileCount files to $stageDir"
-
+# 成功路径只打一行、只用仓库相对路径（输出纪律见 build-dev.ps1 头注释）。
+$zipName = ''
 if ($CreateZip) {
     $zipPath = Join-Path (Split-Path -Parent $stageDir) "$modName-$BuildFlavor-v$VersionLabel-$CommitLabel.zip"
     if (Test-Path -LiteralPath $zipPath -PathType Leaf) { Remove-Item -LiteralPath $zipPath -Force }
     Compress-Archive -Path (Join-Path $stageDir '*') -DestinationPath $zipPath
-    Write-Host "[stage-package] Created zip $zipPath"
+    $zipName = (Resolve-Path -LiteralPath $zipPath).Path.Substring($root.Length + 1)
 }
+$fileCount = (Get-ChildItem -LiteralPath $stageDir -Recurse -File | Measure-Object).Count
+$relStage = $stageDir.Substring($root.Length + 1)
+Write-Host "[stage-package] $zipName  ($fileCount files -> $relStage, build=$BuildFlavor commit=$CommitLabel)"
