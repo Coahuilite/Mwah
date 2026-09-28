@@ -64,7 +64,8 @@ public class FloatMenuOptionProvider_Kiss : FloatMenuOptionProvider
 
     private static FloatMenuOption? BuildOption(Pawn selected, Pawn clickedPawn, FloatMenuContext context)
     {
-        KissProposal proposal = KissUtility.Propose(selected, clickedPawn, allowRoleSwap: true);
+        // 右键 = 玩家亲自下令：swap 允许、战斗闸放行。
+        KissProposal proposal = KissUtility.Propose(selected, clickedPawn, allowRoleSwap: true, allowCombatInterrupt: true);
         if (!proposal.Visible)
         {
             return null;

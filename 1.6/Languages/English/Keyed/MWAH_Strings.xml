@@ -24,6 +24,7 @@
   <MWAH.Fail.RitualAbsorbed>{PAWN} is wrapped up in the ritual</MWAH.Fail.RitualAbsorbed>
   <MWAH.Fail.CannotReach>cannot reach {TARGET}</MWAH.Fail.CannotReach>
   <MWAH.Fail.Busy>already in the middle of a kiss</MWAH.Fail.Busy>
+  <MWAH.Fail.InCombat>{PAWN} is in a fight and can't be pulled away</MWAH.Fail.InCombat>
   <MWAH.Fail.CooldownPawn>{PAWN} needs a moment between kisses ({TIME})</MWAH.Fail.CooldownPawn>
   <MWAH.Fail.CooldownPair>{PAWN} and {OTHER} already kissed recently ({TIME})</MWAH.Fail.CooldownPair>
   <MWAH.KissThing.Fail.NoStandCell>{PAWN} can't find a standable, reachable spot to kiss that {WALL}</MWAH.KissThing.Fail.NoStandCell>

@@ -24,6 +24,7 @@
   <MWAH.Fail.RitualAbsorbed>{PAWN} 正沉浸在仪式里</MWAH.Fail.RitualAbsorbed>
   <MWAH.Fail.CannotReach>够不到{TARGET}</MWAH.Fail.CannotReach>
   <MWAH.Fail.Busy>已经在亲了</MWAH.Fail.Busy>
+  <MWAH.Fail.InCombat>{PAWN} 正在打架，抽不开身</MWAH.Fail.InCombat>
   <MWAH.Fail.CooldownPawn>{PAWN} 还得缓缓才能再亲（{TIME}）</MWAH.Fail.CooldownPawn>
   <MWAH.Fail.CooldownPair>{PAWN} 和 {OTHER} 刚亲过（{TIME}）</MWAH.Fail.CooldownPair>
   <MWAH.KissThing.Fail.NoStandCell>{PAWN} 找不到能站下、又够得着的地方去亲那堵 {WALL}</MWAH.KissThing.Fail.NoStandCell>

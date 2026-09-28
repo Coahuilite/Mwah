@@ -166,7 +166,7 @@ Assert-True 'DefInjected uses flat DefName.path keys' ($injBad.Count -eq 0) ($in
 $text = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes($assemblyPath))
 $symbols = @('FloatMenuOptionProvider_Kiss','JobDriver_Kiss','KissUtility','KissBoundary','KissScope','KissScopeUtility','KissAmbient',
     'KissDirector','Dialog_KissDirector','KissTicker','MainButtonWorker_KissDirector','KissMoodReward','KissCooldown','KissReturnQueue','MwahSettings','MwahMod','MWAH_JobDefOf','MWAH_ThoughtDefOf',"$modName.JobDriver_Kiss",'MWAH_Kiss','MWAH_KissedBond',
-    'KissThingAddon','KissThingAddons','KissWallAddon','MWAH_FateDef','KissFate','Thought_MemoryFated','Thought_MemorySocialFated',"$modName.JobDriver_KissThing",'FloatMenuOptionProvider_KissThing','MWAH_KissThing','MWAH_KissedWall_Devoted')
+    'KissThingAddon','KissThingAddons','KissWallAddon','MWAH_FateDef','KissFate','Thought_MemoryFated','Thought_MemorySocialFated',"$modName.JobDriver_KissThing",'FloatMenuOptionProvider_KissThing','MWAH_KissThing','MWAH_KissedWall_Devoted','KissStage','KissReturn')
 $missingSyms = @($symbols | Where-Object { -not $text.Contains($_) })
 Assert-True ("DLL contains all $($symbols.Count) key symbols") ($missingSyms.Count -eq 0) ($missingSyms -join ', ')
 Assert-True 'zero-Harmony: no Harmony/HarmonyLib reference in DLL' (-not ($text.Contains('HarmonyLib') -or $text.Contains('Harmony')))

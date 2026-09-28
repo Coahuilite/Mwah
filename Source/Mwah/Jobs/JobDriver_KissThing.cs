@@ -8,9 +8,11 @@ namespace Mwah;
 
 /// <summary>
 /// 单人亲"非 pawn 目标"（墙，将来树等）的共享 job —— 全 addon 族就这一个 driver、一个 JobDef：
-/// 走到贴目标格、面向它、闭眼若干 tick、按间隔冒爱心，然后交给认领它的 addon 结算。
-/// 与双人镜像 job 的差别全部来自"目标不进 job"：没有定台（只挑自己的一格）、没有 lock、
-/// 没有回原位（它是自己走过去的，原版对抵达目标干完活的人不送回）。
+/// 走到贴目标格、面向它、闭眼若干 tick、按间隔冒爱心，然后**在 job 内走回原位**收尾。
+/// 与双人镜像 job 的差别全部来自"目标不进 job"：没有定台（只挑自己的一格）、没有 lock。
+/// 回程段与双人版同一个理由：敌对者的 think tree 只在 job 结束后接管，离开段留在 job 内，
+/// "被发配去亲墙的机械体"才有完整的停火窗口；走不了的路由 kiss 段 finish action 登记的
+/// KissReturnQueue 兜底（殖民者"亲完回家"的礼貌不丢）。
 /// 朝向沿用双人版验证过的路子：toil 打 handlingFacing 让 Pawn_RotationTracker 早退，
 /// 每 tick 用 rotationTracker.Face(目标的 DrawPos) 钉住 —— 与站着聊天同一套。
 /// </summary>
@@ -18,6 +20,12 @@ public class JobDriver_KissThing : JobDriver
 {
     /// <summary>同一段路重复发第 3 次即判定走不动（与双人版同一止损）。</summary>
     private const int WalkAttemptBudget = 3;
+
+    private const int InvalidCell = -999999;
+
+    private int homeX = InvalidCell;
+
+    private int homeZ = InvalidCell;
 
     private int ticksLeft;
 
@@ -35,11 +43,15 @@ public class JobDriver_KissThing : JobDriver
 
     private Thing Target => job.GetTarget(TargetIndex.A).Thing;
 
+    private IntVec3 HomeCell => homeX == InvalidCell ? IntVec3.Invalid : new IntVec3(homeX, 0, homeZ);
+
     public override void ExposeData()
     {
         base.ExposeData();
         Scribe_Values.Look(ref ticksLeft, "ticksLeft", 0);
         Scribe_Values.Look(ref completed, "completed");
+        Scribe_Values.Look(ref homeX, "homeX", InvalidCell);
+        Scribe_Values.Look(ref homeZ, "homeZ", InvalidCell);
     }
 
     public override bool TryMakePreToilReservations(bool errorOnFailed)
@@ -58,11 +70,12 @@ public class JobDriver_KissThing : JobDriver
         yield return ToilMarkCooldown();
         yield return ToilWalkToTarget();
         yield return ToilKiss();
+        yield return KissReturn.MakeToil("thing-return", base.pawn, () => HomeCell, () => false, ReadyForNextToil);
     }
 
     /// <summary>
     /// 冷却在 job 落地后、走位前记（与双人版同一时机：预订失败时 job 根本没落地）。
-    /// 与双人版同样**无条件记账** —— "无视冷却"只豁免检查，不豁免记账。
+    /// 与双人版同样**无条件记账** —— "无视冷却"只豁免检查，不豁免记账。原位也在这里记。
     /// </summary>
     private Toil ToilMarkCooldown()
     {
@@ -71,6 +84,8 @@ public class JobDriver_KissThing : JobDriver
         {
             MwahSettings settings = MwahMod.Settings;
             KissCooldown.Mark(pawn, Target, settings.PawnCooldown, settings.PairCooldown);
+            homeX = base.pawn.Position.x;
+            homeZ = base.pawn.Position.z;
             MwahLog.Dev("thing kiss start: " + pawn.LabelShort + " -> " + Target.LabelCap);
         };
         toil.socialMode = RandomSocialMode.Off;
@@ -167,6 +182,8 @@ public class JobDriver_KissThing : JobDriver
                 return;
             }
             finished = true;
+            // "回原位"兜底：登记进队列（下一 tick 才发），正常路径会被"已站在原位"的过滤消化。
+            KissReturnQueue.Enqueue(base.pawn, HomeCell);
             // 只有倒计时真的走完才结算：中途散场（墙被拆、被征召）不该有天意。
             if (completed)
             {

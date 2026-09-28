@@ -127,6 +127,20 @@ public static class KissBoundary
         return new AcceptanceReport("MWAH.Fail.Unwilling".Translate(unwilling.Named("PAWN"), other.Named("OTHER")));
     }
 
+    /// <summary>
+    /// 这会儿正在交战：手里挂着原版三条攻击性 job 之一（近身追杀 AttackMelee、
+    /// 站桩输出 AttackStatic、互殴 SocialFight）。给**自主派发**的战斗闸用 —— 系统不许把
+    /// 单位硬拽去亲嘴（那是免费点穴器）；玩家亲自下令的两条路不受此限（见
+    /// <see cref="KissUtility.BeginDirected"/> 的 playerIssued）。
+    /// 只认 job，不查 mindState.enemyTarget：那个旗标在交火结束后还会滞留很久，拿它当闸
+    /// 会把"刚打完、正溜达"的机械体永久排除在自主亲吻之外。
+    /// </summary>
+    public static bool InCombatNow(Pawn pawn)
+    {
+        JobDef def = pawn.CurJobDef;
+        return def == JobDefOf.AttackMelee || def == JobDefOf.AttackStatic || def == JobDefOf.SocialFight;
+    }
+
     /// <summary>菜单标签用的提示：这一对里有人没有心情系统，亲了也只有动作没有收益。</summary>
     public static bool AnyMoodless(Pawn a, Pawn b) => !HasMood(a) || !HasMood(b);
 }

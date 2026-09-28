@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Defs>
   <!--
-    亲吻 job。双方各自跑同一个 JobDef（镜像 job，沿用原版 JobDriver_Lovin 的双人锁定手法）。
-    TargetIndex.A = 对方 pawn。数值（时长/爱心间隔/心情时长）由 ModSettings 决定，job 本身不写死。
+    亲吻 job。双方各自跑同一个 JobDef（镜像 job，骨架沿用原版 JobDriver_Lovin 的双人锁定手法）。
+    TargetIndex.A = 对方 pawn；B = 自己的台位格（可空 = 贴脸兜底）；C = 发起方本人（认角色的记号）。
+    两个 job 在发起的那一帧**同时**起来（KissUtility.Start），离开段也在 job 内走完：
+    敌对单位的 think tree 只在 job 结束后才接管 ⇒ 停火窗口 = job 生命期，不需要别的机制。
   -->
   <JobDef>
     <defName>MWAH_Kiss</defName>

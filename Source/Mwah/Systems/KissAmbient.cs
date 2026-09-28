@@ -76,10 +76,12 @@ public class KissAmbient : GameComponent
             {
                 continue;
             }
-            if (!KissUtility.CanMoveNow(doer) || doer.jobs == null)
+            if (!KissUtility.CanMoveNow(doer) || doer.jobs == null || KissBoundary.InCombatNow(doer))
             {
                 continue;
             }
+            // 战斗闸（doer 与对象两侧）：系统不许把交火中的单位拽去亲嘴 —— 那等于给 AI
+            // 发免费点穴器。玩家亲自下令（右键/导演台）不受此限。见 KissBoundary.InCombatNow。
             // 单人冷却还挂着就别进 O(N) 的对象扫描了：小间隔 + 大地图时这一层全是在烧空转。
             if (KissCooldown.PawnRemaining(doer) > 0)
             {
@@ -95,7 +97,7 @@ public class KissAmbient : GameComponent
             {
                 return;
             }
-            if (KissUtility.BeginDirected(doer, receiver).Allowed)
+            if (KissUtility.BeginDirected(doer, receiver, playerIssued: false).Allowed)
             {
                 return;
             }
