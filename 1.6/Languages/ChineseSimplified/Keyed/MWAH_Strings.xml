@@ -26,8 +26,14 @@
   <MWAH.Fail.Busy>已经在亲了</MWAH.Fail.Busy>
   <MWAH.Fail.CooldownPawn>{PAWN} 还得缓缓才能再亲（{TIME}）</MWAH.Fail.CooldownPawn>
   <MWAH.Fail.CooldownPair>{PAWN} 和 {OTHER} 刚亲过（{TIME}）</MWAH.Fail.CooldownPair>
-  <MWAH.KissWall.Fail.NoStandCell>{PAWN} 找不到能站下、又够得着的地方去亲那堵 {WALL}</MWAH.KissWall.Fail.NoStandCell>
+  <MWAH.KissThing.Fail.NoStandCell>{PAWN} 找不到能站下、又够得着的地方去亲那堵 {WALL}</MWAH.KissThing.Fail.NoStandCell>
 
+  <!-- 亲墙结算短讯（五档各一条；长旁白在心情条目描述里，由天意表逐行指派） -->
+  <MWAH.KissWall.Result.Weird>{PAWN} 凑过去亲吻了 {WALL}。嘴唇触到石头的瞬间，{PAWN} 愣住了。</MWAH.KissWall.Result.Weird>
+  <MWAH.KissWall.Result.Nothing>{PAWN} 亲吻了 {WALL}。什么也没有发生——这正是 {PAWN} 想要的。</MWAH.KissWall.Result.Nothing>
+  <MWAH.KissWall.Result.Slight>{PAWN} 亲吻了 {WALL}。石头的温度刚刚好。</MWAH.KissWall.Result.Slight>
+  <MWAH.KissWall.Result.Moved>{PAWN} 与 {WALL} 久久相吻。</MWAH.KissWall.Result.Moved>
+  <MWAH.KissWall.Result.Devoted>{PAWN} 深情亲吻了 {WALL}，并在原地伫立良久。</MWAH.KissWall.Result.Devoted>
   <!-- 亲墙天意五档 × 每档 10 条叙述式旁白（墙不开口；结算时从对应档的池子里随机播一条） -->
   <MWAH.KissWall.Line.Weird.0>{PAWN} 亲吻了 {WALL}。当时没有感觉，回到工作三分钟后开始感觉不太对劲。</MWAH.KissWall.Line.Weird.0>
   <MWAH.KissWall.Line.Weird.1>{PAWN} 现在每路过这堵墙一次，就要把那天重新想一遍。</MWAH.KissWall.Line.Weird.1>

@@ -26,8 +26,14 @@
   <MWAH.Fail.Busy>already in the middle of a kiss</MWAH.Fail.Busy>
   <MWAH.Fail.CooldownPawn>{PAWN} needs a moment between kisses ({TIME})</MWAH.Fail.CooldownPawn>
   <MWAH.Fail.CooldownPair>{PAWN} and {OTHER} already kissed recently ({TIME})</MWAH.Fail.CooldownPair>
-  <MWAH.KissWall.Fail.NoStandCell>{PAWN} can't find a standable, reachable spot to kiss that {WALL}</MWAH.KissWall.Fail.NoStandCell>
+  <MWAH.KissThing.Fail.NoStandCell>{PAWN} can't find a standable, reachable spot to kiss that {WALL}</MWAH.KissThing.Fail.NoStandCell>
 
+  <!-- 亲墙结算短讯（五档各一条；长旁白在心情条目描述里，由天意表逐行指派） -->
+  <MWAH.KissWall.Result.Weird>{PAWN} leaned in and kissed {WALL}. The instant lips met stone, {PAWN} froze.</MWAH.KissWall.Result.Weird>
+  <MWAH.KissWall.Result.Nothing>{PAWN} kissed {WALL}. Nothing happened — exactly as {PAWN} hoped.</MWAH.KissWall.Result.Nothing>
+  <MWAH.KissWall.Result.Slight>{PAWN} kissed {WALL}. The stone was just the right temperature.</MWAH.KissWall.Result.Slight>
+  <MWAH.KissWall.Result.Moved>{PAWN} shared a long kiss with {WALL}.</MWAH.KissWall.Result.Moved>
+  <MWAH.KissWall.Result.Devoted>{PAWN} kissed {WALL} with true devotion, then lingered.</MWAH.KissWall.Result.Devoted>
   <!-- 亲墙天意五档 × 每档 10 条叙述式旁白（墙不开口；结算时从对应档的池子里随机播一条） -->
   <MWAH.KissWall.Line.Weird.0>{PAWN} kissed {WALL}. Nothing then — and, uncomfortably, something three minutes later.</MWAH.KissWall.Line.Weird.0>
   <MWAH.KissWall.Line.Weird.1>Now every route walks {PAWN} past that wall, and every pass replays the moment.</MWAH.KissWall.Line.Weird.1>

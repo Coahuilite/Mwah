@@ -13,7 +13,7 @@ $ErrorActionPreference = "Stop"
 #   3   Keyed 中英键集合一致
 #   4   C# 引用的 MWAH.* 键在两种语言里都存在
 #   5   defName(XML) ↔ DefOf 字段(C#) ↔ driverClass 字符串
-#   6   DLL 符号审计 + 零 Harmony 断言
+#   5a  天意表行完整性（scope/权重/thought/旁白与短讯键双语）
 #   7   版本纪律：csproj <Version> == About.xml <modVersion>
 #   8   分发卫生与隐私红线：无 PublishedFileId、无绝对本地路径
 #   9   设置项三处锁死：字段名 ↔ Scribe key ↔ Constants 默认值
@@ -94,30 +94,46 @@ $scopeRungs = @()
 if ($scopeCs -match '(?s)public enum KissScope\s*\r?\n\{(.*?)\r?\n\}') {
     $scopeRungs = @([regex]::Matches($matches[1], '(?m)^\s{4}(\w+)\s*=\s*(\d+)') | ForEach-Object { ,@($_.Groups[1].Value, [int]$_.Groups[2].Value) })
 }
-$scopeKeys = @($scopeRungs | ForEach-Object { "MWAH.Settings.Scope." + $_[0] })
-$literalKeys = @([regex]::Matches($code, '"(MWAH\.[A-Za-z0-9_.]+)"') | ForEach-Object { $_.Groups[1].Value })
-# 以点结尾的匹配是拼接前缀，不是键名。
-$used = @((($literalKeys + $scopeKeys) | Where-Object { $_ -notmatch '\.$' } | Sort-Object -Unique))
+    $scopeKeys = @($scopeRungs | ForEach-Object { "MWAH.Settings.Scope." + $_[0] })
+    # Defs 内容提前算好：天意表的旁白/短讯键写在 XML 里，正反两个方向都要把它们算进"被使用"。
+    $defXml = @(Get-ChildItem (Join-Path $root '1.6\Defs') -Recurse -Filter *.xml | Get-Content -Raw) -join "`n"
+    $literalKeys = @([regex]::Matches($code, '"(MWAH\.[A-Za-z0-9_.]+)"') | ForEach-Object { $_.Groups[1].Value })
+    $fateKeys = @([regex]::Matches($defXml, '<(?:narrationKey|messageKey)>(MWAH\.[A-Za-z0-9_.]+)</') | ForEach-Object { $_.Groups[1].Value })
+    # 以点结尾的匹配是拼接前缀，不是键名。
+    $used = @((($literalKeys + $scopeKeys + $fateKeys) | Where-Object { $_ -notmatch '\.$' } | Sort-Object -Unique))
 $missing = @($used | Where-Object { $en -notcontains $_ -or $zh -notcontains $_ })
 Assert-True ("all $($used.Count) C#-referenced keys exist in both languages") ($missing.Count -eq 0) ($missing -join ', ')
 # 反向信息项：定义了却没人用的键（不失败，只提示，防止语言文件攒尸体）
 $unused = @($en | Where-Object { $used -notcontains $_ })
 if ($unused.Count -gt 0) { Write-Host ("[info] defined but unreferenced keys: " + ($unused -join ', ')) }
 
-# 5. Def identity cross-check
-$defXml = @(Get-ChildItem (Join-Path $root '1.6\Defs') -Recurse -Filter *.xml | Get-Content -Raw) -join "`n"
+# 5. Def identity cross-check（$defXml 已在第 4 节前算好）
 $xmlDefs = @([regex]::Matches($defXml, '<defName>(MWAH_\w+)</defName>') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique)
 $defOfFields = @([regex]::Matches((Get-ChildItem (Join-Path $root "Source\$modName\DefOf") -Recurse -Filter *.cs | Get-Content -Raw),
     'public static (?!class\b)\w+ (MWAH_\w+)') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique)
 $orphanFields = @($defOfFields | Where-Object { $xmlDefs -notcontains $_ })
 Assert-True ("DefOf fields all resolve to an XML defName ($($defOfFields.Count)/$($xmlDefs.Count))") ($orphanFields.Count -eq 0) ($orphanFields -join ', ')
 $driverRefs = @([regex]::Matches($defXml, '<driverClass>([^<]+)</driverClass>') | ForEach-Object { $_.Groups[1].Value })
-Assert-True 'driverClass uses the real namespace.type' (@($driverRefs | Where-Object { $_ -notin @("$modName.JobDriver_Kiss","$modName.JobDriver_KissWall") }).Count -eq 0 -and $driverRefs.Count -eq 2)
+Assert-True 'driverClass uses the real namespace.type' (@($driverRefs | Where-Object { $_ -notin @("$modName.JobDriver_Kiss","$modName.JobDriver_KissThing") }).Count -eq 0 -and $driverRefs.Count -eq 2)
+
+# 5a. 天意表完整性：每行必须有 scope、正权重、可解析的 thought（可空=不发心情）、
+#     旁白/短讯键必须双语齐备（与 Keyed 门同源）。坏行引擎会跳过，但门要提前喊。
+[xml]$fateDoc = Get-Content -Raw -LiteralPath (Join-Path $root '1.6\Defs\Kiss\MWAH_FateDefs.xml')
+$fateBad = @()
+foreach ($row in $fateDoc.Defs.MWAH_FateDef) {
+    if ([string]::IsNullOrEmpty($row.scope)) { $fateBad += "$($row.defName): empty scope" }
+    if ([int]$row.weight -le 0) { $fateBad += "$($row.defName): weight <= 0" }
+    if ($row.thought -and $xmlDefs -notcontains $row.thought) { $fateBad += "$($row.defName): thought '$($row.thought)' is not a known defName" }
+    foreach ($k in @($row.narrationKey, $row.messageKey)) {
+        if ($k -and ($en -notcontains $k -or $zh -notcontains $k)) { $fateBad += "$($row.defName): key '$k' missing in one language" }
+    }
+}
+Assert-True "fate table rows are complete ($(@($fateDoc.Defs.MWAH_FateDef).Count) rows)" ($fateBad.Count -eq 0) ($fateBad -join ' | ')
 
 # 5b. DefInjected 结构检查：顶层元素必须是扁平键 `DefName.字段路径`（原版格式），
-# 不是嵌套 def 格式。引擎 SetDefFieldAtPath 用 path.Split('.')[0] 当 defName，
-# 写成 <MWAH_KissDirector><label>…</label></MWAH_KissDirector> 会让顶层名变成裸 defName、
-# 找不到字段路径，静默丢进翻译报告的 "missing" 节——本项目踩过，Keyed 检查看不见。
+#     不是嵌套 def 格式。引擎 SetDefFieldAtPath 用 path.Split('.')[0] 当 defName，
+#     写成 <MWAH_KissDirector><label>…</label></MWAH_KissDirector> 会让顶层名变成裸 defName、
+#     找不到字段路径，静默丢进翻译报告的 "missing" 节——本项目踩过，Keyed 检查看不见。
 $injBad = @()
 foreach ($langDir in @('English', 'ChineseSimplified')) {
     $injRoot = Join-Path $root "1.6\Languages\$langDir\DefInjected"
@@ -142,7 +158,8 @@ Assert-True 'DefInjected uses flat DefName.path keys' ($injBad.Count -eq 0) ($in
 # 6. DLL symbol audit + zero Harmony
 $text = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes($assemblyPath))
 $symbols = @('FloatMenuOptionProvider_Kiss','JobDriver_Kiss','KissUtility','KissBoundary','KissScope','KissScopeUtility','KissAmbient',
-    'KissDirector','Dialog_KissDirector','KissTicker','MainButtonWorker_KissDirector','KissMoodReward','KissCooldown','KissReturnQueue','MwahSettings','MwahMod','MWAH_JobDefOf','MWAH_ThoughtDefOf',"$modName.JobDriver_Kiss",'MWAH_Kiss','MWAH_KissedBond',"$modName.JobDriver_KissWall",'KissWallUtility','KissWallReward','FloatMenuOptionProvider_KissWall','MWAH_KissWall','MWAH_KissedWall_Devoted')
+    'KissDirector','Dialog_KissDirector','KissTicker','MainButtonWorker_KissDirector','KissMoodReward','KissCooldown','KissReturnQueue','MwahSettings','MwahMod','MWAH_JobDefOf','MWAH_ThoughtDefOf',"$modName.JobDriver_Kiss",'MWAH_Kiss','MWAH_KissedBond',
+    'KissThingAddon','KissThingAddons','KissWallAddon','MWAH_FateDef','KissFate','Thought_MemoryFated',"$modName.JobDriver_KissThing",'FloatMenuOptionProvider_KissThing','MWAH_KissThing','MWAH_KissedWall_Devoted')
 $missingSyms = @($symbols | Where-Object { -not $text.Contains($_) })
 Assert-True ("DLL contains all $($symbols.Count) key symbols") ($missingSyms.Count -eq 0) ($missingSyms -join ', ')
 Assert-True 'zero-Harmony: no Harmony/HarmonyLib reference in DLL' (-not ($text.Contains('HarmonyLib') -or $text.Contains('Harmony')))

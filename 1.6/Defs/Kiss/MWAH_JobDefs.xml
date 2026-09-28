@@ -16,12 +16,13 @@
   </JobDef>
 
   <!--
-    单人亲墙 job。TargetIndex.A = 墙（人造墙 / 天然岩壁 / 压埋矿脉，判定见 KissWallUtility.IsWallLike）。
-    没有定台与回原位：只挑一格站定面向墙；结算走 KissWallReward 的天意五档。
+    单人亲"非 pawn 目标"的共享 job（addon 族全用这一个：墙、将来的树……）。
+    TargetIndex.A = 目标；认领它的 addon 由 KissThingAddons.For 按谓词解析。
+    没有定台与回原位：只挑一格站定面向目标；结算走天意表（MWAH_FateDefs.xml）。
   -->
   <JobDef>
-    <defName>MWAH_KissWall</defName>
-    <driverClass>Mwah.JobDriver_KissWall</driverClass>
+    <defName>MWAH_KissThing</defName>
+    <driverClass>Mwah.JobDriver_KissThing</driverClass>
     <reportString>kissing TargetA.</reportString>
     <casualInterruptible>false</casualInterruptible>
     <playerInterruptible>true</playerInterruptible>

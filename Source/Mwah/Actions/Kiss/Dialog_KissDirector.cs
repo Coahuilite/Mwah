@@ -176,7 +176,9 @@ public class Dialog_KissDirector : Window
         {
             pawnA = null;
         }
-        if (!IsAlive(targetB))
+        // 右槽目标死了/塌了要清；非 pawn 目标还要看认领它的 addon 是否仍开着 ——
+        // 中途关功能 = 槽位静默回收，不留一个"看着能点、点了没反应"的假目标。
+        if (targetB is { } slotB && (!IsAlive(slotB) || (slotB is not Pawn && !KissThingAddons.ActiveFor(slotB))))
         {
             targetB = null;
         }

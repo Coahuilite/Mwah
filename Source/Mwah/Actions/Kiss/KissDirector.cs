@@ -69,7 +69,7 @@ public static class KissDirector
         Active = true;
         MwahLog.Dev("pick start (generation " + generation + ")");
         Find.Targeter.BeginTargeting(
-            targetParams: pawnsOnly ? TargetingParameters.ForPawns() : PawnAndWallParams,
+            targetParams: pawnsOnly ? TargetingParameters.ForPawns() : PawnAndThingParams,
             action: delegate (LocalTargetInfo ti)
             {
                 if (ti.Thing is Thing picked && (extraAccept == null || extraAccept(picked)))
@@ -93,20 +93,15 @@ public static class KissDirector
             });
     }
 
-    /// <summary>pawn 全放行（能不能亲由派发判定），墙要过 IsWallLike + 迷雾两道。</summary>
-    private static TargetingParameters PawnAndWallParams => new()
+    /// <summary>pawn 全放行（能不能亲由派发判定）；非 pawn 交给 addon 注册表：
+    /// 某个开着的 addon 认领、且不在迷雾里，才可选。</summary>
+    private static TargetingParameters PawnAndThingParams => new()
     {
         canTargetPawns = true,
         canTargetBuildings = true,
         validator = delegate (TargetInfo ti)
         {
-            if (ti.Thing is Pawn)
-            {
-                return true;
-            }
-            return MwahMod.Settings.WallKissingEnabled
-                && KissWallUtility.IsWallLike(ti.Thing)
-                && !ti.Thing.Position.Fogged(ti.Thing.Map);
+            return ti.Thing is Pawn || (ti.Thing != null && KissThingAddons.AnyPickable(ti.Thing));
         },
     };
 
@@ -144,8 +139,8 @@ public static class KissDirector
         }
     }
 
-    // 取点参数只管"是不是个可选的东西"，能不能亲交给派发时的完整门禁
-    // （双人走 KissUtility.BeginDirected，亲墙走 KissWallUtility.BeginDirected）。
+    // 取点参数只管"是不是个可选的东西"，能不能亲交给派发时的完整门禁：
+    // pawn 走 core（KissUtility.BeginDirected），非 pawn 走 addon 注册表。
 
     public static void Dispatch(Pawn a, Thing b)
     {
@@ -164,14 +159,23 @@ public static class KissDirector
             return;
         }
 
-        KissWallUtility.WallKissProposal wallProposal = KissWallUtility.BeginDirected(a, b);
-        if (wallProposal.Allowed)
+        KissThingAddon? addon = KissThingAddons.For(b);
+        if (addon is not { Active: true })
+        {
+            return; // 没有 addon 认领、或认领它的功能刚被关掉：静默失效，不弹"为什么不行"
+        }
+        ThingKissProposal thingProposal = addon.BeginDirected(a, b);
+        if (!thingProposal.Visible)
+        {
+            return;
+        }
+        if (thingProposal.Allowed)
         {
             Messages.Message("MWAH.Director.Started".Translate(a.Named("PAWN"), b.Named("OTHER")),
                 new LookTargets(a, b), MessageTypeDefOf.PositiveEvent, historical: false);
             return;
         }
-        Messages.Message(wallProposal.BlockedReason ?? "MWAH.Fail.Busy".Translate(),
+        Messages.Message(thingProposal.BlockedReason ?? "MWAH.Fail.Busy".Translate(),
             new LookTargets(a, b), MessageTypeDefOf.RejectInput, historical: false);
     }
 }

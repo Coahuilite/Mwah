@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Defs>
   <!--
     ===== 数值依据（1.6 原版锚点；强度 = 心情 × 存活游戏日）=====
@@ -51,7 +51,6 @@
       </li>
     </stages>
   </ThoughtDef>
-
   <!-- 设置里打开"影响好感度"后才使用：Thought_MemorySocial，额外写入对对方的意见。
        意见 +6 对齐原版滚床单（GotSomeLovin，+8 心情 / +6 意见 / 3 日）的意见份量。
        注：KissMoodReward 里 SocialImpact×倍率 这一个值同时乘进 moodPowerFactor 与 opinionOffset
@@ -81,9 +80,8 @@
       </li>
     </stages>
   </ThoughtDef>
-
   <!--
-    ===== 亲墙天意五档（互斥，权重 20/30/25/17/8，见 KissWallReward）=====
+    ===== 亲墙天意五档（互斥，权重 20/30/25/17/8，出厂表在 MWAH_FateDefs.xml）=====
     锚点同上一条：滚床单 +8/3日 > 美言 +5/2日 > 被蹭 +4/1日；双人吻 +5/1日。
     亲墙是"没有回应的单向多情"：期望 ≈ +0.84/次（远低于双人吻），方差全社交最大 —— 笑点即方差。
     "毫无感觉"档 moodOffset 0 也保留 thought：心情列表挂着"亲了一堵墙（毫无感觉）"比什么都不加更有戏。
@@ -93,7 +91,7 @@
   -->
   <ThoughtDef>
     <defName>MWAH_KissedWall_Weird</defName>
-    <thoughtClass>Thought_Memory</thoughtClass>
+    <thoughtClass>Mwah.Thought_MemoryFated</thoughtClass>
     <durationDays>0.5</durationDays>
     <stackLimit>1</stackLimit>
     <nullifiedIfNotColonist>false</nullifiedIfNotColonist>
@@ -105,10 +103,9 @@
       </li>
     </stages>
   </ThoughtDef>
-
   <ThoughtDef>
     <defName>MWAH_KissedWall_Nothing</defName>
-    <thoughtClass>Thought_Memory</thoughtClass>
+    <thoughtClass>Mwah.Thought_MemoryFated</thoughtClass>
     <durationDays>0.25</durationDays>
     <stackLimit>1</stackLimit>
     <nullifiedIfNotColonist>false</nullifiedIfNotColonist>
@@ -120,10 +117,9 @@
       </li>
     </stages>
   </ThoughtDef>
-
   <ThoughtDef>
     <defName>MWAH_KissedWall_Slight</defName>
-    <thoughtClass>Thought_Memory</thoughtClass>
+    <thoughtClass>Mwah.Thought_MemoryFated</thoughtClass>
     <durationDays>0.5</durationDays>
     <stackLimit>1</stackLimit>
     <nullifiedIfNotColonist>false</nullifiedIfNotColonist>
@@ -135,10 +131,9 @@
       </li>
     </stages>
   </ThoughtDef>
-
   <ThoughtDef>
     <defName>MWAH_KissedWall_Moved</defName>
-    <thoughtClass>Thought_Memory</thoughtClass>
+    <thoughtClass>Mwah.Thought_MemoryFated</thoughtClass>
     <durationDays>1</durationDays>
     <stackLimit>1</stackLimit>
     <nullifiedIfNotColonist>false</nullifiedIfNotColonist>
@@ -150,10 +145,9 @@
       </li>
     </stages>
   </ThoughtDef>
-
   <ThoughtDef>
     <defName>MWAH_KissedWall_Devoted</defName>
-    <thoughtClass>Thought_Memory</thoughtClass>
+    <thoughtClass>Mwah.Thought_MemoryFated</thoughtClass>
     <durationDays>1</durationDays>
     <stackLimit>1</stackLimit>
     <nullifiedIfNotColonist>false</nullifiedIfNotColonist>
