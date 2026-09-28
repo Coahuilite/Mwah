@@ -121,11 +121,18 @@ Assert-True 'driverClass uses the real namespace.type' (@($driverRefs | Where-Ob
 [xml]$fateDoc = Get-Content -Raw -LiteralPath (Join-Path $root '1.6\Defs\Kiss\MWAH_FateDefs.xml')
 $fateBad = @()
 foreach ($row in $fateDoc.Defs.MWAH_FateDef) {
-    if ([string]::IsNullOrEmpty($row.scope)) { $fateBad += "$($row.defName): empty scope" }
-    if ([int]$row.weight -le 0) { $fateBad += "$($row.defName): weight <= 0" }
-    if ($row.thought -and $xmlDefs -notcontains $row.thought) { $fateBad += "$($row.defName): thought '$($row.thought)' is not a known defName" }
-    foreach ($k in @($row.narrationKey, $row.messageKey)) {
-        if ($k -and ($en -notcontains $k -or $zh -notcontains $k)) { $fateBad += "$($row.defName): key '$k' missing in one language" }
+    # StrictMode 下 XmlElement 缺子元素时直接点属性会抛错，一律 SelectSingleNode。
+    $scopeNode = $row.SelectSingleNode('scope')
+    $weightNode = $row.SelectSingleNode('weight')
+    $thoughtNode = $row.SelectSingleNode('thought')
+    if (-not $scopeNode -or [string]::IsNullOrEmpty($scopeNode.InnerText)) { $fateBad += "$($row.defName): empty scope" }
+    if (-not $weightNode -or [int]$weightNode.InnerText -le 0) { $fateBad += "$($row.defName): weight missing or <= 0" }
+    if ($thoughtNode -and $xmlDefs -notcontains $thoughtNode.InnerText.Trim()) { $fateBad += "$($row.defName): thought '$($thoughtNode.InnerText)' is not a known defName" }
+    foreach ($keyNode in @($row.SelectSingleNode('narrationKey'), $row.SelectSingleNode('messageKey'))) {
+        if ($keyNode) {
+            $k = $keyNode.InnerText.Trim()
+            if ($en -notcontains $k -or $zh -notcontains $k) { $fateBad += "$($row.defName): key '$k' missing in one language" }
+        }
     }
 }
 Assert-True "fate table rows are complete ($(@($fateDoc.Defs.MWAH_FateDef).Count) rows)" ($fateBad.Count -eq 0) ($fateBad -join ' | ')
@@ -159,7 +166,7 @@ Assert-True 'DefInjected uses flat DefName.path keys' ($injBad.Count -eq 0) ($in
 $text = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes($assemblyPath))
 $symbols = @('FloatMenuOptionProvider_Kiss','JobDriver_Kiss','KissUtility','KissBoundary','KissScope','KissScopeUtility','KissAmbient',
     'KissDirector','Dialog_KissDirector','KissTicker','MainButtonWorker_KissDirector','KissMoodReward','KissCooldown','KissReturnQueue','MwahSettings','MwahMod','MWAH_JobDefOf','MWAH_ThoughtDefOf',"$modName.JobDriver_Kiss",'MWAH_Kiss','MWAH_KissedBond',
-    'KissThingAddon','KissThingAddons','KissWallAddon','MWAH_FateDef','KissFate','Thought_MemoryFated',"$modName.JobDriver_KissThing",'FloatMenuOptionProvider_KissThing','MWAH_KissThing','MWAH_KissedWall_Devoted')
+    'KissThingAddon','KissThingAddons','KissWallAddon','MWAH_FateDef','KissFate','Thought_MemoryFated','Thought_MemorySocialFated',"$modName.JobDriver_KissThing",'FloatMenuOptionProvider_KissThing','MWAH_KissThing','MWAH_KissedWall_Devoted')
 $missingSyms = @($symbols | Where-Object { -not $text.Contains($_) })
 Assert-True ("DLL contains all $($symbols.Count) key symbols") ($missingSyms.Count -eq 0) ($missingSyms -join ', ')
 Assert-True 'zero-Harmony: no Harmony/HarmonyLib reference in DLL' (-not ($text.Contains('HarmonyLib') -or $text.Contains('Harmony')))

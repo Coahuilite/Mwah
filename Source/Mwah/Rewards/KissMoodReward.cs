@@ -20,6 +20,21 @@ public static class KissMoodReward
     {
         GiveTo(initiator, receiver);
         GiveTo(receiver, initiator);
+        // 没有心情系统的参与者拿不到 thought，改走天意表的消息通道：
+        // 机械族/无人机的冷笑话、动物的嗅觉叙事各查各的表；
+        // 异象实体（有人形没心情）两头都不占，维持静默 —— 它们连"做做样子"都懒得解释。
+        TellMoodless(initiator, receiver);
+        TellMoodless(receiver, initiator);
+    }
+
+    private static void TellMoodless(Pawn pawn, Pawn other)
+    {
+        if (pawn.needs?.mood?.thoughts?.memories != null || pawn.RaceProps.Humanlike)
+        {
+            return;
+        }
+        string scope = pawn.RaceProps.IsFlesh ? "KissPawnBeast" : "KissPawnMechanoid";
+        KissFate.Grant(pawn, other, scope);
     }
 
     private static void GiveTo(Pawn pawn, Pawn other)
@@ -48,6 +63,14 @@ public static class KissMoodReward
             socialMemory.opinionOffset *= impact;
         }
         memory.durationTicksOverride = settings.ThoughtDurationTicks;
+
+        // 类人双人吻的旁白：查 KissPawn 表抽一句挂到这条记忆实例上（表空则维持静态描述，
+        // 心情数值与时长完全不受表影响 —— 表只管"这句话怎么说"）。
+        if (memory is IFatedNarration fated && KissFate.Roll("KissPawn") is { } row && !row.narrationKey.NullOrEmpty())
+        {
+            fated.NarrationKey = row.narrationKey;
+            fated.NarrationSubject = other.LabelShort;
+        }
 
         pawn.needs.mood.thoughts.memories.TryGainMemory(memory, other);
     }

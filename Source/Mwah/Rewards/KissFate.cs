@@ -65,10 +65,10 @@ public static class KissFate
         if (row.thought != null && doer.needs?.mood?.thoughts?.memories != null
             && ThoughtMaker.MakeThought(row.thought) is Thought_Memory memory)
         {
-            if (memory is Thought_MemoryFated fated)
+            if (memory is IFatedNarration fated)
             {
-                fated.narrationKey = row.narrationKey;
-                fated.narrationSubject = target.LabelCap;
+                fated.NarrationKey = row.narrationKey;
+                fated.NarrationSubject = target.LabelCap;
             }
             doer.needs.mood.thoughts.memories.TryGainMemory(memory, null);
         }

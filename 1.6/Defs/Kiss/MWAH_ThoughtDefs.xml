@@ -32,7 +32,7 @@
   -->
   <ThoughtDef>
     <defName>MWAH_Kissed</defName>
-    <thoughtClass>Thought_Memory</thoughtClass>
+    <thoughtClass>Mwah.Thought_MemoryFated</thoughtClass>
     <durationDays>1</durationDays>
     <stackLimit>2</stackLimit>
     <stackedEffectMultiplier>0.5</stackedEffectMultiplier>
@@ -58,7 +58,7 @@
        在尾段线性衰减（ThoughtDef.lerpOpinionToZeroAfterDurationPct 默认 0.7 ⇒ 过 30% 时长后开始掉）。 -->
   <ThoughtDef>
     <defName>MWAH_KissedBond</defName>
-    <thoughtClass>Thought_MemorySocial</thoughtClass>
+    <thoughtClass>Mwah.Thought_MemorySocialFated</thoughtClass>
     <durationDays>1</durationDays>
     <stackLimit>2</stackLimit>
     <stackLimitForSameOtherPawn>1</stackLimitForSameOtherPawn>
