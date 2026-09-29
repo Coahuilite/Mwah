@@ -40,11 +40,22 @@ public class MwahMod : Mod
 
     public MwahMod(ModContentPack content) : base(content)
     {
-        Instance = this;
-        Settings = GetSettings<MwahSettings>();
-        // 非 dev 构建下这是个空方法（KissTrace 用 [Conditional] 兜住），所以调用点不需要 #if。
-        KissTrace.Start();
-        MwahLog.Info($"loaded [{BuildFlavor} {VersionString()}]");
+        // 启动横幅：无条件播报（诊断开关关掉也要能确认模组活着），格式固定
+        // "[MWAH] <模组名> v<版本> build=<渠道> startup OK/FAILED"，全局检索 [MWAH] 即得。
+        // FAILED 的成因 = 入口自身炸了（设置反序列化、路径准备）；播完横幅把异常原样抛回，
+        // 让原版照常记堆栈 —— 半初始化的模组不能装作活着。
+        try
+        {
+            Instance = this;
+            Settings = GetSettings<MwahSettings>();
+            KissTrace.Start();
+            MwahLog.Banner($"Mwah! (Every Pawn Kisses Each Other) v{VersionString()} build={BuildFlavor} startup OK");
+        }
+        catch (Exception ex)
+        {
+            MwahLog.Banner($"Mwah! (Every Pawn Kisses Each Other) build={BuildFlavor} startup FAILED: {ex.GetBaseException().Message}");
+            throw;
+        }
     }
 
     /// <summary>返回非空字符串是设置页在"模式选项"里出现的唯一条件。</summary>

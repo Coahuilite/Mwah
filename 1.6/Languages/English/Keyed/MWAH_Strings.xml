@@ -154,6 +154,8 @@
 
   <MWAH.Settings.ReturnHome>Return to original spot</MWAH.Settings.ReturnHome>
   <MWAH.Settings.ReturnHomeDesc>Afterwards both pawn go back to where the kiss was ordered. A polite request - urgent needs and work still win.</MWAH.Settings.ReturnHomeDesc>
+  <MWAH.Settings.Diagnostics>Diagnostic logs</MWAH.Settings.Diagnostics>
+  <MWAH.Settings.DiagnosticsDesc>Writes [MWAH] dev events to Player.log and lets the 1 Hz phase sampler append to Mwah-trace.log in the game's save data folder. The startup banner and error lines print regardless. Default on in dev builds, off in release builds.</MWAH.Settings.DiagnosticsDesc>
 
   <MWAH.Settings.Reset>Restore defaults</MWAH.Settings.Reset>
   <MWAH.Settings.WallKissing>Allow kissing walls</MWAH.Settings.WallKissing>

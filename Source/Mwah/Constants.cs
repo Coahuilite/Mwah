@@ -40,6 +40,13 @@ public static class Constants
     public const bool AutonomousKissing = false;      // 第三优先级，先不默认开
     public const int AutonomousIntervalTicks = 250;      // 1 游戏小时促成一桩
     public const int AutonomousRadiusCells = 10;         // 超出这个距离就不去追
+    // 诊断日志出厂默认按构建渠道走：dev 包默认开（维护者的测试载体），Steam/GitHub
+    // 发行档默认关（玩家机器上不该有模组刷日志）。运行期以设置页勾选为准，随时可切。
+#if MWAH_DEV
+    public const bool DiagnosticLogs = true;
+#else
+    public const bool DiagnosticLogs = false;
+#endif
 
     public static readonly IntRange DurationTicksRange = new(30, 2400);
     public static readonly IntRange FleckIntervalTicksRange = new(20, 1200);

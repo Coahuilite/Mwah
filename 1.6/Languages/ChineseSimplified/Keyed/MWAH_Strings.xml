@@ -154,6 +154,8 @@
 
   <MWAH.Settings.ReturnHome>亲完回原位</MWAH.Settings.ReturnHome>
   <MWAH.Settings.ReturnHomeDesc>结束后两人都回到被下令时站的位置。这只是个礼貌请求——紧急需求和排班工作仍然会插队。</MWAH.Settings.ReturnHomeDesc>
+  <MWAH.Settings.Diagnostics>诊断日志</MWAH.Settings.Diagnostics>
+  <MWAH.Settings.DiagnosticsDesc>开启后 [MWAH] 开发事件写入 Player.log，1Hz 阶段采样器继续写存档目录下的 Mwah-trace.log。启动横幅与报错行不受此项影响、永远播报。dev 包默认开，发行档默认关。</MWAH.Settings.DiagnosticsDesc>
 
   <MWAH.Settings.Reset>恢复默认值</MWAH.Settings.Reset>
   <MWAH.Settings.WallKissing>允许亲吻墙壁</MWAH.Settings.WallKissing>

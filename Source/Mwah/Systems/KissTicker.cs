@@ -38,11 +38,11 @@ public class KissTicker : GameComponent
         }
     }
 
-#if MWAH_DEV
     /// <summary>
     /// 翻译自证：FinalizeInit 在所有 Def 与语言注入都加载完之后运行，这里读回引擎
     /// "实际解析到"的 label，直接区分两种失败：打出中文 ⇒ 注入生效（屏幕英文另有原因）；
     /// 打出英文 ⇒ 注入没套上（安装目录缺 DefInjected 子树，或 apply 时找不到 def）。
+    /// 全构建都在（2026-09-30 起诊断改运行时开关）：输出走 MwahLog.Dev，关着就一行不发。
     /// </summary>
     public override void FinalizeInit()
     {
@@ -52,5 +52,4 @@ public class KissTicker : GameComponent
         string thoughtLabel = th?.stages != null && th.stages.Count > 0 ? th.stages[0].label.ToString() : "<none>";
         MwahLog.Dev("i18n check: button='" + (mb?.LabelCap ?? "<none>") + "' thought='" + thoughtLabel + "'");
     }
-#endif
 }

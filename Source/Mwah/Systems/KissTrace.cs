@@ -1,4 +1,3 @@
-#if MWAH_DEV
 using System;
 using System.IO;
 using System.Threading;
@@ -7,7 +6,9 @@ using Verse;
 namespace Mwah;
 
 /// <summary>
-/// 旁路阶段采样器（仅 dev 构建编译进来）。
+/// 旁路阶段采样器 —— 逐 tick 的"插桩"，与 MwahLog.Dev 同受设置页「诊断日志」开关管
+/// （2026-09-30 起全构建编译进来，旧写法用 #if MWAH_DEV 造出空壳类在编译期剔除，
+/// 发行档连"事后开诊断"的机会都没有；现在开关一勾即生效，不用换包）。
 ///
 /// 为什么需要它：dnSpy 一类 .NET 调试器 attach 走 ICorDebug，只认 CLR，
 /// 对 RimWorld 的 MonoBleedingEdge 拿不到托管栈；Mono 软调试器又要求启动时带
@@ -18,6 +19,9 @@ namespace Mwah;
 /// 主线程卡死 ⇒ 文件停在最后一行，行与行的时间戳间隔就是卡死时刻；
 /// 主线程崩溃 ⇒ 文件尾巴就是崩溃前最后到达的阶段。两条都无需任何调试器。
 /// 采样线程只读整数字段与 TickManager 引用，不调任何 Unity 主线程 API。
+///
+/// 开关语义：关 ⇒ Sample 直接返回（不读盘不写字，静默）；开 ⇒ 下一秒起恢复写行。
+/// 计时器本身常驻（1Hz 一次空转判断，成本可忽略），换开关不需要重建线程。
 /// </summary>
 public static class KissTrace
 {
@@ -57,7 +61,7 @@ public static class KissTrace
         }
     }
 
-    /// <summary>记阶段。passive 为真记被动方，否则记发起方。</summary>
+    /// <summary>记阶段。passive 为真记被动方，否则记发起方。纯字段写，无需开关判定。</summary>
     public static void Set(bool passive, string phase)
     {
         if (passive)
@@ -95,6 +99,12 @@ public static class KissTrace
     {
         try
         {
+            // 诊断开关是唯一的闸：关 ⇒ 什么都不写（"此后静默"承诺的一部分）。
+            // Settings 在 MwahMod 构造器里先于 Start() 赋值，线程可见性由 Timer 创建边沿保证。
+            if (!MwahMod.Settings.DiagnosticsEnabled)
+            {
+                return;
+            }
             // 主菜单/世界地图下 TicksGame 恒为 0 且不动，写了只是噪音；用游戏 tick 是否
             // 已经走过（>0）当"在局内"的判据。开局前 1 秒的空白无关紧要。
             TickManager? tm = Find.TickManager;
@@ -138,32 +148,3 @@ public static class KissTrace
         File.WriteAllLines(path, tail);
     }
 }
-#else
-using System.Diagnostics;
-
-namespace Mwah;
-
-/// <summary>
-/// 非 dev 构建下的空壳：签名与 dev 版逐条对齐，且每个方法都打
-/// <c>[Conditional("MWAH_DEV")]</c> —— 调用点在编译期整条消失，等价于旧写法在
-/// JobDriver 里套 #if，但不把预处理噪音留在表演代码中间（打点位置就是表演位置）。
-/// </summary>
-public static class KissTrace
-{
-    [Conditional("MWAH_DEV")] public static void Start()
-    {
-    }
-
-    [Conditional("MWAH_DEV")] public static void Set(bool passive, string phase)
-    {
-    }
-
-    [Conditional("MWAH_DEV")] public static void Ticks(bool passive, int ticks)
-    {
-    }
-
-    [Conditional("MWAH_DEV")] public static void Clear()
-    {
-    }
-}
-#endif

@@ -30,6 +30,7 @@ public class MwahSettings : ModSettings
     public int autonomousRadiusCells = Constants.AutonomousRadiusCells;
     public int thoughtDurationTicks = Constants.ThoughtDurationTicks;
     public float moodMultiplier = Constants.MoodMultiplier;
+    public bool diagnosticLogs = Constants.DiagnosticLogs;
 
     private Vector2 scrollPos;
 
@@ -62,6 +63,8 @@ public class MwahSettings : ModSettings
     public bool AutonomousEnabled => autonomousKissing;
     public int AutonomousIntervalTicks => Mathf.Clamp(autonomousIntervalTicks, Constants.AutonomousIntervalTicksRange.min, Constants.AutonomousIntervalTicksRange.max);
     public int AutonomousRadius => Mathf.Clamp(autonomousRadiusCells, Constants.AutonomousRadiusRange.min, Constants.AutonomousRadiusRange.max);
+    /// <summary>诊断总闸：MwahLog.Dev 与 KissTrace 采样共用；横幅与 Warn/Error 不归它管。</summary>
+    public bool DiagnosticsEnabled => diagnosticLogs;
 
     public override void ExposeData()
     {
@@ -82,6 +85,7 @@ public class MwahSettings : ModSettings
         Scribe_Values.Look(ref autonomousRadiusCells, "autonomousRadiusCells", Constants.AutonomousRadiusCells);
         Scribe_Values.Look(ref thoughtDurationTicks, "thoughtDurationTicks", Constants.ThoughtDurationTicks);
         Scribe_Values.Look(ref moodMultiplier, "moodMultiplier", Constants.MoodMultiplier);
+        Scribe_Values.Look(ref diagnosticLogs, "diagnosticLogs", Constants.DiagnosticLogs);
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
@@ -120,6 +124,7 @@ public class MwahSettings : ModSettings
         autonomousRadiusCells = Constants.AutonomousRadiusCells;
         thoughtDurationTicks = Constants.ThoughtDurationTicks;
         moodMultiplier = Constants.MoodMultiplier;
+        diagnosticLogs = Constants.DiagnosticLogs;
     }
 
     public void DoSettingsWindowContents(Rect inRect)
@@ -171,6 +176,8 @@ public class MwahSettings : ModSettings
             "MWAH.Settings.AutonomousRadiusDesc", Constants.AutonomousRadiusRange, cells => cells.ToString());
         changed |= Checkbox(list, ref changeOpinion, "MWAH.Settings.ChangeOpinion", "MWAH.Settings.ChangeOpinionDesc");
         changed |= Checkbox(list, ref returnHomeAfterKiss, "MWAH.Settings.ReturnHome", "MWAH.Settings.ReturnHomeDesc");
+        list.GapLine();
+        changed |= Checkbox(list, ref diagnosticLogs, "MWAH.Settings.Diagnostics", "MWAH.Settings.DiagnosticsDesc");
 
         list.Gap();
         list.Label("MWAH.Settings.TimingHint".Translate());
