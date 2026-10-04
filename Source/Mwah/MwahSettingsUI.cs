@@ -37,13 +37,14 @@ public partial class MwahSettings
     public void DoSettingsWindowContents(Rect inRect)
     {
         bool changed = false;
-        // 固定身份行（2026-10-05 维护者裁定）：vanilla 的标题行只画 SettingsCategory
-        // （Dialog_ModSettings.DoWindowContents 反编译实锤），版本进不了那一行——除非 Harmony，
-        // 那是硬边界。所以在自己区域顶部常驻一行"品牌 · 版本 · 渠道"，滚动区从它下面开始：
-        // 滚到哪里截图都带着构建身份。字符串与启动横幅同源（MwahMod.VersionString()）。
-        Rect identityRect = inRect.TopPartPixels(24f);
-        Rect scrollRect = inRect.BottomPartPixels(inRect.height - 24f);
-        DrawIdentityRow(identityRect);
+        // 固定标题区（2026-10-05 维护者裁定）：vanilla 的标题行只画 SettingsCategory（反编译
+        // Dialog_ModSettings.DoWindowContents 实锤），版本进不了那一行——除非 Harmony，那是硬边界。
+        // 于是在自己区域顶部常驻两行：副标题（"容忍一下这份唐突的多情。"，Small）在上，
+        // 身份水印（"品牌 · 版本 · 渠道"，Tiny）在下，1px 分隔线收尾；滚动区从它下面开始——
+        // 滚到哪里截图都带着构建身份。水印字符串与启动横幅同源（MwahMod.VersionString()）。
+        Rect headerRect = inRect.TopPartPixels(PinnedHeaderHeight);
+        Rect scrollRect = inRect.BottomPartPixels(inRect.height - PinnedHeaderHeight);
+        DrawPinnedHeader(headerRect);
         float viewWidth = scrollRect.width - 16f;
         // 滚动范围用**上一帧量出的内容高度**：viewRect 是局部变量，"End 之后回写高度"
         // 对本帧的滚动条毫无作用（2026-09-10 的自动测高就是这么坏的：范围恒等于窗口高，
@@ -60,8 +61,7 @@ public partial class MwahSettings
         // 换列 = 溢出内容画到右边窗外（实机截图里被挤到另一侧、再也点不到的设置项）。
         list.Begin(new Rect(0f, 0f, viewWidth, 100000f));
 
-        list.Label("MWAH.Settings.Header".Translate());
-        list.GapLine();
+
         changed |= Checkbox(list, ref modEnabled);
 
         // ===== 段一：核心（双人吻的全部旋钮 + 全局入口开关）=====
@@ -119,9 +119,17 @@ public partial class MwahSettings
         }
     }
 
-    /// <summary>身份行：Tiny、半透明、不可交互——它是水印不是控件，读的是横幅同一份真相。</summary>
-    private static void DrawIdentityRow(Rect row)
+    /// <summary>固定标题区总高：副标题 28 + 水印 30（Tiny 行框约 20px，再吃下伸部 g/p/y
+    /// 与居中余量——24px 会裁掉尾巴，实机截图 2026-10-05）。</summary>
+    private const float PinnedHeaderHeight = 58f;
+
+    /// <summary>固定标题区：副标题在上、身份水印在下、底部一条 1px 分隔线。水印是半透明
+    /// 不可交互的，读的是横幅同一份真相。</summary>
+    private static void DrawPinnedHeader(Rect header)
     {
+        Widgets.Label(header.TopPartPixels(28f), "MWAH.Settings.Header".Translate());
+        Widgets.DrawBoxSolid(new Rect(header.x, header.yMax - 1f, header.width, 1f), new Color(1f, 1f, 1f, 0.12f));
+        Rect row = header.BottomPartPixels(30f);
         GameFont fontBefore = Text.Font;
         TextAnchor anchorBefore = Text.Anchor;
         Color colorBefore = GUI.color;
