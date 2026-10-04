@@ -128,6 +128,16 @@ foreach ($row in $fateDoc.Defs.MWAH_FateDef) {
     if (-not $scopeNode -or [string]::IsNullOrEmpty($scopeNode.InnerText)) { $fateBad += "$($row.defName): empty scope" }
     if (-not $weightNode -or [int]$weightNode.InnerText -le 0) { $fateBad += "$($row.defName): weight missing or <= 0" }
     if ($thoughtNode -and $xmlDefs -notcontains $thoughtNode.InnerText.Trim()) { $fateBad += "$($row.defName): thought '$($thoughtNode.InnerText)' is not a known defName" }
+    # thought 带 stageIndex 时校验档位下标在目标 def 的 stages 数内（多档合一 def 后，
+    # 越界 = 掷骰时 CurStage 空引用；XML 数据错误必须在门里喊，不能留给实机）。
+    $stageNode = $row.SelectSingleNode('stageIndex')
+    if ($stageNode -and $thoughtNode) {
+        $tName = $thoughtNode.InnerText.Trim()
+        $stageMatch = [regex]::Match($defXml, "(?s)<defName>$tName</defName>.*?<stages>(.*?)</stages>")
+        $stageCount = if ($stageMatch.Success) { [regex]::Matches($stageMatch.Groups[1].Value, '<li>').Count } else { 0 }
+        $si = [int]$stageNode.InnerText
+        if ($si -lt 0 -or $si -ge $stageCount) { $fateBad += "$($row.defName): stageIndex $si out of range for $tName ($stageCount stages)" }
+    }
     foreach ($keyNode in @($row.SelectSingleNode('narrationKey'), $row.SelectSingleNode('messageKey'))) {
         if ($keyNode) {
             $k = $keyNode.InnerText.Trim()
@@ -166,7 +176,7 @@ Assert-True 'DefInjected uses flat DefName.path keys' ($injBad.Count -eq 0) ($in
 $text = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes($assemblyPath))
 $symbols = @('FloatMenuOptionProvider_Kiss','JobDriver_Kiss','KissUtility','KissBoundary','KissScope','KissScopeUtility','KissAmbient',
     'KissDirector','Dialog_KissDirector','KissTicker','MainButtonWorker_KissDirector','KissMoodReward','KissCooldown','KissReturnQueue','MwahSettings','MwahMod','MWAH_JobDefOf','MWAH_ThoughtDefOf',"$modName.JobDriver_Kiss",'MWAH_Kiss','MWAH_KissedBond',
-    'KissThingAddon','KissThingAddons','KissWallAddon','MWAH_FateDef','KissFate','Thought_MemoryFated','Thought_MemorySocialFated',"$modName.JobDriver_KissThing",'FloatMenuOptionProvider_KissThing','MWAH_KissThing','MWAH_KissedWall_Devoted','KissStage','KissReturn')
+    'KissThingAddon','KissThingAddons','KissWallAddon','MWAH_FateDef','KissFate','KissFateScopes','Thought_MemoryFated','Thought_MemorySocialFated',"$modName.JobDriver_KissThing",'FloatMenuOptionProvider_KissThing','MWAH_KissThing','MWAH_KissedWall','KissStage','KissReturn')
 $missingSyms = @($symbols | Where-Object { -not $text.Contains($_) })
 Assert-True ("DLL contains all $($symbols.Count) key symbols") ($missingSyms.Count -eq 0) ($missingSyms -join ', ')
 Assert-True 'zero-Harmony: no Harmony/HarmonyLib reference in DLL' (-not ($text.Contains('HarmonyLib') -or $text.Contains('Harmony')))

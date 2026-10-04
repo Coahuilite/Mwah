@@ -24,6 +24,10 @@ public class MWAH_FateDef : Def
     /// <summary>发哪条心情记忆；空 = 不发。</summary>
     public ThoughtDef? thought;
 
+    /// <summary>发该心情的第几档（ThoughtDef.stages 下标）。多档合一 def 后，行数据用
+    /// thought+stageIndex 两字段指认"哪一档"；单档思想恒为 0。</summary>
+    public int stageIndex;
+
     /// <summary>相对权重；≤0 的行视为坏数据，掷骰时跳过。</summary>
     public int weight = 1;
 

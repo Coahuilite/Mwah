@@ -51,14 +51,6 @@ public sealed class KissWallAddon : KissThingAddon
     /// </summary>
     public override void SettleWithoutTable(Pawn doer, Thing target)
     {
-        ThoughtDef[] tiers =
-        {
-            MWAH_ThoughtDefOf.MWAH_KissedWall_Weird,
-            MWAH_ThoughtDefOf.MWAH_KissedWall_Nothing,
-            MWAH_ThoughtDefOf.MWAH_KissedWall_Slight,
-            MWAH_ThoughtDefOf.MWAH_KissedWall_Moved,
-            MWAH_ThoughtDefOf.MWAH_KissedWall_Devoted,
-        };
         int[] weights = { 20, 30, 25, 17, 8 };
         string[] messageKeys =
         {
@@ -78,26 +70,23 @@ public sealed class KissWallAddon : KissThingAddon
                 break;
             }
         }
-        if (tier >= tiers.Length)
+        if (tier >= weights.Length)
         {
             tier = 2; // 权重和不为 100 时的兜底：落在"小暖"，不落在越界
         }
-        KissFate.GrantRow(doer, target, FateRow(tiers, weights, messageKeys, tier));
-    }
-
-    private static MWAH_FateDef FateRow(ThoughtDef[] tiers, int[] weights, string[] messageKeys, int tier)
-    {
-        // 兜底行只在内存里存在（不进 DefDatabase），字段与出厂表的档位语义一一对应。
+        // 兜底行只在内存里存在（不进 DefDatabase）：五档 = 单 def 的 stageIndex，
+        // 字段与出厂表的档位语义一一对应。
         var row = new MWAH_FateDef
         {
             defName = "MWAH_Fate_Fallback_Wall",
             scope = ScopeConst,
-            thought = tiers[tier],
+            thought = MWAH_ThoughtDefOf.MWAH_KissedWall,
+            stageIndex = tier,
             weight = weights[tier],
             messageKey = messageKeys[tier],
             messageType = tier <= 1 ? MessageTypeDefOf.NegativeEvent : MessageTypeDefOf.PositiveEvent,
         };
-        return row;
+        KissFate.GrantRow(doer, target, row);
     }
 
     private const string ScopeConst = "KissWall";

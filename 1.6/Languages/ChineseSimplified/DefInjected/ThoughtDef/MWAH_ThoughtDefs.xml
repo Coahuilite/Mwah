@@ -5,14 +5,14 @@
   <MWAH_KissedBond.stages.0.label>被{0}亲吻过</MWAH_KissedBond.stages.0.label>
   <MWAH_KissedBond.stages.0.labelSocial>我们的那一吻</MWAH_KissedBond.stages.0.labelSocial>
   <MWAH_KissedBond.stages.0.description>有人吻了我，我也吻了回去。脸到现在还是热的。</MWAH_KissedBond.stages.0.description>
-  <MWAH_KissedWall_Weird.stages.0.label>亲了一堵墙，越想越怪</MWAH_KissedWall_Weird.stages.0.label>
-  <MWAH_KissedWall_Weird.stages.0.description>嘴唇贴上石头的那一刻没什么感觉，事后却越想越不对劲。我为什么要亲一堵墙？它连躲都不会躲。</MWAH_KissedWall_Weird.stages.0.description>
-  <MWAH_KissedWall_Nothing.stages.0.label>亲了一堵墙（毫无感觉）</MWAH_KissedWall_Nothing.stages.0.label>
-  <MWAH_KissedWall_Nothing.stages.0.description>石头是冰凉的，沉默是诚实的。没有心动，也没有尴尬，这一页可以直接翻过去。</MWAH_KissedWall_Nothing.stages.0.description>
-  <MWAH_KissedWall_Slight.stages.0.label>亲了一堵墙，感觉还不错</MWAH_KissedWall_Slight.stages.0.label>
-  <MWAH_KissedWall_Slight.stages.0.description>那堵墙什么都没做，只是站在那里。奇怪的是，这反而让人安心。</MWAH_KissedWall_Slight.stages.0.description>
-  <MWAH_KissedWall_Moved.stages.0.label>与一堵墙的深吻</MWAH_KissedWall_Moved.stages.0.label>
-  <MWAH_KissedWall_Moved.stages.0.description>砖缝里有一点苔藓的湿意。我愿意把那当成它的回应。</MWAH_KissedWall_Moved.stages.0.description>
-  <MWAH_KissedWall_Devoted.stages.0.label>我爱上了一堵墙</MWAH_KissedWall_Devoted.stages.0.label>
-  <MWAH_KissedWall_Devoted.stages.0.description>它不说话、不离开、不评判。它只是撑住——撑住屋顶，撑住风雨，此刻连我全部的多情也一并撑住了。今天，它比任何同事都更接近爱情本身。</MWAH_KissedWall_Devoted.stages.0.description>
+  <MWAH_KissedWall.stages.0.label>亲了一堵墙，越想越怪</MWAH_KissedWall.stages.0.label>
+  <MWAH_KissedWall.stages.0.description>嘴唇贴上石头的那一刻没什么感觉，事后却越想越不对劲。我为什么要亲一堵墙？它连躲都不会躲。</MWAH_KissedWall.stages.0.description>
+  <MWAH_KissedWall.stages.1.label>亲了一堵墙（毫无感觉）</MWAH_KissedWall.stages.1.label>
+  <MWAH_KissedWall.stages.1.description>石头是冰凉的，沉默是诚实的。没有心动，也没有尴尬，这一页可以直接翻过去。</MWAH_KissedWall.stages.1.description>
+  <MWAH_KissedWall.stages.2.label>亲了一堵墙，感觉还不错</MWAH_KissedWall.stages.2.label>
+  <MWAH_KissedWall.stages.2.description>那堵墙什么都没做，只是站在那里。奇怪的是，这反而让人安心。</MWAH_KissedWall.stages.2.description>
+  <MWAH_KissedWall.stages.3.label>与一堵墙的深吻</MWAH_KissedWall.stages.3.label>
+  <MWAH_KissedWall.stages.3.description>砖缝里有一点苔藓的湿意。我愿意把那当成它的回应。</MWAH_KissedWall.stages.3.description>
+  <MWAH_KissedWall.stages.4.label>我爱上了一堵墙</MWAH_KissedWall.stages.4.label>
+  <MWAH_KissedWall.stages.4.description>它不说话、不离开、不评判。它只是撑住——撑住屋顶，撑住风雨，此刻连我全部的多情也一并撑住了。今天，它比任何同事都更接近爱情本身。</MWAH_KissedWall.stages.4.description>
 </LanguageData>

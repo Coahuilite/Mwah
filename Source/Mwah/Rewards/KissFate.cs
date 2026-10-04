@@ -62,15 +62,9 @@ public static class KissFate
     /// <summary>把一行结果发出去 —— 兜底路径也复用这一步，保证两条路落地形状一致。</summary>
     public static void GrantRow(Pawn doer, Thing target, MWAH_FateDef row)
     {
-        if (row.thought != null && doer.needs?.mood?.thoughts?.memories != null
-            && ThoughtMaker.MakeThought(row.thought) is Thought_Memory memory)
+        if (row.thought != null && doer.needs?.mood?.thoughts?.memories != null)
         {
-            if (memory is IFatedNarration fated)
-            {
-                fated.NarrationKey = row.narrationKey;
-                fated.NarrationSubject = target.LabelCap;
-            }
-            doer.needs.mood.thoughts.memories.TryGainMemory(memory, null);
+            GrantFatedMemory(doer, target, row);
         }
         if (!row.messageKey.NullOrEmpty())
         {
@@ -78,5 +72,46 @@ public static class KissFate
                 new LookTargets(target), row.messageType ?? MessageTypeDefOf.NeutralEvent, historical: false);
         }
         MwahLog.Dev("fate " + row.scope + ": " + doer.LabelShort + " -> " + target.LabelCap + " row=" + row.defName);
+    }
+
+    /// <summary>
+    /// 关系槽语义（2026-10-05 裁定，见 MEMORY "0.2.x mood architecture rulings"）：
+    /// 这类"单主体、无对象"的心情记忆按 (pawn, def) 各占一个槽，新抽签**就地顶替**——
+    /// 换档、换旁白、重计时。vanilla 的组满行为是"刷新最旧、丢弃新条"，旧档会骑在新抽签
+    /// 头上常驻，所以顶替由结算侧显式做；找不到槽才新建。
+    /// </summary>
+    private static void GrantFatedMemory(Pawn doer, Thing target, MWAH_FateDef row)
+    {
+        MemoryThoughtHandler memories = doer.needs.mood.thoughts.memories;
+        List<Thought_Memory> list = memories.Memories;
+        Thought_Memory? slot = null;
+        for (int i = 0; i < list.Count; i++)
+        {
+            if (list[i].def == row.thought && list[i].otherPawn == null)
+            {
+                slot = list[i];
+                break;
+            }
+        }
+        if (slot != null)
+        {
+            slot.SetForcedStage(row.stageIndex);
+            if (slot is IFatedNarration fatedSlot)
+            {
+                fatedSlot.NarrationKey = row.narrationKey;
+                fatedSlot.NarrationSubject = target.LabelCap;
+            }
+            slot.Renew();
+            return;
+        }
+        if (ThoughtMaker.MakeThought(row.thought, row.stageIndex) is Thought_Memory memory)
+        {
+            if (memory is IFatedNarration fated)
+            {
+                fated.NarrationKey = row.narrationKey;
+                fated.NarrationSubject = target.LabelCap;
+            }
+            memories.TryGainMemory(memory, null);
+        }
     }
 }

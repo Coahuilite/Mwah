@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Defs>
   <!--
     天意表（MWAH_FateDef）：结构在 Defs、文字在翻译文件 —— 每行只说
@@ -14,7 +14,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Weird_0</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Weird</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>0</stageIndex>
     <weight>40</weight>
     <narrationKey>MWAH.KissWall.Line.Weird.0</narrationKey>
     <messageKey>MWAH.KissWall.Result.Weird</messageKey>
@@ -23,7 +24,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Weird_1</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Weird</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>0</stageIndex>
     <weight>40</weight>
     <narrationKey>MWAH.KissWall.Line.Weird.1</narrationKey>
     <messageKey>MWAH.KissWall.Result.Weird</messageKey>
@@ -32,7 +34,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Weird_2</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Weird</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>0</stageIndex>
     <weight>40</weight>
     <narrationKey>MWAH.KissWall.Line.Weird.2</narrationKey>
     <messageKey>MWAH.KissWall.Result.Weird</messageKey>
@@ -41,7 +44,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Weird_3</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Weird</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>0</stageIndex>
     <weight>40</weight>
     <narrationKey>MWAH.KissWall.Line.Weird.3</narrationKey>
     <messageKey>MWAH.KissWall.Result.Weird</messageKey>
@@ -50,7 +54,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Weird_4</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Weird</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>0</stageIndex>
     <weight>40</weight>
     <narrationKey>MWAH.KissWall.Line.Weird.4</narrationKey>
     <messageKey>MWAH.KissWall.Result.Weird</messageKey>
@@ -59,7 +64,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Weird_5</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Weird</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>0</stageIndex>
     <weight>40</weight>
     <narrationKey>MWAH.KissWall.Line.Weird.5</narrationKey>
     <messageKey>MWAH.KissWall.Result.Weird</messageKey>
@@ -68,7 +74,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Weird_6</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Weird</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>0</stageIndex>
     <weight>40</weight>
     <narrationKey>MWAH.KissWall.Line.Weird.6</narrationKey>
     <messageKey>MWAH.KissWall.Result.Weird</messageKey>
@@ -77,7 +84,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Weird_7</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Weird</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>0</stageIndex>
     <weight>40</weight>
     <narrationKey>MWAH.KissWall.Line.Weird.7</narrationKey>
     <messageKey>MWAH.KissWall.Result.Weird</messageKey>
@@ -86,7 +94,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Weird_8</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Weird</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>0</stageIndex>
     <weight>40</weight>
     <narrationKey>MWAH.KissWall.Line.Weird.8</narrationKey>
     <messageKey>MWAH.KissWall.Result.Weird</messageKey>
@@ -95,7 +104,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Weird_9</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Weird</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>0</stageIndex>
     <weight>40</weight>
     <narrationKey>MWAH.KissWall.Line.Weird.9</narrationKey>
     <messageKey>MWAH.KissWall.Result.Weird</messageKey>
@@ -105,7 +115,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Nothing_0</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Nothing</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>1</stageIndex>
     <weight>60</weight>
     <narrationKey>MWAH.KissWall.Line.Nothing.0</narrationKey>
     <messageKey>MWAH.KissWall.Result.Nothing</messageKey>
@@ -114,7 +125,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Nothing_1</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Nothing</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>1</stageIndex>
     <weight>60</weight>
     <narrationKey>MWAH.KissWall.Line.Nothing.1</narrationKey>
     <messageKey>MWAH.KissWall.Result.Nothing</messageKey>
@@ -123,7 +135,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Nothing_2</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Nothing</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>1</stageIndex>
     <weight>60</weight>
     <narrationKey>MWAH.KissWall.Line.Nothing.2</narrationKey>
     <messageKey>MWAH.KissWall.Result.Nothing</messageKey>
@@ -132,7 +145,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Nothing_3</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Nothing</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>1</stageIndex>
     <weight>60</weight>
     <narrationKey>MWAH.KissWall.Line.Nothing.3</narrationKey>
     <messageKey>MWAH.KissWall.Result.Nothing</messageKey>
@@ -141,7 +155,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Nothing_4</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Nothing</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>1</stageIndex>
     <weight>60</weight>
     <narrationKey>MWAH.KissWall.Line.Nothing.4</narrationKey>
     <messageKey>MWAH.KissWall.Result.Nothing</messageKey>
@@ -150,7 +165,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Nothing_5</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Nothing</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>1</stageIndex>
     <weight>60</weight>
     <narrationKey>MWAH.KissWall.Line.Nothing.5</narrationKey>
     <messageKey>MWAH.KissWall.Result.Nothing</messageKey>
@@ -159,7 +175,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Nothing_6</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Nothing</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>1</stageIndex>
     <weight>60</weight>
     <narrationKey>MWAH.KissWall.Line.Nothing.6</narrationKey>
     <messageKey>MWAH.KissWall.Result.Nothing</messageKey>
@@ -168,7 +185,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Nothing_7</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Nothing</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>1</stageIndex>
     <weight>60</weight>
     <narrationKey>MWAH.KissWall.Line.Nothing.7</narrationKey>
     <messageKey>MWAH.KissWall.Result.Nothing</messageKey>
@@ -177,7 +195,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Nothing_8</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Nothing</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>1</stageIndex>
     <weight>60</weight>
     <narrationKey>MWAH.KissWall.Line.Nothing.8</narrationKey>
     <messageKey>MWAH.KissWall.Result.Nothing</messageKey>
@@ -186,7 +205,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Nothing_9</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Nothing</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>1</stageIndex>
     <weight>60</weight>
     <narrationKey>MWAH.KissWall.Line.Nothing.9</narrationKey>
     <messageKey>MWAH.KissWall.Result.Nothing</messageKey>
@@ -196,7 +216,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Slight_0</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Slight</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>2</stageIndex>
     <weight>50</weight>
     <narrationKey>MWAH.KissWall.Line.Slight.0</narrationKey>
     <messageKey>MWAH.KissWall.Result.Slight</messageKey>
@@ -205,7 +226,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Slight_1</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Slight</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>2</stageIndex>
     <weight>50</weight>
     <narrationKey>MWAH.KissWall.Line.Slight.1</narrationKey>
     <messageKey>MWAH.KissWall.Result.Slight</messageKey>
@@ -214,7 +236,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Slight_2</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Slight</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>2</stageIndex>
     <weight>50</weight>
     <narrationKey>MWAH.KissWall.Line.Slight.2</narrationKey>
     <messageKey>MWAH.KissWall.Result.Slight</messageKey>
@@ -223,7 +246,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Slight_3</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Slight</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>2</stageIndex>
     <weight>50</weight>
     <narrationKey>MWAH.KissWall.Line.Slight.3</narrationKey>
     <messageKey>MWAH.KissWall.Result.Slight</messageKey>
@@ -232,7 +256,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Slight_4</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Slight</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>2</stageIndex>
     <weight>50</weight>
     <narrationKey>MWAH.KissWall.Line.Slight.4</narrationKey>
     <messageKey>MWAH.KissWall.Result.Slight</messageKey>
@@ -241,7 +266,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Slight_5</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Slight</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>2</stageIndex>
     <weight>50</weight>
     <narrationKey>MWAH.KissWall.Line.Slight.5</narrationKey>
     <messageKey>MWAH.KissWall.Result.Slight</messageKey>
@@ -250,7 +276,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Slight_6</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Slight</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>2</stageIndex>
     <weight>50</weight>
     <narrationKey>MWAH.KissWall.Line.Slight.6</narrationKey>
     <messageKey>MWAH.KissWall.Result.Slight</messageKey>
@@ -259,7 +286,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Slight_7</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Slight</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>2</stageIndex>
     <weight>50</weight>
     <narrationKey>MWAH.KissWall.Line.Slight.7</narrationKey>
     <messageKey>MWAH.KissWall.Result.Slight</messageKey>
@@ -268,7 +296,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Slight_8</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Slight</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>2</stageIndex>
     <weight>50</weight>
     <narrationKey>MWAH.KissWall.Line.Slight.8</narrationKey>
     <messageKey>MWAH.KissWall.Result.Slight</messageKey>
@@ -277,7 +306,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Slight_9</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Slight</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>2</stageIndex>
     <weight>50</weight>
     <narrationKey>MWAH.KissWall.Line.Slight.9</narrationKey>
     <messageKey>MWAH.KissWall.Result.Slight</messageKey>
@@ -287,7 +317,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Moved_0</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Moved</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>3</stageIndex>
     <weight>34</weight>
     <narrationKey>MWAH.KissWall.Line.Moved.0</narrationKey>
     <messageKey>MWAH.KissWall.Result.Moved</messageKey>
@@ -296,7 +327,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Moved_1</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Moved</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>3</stageIndex>
     <weight>34</weight>
     <narrationKey>MWAH.KissWall.Line.Moved.1</narrationKey>
     <messageKey>MWAH.KissWall.Result.Moved</messageKey>
@@ -305,7 +337,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Moved_2</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Moved</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>3</stageIndex>
     <weight>34</weight>
     <narrationKey>MWAH.KissWall.Line.Moved.2</narrationKey>
     <messageKey>MWAH.KissWall.Result.Moved</messageKey>
@@ -314,7 +347,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Moved_3</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Moved</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>3</stageIndex>
     <weight>34</weight>
     <narrationKey>MWAH.KissWall.Line.Moved.3</narrationKey>
     <messageKey>MWAH.KissWall.Result.Moved</messageKey>
@@ -323,7 +357,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Moved_4</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Moved</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>3</stageIndex>
     <weight>34</weight>
     <narrationKey>MWAH.KissWall.Line.Moved.4</narrationKey>
     <messageKey>MWAH.KissWall.Result.Moved</messageKey>
@@ -332,7 +367,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Moved_5</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Moved</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>3</stageIndex>
     <weight>34</weight>
     <narrationKey>MWAH.KissWall.Line.Moved.5</narrationKey>
     <messageKey>MWAH.KissWall.Result.Moved</messageKey>
@@ -341,7 +377,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Moved_6</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Moved</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>3</stageIndex>
     <weight>34</weight>
     <narrationKey>MWAH.KissWall.Line.Moved.6</narrationKey>
     <messageKey>MWAH.KissWall.Result.Moved</messageKey>
@@ -350,7 +387,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Moved_7</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Moved</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>3</stageIndex>
     <weight>34</weight>
     <narrationKey>MWAH.KissWall.Line.Moved.7</narrationKey>
     <messageKey>MWAH.KissWall.Result.Moved</messageKey>
@@ -359,7 +397,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Moved_8</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Moved</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>3</stageIndex>
     <weight>34</weight>
     <narrationKey>MWAH.KissWall.Line.Moved.8</narrationKey>
     <messageKey>MWAH.KissWall.Result.Moved</messageKey>
@@ -368,7 +407,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Moved_9</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Moved</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>3</stageIndex>
     <weight>34</weight>
     <narrationKey>MWAH.KissWall.Line.Moved.9</narrationKey>
     <messageKey>MWAH.KissWall.Result.Moved</messageKey>
@@ -378,7 +418,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Devoted_0</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Devoted</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>4</stageIndex>
     <weight>16</weight>
     <narrationKey>MWAH.KissWall.Line.Devoted.0</narrationKey>
     <messageKey>MWAH.KissWall.Result.Devoted</messageKey>
@@ -387,7 +428,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Devoted_1</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Devoted</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>4</stageIndex>
     <weight>16</weight>
     <narrationKey>MWAH.KissWall.Line.Devoted.1</narrationKey>
     <messageKey>MWAH.KissWall.Result.Devoted</messageKey>
@@ -396,7 +438,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Devoted_2</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Devoted</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>4</stageIndex>
     <weight>16</weight>
     <narrationKey>MWAH.KissWall.Line.Devoted.2</narrationKey>
     <messageKey>MWAH.KissWall.Result.Devoted</messageKey>
@@ -405,7 +448,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Devoted_3</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Devoted</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>4</stageIndex>
     <weight>16</weight>
     <narrationKey>MWAH.KissWall.Line.Devoted.3</narrationKey>
     <messageKey>MWAH.KissWall.Result.Devoted</messageKey>
@@ -414,7 +458,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Devoted_4</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Devoted</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>4</stageIndex>
     <weight>16</weight>
     <narrationKey>MWAH.KissWall.Line.Devoted.4</narrationKey>
     <messageKey>MWAH.KissWall.Result.Devoted</messageKey>
@@ -423,7 +468,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Devoted_5</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Devoted</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>4</stageIndex>
     <weight>16</weight>
     <narrationKey>MWAH.KissWall.Line.Devoted.5</narrationKey>
     <messageKey>MWAH.KissWall.Result.Devoted</messageKey>
@@ -432,7 +478,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Devoted_6</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Devoted</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>4</stageIndex>
     <weight>16</weight>
     <narrationKey>MWAH.KissWall.Line.Devoted.6</narrationKey>
     <messageKey>MWAH.KissWall.Result.Devoted</messageKey>
@@ -441,7 +488,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Devoted_7</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Devoted</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>4</stageIndex>
     <weight>16</weight>
     <narrationKey>MWAH.KissWall.Line.Devoted.7</narrationKey>
     <messageKey>MWAH.KissWall.Result.Devoted</messageKey>
@@ -450,7 +498,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Devoted_8</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Devoted</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>4</stageIndex>
     <weight>16</weight>
     <narrationKey>MWAH.KissWall.Line.Devoted.8</narrationKey>
     <messageKey>MWAH.KissWall.Result.Devoted</messageKey>
@@ -459,7 +508,8 @@
   <MWAH_FateDef>
     <defName>MWAH_Fate_Wall_Devoted_9</defName>
     <scope>KissWall</scope>
-    <thought>MWAH_KissedWall_Devoted</thought>
+    <thought>MWAH_KissedWall</thought>
+    <stageIndex>4</stageIndex>
     <weight>16</weight>
     <narrationKey>MWAH.KissWall.Line.Devoted.9</narrationKey>
     <messageKey>MWAH.KissWall.Result.Devoted</messageKey>
