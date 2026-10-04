@@ -22,10 +22,16 @@ $ErrorActionPreference = "Stop"
 
 $root = [System.IO.Path]::GetFullPath($ProjectRoot)
 
-function Get-KeySet([string]$path) {
-    [xml]$doc = Get-Content -Raw -LiteralPath $path
-    # 只取元素节点：XML 注释在 DOM 里名为 #comment，会把键计数灌水。
-    @($doc.DocumentElement.ChildNodes | Where-Object { $_.Name -notlike '#*' } | ForEach-Object { $_.Name }) | Sort-Object
+function Get-KeySet([string]$keyedDir) {
+    # 合并目录下**全部** Keyed 文件：vanilla 的翻译器本就按文件夹合并，
+    # 天意表文案拆成每表一文件（MWAH_Fate_*.xml）后，门必须看全集而不是单文件。
+    $keys = @()
+    foreach ($f in Get-ChildItem -LiteralPath $keyedDir -Filter *.xml) {
+        [xml]$doc = Get-Content -Raw -LiteralPath $f.FullName
+        # 只取元素节点：XML 注释在 DOM 里名为 #comment，会把键计数灌水。
+        $keys += @($doc.DocumentElement.ChildNodes | Where-Object { $_.Name -notlike '#*' } | ForEach-Object { $_.Name })
+    }
+    @($keys | Sort-Object)
 }
 $modName = 'Mwah'
 $projectFile = Join-Path $root "Source\$modName\$modName.csproj"
@@ -79,11 +85,13 @@ foreach ($f in $xmlFiles) {
 Assert-True ("all XML well-formed (" + @($xmlFiles).Count + " files)") ($bad.Count -eq 0) ($bad -join ' | ')
 
 # 3/4. Localization
-$enPath = Join-Path $root '1.6\Languages\English\Keyed\MWAH_Strings.xml'
-$zhPath = Join-Path $root '1.6\Languages\ChineseSimplified\Keyed\MWAH_Strings.xml'
-$en = Get-KeySet $enPath
-$zh = Get-KeySet $zhPath
+$en = Get-KeySet (Join-Path $root '1.6\Languages\English\Keyed')
+$zh = Get-KeySet (Join-Path $root '1.6\Languages\ChineseSimplified\Keyed')
 Assert-True "Keyed parity English/ChineseSimplified ($($en.Count)/$($zh.Count))" ((@(Compare-Object $en $zh)).Count -eq 0)
+# 跨文件重键：vanilla 后加载者赢、无警告——拆文件后最容易自伤的一处，门直接点名。
+$dupEn = @($en | Group-Object | Where-Object Count -gt 1 | ForEach-Object Name)
+$dupZh = @($zh | Group-Object | Where-Object Count -gt 1 | ForEach-Object Name)
+Assert-True 'no duplicate keys across Keyed files' ($dupEn.Count -eq 0 -and $dupZh.Count -eq 0) (($dupEn + $dupZh) -join ', ')
 
 $code = @(Get-ChildItem (Join-Path $root "Source\$modName") -Recurse -Filter *.cs | Get-Content -Raw) -join "`n"
 

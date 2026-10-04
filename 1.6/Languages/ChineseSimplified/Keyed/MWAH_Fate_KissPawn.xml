@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <!-- 类人双人吻旁白（进心情条目描述，每实例随机一句；{PAWN}=当事人 {WALL}=对方名） -->
+  <MWAH.KissPawn.Line.0>嘴唇分开的那一刻，{PAWN} 忽然听懂了所有写得很烂的情歌。</MWAH.KissPawn.Line.0>
+  <MWAH.KissPawn.Line.1>这一吻的余温大概撑不过一场雨，但 {PAWN} 决定先记着。</MWAH.KissPawn.Line.1>
+  <MWAH.KissPawn.Line.2>{PAWN} 亲完第一件事是偷看 {WALL} ——很好，对方也在偷看。</MWAH.KissPawn.Line.2>
+  <MWAH.KissPawn.Line.3>吻很短，{PAWN} 用来回味的工作班次很长。</MWAH.KissPawn.Line.3>
+  <MWAH.KissPawn.Line.4>如果多巴胺有账本，{WALL} 今天欠 {PAWN} 一笔。</MWAH.KissPawn.Line.4>
+  <MWAH.KissPawn.Line.5>{PAWN} 决定这件事不写进任何报告，就留在脸上。</MWAH.KissPawn.Line.5>
+  <MWAH.KissPawn.Line.6>原来被吻和被殖民是两回事，{PAWN} 今天头一回分得清。</MWAH.KissPawn.Line.6>
+  <MWAH.KissPawn.Line.7>刚才那一下，比这一季全部口粮加起来都值——热量除外。</MWAH.KissPawn.Line.7>
+  <MWAH.KissPawn.Line.8>{PAWN} 有点想笑，又想不出为什么，只好继续干活。</MWAH.KissPawn.Line.8>
+  <MWAH.KissPawn.Line.9>{WALL} 的嘴唇比想象中凉，回甘比想象中暖。{PAWN} 认为两条都算准确记录。</MWAH.KissPawn.Line.9>
+</LanguageData>

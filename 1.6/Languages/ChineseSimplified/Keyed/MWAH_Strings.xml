@@ -28,64 +28,6 @@
   <MWAH.Fail.CooldownPair>{PAWN} 和 {OTHER} 刚亲过（{TIME}）</MWAH.Fail.CooldownPair>
   <MWAH.KissThing.Fail.NoStandCell>{PAWN} 找不到能站下、又够得着的地方去亲那堵 {WALL}</MWAH.KissThing.Fail.NoStandCell>
 
-  <!-- 亲墙结算短讯（五档各一条；长旁白在心情条目描述里，由天意表逐行指派） -->
-  <MWAH.KissWall.Result.Weird>{PAWN} 凑过去亲吻了 {WALL}。嘴唇触到石头的瞬间，{PAWN} 愣住了。</MWAH.KissWall.Result.Weird>
-  <MWAH.KissWall.Result.Nothing>{PAWN} 亲吻了 {WALL}。什么也没有发生——这正是 {PAWN} 想要的。</MWAH.KissWall.Result.Nothing>
-  <MWAH.KissWall.Result.Slight>{PAWN} 亲吻了 {WALL}。石头的温度刚刚好。</MWAH.KissWall.Result.Slight>
-  <MWAH.KissWall.Result.Moved>{PAWN} 与 {WALL} 久久相吻。</MWAH.KissWall.Result.Moved>
-  <MWAH.KissWall.Result.Devoted>{PAWN} 深情亲吻了 {WALL}，并在原地伫立良久。</MWAH.KissWall.Result.Devoted>
-  <!-- 亲墙天意五档 × 每档 10 条叙述式旁白（墙不开口；结算时从对应档的池子里随机播一条） -->
-  <MWAH.KissWall.Line.Weird.0>{PAWN} 亲吻了 {WALL}。当时没有感觉，回到工作三分钟后开始感觉不太对劲。</MWAH.KissWall.Line.Weird.0>
-  <MWAH.KissWall.Line.Weird.1>{PAWN} 现在每路过这堵墙一次，就要把那天重新想一遍。</MWAH.KissWall.Line.Weird.1>
-  <MWAH.KissWall.Line.Weird.2>医生说人也这样，{PAWN} 听完之后更不舒服了。</MWAH.KissWall.Line.Weird.2>
-  <MWAH.KissWall.Line.Weird.3>{PAWN} 试图向同事解释那只是一时冲动，解释到第二遍连自己都没说服。</MWAH.KissWall.Line.Weird.3>
-  <MWAH.KissWall.Line.Weird.4>那天之后，{PAWN} 开始研究房屋的承重结构，研究得不太心甘情愿。</MWAH.KissWall.Line.Weird.4>
-  <MWAH.KissWall.Line.Weird.5>{PAWN} 梦见那堵墙了，醒来以后对梦的内容保持了职业性的沉默。</MWAH.KissWall.Line.Weird.5>
-  <MWAH.KissWall.Line.Weird.6>有人问 {PAWN} 为什么总盯着那面墙看，{PAWN} 发现自己答不上来。</MWAH.KissWall.Line.Weird.6>
-  <MWAH.KissWall.Line.Weird.7>{PAWN} 亲完就后悔了，后悔持续的时间远远超过亲吻本身。</MWAH.KissWall.Line.Weird.7>
-  <MWAH.KissWall.Line.Weird.8>心理评估表上"最近是否有异常冲动"一栏，{PAWN} 犹豫了很久。</MWAH.KissWall.Line.Weird.8>
-  <MWAH.KissWall.Line.Weird.9>从那以后 {PAWN} 路过 {WALL} 都会加快脚步，好像那里发生过什么需要绕行的事。</MWAH.KissWall.Line.Weird.9>
-  <MWAH.KissWall.Line.Nothing.0>{PAWN} 亲吻了 {WALL}。什么也没有发生，这件事就到此为止了。</MWAH.KissWall.Line.Nothing.0>
-  <MWAH.KissWall.Line.Nothing.1>{PAWN} 亲了 {WALL}，然后回去继续手头的工作，节奏一点没乱。</MWAH.KissWall.Line.Nothing.1>
-  <MWAH.KissWall.Line.Nothing.2>如果一定要给这一吻写报告，正文只能是一句"已完成"。</MWAH.KissWall.Line.Nothing.2>
-  <MWAH.KissWall.Line.Nothing.3>{PAWN} 对这堵墙的感觉，和对每一堵墙的感觉完全一致。</MWAH.KissWall.Line.Nothing.3>
-  <MWAH.KissWall.Line.Nothing.4>这一吻的全部意义，大约等于嘴唇确认了一次温度。</MWAH.KissWall.Line.Nothing.4>
-  <MWAH.KissWall.Line.Nothing.5>有人问 {PAWN} 刚才在做什么，{PAWN} 如实回答之后，对方选择了不追问。</MWAH.KissWall.Line.Nothing.5>
-  <MWAH.KissWall.Line.Nothing.6>{PAWN} 亲完 {WALL} 就走了，没有回头，一次都没有。</MWAH.KissWall.Line.Nothing.6>
-  <MWAH.KissWall.Line.Nothing.7>心情没有波动，日程没有改动，连站过的格子都没有留下痕迹。</MWAH.KissWall.Line.Nothing.7>
-  <MWAH.KissWall.Line.Nothing.8>这一吻唯一值得记录的地方，是它确实发生了。</MWAH.KissWall.Line.Nothing.8>
-  <MWAH.KissWall.Line.Nothing.9>{PAWN} 觉得亲一堵墙和呼吸一样，是一件做过了就想不起来的事。</MWAH.KissWall.Line.Nothing.9>
-  <MWAH.KissWall.Line.Slight.0>{PAWN} 亲了 {WALL}，石头的温度刚刚好，于是接下来两个小时都顺顺当当。</MWAH.KissWall.Line.Slight.0>
-  <MWAH.KissWall.Line.Slight.1>那面墙朝西，下午晒得暖洋洋的，{PAWN} 觉得亲得其所。</MWAH.KissWall.Line.Slight.1>
-  <MWAH.KissWall.Line.Slight.2>{PAWN} 说不清哪里好，只是路过 {WALL} 的时候脚步轻了一点。</MWAH.KissWall.Line.Slight.2>
-  <MWAH.KissWall.Line.Slight.3>一吻之后，{PAWN} 对殖民地的砖石工艺有了朴素的好感。</MWAH.KissWall.Line.Slight.3>
-  <MWAH.KissWall.Line.Slight.4>{PAWN} 亲完 {WALL} 心情不错，连工作都勤快了几分——墙对此没有任何贡献，也没有任何反对。</MWAH.KissWall.Line.Slight.4>
-  <MWAH.KissWall.Line.Slight.5>没什么特别的事发生，只是 {PAWN} 嘴角有一小会儿是向上的。</MWAH.KissWall.Line.Slight.5>
-  <MWAH.KissWall.Line.Slight.6>{PAWN} 后来跟别人提起这一吻，语气里居然带了一点推荐的意思。</MWAH.KissWall.Line.Slight.6>
-  <MWAH.KissWall.Line.Slight.7>那堵墙站得很稳，这份稳当多少传染给了 {PAWN}。</MWAH.KissWall.Line.Slight.7>
-  <MWAH.KissWall.Line.Slight.8>{PAWN} 亲 {WALL} 的时候正在想别的事，想完发现心情居然变好了。</MWAH.KissWall.Line.Slight.8>
-  <MWAH.KissWall.Line.Slight.9>如果满意有分贝，{PAWN} 离开 {WALL} 时的脚步声就是证据。</MWAH.KissWall.Line.Slight.9>
-  <MWAH.KissWall.Line.Moved.0>{PAWN} 与 {WALL} 久久相吻。风从门缝里进来，{PAWN} 决定把那当成回信。</MWAH.KissWall.Line.Moved.0>
-  <MWAH.KissWall.Line.Moved.1>砖缝里有一点苔藓的湿意，{PAWN} 坚持认为那不是普通的水。</MWAH.KissWall.Line.Moved.1>
-  <MWAH.KissWall.Line.Moved.2>{PAWN} 亲完 {WALL} 在原地站了很久，久到旁观者开始互相使眼色。</MWAH.KissWall.Line.Moved.2>
-  <MWAH.KissWall.Line.Moved.3>有人说那堵墙好像热了一点，说完自己也觉得这话没有根据。</MWAH.KissWall.Line.Moved.3>
-  <MWAH.KissWall.Line.Moved.4>{PAWN} 把这一吻讲给最好的朋友听，讲到一半自己先红了眼眶。</MWAH.KissWall.Line.Moved.4>
-  <MWAH.KissWall.Line.Moved.5>那天晚上 {PAWN} 失眠了，原因复杂，其中一面墙占了很大比重。</MWAH.KissWall.Line.Moved.5>
-  <MWAH.KissWall.Line.Moved.6>{PAWN} 开始绕远路，只为多经过 {WALL} 几次，并且管这叫散步。</MWAH.KissWall.Line.Moved.6>
-  <MWAH.KissWall.Line.Moved.7>墙体当然没有任何变化，变化的是 {PAWN} 看它的眼神。</MWAH.KissWall.Line.Moved.7>
-  <MWAH.KissWall.Line.Moved.8>这一吻之后，{PAWN} 在房间里走路会下意识放轻脚步，像怕吵到什么。</MWAH.KissWall.Line.Moved.8>
-  <MWAH.KissWall.Line.Moved.9>监工在记录里写下"工作中"，然后揉了揉眼睛。</MWAH.KissWall.Line.Moved.9>
-  <MWAH.KissWall.Line.Devoted.0>{PAWN} 深情亲吻了 {WALL}，并在原地伫立良久。爱情不需要双向奔赴。</MWAH.KissWall.Line.Devoted.0>
-  <MWAH.KissWall.Line.Devoted.1>它不说话、不离开、不评判——{PAWN} 认为这三条已经胜过绝大多数同事。</MWAH.KissWall.Line.Devoted.1>
-  <MWAH.KissWall.Line.Devoted.2>{PAWN} 向所有人宣布自己找到了理想的伴侣，随后发现并没有向任何人宣布。</MWAH.KissWall.Line.Devoted.2>
-  <MWAH.KissWall.Line.Devoted.3>从那以后 {PAWN} 睡在 {WALL} 的墙根下，并坚称这是床的问题，不是感情的问题。</MWAH.KissWall.Line.Devoted.3>
-  <MWAH.KissWall.Line.Devoted.4>有人问起 {WALL} 的优点，{PAWN} 从承重讲到了沉默，讲了很久。</MWAH.KissWall.Line.Devoted.4>
-  <MWAH.KissWall.Line.Devoted.5>{PAWN} 开始给那面墙掸灰，动作轻得像在整理谁的头发。</MWAH.KissWall.Line.Devoted.5>
-  <MWAH.KissWall.Line.Devoted.6>这一吻没有任何力学意义上的收获，却好像完成了 {PAWN} 此生最重要的一次受力分析。</MWAH.KissWall.Line.Devoted.6>
-  <MWAH.KissWall.Line.Devoted.7>{PAWN} 路过别的墙都不再看，专一到了让建筑结构师担心的程度。</MWAH.KissWall.Line.Devoted.7>
-  <MWAH.KissWall.Line.Devoted.8>维修清单上永远不会写这一条：{WALL} 需要被温柔对待。</MWAH.KissWall.Line.Devoted.8>
-  <MWAH.KissWall.Line.Devoted.9>石头的沉默据说震耳欲聋，{PAWN} 已经学会从中听出誓言。</MWAH.KissWall.Line.Devoted.9>
-
   <!-- 亲吻导演台 -->
   <MWAH.Director.PickFirst>谁要发起亲吻？</MWAH.Director.PickFirst>
   <MWAH.Director.PickSecond>{PAWN} 想要和谁亲吻？</MWAH.Director.PickSecond>
@@ -167,48 +109,5 @@
   <MWAH.Settings.Reset>恢复默认值</MWAH.Settings.Reset>
   <MWAH.Settings.WallKissing>允许亲吻墙壁</MWAH.Settings.WallKissing>
   <MWAH.Settings.WallKissingDesc>右键可以亲吻墙：人造墙、天然岩壁、连压埋的矿脉都算。墙不会回应，所以心情全凭天意——可能越想越怪，也可能当场爱上。这一条与"谁能亲谁"无关，不受门禁滑条管。</MWAH.Settings.WallKissingDesc>
-  <!-- 类人双人吻旁白（进心情条目描述，每实例随机一句；{PAWN}=当事人 {WALL}=对方名） -->
-  <MWAH.KissPawn.Line.0>嘴唇分开的那一刻，{PAWN} 忽然听懂了所有写得很烂的情歌。</MWAH.KissPawn.Line.0>
-  <MWAH.KissPawn.Line.1>这一吻的余温大概撑不过一场雨，但 {PAWN} 决定先记着。</MWAH.KissPawn.Line.1>
-  <MWAH.KissPawn.Line.2>{PAWN} 亲完第一件事是偷看 {WALL} ——很好，对方也在偷看。</MWAH.KissPawn.Line.2>
-  <MWAH.KissPawn.Line.3>吻很短，{PAWN} 用来回味的工作班次很长。</MWAH.KissPawn.Line.3>
-  <MWAH.KissPawn.Line.4>如果多巴胺有账本，{WALL} 今天欠 {PAWN} 一笔。</MWAH.KissPawn.Line.4>
-  <MWAH.KissPawn.Line.5>{PAWN} 决定这件事不写进任何报告，就留在脸上。</MWAH.KissPawn.Line.5>
-  <MWAH.KissPawn.Line.6>原来被吻和被殖民是两回事，{PAWN} 今天头一回分得清。</MWAH.KissPawn.Line.6>
-  <MWAH.KissPawn.Line.7>刚才那一下，比这一季全部口粮加起来都值——热量除外。</MWAH.KissPawn.Line.7>
-  <MWAH.KissPawn.Line.8>{PAWN} 有点想笑，又想不出为什么，只好继续干活。</MWAH.KissPawn.Line.8>
-  <MWAH.KissPawn.Line.9>{WALL} 的嘴唇比想象中凉，回甘比想象中暖。{PAWN} 认为两条都算准确记录。</MWAH.KissPawn.Line.9>
 
-  <!-- 机械族/无人机被吻或吻人（无心情系统，走消息；{PAWN}=机械体 {WALL}=对方名） -->
-  <MWAH.KissPawn.Mech.Line.0>{PAWN} 的视觉处理器把这次接触标记为"非战斗液体交换事件"，然后继续巡逻。</MWAH.KissPawn.Mech.Line.0>
-  <MWAH.KissPawn.Mech.Line.1>没有心跳，没有激素——但 {PAWN} 的运动脚本在原地多待了 0.4 秒。这就是它的脸红。</MWAH.KissPawn.Mech.Line.1>
-  <MWAH.KissPawn.Mech.Line.2>{PAWN} 检索了全部已知礼节协议，没有找到"被吻"的应对方案，于是选择了待机。</MWAH.KissPawn.Mech.Line.2>
-  <MWAH.KissPawn.Mech.Line.3>这次亲吻没有为 {PAWN} 产生任何心情数据，却产生了一条无法归档的日志。</MWAH.KissPawn.Mech.Line.3>
-  <MWAH.KissPawn.Mech.Line.4>{PAWN} 的扬声器发出一声短促的电流音。在场的人一致选择把它翻译成"嗯"。</MWAH.KissPawn.Mech.Line.4>
-  <MWAH.KissPawn.Mech.Line.5>若问 {PAWN} 感觉如何，它会如实回答"没有感觉"——并且听不出这不是回答。</MWAH.KissPawn.Mech.Line.5>
-  <MWAH.KissPawn.Mech.Line.6>{PAWN} 把 {WALL} 的唇温记进了环境采样表，和昨天的雨归档在一起。</MWAH.KissPawn.Mech.Line.6>
-  <MWAH.KissPawn.Mech.Line.7>亲机械族的好处是它从不记仇，坏处是它也从不记得。</MWAH.KissPawn.Mech.Line.7>
-  <MWAH.KissPawn.Mech.Line.8>{PAWN} 的敌我识别短暂地把 {WALL} 归为"未知但无害"——这是它浪漫的上限。</MWAH.KissPawn.Mech.Line.8>
-  <MWAH.KissPawn.Mech.Line.9>这次接触唯一的技术后果：{PAWN} 的待机姿势从此歪了两度。</MWAH.KissPawn.Mech.Line.9>
-  <!-- 实体被吻或吻人（mutant 空壳／有人形没心情，走消息；文案零外形描述——维护者裁定 2026-10-05：只写心理，不写形体；{PAWN}=实体 {WALL}=对方名） -->
-  <MWAH.KissPawn.Entity.Line.0>{PAWN} 接受了这个吻，像一扇门接受一次推——这个动作很久以前就学会了，里面已经没有人看着了。</MWAH.KissPawn.Entity.Line.0>
-  <MWAH.KissPawn.Entity.Line.1>在 {PAWN} 之内某处，一个想要回应的冲动开始了，走完一半的弧线，还没变成动作就消散了。</MWAH.KissPawn.Entity.Line.1>
-  <MWAH.KissPawn.Entity.Line.2>{PAWN} 发出一个介于词和呻吟之间的声音。队里的语言学家已正式放弃翻译。</MWAH.KissPawn.Entity.Line.2>
-  <MWAH.KissPawn.Entity.Line.3>{PAWN} 全程在场，像一间空房出席一场音乐会：一切发生了，什么都没有抵达。</MWAH.KissPawn.Entity.Line.3>
-  <MWAH.KissPawn.Entity.Line.4>不管 {PAWN} 从前是什么，它全凭习惯回了吻——而回来的也只有习惯。</MWAH.KissPawn.Entity.Line.4>
-  <MWAH.KissPawn.Entity.Line.5>这个吻落在 {PAWN} 旧习惯的某个深处——在被带走的那些东西上面一层。</MWAH.KissPawn.Entity.Line.5>
-  <MWAH.KissPawn.Entity.Line.6>有一瞬间，{PAWN} 几乎要说出一句对着 {WALL} 的话。那簇火苗很礼貌地熄了。</MWAH.KissPawn.Entity.Line.6>
-  <MWAH.KissPawn.Entity.Line.7>{PAWN} 没有回吻，没有躲开，也没有评论。大家一致认为这已经算有反应。</MWAH.KissPawn.Entity.Line.7>
-  <MWAH.KissPawn.Entity.Line.8>这具空壳容忍了这个吻，像房子容忍一封从门缝塞进来的信：收到了，没读。</MWAH.KissPawn.Entity.Line.8>
-  <MWAH.KissPawn.Entity.Line.9>{PAWN} 之内某个曾经可能是"觉得好笑"的东西动了一下，找不到要汇报的人，又落回去了。</MWAH.KissPawn.Entity.Line.9>
-
-  <!-- 动物被吻或吻人（无心情系统，走消息；{PAWN}=动物 {WALL}=对方名） -->
-  <MWAH.KissPawn.Beast.Line.0>{PAWN} 甩了甩头，把 {WALL} 留下的气味和今天的第十七种味道排在一起。</MWAH.KissPawn.Beast.Line.0>
-  <MWAH.KissPawn.Beast.Line.1>{PAWN} 舔回了三下。在它的世界观里，这已经算一桩婚约。</MWAH.KissPawn.Beast.Line.1>
-  <MWAH.KissPawn.Beast.Line.2>没有语言，没有心情，只有一瞬间的、尾巴的迟疑。</MWAH.KissPawn.Beast.Line.2>
-  <MWAH.KissPawn.Beast.Line.3>{PAWN} 记住了这个味道，然后用五分钟忘记了为什么要记住。</MWAH.KissPawn.Beast.Line.3>
-  <MWAH.KissPawn.Beast.Line.4>这一吻换来 {PAWN} 歪头两秒——在场人类一致投票：拒绝解读。</MWAH.KissPawn.Beast.Line.4>
-  <MWAH.KissPawn.Beast.Line.5>{PAWN} 唯一的回应是凑近闻了闻 {WALL} 的口袋。里面没有食物，兴致遂散。</MWAH.KissPawn.Beast.Line.5>
-  <MWAH.KissPawn.Beast.Line.6>{PAWN} 不懂亲吻，但它听懂了 {WALL} 刚才快起来的心跳。</MWAH.KissPawn.Beast.Line.6>
-  <MWAH.KissPawn.Beast.Line.7>尾巴摇了两下。这是 {PAWN} 对本次亲吻最准确的报告。</MWAH.KissPawn.Beast.Line.7>
 </LanguageData>

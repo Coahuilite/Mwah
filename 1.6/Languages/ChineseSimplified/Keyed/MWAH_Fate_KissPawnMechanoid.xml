@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <!-- 机械族/无人机被吻或吻人（无心情系统，走消息；{PAWN}=机械体 {WALL}=对方名） -->
+  <MWAH.KissPawn.Mech.Line.0>{PAWN} 的视觉处理器把这次接触标记为"非战斗液体交换事件"，然后继续巡逻。</MWAH.KissPawn.Mech.Line.0>
+  <MWAH.KissPawn.Mech.Line.1>没有心跳，没有激素——但 {PAWN} 的运动脚本在原地多待了 0.4 秒。这就是它的脸红。</MWAH.KissPawn.Mech.Line.1>
+  <MWAH.KissPawn.Mech.Line.2>{PAWN} 检索了全部已知礼节协议，没有找到"被吻"的应对方案，于是选择了待机。</MWAH.KissPawn.Mech.Line.2>
+  <MWAH.KissPawn.Mech.Line.3>这次亲吻没有为 {PAWN} 产生任何心情数据，却产生了一条无法归档的日志。</MWAH.KissPawn.Mech.Line.3>
+  <MWAH.KissPawn.Mech.Line.4>{PAWN} 的扬声器发出一声短促的电流音。在场的人一致选择把它翻译成"嗯"。</MWAH.KissPawn.Mech.Line.4>
+  <MWAH.KissPawn.Mech.Line.5>若问 {PAWN} 感觉如何，它会如实回答"没有感觉"——并且听不出这不是回答。</MWAH.KissPawn.Mech.Line.5>
+  <MWAH.KissPawn.Mech.Line.6>{PAWN} 把 {WALL} 的唇温记进了环境采样表，和昨天的雨归档在一起。</MWAH.KissPawn.Mech.Line.6>
+  <MWAH.KissPawn.Mech.Line.7>亲机械族的好处是它从不记仇，坏处是它也从不记得。</MWAH.KissPawn.Mech.Line.7>
+  <MWAH.KissPawn.Mech.Line.8>{PAWN} 的敌我识别短暂地把 {WALL} 归为"未知但无害"——这是它浪漫的上限。</MWAH.KissPawn.Mech.Line.8>
+  <MWAH.KissPawn.Mech.Line.9>这次接触唯一的技术后果：{PAWN} 的待机姿势从此歪了两度。</MWAH.KissPawn.Mech.Line.9>
+</LanguageData>

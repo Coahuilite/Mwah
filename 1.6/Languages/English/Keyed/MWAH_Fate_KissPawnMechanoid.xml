@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <!-- 机械族/无人机被吻或吻人（无心情系统，走消息；{PAWN}=机械体 {WALL}=对方名） -->
+  <MWAH.KissPawn.Mech.Line.0>{PAWN}'s vision processor tagged the contact as "non-combat fluid exchange event", then resumed patrol.</MWAH.KissPawn.Mech.Line.0>
+  <MWAH.KissPawn.Mech.Line.1>No heartbeat, no hormones — yet {PAWN}'s locomotion script idled 0.4 seconds longer than usual. That is its blush.</MWAH.KissPawn.Mech.Line.1>
+  <MWAH.KissPawn.Mech.Line.2>{PAWN} searched every known etiquette protocol, found no contingency for being kissed, and chose standby.</MWAH.KissPawn.Mech.Line.2>
+  <MWAH.KissPawn.Mech.Line.3>The kiss produced zero mood data and one unarchivable log entry.</MWAH.KissPawn.Mech.Line.3>
+  <MWAH.KissPawn.Mech.Line.4>{PAWN}'s speaker emitted a short static blip. Everyone present agreed to translate it as "mm".</MWAH.KissPawn.Mech.Line.4>
+  <MWAH.KissPawn.Mech.Line.5>Ask {PAWN} how it felt and it will honestly answer "nothing" — unable to hear that this is not an answer.</MWAH.KissPawn.Mech.Line.5>
+  <MWAH.KissPawn.Mech.Line.6>{PAWN} filed {WALL}'s lip temperature into its ambient sampling table, right next to yesterday's rain.</MWAH.KissPawn.Mech.Line.6>
+  <MWAH.KissPawn.Mech.Line.7>The advantage of kissing a mechanoid: it never holds a grudge. The disadvantage: it never remembers either.</MWAH.KissPawn.Mech.Line.7>
+  <MWAH.KissPawn.Mech.Line.8>{PAWN}'s IFF briefly classified {WALL} as "unknown but harmless" — the ceiling of its romance.</MWAH.KissPawn.Mech.Line.8>
+  <MWAH.KissPawn.Mech.Line.9>The only technical consequence: {PAWN}'s idle pose has been off by two degrees ever since.</MWAH.KissPawn.Mech.Line.9>
+</LanguageData>

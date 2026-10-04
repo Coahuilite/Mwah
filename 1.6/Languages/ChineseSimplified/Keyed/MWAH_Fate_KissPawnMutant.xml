@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <!-- 实体被吻或吻人（mutant 空壳／有人形没心情，走消息；文案零外形描述——2026-10-05 裁定只写心理；{PAWN}=实体 {WALL}=对方名） -->
+  <MWAH.KissPawn.Entity.Line.0>{PAWN} 接受了这个吻，像一扇门接受一次推——这个动作很久以前就学会了，里面已经没有人看着了。</MWAH.KissPawn.Entity.Line.0>
+  <MWAH.KissPawn.Entity.Line.1>在 {PAWN} 之内某处，一个想要回应的冲动开始了，走完一半的弧线，还没变成动作就消散了。</MWAH.KissPawn.Entity.Line.1>
+  <MWAH.KissPawn.Entity.Line.2>{PAWN} 发出一个介于词和呻吟之间的声音。队里的语言学家已正式放弃翻译。</MWAH.KissPawn.Entity.Line.2>
+  <MWAH.KissPawn.Entity.Line.3>{PAWN} 全程在场，像一间空房出席一场音乐会：一切发生了，什么都没有抵达。</MWAH.KissPawn.Entity.Line.3>
+  <MWAH.KissPawn.Entity.Line.4>不管 {PAWN} 从前是什么，它全凭习惯回了吻——而回来的也只有习惯。</MWAH.KissPawn.Entity.Line.4>
+  <MWAH.KissPawn.Entity.Line.5>这个吻落在 {PAWN} 旧习惯的某个深处——在被带走的那些东西上面一层。</MWAH.KissPawn.Entity.Line.5>
+  <MWAH.KissPawn.Entity.Line.6>有一瞬间，{PAWN} 几乎要说出一句对着 {WALL} 的话。那簇火苗很礼貌地熄了。</MWAH.KissPawn.Entity.Line.6>
+  <MWAH.KissPawn.Entity.Line.7>{PAWN} 没有回吻，没有躲开，也没有评论。大家一致认为这已经算有反应。</MWAH.KissPawn.Entity.Line.7>
+  <MWAH.KissPawn.Entity.Line.8>这具空壳容忍了这个吻，像房子容忍一封从门缝塞进来的信：收到了，没读。</MWAH.KissPawn.Entity.Line.8>
+  <MWAH.KissPawn.Entity.Line.9>{PAWN} 之内某个曾经可能是"觉得好笑"的东西动了一下，找不到要汇报的人，又落回去了。</MWAH.KissPawn.Entity.Line.9>
+</LanguageData>
