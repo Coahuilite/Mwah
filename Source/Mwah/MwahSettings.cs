@@ -245,6 +245,9 @@ public class MwahSettings : ModSettings
         // 档位是"档"不是"量"：输入 2 没有意义，滑条刻意不带数值框（与门禁滑条同一先例）。
         changed |= IntSliderRow(list, ref diagnosticLevel, "MWAH.Settings.DiagLevel", "MWAH.Settings.DiagLevelDesc",
             Constants.DiagnosticLevelRange, raw => DiagLabel((MwahDiag)Mathf.Clamp(raw, (int)MwahDiag.Off, (int)MwahDiag.Verbose)), withField: false);
+        // 版本身份行：与启动横幅同一个 VersionString()（dev 带 commit hash、发行只报版本号），
+        // 玩家报障时截图这一行就够定位到构建。
+        list.Label("MWAH.Settings.Version".Translate(MwahMod.VersionString()));
         list.Gap();
         list.Label("MWAH.Settings.TimingHint".Translate());
         list.Gap();

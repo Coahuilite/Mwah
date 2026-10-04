@@ -53,7 +53,7 @@ public class MwahMod : Mod
         }
         catch (Exception ex)
         {
-            MwahLog.Banner($"Mwah! (Every Pawn Kisses Each Other) build={BuildFlavor} startup FAILED: {ex.GetBaseException().Message}");
+            MwahLog.Banner($"Mwah! (Every Pawn Kisses Each Other) v{VersionString()} build={BuildFlavor} startup FAILED: {ex.GetBaseException().Message}");
             throw;
         }
     }
@@ -116,10 +116,25 @@ public class MwahMod : Mod
         savePending = false;
     }
 
-    private static string VersionString()
+    /// <summary>
+    /// 横幅与设置页共用的版本身份（2026-10-05 维护者裁定，机制同 UniversalSqueaker）：
+    /// dev 包带完整 commit hash——同版本号的不同构建必须能在日志里分辨（"打包必构建"
+    /// 事故的账本）；Steam/GitHub 发行包只报版本号——+sha 是构建账本，不是玩家信息。
+    /// #if 只改返回值不改成员存废，三渠道编译面一致（渠道纪律）。
+    /// </summary>
+    internal static string VersionString()
     {
         string? informational = typeof(MwahMod).Assembly
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
-        return string.IsNullOrEmpty(informational) ? "unknown" : informational!;
+        if (string.IsNullOrEmpty(informational))
+        {
+            return "unknown";
+        }
+#if MWAH_DEV
+        return informational!;
+#else
+        int plus = informational!.IndexOf('+');
+        return plus < 0 ? informational : informational[..plus];
+#endif
     }
 }

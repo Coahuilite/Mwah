@@ -22,7 +22,7 @@
 
 ### 0.2.x live checks (new surfaces, maintainer executes)
 
-- [ ] Settings page: four section headers in order; the Add-ons block shows the wall group — "允许亲吻墙壁" switch + "亲吻一堵墙：思想持续" slider (factory 30000 t / 500 s / 12 h); flipping the switch off still silences every wall surface (addon constitution unchanged, storage moved); "restore defaults" reverts both dictionaries (switch back to on, duration back to factory).
+- [ ] Settings page: four section headers in order; the Add-ons block shows the wall group — "允许亲吻墙壁" switch + "亲吻一堵墙：思想持续" slider (factory 30000 t / 500 s / 12 h); flipping the switch off still silences every wall surface (addon constitution unchanged, storage moved); "restore defaults" reverts both dictionaries (switch back to on, duration back to factory); the System section carries a version line — on the dev package it must read `0.2.1+<full commit sha>` (same string as the startup banner).
 - [ ] Wall slot live: two wall kisses in a row (mood-duration long, cooldown short) → **one** entry only, its tier/label/narration from the latest roll, timer restarted; the fate short message still fires per kiss.
 - [x] Copy terminology sweep (done same session): 5 hits rewritten to the mixed-CN register "Pawn" (`PawnCooldownDesc` / `PairCooldownDesc` / `MoodMultiplierDesc` / `DirectorButtonDesc` / `AutonomousDesc` — the last now reads "所有 Pawn 都互相亲吻", no longer listing animals under 小人); full-tree grep for 小人 across `1.6/Languages/` returns zero.
 
