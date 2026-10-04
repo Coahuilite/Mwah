@@ -13,7 +13,7 @@ permissions:
 # a superseded commit.
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress
+  cancel-in-progress: true
 
 jobs:
   build:
