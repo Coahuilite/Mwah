@@ -24,6 +24,7 @@
 
 - [ ] Settings page: four section headers in order; the Add-ons block shows the wall group — "允许亲吻墙壁" switch + "亲吻一堵墙：思想持续" slider (factory 30000 t / 500 s / 12 h); flipping the switch off still silences every wall surface (addon constitution unchanged, storage moved); "restore defaults" reverts both dictionaries (switch back to on, duration back to factory).
 - [ ] Wall slot live: two wall kisses in a row (mood-duration long, cooldown short) → **one** entry only, its tier/label/narration from the latest roll, timer restarted; the fate short message still fires per kiss.
+- [ ] Copy terminology sweep (maintainer ruling 2026-10-05): Chinese copy must say **pawn**, not 小人, wherever the referent is not human-only — confirmed hits in `MWAH_Strings.xml`: `PawnCooldownDesc` / `PairCooldownDesc` / `MoodMultiplierDesc` / `DirectorButtonDesc` / `AutonomousDesc` (L96 lists 野生动物/机械族 under 小人, self-contradictory). Established mixed-CN register "Pawn" is the replacement (cf. 所有 Pawn 都互相亲吻). Sweep all Chinese files (Keyed + DefInjected) at the same pass.
 
 ## Live verification matrix (maintainer executes; the agent builds no junctions and never runs the game)
 
