@@ -111,8 +111,8 @@
 
 ## 待决策
 
-- [ ] 是否建远端仓库与 `.github/workflows` CI（外部操作，需逐次授权）。
-- [ ] LICENSE 选型（当前仓库无 LICENSE；`Coahuilite` 各仓库口径待统一）。
+- [ ] 建远端与推送：CI/隐私门/README/LICENSE 已备齐（2d4ba1c），用户已授权建远端+push；**待仓库命名裁定**（Mwah vs 全名）；推送前跑 `privacy-audit.ps1 -FullHistory -PrePush`。
+- [x] LICENSE 选型：**MPL 2.0**（2026-10-04 定案——三兄弟仓同款，"Coahuilite 口径待统一"就此闭合）。
 
 ## 明确延后 / 不做
 
