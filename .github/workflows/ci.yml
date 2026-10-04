@@ -2,9 +2,10 @@ name: CI
 
 on:
   push:
-    branches: [main, '0.1.x']
+    # 版本分支通配（0.1.x / 0.2.x / …）+ main：切 minor 分支不再手改触发器（本次差点漏推 0.2.x）。
+    branches: [main, '[0-9].[0-9].x']
   pull_request:
-    branches: [main, '0.1.x']
+    branches: [main, '[0-9].[0-9].x']
 
 permissions:
   contents: read

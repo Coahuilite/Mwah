@@ -12,18 +12,18 @@
 
 已有还原缓存或离线环境给构建类命令加 `-NoRestore` 不适用（本项目脚本自带 restore）；浮动版本 `1.6.*` 的隐式 restore 在无网时会 NU1301。不要在发布检查里手工重复脚本已覆盖的逐项复核——**新增检查先做成脚本，再进本文**。
 
-## 分支模型（2026-10-04 裁定，对齐兄弟仓）
+## 分支模型（2026-10-04 裁定，对齐兄弟仓；2026-10-05 起对版本分支无关）
 
 - **`main` 只做 release**：只在发布时前进；tag 必须落在 `origin/main` 的历史上（release CI 强制校验血统）。
-- **`0.1.x` 是当前开发分支**（取代 `dev`；每个 minor 开自己的版本分支，`dev` 不再复活）。日常提交落 `0.1.x`，授权后 push → CI。
-- 发布时：`0.1.x` 上的批准提交 → PR/squash merge 进 `main` → 在 main 的合并提交上打 tag → tag push 触发 Release CI。
+- **开发在当前版本分支 `<minor>.x` 上**（取代 `dev`；每个 minor 开自己的版本分支，`dev` 不再复活；已归档的版本分支冻结、不再收新提交，当前是哪条看 `git branch --show-current` 与 `MEMORY.md` 耐久状态）。日常提交落当前版本分支，授权后 push → CI（CI 触发用 `[0-9].[0-9].x` 通配，切分支不改工作流）。
+- 发布时：当前版本分支上的批准提交 → PR/squash merge 进 `main` → 在 main 的合并提交上打 tag → tag push 触发 Release CI。
 - 历史 **append-only**：不 amend、不 rebase、不回写。
 
 ## 发布顺序
 
 1. **候选准备**。版本主源 = csproj `<Version>`，`About/About.xml <modVersion>` 跟随（verify-local 门钉死三处一致）；实机矩阵全部验收通过；文案与双语键齐备。试玩用 `build-dev.ps1` 产物；dirty 包只作测试证据。
 2. **最小仪式**：`verify-local` 全绿 → `privacy-audit -FullHistory -PrePush` 全绿 → 维护者裁决版本、渠道与工坊文案。非发布 push 同样必须先过完整隐私门并有授权。
-3. **合入 main**：squash merge（受保护 main 走 PR），合并后 `git diff --stat 0.1.x main` 应为空。
+3. **合入 main**：squash merge（受保护 main 走 PR），合并后 `git diff --stat <当前版本分支> main` 应为空。
 4. **GitHub**：在 main 的发布提交上 `git tag vX.Y.Z && git push origin vX.Y.Z`（需授权）。Release CI 校验 tag/版本/血统 → 25 门 → GitHub flavor → `dist/github/Mwah-vX.Y.Z.zip` → 自动建 Release（pre-release 由 `-` 后缀自动判定）。
 5. **Steam（若获准）**：`pack-steam.ps1`（要求干净树）产出 `dist/steam/Mwah/`；维护者复制到本地上传副本，item ID 只写该副本的 `About/PublishedFileId.txt`（永不入库）。上传与页面维护由维护者本人执行。
 6. **收尾**：更新 `MEMORY.md` 的耐久状态（版本号、已发布渠道）与 `TODO.md`；渠道观察只支持页面级结论，一个渠道不证明另一个渠道。
