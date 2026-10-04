@@ -7,7 +7,7 @@
 
 Pawns with a mood get a mood bonus scaled by their own social impact; pawns without one (animals, mechanoids, drones, entities) get nothing at all. Live maps only, single-player only. Romance, opinion and relationships stay untouched unless you turn that on in the mod settings.
   </description>
-  <modVersion>0.1.0</modVersion>
+  <modVersion>0.2.0</modVersion>
   <url>https://github.com/Coahuilite/Mwah</url>
   <supportedVersions>
     <li>1.6</li>

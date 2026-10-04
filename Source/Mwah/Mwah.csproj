@@ -15,8 +15,8 @@
 
   <!-- 版本单一源头：SemVer，内测 0.x.y。tag 使用 v<version>。 -->
   <PropertyGroup>
-    <Version>0.1.0</Version>
-    <VersionPrefix>0.1.0</VersionPrefix>
+    <Version>0.2.0</Version>
+    <VersionPrefix>0.2.0</VersionPrefix>
     <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
     <FileVersion>$(VersionPrefix).0</FileVersion>
     <InformationalVersion>$(VersionPrefix)</InformationalVersion>
