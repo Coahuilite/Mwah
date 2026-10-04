@@ -2,14 +2,14 @@
 
 ## Current goal
 
-- **0.1.0 awaits the maintainer's live acceptance** (matrix below); only after acceptance do tag / GitHub Release / Workshop come into play (each separately authorized).
-- The repository is on the cloud (`Coahuilite/Mwah`, development branch `0.1.x`; process: `docs/release-runbook-zh.md`); the offline surface is fully green. History and completed narratives live in `OBLIVIONIS.md` (2026-10-04 section); durable conclusions in `MEMORY.md`.
+- **0.1.x is archived without release** (2026-10-05 maintainer ruling; 0.1.0 never ships — the first release will be **0.2.0**). The live matrix below is now part of the **0.1.x archive record**: the maintainer may keep ticking rows as evidence, but it gates no release anymore; the release-process entry moves wholesale to the **0.2.x design line**.
+- The repository is on the cloud (`Coahuilite/Mwah`; `0.1.x` = pure archive line, development branch `0.2.x`; process: `docs/release-runbook-zh.md`); the offline surface is fully green. History and completed narratives live in `OBLIVIONIS.md` (2026-10-04 section); durable conclusions in `MEMORY.md`.
 
 ## Entry point for the next session
 
 - Read `MEMORY.md`'s "Vanilla capability boundaries" and "Naming decisions" sections before touching code.
-- Working branch `0.1.x` (local and remote share the name); `main` only advances at release time. Current hash: `git log --oneline -1` — this file pins no hash.
-- The only in-flight item is the live matrix below, executed by the maintainer personally. The agent's next step appears in exactly two cases: the matrix reports a defect, or the maintainer authorizes release actions.
+- Working branch `0.2.x` (branched 2026-10-05 from the archived `0.1.x` head; its remote branch appears at the first authorized push); `0.1.x` never receives new commits; `main` only advances at release time. Current hash: `git log --oneline -1` — this file pins no hash.
+- The in-flight surface is the 0.2.x design line; the live matrix below is 0.1.x evidence, executed by the maintainer personally. The agent's next step appears in exactly two cases: the matrix reports a defect (fixed on 0.2.x), or the maintainer authorizes release actions (for 0.2.0).
 
 ## Live verification matrix (maintainer executes; the agent builds no junctions and never runs the game)
 
