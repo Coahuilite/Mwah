@@ -12,6 +12,15 @@ $modName = 'Mwah'
 $stageDir = Join-Path $root "dist\dev\$modName"
 $projectFile = Join-Path $root "Source\$modName\$modName.csproj"
 
+# 打包必构建（2026-10-04 事故纪律）：本脚本曾只搬 1.6/Assemblies 里的现成 DLL，
+# 把旧产物装进新标签的包（包名 864df31、DLL 里是 ae8d855，两个修复根本没进包）。
+# dotnet 的完整输出只在失败时回显；成功路径依旧一行。
+$buildLog = & dotnet build $projectFile -c Release -nologo -v quiet 2>&1
+if ($LASTEXITCODE -ne 0) {
+    $buildLog | Out-Host
+    throw 'Release build failed; refusing to package a stale DLL.'
+}
+
 [xml]$projectXml = Get-Content -LiteralPath $projectFile -Raw
 $versionNode = $projectXml.SelectSingleNode('/Project/PropertyGroup/Version')
 if ($null -eq $versionNode -or [string]::IsNullOrWhiteSpace($versionNode.InnerText)) {
