@@ -37,11 +37,11 @@ public readonly struct ThingKissProposal
 /// addon 层的宪法：core 只有"pawn 亲 pawn"；"pawn 亲非 pawn 目标"是一族附加功能 ——
 /// 本次是墙，下次可以是树。可动的永远是 pawn，所以每个 addon 只接"由 pawn 发起"的单向亲吻。
 ///
-/// 管线（提案判定、落脚点、job、右键菜单、导演台取点与派发、静默失效语义）全部在基类与
-/// 注册表里现成完成；一个 addon 只提供四件事：自己的开关（<see cref="Active"/>）、
-/// 目标谓词（<see cref="Accepts"/>）、天意表作用域（<see cref="Scope"/>）、
-/// 右键标签口径（<see cref="OptionLabel"/>）。新加一种可亲的东西 = 一个子类 +
-/// 注册表一行 + 自己的 defs/语言键，零管线代码。
+/// 管线（提案判定、落脚点、job、右键菜单、导演台取点与派发、静默失效语义、设置页生长）
+/// 全部在基类与注册表里现成完成；一个 addon 只提供：稳定 Id、天意表作用域（<see cref="Scope"/>）、
+/// 目标谓词（<see cref="Accepts"/>）、右键标签口径（<see cref="OptionLabel"/>），
+/// 以及设置页声明（名字键、开关标签/说明键、出厂开关与出厂时长）。
+/// 新加一种可亲的东西 = 一个子类 + 注册表一行 + 自己的 defs/语言键，零管线代码、零设置类改动。
 ///
 /// 与双人吻共用冷却表与"正在亲"判定；**不进门禁滑条** —— 七档管的是"谁能亲谁"
 /// （两个 pawn 的关系），Thing 不是 pawn，各归各的开关。
@@ -56,14 +56,24 @@ public abstract class KissThingAddon
     /// </summary>
     public abstract string Id { get; }
 
-    /// <summary>本 addon 心情记忆的出厂时长（tick）；玩家覆盖走设置字典。</summary>
+    /// <summary>设置页 addon 名（时长滑条标签的 {0}），如"墙"。</summary>
+    public abstract string NameKey { get; }
+
+    /// <summary>设置页开关行的标签/说明键（沿用各自既有键，文案不改）。</summary>
+    public abstract string SwitchLabelKey { get; }
+
+    public abstract string SwitchDescKey { get; }
+
+    /// <summary>开关与思想时长的出厂值；玩家覆盖走设置的两张 Id 字典。</summary>
+    public abstract bool DefaultActive { get; }
+
     public abstract int DefaultThoughtDurationTicks { get; }
 
-    /// <summary>当前生效时长：设置字典按 Id 查，缺槽落出厂值（读侧已 clamp）。</summary>
+    /// <summary>当前生效时长：字典按 Id 查，缺槽落出厂值（读侧已 clamp）。</summary>
     public int ThoughtDurationTicks => MwahMod.Settings.AddonThoughtDuration(Id, DefaultThoughtDurationTicks);
 
-    /// <summary>总开关 ∧ 本 addon 自己的开关。</summary>
-    public abstract bool Active { get; }
+    /// <summary>总开关 ∧ 本 addon 自己的开关（基类统一实现，子类只报出厂值）。</summary>
+    public bool Active => MwahMod.Settings.Enabled && MwahMod.Settings.AddonSwitch(Id, DefaultActive);
 
     /// <summary>什么算本 addon 的目标（不含开关与迷雾 —— 那是 Active/Pickable 的事）。</summary>
     public abstract bool Accepts(Thing thing);

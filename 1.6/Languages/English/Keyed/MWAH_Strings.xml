@@ -107,6 +107,14 @@
   <MWAH.Settings.TimingFormat>{0} t / {1} s / {2} h</MWAH.Settings.TimingFormat>
   <MWAH.Settings.TimingHint>Every duration is stored in ticks and shown as ticks / real seconds / game hours. Reference: 60 t = 1 real second at 1x speed, 2500 t = 1 game hour, 60000 t = 1 game day.</MWAH.Settings.TimingHint>
 
+  <MWAH.Settings.Section.Core>Core — pawns kissing pawns</MWAH.Settings.Section.Core>
+  <MWAH.Settings.Section.Autonomous>Autonomous matchmaking — the game plays matchmaker</MWAH.Settings.Section.Autonomous>
+  <MWAH.Settings.Section.Addons>Add-ons — kissing everything else</MWAH.Settings.Section.Addons>
+  <MWAH.Settings.Section.System>System</MWAH.Settings.Section.System>
+  <MWAH.Addon.Wall.Name>a wall</MWAH.Addon.Wall.Name>
+  <MWAH.Settings.AddonDuration>Kissing {0}: thought duration</MWAH.Settings.AddonDuration>
+  <MWAH.Settings.AddonDurationDesc>How long the mood memory of kissing {0} lingers. Independent of the core mood duration — add-ons keep their own clocks.</MWAH.Settings.AddonDurationDesc>
+
   <MWAH.Settings.Enabled>Enable kissing</MWAH.Settings.Enabled>
   <MWAH.Settings.EnabledDesc>Master switch. Off removes the right-click option; ongoing kisses finish normally.</MWAH.Settings.EnabledDesc>
 

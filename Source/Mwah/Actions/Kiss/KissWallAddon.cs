@@ -25,9 +25,15 @@ public sealed class KissWallAddon : KissThingAddon
     /// <summary>稳定 Id：设置字典的 key（"wall"）。改名即迁移，定死。</summary>
     public override string Id => "wall";
 
-    public override int DefaultThoughtDurationTicks => Constants.WallThoughtDurationTicks;
+    public override string NameKey => "MWAH.Addon.Wall.Name";
 
-    public override bool Active => MwahMod.Settings.Enabled && MwahMod.Settings.WallKissingEnabled;
+    public override string SwitchLabelKey => "MWAH.Settings.WallKissing";
+
+    public override string SwitchDescKey => "MWAH.Settings.WallKissingDesc";
+
+    public override bool DefaultActive => Constants.WallKissing;
+
+    public override int DefaultThoughtDurationTicks => Constants.WallThoughtDurationTicks;
 
     public override bool Accepts(Thing thing)
     {

@@ -107,6 +107,14 @@
   <MWAH.Settings.TimingFormat>{0} tick / {1} 秒 / {2} 游戏时</MWAH.Settings.TimingFormat>
   <MWAH.Settings.TimingHint>所有时长按 tick 存储，显示为 tick / 现实秒 / 游戏小时。换算：60 tick = 1 现实秒（1 倍速），2500 tick = 1 游戏小时，60000 tick = 1 游戏日。</MWAH.Settings.TimingHint>
 
+  <MWAH.Settings.Section.Core>核心——Pawn 与 Pawn 的吻</MWAH.Settings.Section.Core>
+  <MWAH.Settings.Section.Autonomous>自主撮合——游戏自己当红娘</MWAH.Settings.Section.Autonomous>
+  <MWAH.Settings.Section.Addons>附加功能——亲别的万物</MWAH.Settings.Section.Addons>
+  <MWAH.Settings.Section.System>系统</MWAH.Settings.Section.System>
+  <MWAH.Addon.Wall.Name>一堵墙</MWAH.Addon.Wall.Name>
+  <MWAH.Settings.AddonDuration>亲吻{0}：思想持续</MWAH.Settings.AddonDuration>
+  <MWAH.Settings.AddonDurationDesc>亲吻{0}留下的心情记忆存活多久。与上面的核心心情持续互不相干——附加功能各走各的钟。</MWAH.Settings.AddonDurationDesc>
+
   <MWAH.Settings.Enabled>启用亲吻</MWAH.Settings.Enabled>
   <MWAH.Settings.EnabledDesc>总开关。关闭后右键菜单里不再出现亲吻；正在进行中的亲吻正常结束。</MWAH.Settings.EnabledDesc>
 

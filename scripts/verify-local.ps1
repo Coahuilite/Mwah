@@ -228,14 +228,16 @@ $restoreBody = [regex]::Match($settingsCs, '(?s)public void RestoreDefaults\(\)\
 $missRestore = @($decls | Where-Object { $restoreBody -notmatch ('\b' + $_.Groups[1].Value + '\s*=\s*Constants\.') })
 Assert-True ("RestoreDefaults covers all $($decls.Count) settings fields") ($missRestore.Count -eq 0) (($missRestore | ForEach-Object { $_.Groups[1].Value }) -join ', ')
 
-# 9c. addon 时长字典的三处锁：字段存在 ⇒ Scribe 必须整表入档、RestoreDefaults 必须清空。
+# 9c. addon 字典（时长、开关）的三处锁：字段存在 ⇒ Scribe 必须整表入档、RestoreDefaults 必须清空。
 #     字典逃过 9b 的 `= Constants.*` 逐字段正则，"恢复默认"对字典静默失效正是最容易漏的半边。
-if ($settingsCs -match 'addonThoughtDurations') {
-    $badDict = @()
-    if ($settingsCs -notmatch 'Scribe_Collections\.Look\(ref addonThoughtDurations, "addonThoughtDurations"') { $badDict += 'Scribe_Collections.Look missing' }
-    if ($restoreBody -notmatch 'addonThoughtDurations\.Clear\(\)') { $badDict += 'RestoreDefaults does not clear' }
-    Assert-True 'addon duration dictionary is persisted and restorable' ($badDict.Count -eq 0) ($badDict -join ' | ')
+$badDict = @()
+foreach ($dictName in @('addonThoughtDurations', 'addonSwitches')) {
+    if ($settingsCs -match $dictName) {
+        if ($settingsCs -notmatch ('Scribe_Collections\.Look\(ref ' + $dictName + ', "' + $dictName + '"')) { $badDict += "$dictName : Scribe_Collections.Look missing" }
+        if ($restoreBody -notmatch ($dictName + '\.Clear\(\)')) { $badDict += "$dictName : RestoreDefaults does not clear" }
+    }
 }
+Assert-True 'addon setting dictionaries are persisted and restorable' ($badDict.Count -eq 0) ($badDict -join ' | ')
 
 # 10. 门禁每加一档就得同时有双语档位名，且范围与默认常量跟着改；漏一处就是滑条上出现裸键名。
 #     枚举在门 3/4 之前已解析成 $scopeRungs，这里只做断言，不重复解析。

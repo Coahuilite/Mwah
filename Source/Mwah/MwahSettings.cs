@@ -10,11 +10,14 @@ namespace Mwah;
 /// 玩家配置。生命周期：immediate canonical + coalesced persistence。
 /// 控件改动立刻成为唯一权威值并即时生效；磁盘写入由 <see cref="MwahMod"/> 防抖合并，关窗时强制 flush。
 /// 所有时长按 tick 存储，界面同时给出 tick / 现实秒 / 游戏小时三种读法。
+///
+/// 页面分四段（2026-10-05 维护者裁定）：核心 / 自主撮合 / 附加功能 / 系统。
+/// 附加功能段按 <see cref="KissThingAddons.All"/> 注册表生长——新 addon 在这里自动长出
+/// 自己的开关与思想时长行，设置类零改动；两份按 Id 索引的字典
+/// （<see cref="addonSwitches"/>、<see cref="addonThoughtDurations"/>）就是它的存储。
 /// </summary>
 public class MwahSettings : ModSettings
 {
-
-    // 出厂默认来自 Constants；玩家改动只落在这些字段上，Scribe key 与字段名一致。
     public bool modEnabled = Constants.ModEnabled;
     public int pairScope = Constants.PairScopeDefault;
     public bool changeOpinion = Constants.ChangeOpinion;
@@ -24,7 +27,6 @@ public class MwahSettings : ModSettings
     public int pawnCooldownTicks = Constants.PawnCooldownTicks;
     public int pairCooldownTicks = Constants.PairCooldownTicks;
     public bool directorButton = Constants.DirectorButton;
-    public bool wallKissing = Constants.WallKissing;
     public bool noCooldowns = Constants.NoCooldowns;
     public bool autonomousKissing = Constants.AutonomousKissing;
     public int autonomousIntervalTicks = Constants.AutonomousIntervalTicks;
@@ -39,6 +41,13 @@ public class MwahSettings : ModSettings
     /// 读侧一律 clamp；缺 Id = 用该 addon 声明的出厂值（<see cref="Constants.WallThoughtDurationTicks"/> 一类）。
     /// </summary>
     public Dictionary<string, int> addonThoughtDurations = new();
+
+    /// <summary>
+    /// addon 开关，按稳定 Id 索引（"wall" → 开/关）。与时长字典同一套理由：
+    /// 开关是 addon 的事，不是设置类的事；缺槽 = 该 addon 的 DefaultActive。
+    /// 它取代了旧的 wallKissing 裸字段（0.2.0 首发前，不留兼容）。
+    /// </summary>
+    public Dictionary<string, bool> addonSwitches = new();
 
     private Vector2 scrollPos;
 
@@ -69,7 +78,6 @@ public class MwahSettings : ModSettings
     public int ThoughtDurationTicks => Mathf.Clamp(thoughtDurationTicks, Constants.ThoughtDurationTicksRange.min, Constants.ThoughtDurationTicksRange.max);
     public float MoodMult => Mathf.Clamp(moodMultiplier, Constants.MoodMultiplierRange.min, Constants.MoodMultiplierRange.max);
     public bool DirectorEnabled => directorButton;
-    public bool WallKissingEnabled => wallKissing;
     public bool CooldownsIgnored => noCooldowns;
     public bool AutonomousEnabled => autonomousKissing;
     public int AutonomousIntervalTicks => Mathf.Clamp(autonomousIntervalTicks, Constants.AutonomousIntervalTicksRange.min, Constants.AutonomousIntervalTicksRange.max);
@@ -83,6 +91,14 @@ public class MwahSettings : ModSettings
             ? Mathf.Clamp(ticks, Constants.AddonDurationTicksRange.min, Constants.AddonDurationTicksRange.max)
             : factoryDefault;
 
+    public void SetAddonThoughtDuration(string addonId, int ticks) => addonThoughtDurations[addonId] = ticks;
+
+    /// <summary>addon 开关的唯一读法：缺槽落出厂值。</summary>
+    public bool AddonSwitch(string addonId, bool factoryDefault) =>
+        addonSwitches.TryGetValue(addonId, out bool on) ? on : factoryDefault;
+
+    public void SetAddonSwitch(string addonId, bool on) => addonSwitches[addonId] = on;
+
     public override void ExposeData()
     {
         base.ExposeData();
@@ -95,7 +111,6 @@ public class MwahSettings : ModSettings
         Scribe_Values.Look(ref pawnCooldownTicks, "pawnCooldownTicks", Constants.PawnCooldownTicks);
         Scribe_Values.Look(ref pairCooldownTicks, "pairCooldownTicks", Constants.PairCooldownTicks);
         Scribe_Values.Look(ref directorButton, "directorButton", Constants.DirectorButton);
-        Scribe_Values.Look(ref wallKissing, "wallKissing", Constants.WallKissing);
         Scribe_Values.Look(ref noCooldowns, "noCooldowns", Constants.NoCooldowns);
         Scribe_Values.Look(ref autonomousKissing, "autonomousKissing", Constants.AutonomousKissing);
         Scribe_Values.Look(ref autonomousIntervalTicks, "autonomousIntervalTicks", Constants.AutonomousIntervalTicks);
@@ -103,13 +118,15 @@ public class MwahSettings : ModSettings
         Scribe_Values.Look(ref thoughtDurationTicks, "thoughtDurationTicks", Constants.ThoughtDurationTicks);
         Scribe_Values.Look(ref moodMultiplier, "moodMultiplier", Constants.MoodMultiplier);
         Scribe_Values.Look(ref diagnosticLogs, "diagnosticLogs", Constants.DiagnosticLogs);
-        // addon 时长字典：整表一次入档（LookMode.Value×2，string→int 都是值类型）。
+        // addon 两张字典：整表入档（LookMode.Value；string→int / string→bool 都是值类型）。
         Scribe_Collections.Look(ref addonThoughtDurations, "addonThoughtDurations", LookMode.Value, LookMode.Value);
+        Scribe_Collections.Look(ref addonSwitches, "addonSwitches", LookMode.Value, LookMode.Value);
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
             // 手改/损坏的 XML 可能把整表置 null：先补回空表再归一，读侧永不判空。
             addonThoughtDurations ??= new();
+            addonSwitches ??= new();
             Normalize();
         }
     }
@@ -144,7 +161,6 @@ public class MwahSettings : ModSettings
         pawnCooldownTicks = Constants.PawnCooldownTicks;
         pairCooldownTicks = Constants.PairCooldownTicks;
         directorButton = Constants.DirectorButton;
-        wallKissing = Constants.WallKissing;
         noCooldowns = Constants.NoCooldowns;
         autonomousKissing = Constants.AutonomousKissing;
         autonomousIntervalTicks = Constants.AutonomousIntervalTicks;
@@ -154,6 +170,7 @@ public class MwahSettings : ModSettings
         diagnosticLogs = Constants.DiagnosticLogs;
         // 字典没有"逐字段的 Constants.*"可回，恢复默认 = 清空整表 ⇒ 全部读侧落回各 addon 出厂值。
         addonThoughtDurations.Clear();
+        addonSwitches.Clear();
     }
 
     public void DoSettingsWindowContents(Rect inRect)
@@ -178,8 +195,12 @@ public class MwahSettings : ModSettings
         list.Label("MWAH.Settings.Header".Translate());
         list.GapLine();
         changed |= Checkbox(list, ref modEnabled, "MWAH.Settings.Enabled", "MWAH.Settings.EnabledDesc");
-        list.Gap();
 
+        // ===== 段一：核心（双人吻的全部旋钮 + 全局入口开关）=====
+        Section(list, "MWAH.Settings.Section.Core");
+        // 范围档位是"档"不是"量"：输入 3 没有意义，所以这一条滑条刻意不带数值框。
+        changed |= IntSliderRow(list, ref pairScope, "MWAH.Settings.PairScope", "MWAH.Settings.PairScopeDesc",
+            Constants.PairScopeRange, raw => KissScopeUtility.Label(KissScopeUtility.Clamp(raw)), withField: false);
         changed |= IntSlider(list, ref kissDurationTicks, "MWAH.Settings.Duration", "MWAH.Settings.DurationDesc",
             Constants.DurationTicksRange, MwahTime.FormatTicks);
         changed |= IntSlider(list, ref heartFleckIntervalTicks, "MWAH.Settings.FleckInterval", "MWAH.Settings.FleckIntervalDesc",
@@ -193,26 +214,31 @@ public class MwahSettings : ModSettings
             Constants.ThoughtDurationStepTicks);
         changed |= FloatSlider(list, ref moodMultiplier, "MWAH.Settings.MoodMultiplier", "MWAH.Settings.MoodMultiplierDesc",
             Constants.MoodMultiplierRange, Constants.MoodMultiplierStep, v => v.ToString("0.##") + "x");
-
-        list.GapLine();
-        // 亲墙开关刻意放在门禁滑条（pairScope，在下面几行）之外的独立位置：
-        // 它管的是"墙算不算可亲对象"，与"谁能亲谁"的七档范围是两回事。
-        changed |= Checkbox(list, ref wallKissing, "MWAH.Settings.WallKissing", "MWAH.Settings.WallKissingDesc");
-        changed |= Checkbox(list, ref directorButton, "MWAH.Settings.DirectorButton", "MWAH.Settings.DirectorButtonDesc");
+        changed |= Checkbox(list, ref changeOpinion, "MWAH.Settings.ChangeOpinion", "MWAH.Settings.ChangeOpinionDesc");
+        changed |= Checkbox(list, ref returnHomeAfterKiss, "MWAH.Settings.ReturnHome", "MWAH.Settings.ReturnHomeDesc");
         changed |= Checkbox(list, ref noCooldowns, "MWAH.Settings.NoCooldowns", "MWAH.Settings.NoCooldownsDesc");
-        // 范围档位是"档"不是"量"：输入 3 没有意义，所以这一条滑条刻意不带数值框。
-        changed |= IntSliderRow(list, ref pairScope, "MWAH.Settings.PairScope", "MWAH.Settings.PairScopeDesc",
-            Constants.PairScopeRange, raw => KissScopeUtility.Label(KissScopeUtility.Clamp(raw)), withField: false);
+        changed |= Checkbox(list, ref directorButton, "MWAH.Settings.DirectorButton", "MWAH.Settings.DirectorButtonDesc");
+
+        // ===== 段二：自主撮合（系统替玩家点的鸳鸯）=====
+        Section(list, "MWAH.Settings.Section.Autonomous");
         changed |= Checkbox(list, ref autonomousKissing, "MWAH.Settings.Autonomous", "MWAH.Settings.AutonomousDesc");
         changed |= IntSlider(list, ref autonomousIntervalTicks, "MWAH.Settings.AutonomousInterval",
             "MWAH.Settings.AutonomousIntervalDesc", Constants.AutonomousIntervalTicksRange, MwahTime.FormatTicks);
         changed |= IntSlider(list, ref autonomousRadiusCells, "MWAH.Settings.AutonomousRadius",
             "MWAH.Settings.AutonomousRadiusDesc", Constants.AutonomousRadiusRange, cells => cells.ToString());
-        changed |= Checkbox(list, ref changeOpinion, "MWAH.Settings.ChangeOpinion", "MWAH.Settings.ChangeOpinionDesc");
-        changed |= Checkbox(list, ref returnHomeAfterKiss, "MWAH.Settings.ReturnHome", "MWAH.Settings.ReturnHomeDesc");
-        list.GapLine();
-        changed |= Checkbox(list, ref diagnosticLogs, "MWAH.Settings.Diagnostics", "MWAH.Settings.DiagnosticsDesc");
 
+        // ===== 段三：附加功能（注册表生长；每个 addon 一组开关+时长）=====
+        Section(list, "MWAH.Settings.Section.Addons");
+        for (int i = 0; i < KissThingAddons.All.Length; i++)
+        {
+            KissThingAddon addon = KissThingAddons.All[i];
+            changed |= AddonSwitchRow(list, addon);
+            changed |= AddonDurationRow(list, addon);
+        }
+
+        // ===== 段四：系统（诊断与恢复）=====
+        Section(list, "MWAH.Settings.Section.System");
+        changed |= Checkbox(list, ref diagnosticLogs, "MWAH.Settings.Diagnostics", "MWAH.Settings.DiagnosticsDesc");
         list.Gap();
         list.Label("MWAH.Settings.TimingHint".Translate());
         list.Gap();
@@ -230,6 +256,44 @@ public class MwahSettings : ModSettings
         }
     }
 
+    /// <summary>段标题：一条分隔线 + 加粗感的裸标签（键双语齐备由门把关）。</summary>
+    private static void Section(Listing_Standard list, string labelKey)
+    {
+        list.GapLine();
+        list.Label(labelKey.Translate());
+    }
+
+    /// <summary>addon 开关行：读写都走字典（缺槽落 DefaultActive），写只在真被改过时发生。</summary>
+    private bool AddonSwitchRow(Listing_Standard list, KissThingAddon addon)
+    {
+        bool before = MwahMod.Settings.AddonSwitch(addon.Id, addon.DefaultActive);
+        bool value = before;
+        bool touched = Checkbox(list, ref value, addon.SwitchLabelKey, addon.SwitchDescKey);
+        if (touched && value != before)
+        {
+            MwahMod.Settings.SetAddonSwitch(addon.Id, value);
+        }
+        return touched && value != before;
+    }
+
+    /// <summary>
+    /// addon 思想时长行：标签带 addon 名（{0}），数值框的编辑态键必须逐 addon 唯一
+    /// （fieldId=Id —— 否则两个 addon 共用一个输入框焦点，editBuf 会串台）。
+    /// </summary>
+    private bool AddonDurationRow(Listing_Standard list, KissThingAddon addon)
+    {
+        int before = MwahMod.Settings.AddonThoughtDuration(addon.Id, addon.DefaultThoughtDurationTicks);
+        int value = before;
+        bool touched = IntSlider(list, ref value, "MWAH.Settings.AddonDuration", "MWAH.Settings.AddonDurationDesc",
+            Constants.AddonDurationTicksRange, MwahTime.FormatTicks, Constants.ThoughtDurationStepTicks,
+            labelArg: addon.NameKey.Translate(), fieldId: addon.Id);
+        if (touched && value != before)
+        {
+            MwahMod.Settings.SetAddonThoughtDuration(addon.Id, value);
+        }
+        return touched && value != before;
+    }
+
     private static bool Checkbox(Listing_Standard list, ref bool value, string labelKey, string tipKey)
     {
         bool before = value;
@@ -242,14 +306,14 @@ public class MwahSettings : ModSettings
     /// 三读法只出现在标签上，符合"时长只以 tick 为存储单位"的硬边界。
     /// </summary>
     private bool IntSlider(Listing_Standard list, ref int value, string labelKey, string tipKey,
-        IntRange range, Func<int, string> showAs, int step = 1)
-        => IntSliderRow(list, ref value, labelKey, tipKey, range, showAs, withField: true, step);
+        IntRange range, Func<int, string> showAs, int step = 1, string? labelArg = null, string? fieldId = null)
+        => IntSliderRow(list, ref value, labelKey, tipKey, range, showAs, withField: true, step, labelArg, fieldId);
 
     private bool IntSliderRow(Listing_Standard list, ref int value, string labelKey, string tipKey,
-        IntRange range, Func<int, string> showAs, bool withField, int step = 1)
+        IntRange range, Func<int, string> showAs, bool withField, int step = 1, string? labelArg = null, string? fieldId = null)
     {
         int before = value;
-        string label = labelKey.Translate() + ": " + showAs(value);
+        string label = (labelArg == null ? labelKey.Translate() : labelKey.Translate(labelArg)) + ": " + showAs(value);
         string tip = tipKey.Translate();
         if (!withField)
         {
@@ -262,7 +326,7 @@ public class MwahSettings : ModSettings
         Rect slider = new Rect(row.x, row.y + 24f, row.width - FieldWidth - FieldGap, 20f);
         float raw = Widgets.HorizontalSlider(slider, value, range.min, range.max);
         value = Mathf.RoundToInt(raw / step) * step; // 滑条连续、落值量化：step 才是允许的刻度
-        value = (int)NumericField(labelKey, new Rect(row.xMax - FieldWidth, row.y + 22f, FieldWidth, 24f),
+        value = (int)NumericField(labelKey + (fieldId ?? ""), new Rect(row.xMax - FieldWidth, row.y + 22f, FieldWidth, 24f),
             value, range.min, range.max, step);
         return before != value;
     }
