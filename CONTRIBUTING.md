@@ -4,7 +4,7 @@
 
 ## 规则 / Rules
 
-1. Fork 后从 `dev` 分支开工作分支；PR 目标 `dev`（维护者 squash merge 进 `main`）。
+1. Fork 后从版本分支（当前 `0.1.x`）开工作分支；PR 目标也是版本分支（维护者 squash merge 进只做发布的 `main`）。
 2. 提交信息用 Conventional Commits（`feat` / `fix` / `docs` / `refactor` / `chore` / `style` / `test`，模板见 `.gitmessage`）；一个 commit 只做一件事。
 3. **零 Harmony**：不引入 `Lib.Harmony`、不做运行时补丁。需要补丁才能做到的功能，请直接判定为不做。
 4. 仅游戏内地图、仅单机：不碰世界地图、商队、多人同步。

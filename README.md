@@ -30,13 +30,15 @@ Seventeen settings, live-map only, in English and Simplified Chinese with identi
 The only manually maintained product version is `<Version>` in `Source/Mwah/Mwah.csproj`. Builds never install into RimWorld.
 
 ```powershell
-pwsh scripts/build-dev.ps1        # Release build + stage dist/dev/Mwah + zip
-pwsh scripts/verify-local.ps1     # 25 offline gates: 3 flavor builds, keyed parity,
-                                  # fate-table completeness, DLL symbol audit, zero-Harmony proof
-pwsh scripts/privacy-audit.ps1 -FullHistory -PrePush   # the pre-push ritual
+pwsh scripts/build-dev.ps1                          # dev: Release build + stage dist/dev/Mwah + zip
+pwsh scripts/pack-github.ps1 -Version v0.1.0        # GitHub flavor -> dist/github/Mwah-vX.Y.Z.zip
+pwsh scripts/pack-steam.ps1                         # Steam flavor -> dist/steam/Mwah (clean tree required)
+pwsh scripts/verify-local.ps1                       # 25 offline gates: 3 flavor builds, keyed parity,
+                                                    # fate-table completeness, DLL symbol audit, zero-Harmony proof
+pwsh scripts/privacy-audit.ps1 -FullHistory -PrePush # the pre-push ritual
 ```
 
-CI (`.github/workflows/ci.yml`) runs the same gates plus the privacy default scan on every push and PR. Commit discipline: Conventional Commits (see `.gitmessage`), work on `dev`, squash-merge into `main`, history is append-only — no amend, no rebase.
+CI (`.github/workflows/ci.yml`) runs the same gates plus the privacy default scan on every push and PR. Commit discipline: Conventional Commits (see `.gitmessage`), work on the version branch (`0.1.x`), squash-merge into `main` which is release-only, history is append-only — no amend, no rebase. The full flow lives in [`docs/release-runbook-zh.md`](./docs/release-runbook-zh.md).
 
 ## Hard boundaries
 

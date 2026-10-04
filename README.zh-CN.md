@@ -30,13 +30,15 @@ Mwah! 让游戏内地图上的任何单位亲任何单位。选中一个 pawn，
 唯一人工维护的产品版本在 `Source/Mwah/Mwah.csproj`。构建从不写入游戏目录。
 
 ```powershell
-pwsh scripts/build-dev.ps1        # Release 构建 + stage dist/dev/Mwah + zip
-pwsh scripts/verify-local.ps1     # 25 道离线门：三渠道构建、双语键一致、天意表完整、
-                                  # DLL 符号审计、零 Harmony 反证
-pwsh scripts/privacy-audit.ps1 -FullHistory -PrePush   # push 前仪式
+pwsh scripts/build-dev.ps1                          # dev：Release 构建 + stage dist/dev/Mwah + zip
+pwsh scripts/pack-github.ps1 -Version v0.1.0        # GitHub flavor -> dist/github/Mwah-vX.Y.Z.zip
+pwsh scripts/pack-steam.ps1                         # Steam flavor -> dist/steam/Mwah（要求干净树）
+pwsh scripts/verify-local.ps1                       # 25 道离线门：三渠道构建、双语键一致、天意表完整、
+                                                    # DLL 符号审计、零 Harmony 反证
+pwsh scripts/privacy-audit.ps1 -FullHistory -PrePush # push 前仪式
 ```
 
-CI（`.github/workflows/ci.yml`）在每次 push/PR 跑同一套门加隐私默认扫描。提交纪律：Conventional Commits（见 `.gitmessage`），在 `dev` 上工作，squash merge 进 `main`，历史 **append-only**——不 amend、不 rebase。
+CI（`.github/workflows/ci.yml`）在每次 push/PR 跑同一套门加隐私默认扫描。提交纪律：Conventional Commits（见 `.gitmessage`），在版本分支（`0.1.x`）上工作，squash merge 进只做发布的 `main`，历史 **append-only**——不 amend、不 rebase。完整流程见 [`docs/release-runbook-zh.md`](./docs/release-runbook-zh.md)。
 
 ## 硬边界
 
