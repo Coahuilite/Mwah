@@ -39,12 +39,18 @@ public partial class MwahSettings
         bool changed = false;
         // 固定标题区（2026-10-05 维护者裁定）：vanilla 的标题行只画 SettingsCategory（反编译
         // Dialog_ModSettings.DoWindowContents 实锤），版本进不了那一行——除非 Harmony，那是硬边界。
-        // 于是在自己区域顶部常驻两行：副标题（"容忍一下这份唐突的多情。"，Small）在上，
-        // 身份水印（"品牌 · 版本 · 渠道"，Tiny）在下，1px 分隔线收尾；滚动区从它下面开始——
-        // 滚到哪里截图都带着构建身份。水印字符串与启动横幅同源（MwahMod.VersionString()）。
-        Rect headerRect = inRect.TopPartPixels(PinnedHeaderHeight);
-        Rect scrollRect = inRect.BottomPartPixels(inRect.height - PinnedHeaderHeight);
-        DrawPinnedHeader(headerRect);
+        // 于是自己区域顶部常驻两行：副标题（Small）在上、身份水印（Tiny）在下、1px 分隔线收尾；
+        // 滚动区从它下面开始——滚到哪里截图都带着构建身份。水印字符串与启动横幅同源。
+        // 行带高度不再拍脑袋（响应式纪律）：两轮实机截图先裁水印、再裁副标题，说明手猜的
+        // 像素永远可能小于真实行框（中文字形吃满 em box，下伸部另算）——改为 Text.CalcHeight
+        // 按字体与宽度实测 + 呼吸位。文字的高度归字体管，不归常数管。
+        string watermark = "Mwah!  ·  v" + MwahMod.VersionString() + "  ·  build=" + MwahMod.BuildFlavor;
+        float subtitleHeight = LineHeightWithPadding("MWAH.Settings.Header".Translate(), GameFont.Small, inRect.width);
+        float watermarkHeight = LineHeightWithPadding(watermark, GameFont.Tiny, inRect.width);
+        float headerHeight = subtitleHeight + watermarkHeight + 2f;
+        Rect headerRect = inRect.TopPartPixels(headerHeight);
+        Rect scrollRect = inRect.BottomPartPixels(inRect.height - headerHeight);
+        DrawPinnedHeader(headerRect, subtitleHeight, watermark);
         float viewWidth = scrollRect.width - 16f;
         // 滚动范围用**上一帧量出的内容高度**：viewRect 是局部变量，"End 之后回写高度"
         // 对本帧的滚动条毫无作用（2026-09-10 的自动测高就是这么坏的：范围恒等于窗口高，
@@ -119,27 +125,31 @@ public partial class MwahSettings
         }
     }
 
-    /// <summary>固定标题区总高：副标题 28 + 水印 30（Tiny 行框约 20px，再吃下伸部 g/p/y
-    /// 与居中余量——24px 会裁掉尾巴，实机截图 2026-10-05）。</summary>
-    private const float PinnedHeaderHeight = 58f;
-
-    /// <summary>固定标题区：副标题在上、身份水印在下、底部一条 1px 分隔线。水印是半透明
-    /// 不可交互的，读的是横幅同一份真相。</summary>
-    private static void DrawPinnedHeader(Rect header)
+    /// <summary>单行文本的实测高度 + 8px 呼吸位（Text.CalcHeight 按当前字体与给定宽度算
+    /// 行框，下伸部与行距都在里面；量完还原字体，不污染 IMGUI 状态）。</summary>
+    private static float LineHeightWithPadding(string text, GameFont font, float width)
     {
-        Widgets.Label(header.TopPartPixels(28f), "MWAH.Settings.Header".Translate());
-        Widgets.DrawBoxSolid(new Rect(header.x, header.yMax - 1f, header.width, 1f), new Color(1f, 1f, 1f, 0.12f));
-        Rect row = header.BottomPartPixels(30f);
         GameFont fontBefore = Text.Font;
+        Text.Font = font;
+        float height = Text.CalcHeight(text, width);
+        Text.Font = fontBefore;
+        return height + 8f;
+    }
+
+    /// <summary>固定标题区：副标题在上（Small，默认锚点）、身份水印在下（Tiny、半透明、
+    /// 不可交互——它是水印不是控件）、底部 1px 分隔线。两行都读同一份真相。</summary>
+    private static void DrawPinnedHeader(Rect header, float subtitleHeight, string watermark)
+    {
+        Widgets.Label(header.TopPartPixels(subtitleHeight), "MWAH.Settings.Header".Translate());
+        Widgets.DrawBoxSolid(new Rect(header.x, header.yMax - 1f, header.width, 1f), new Color(1f, 1f, 1f, 0.12f));
+        Rect row = new Rect(header.x, header.y + subtitleHeight, header.width, header.height - subtitleHeight);
         TextAnchor anchorBefore = Text.Anchor;
         Color colorBefore = GUI.color;
-        Text.Font = GameFont.Tiny;
         Text.Anchor = TextAnchor.MiddleLeft;
         GUI.color = new Color(1f, 1f, 1f, 0.55f);
-        Widgets.Label(row, "Mwah!  ·  v" + MwahMod.VersionString() + "  ·  build=" + MwahMod.BuildFlavor);
+        Widgets.Label(row, watermark);
         GUI.color = colorBefore;
         Text.Anchor = anchorBefore;
-        Text.Font = fontBefore;
     }
 
     /// <summary>段标题：一条分隔线 + 加粗感的裸标签（键双语齐备由门把关）。</summary>
