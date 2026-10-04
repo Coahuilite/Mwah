@@ -111,7 +111,7 @@
 
 ## 待决策
 
-- [ ] 建远端与推送：CI/隐私门/README/LICENSE 已备齐（2d4ba1c），用户已授权建远端+push；**待仓库命名裁定**（Mwah vs 全名）；推送前跑 `privacy-audit.ps1 -FullHistory -PrePush`。
+- [x] 建远端与推送（2026-10-04）：`github.com/Coahuilite/Mwah`（public，默认 main）；main+dev 已推，CI 首绿（25 门+隐私扫描+dev artifact），推送仪式与凭据事实见 MEMORY「远端纪律」。tag/release 仍是独立授权项。
 - [x] LICENSE 选型：**MPL 2.0**（2026-10-04 定案——三兄弟仓同款，"Coahuilite 口径待统一"就此闭合）。
 
 ## 明确延后 / 不做
