@@ -101,7 +101,7 @@ public class JobDriver_Kiss : JobDriver
         base.Notify_DamageTaken(dinfo);
         if (dinfo.Def.ExternalViolenceFor(base.pawn) && dinfo.Def.canInterruptJobs)
         {
-            MwahLog.Dev("kiss broken by damage: " + base.pawn.LabelShort + " (dmg=" + dinfo.Def.defName + ")");
+            MwahLog.Note("kiss broken by damage: " + base.pawn.LabelShort + " (dmg=" + dinfo.Def.defName + ")");
             EndJobWith(JobCondition.Incompletable);
         }
     }
@@ -196,7 +196,7 @@ public class JobDriver_Kiss : JobDriver
             // 对方已经不在亲吻 job 里（走位失败、受击散场）就别继续走向空台。
             if (Partner.CurJob == null || Partner.CurJob.def != MWAH_JobDefOf.MWAH_Kiss)
             {
-                MwahLog.Dev("kiss abort in walk: " + base.pawn.LabelShort + " partner " + Partner.LabelShort + " left the kiss");
+                MwahLog.Note("kiss abort in walk: " + base.pawn.LabelShort + " partner " + Partner.LabelShort + " left the kiss");
                 return true;
             }
             return false;
@@ -216,7 +216,7 @@ public class JobDriver_Kiss : JobDriver
         }
         else if (!BeginWalk())
         {
-            MwahLog.Dev("kiss walk fail: " + base.pawn.LabelShort + " stage=" + StageCell
+            MwahLog.Note("kiss walk fail: " + base.pawn.LabelShort + " stage=" + StageCell
                 + " canMove=" + KissUtility.CanMoveNow(base.pawn) + " attempts=" + walkAttempts);
             EndJobWith(JobCondition.Incompletable);
         }
@@ -255,7 +255,7 @@ public class JobDriver_Kiss : JobDriver
                 // 对方中途掉出这场亲（被拉走、受击）：独角戏没有意义，直接进回程。
                 if (Partner.CurJob == null || Partner.CurJob.def != MWAH_JobDefOf.MWAH_Kiss)
                 {
-                    MwahLog.Dev("kiss cut short: " + base.pawn.LabelShort + " partner " + Partner.LabelShort + " gone at t-" + ticksLeft);
+                    MwahLog.Note("kiss cut short: " + base.pawn.LabelShort + " partner " + Partner.LabelShort + " gone at t-" + ticksLeft);
                     ReadyForNextToil();
                     return;
                 }

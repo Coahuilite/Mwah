@@ -47,13 +47,10 @@ public static class Constants
     public const bool AutonomousKissing = false;      // 第三优先级，先不默认开
     public const int AutonomousIntervalTicks = 250;      // 1 游戏小时促成一桩
     public const int AutonomousRadiusCells = 10;         // 超出这个距离就不去追
-    // 诊断日志出厂默认按构建渠道走：dev 包默认开（维护者的测试载体），Steam/GitHub
-    // 发行档默认关（玩家机器上不该有模组刷日志）。运行期以设置页勾选为准，随时可切。
-#if MWAH_DEV
-    public const bool DiagnosticLogs = true;
-#else
-    public const bool DiagnosticLogs = false;
-#endif
+    // 诊断出厂档位 = Auto：设置本身不藏渠道差异，渠道判断推迟到 MwahLog.Level 解析
+    // （dev→详细、发行→简化）。旧式"#if 换默认值"让 Settings.xml 里看不出手脚，现在只有一个真相。
+    public const int DiagnosticLevelDefault = (int)MwahDiag.Auto;
+    public static readonly IntRange DiagnosticLevelRange = new((int)MwahDiag.Off, (int)MwahDiag.Verbose);
 
     public static readonly IntRange DurationTicksRange = new(30, 2400);
     public static readonly IntRange FleckIntervalTicksRange = new(20, 1200);

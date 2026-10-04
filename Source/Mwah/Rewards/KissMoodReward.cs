@@ -38,7 +38,7 @@ public static class KissMoodReward
         string? scope = KissFateScopes.ScopeFor(pawn);
         if (scope == null)
         {
-            MwahLog.Dev("moodless pawn matched no fate scope: " + pawn.LabelShortCap + " (" + pawn.def.defName + ")");
+            MwahLog.Note("moodless pawn matched no fate scope: " + pawn.LabelShortCap + " (" + pawn.def.defName + ")");
             return;
         }
         KissFate.Grant(pawn, other, scope);
@@ -77,6 +77,8 @@ public static class KissMoodReward
         {
             fated.NarrationKey = row.narrationKey;
             fated.NarrationSubject = other.LabelShort;
+            // 这条路径不经 GrantRow，补一行同形打点：抽中哪一行在 note 层可见（发行包也看得到）。
+            MwahLog.Note("fate KissPawn: " + pawn.LabelShort + " -> " + other.LabelShort + " row=" + row.defName);
         }
 
         pawn.needs.mood.thoughts.memories.TryGainMemory(memory, other);

@@ -42,7 +42,7 @@ public static class KissStage
         // 2x2 及以上（大象、部分机械族）放不下"两个 1x1 相邻格"这个模型，交给贴脸兜底。
         if (!SingleCell(a) || !SingleCell(b))
         {
-            MwahLog.Dev("stage skipped: multi-cell occupant " + a.LabelShort + " / " + b.LabelShort);
+            MwahLog.Note("stage skipped: multi-cell occupant " + a.LabelShort + " / " + b.LabelShort);
             return false;
         }
 
@@ -78,7 +78,7 @@ public static class KissStage
                 return true;
             }
         }
-        MwahLog.Dev("no stage within radius " + StageRadius + " for " + a.LabelShort + " / " + b.LabelShort);
+        MwahLog.Note("no stage within radius " + StageRadius + " for " + a.LabelShort + " / " + b.LabelShort);
         return false;
     }
 

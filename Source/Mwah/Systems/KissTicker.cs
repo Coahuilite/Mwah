@@ -50,6 +50,6 @@ public class KissTicker : GameComponent
         MainButtonDef mb = DefDatabase<MainButtonDef>.GetNamedSilentFail("MWAH_KissDirector");
         ThoughtDef th = DefDatabase<ThoughtDef>.GetNamedSilentFail("MWAH_Kissed");
         string thoughtLabel = th?.stages != null && th.stages.Count > 0 ? th.stages[0].label.ToString() : "<none>";
-        MwahLog.Dev("i18n check: button='" + (mb?.LabelCap ?? "<none>") + "' thought='" + thoughtLabel + "'");
+        MwahLog.Note("i18n check: button='" + (mb?.LabelCap ?? "<none>") + "' thought='" + thoughtLabel + "'");
     }
 }

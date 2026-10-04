@@ -33,7 +33,7 @@ public class MwahSettings : ModSettings
     public int autonomousRadiusCells = Constants.AutonomousRadiusCells;
     public int thoughtDurationTicks = Constants.ThoughtDurationTicks;
     public float moodMultiplier = Constants.MoodMultiplier;
-    public bool diagnosticLogs = Constants.DiagnosticLogs;
+    public int diagnosticLevel = Constants.DiagnosticLevelDefault;
 
     /// <summary>
     /// addon 心情记忆时长，按 addon 稳定 Id 索引（"wall" → tick）。字典而不是散字段：
@@ -82,8 +82,11 @@ public class MwahSettings : ModSettings
     public bool AutonomousEnabled => autonomousKissing;
     public int AutonomousIntervalTicks => Mathf.Clamp(autonomousIntervalTicks, Constants.AutonomousIntervalTicksRange.min, Constants.AutonomousIntervalTicksRange.max);
     public int AutonomousRadius => Mathf.Clamp(autonomousRadiusCells, Constants.AutonomousRadiusRange.min, Constants.AutonomousRadiusRange.max);
-    /// <summary>诊断总闸：MwahLog.Dev 与 KissTrace 采样共用；横幅与 Warn/Error 不归它管。</summary>
-    public bool DiagnosticsEnabled => diagnosticLogs;
+    /// <summary>诊断档位原始值（收进合法档）；生效级别由 MwahLog.Level 解析 Auto，采样器共用。</summary>
+    public MwahDiag DiagSetting => (MwahDiag)Mathf.Clamp(diagnosticLevel, (int)MwahDiag.Off, (int)MwahDiag.Verbose);
+
+    /// <summary>档位名键：枚举拼出来的，语言文件键集合由 verify-local 反向核对。</summary>
+    private static string DiagLabel(MwahDiag level) => ("MWAH.Settings.Diag." + level).Translate();
 
     /// <summary>addon 时长的唯一读法：字典有 Id 则 clamp 取出，没有则用该 addon 声明的出厂值。</summary>
     public int AddonThoughtDuration(string addonId, int factoryDefault) =>
@@ -117,7 +120,7 @@ public class MwahSettings : ModSettings
         Scribe_Values.Look(ref autonomousRadiusCells, "autonomousRadiusCells", Constants.AutonomousRadiusCells);
         Scribe_Values.Look(ref thoughtDurationTicks, "thoughtDurationTicks", Constants.ThoughtDurationTicks);
         Scribe_Values.Look(ref moodMultiplier, "moodMultiplier", Constants.MoodMultiplier);
-        Scribe_Values.Look(ref diagnosticLogs, "diagnosticLogs", Constants.DiagnosticLogs);
+        Scribe_Values.Look(ref diagnosticLevel, "diagnosticLevel", Constants.DiagnosticLevelDefault);
         // addon 两张字典：整表入档（LookMode.Value；string→int / string→bool 都是值类型）。
         Scribe_Collections.Look(ref addonThoughtDurations, "addonThoughtDurations", LookMode.Value, LookMode.Value);
         Scribe_Collections.Look(ref addonSwitches, "addonSwitches", LookMode.Value, LookMode.Value);
@@ -142,6 +145,7 @@ public class MwahSettings : ModSettings
         pairScope = (int)Scope;
         autonomousIntervalTicks = AutonomousIntervalTicks;
         autonomousRadiusCells = AutonomousRadius;
+        diagnosticLevel = (int)DiagSetting;
         // 字典逐项 clamp：手改 XML 不能把 addon 时长带出合法区间。
         foreach (string key in new List<string>(addonThoughtDurations.Keys))
         {
@@ -167,7 +171,7 @@ public class MwahSettings : ModSettings
         autonomousRadiusCells = Constants.AutonomousRadiusCells;
         thoughtDurationTicks = Constants.ThoughtDurationTicks;
         moodMultiplier = Constants.MoodMultiplier;
-        diagnosticLogs = Constants.DiagnosticLogs;
+        diagnosticLevel = Constants.DiagnosticLevelDefault;
         // 字典没有"逐字段的 Constants.*"可回，恢复默认 = 清空整表 ⇒ 全部读侧落回各 addon 出厂值。
         addonThoughtDurations.Clear();
         addonSwitches.Clear();
@@ -238,7 +242,9 @@ public class MwahSettings : ModSettings
 
         // ===== 段四：系统（诊断与恢复）=====
         Section(list, "MWAH.Settings.Section.System");
-        changed |= Checkbox(list, ref diagnosticLogs, "MWAH.Settings.Diagnostics", "MWAH.Settings.DiagnosticsDesc");
+        // 档位是"档"不是"量"：输入 2 没有意义，滑条刻意不带数值框（与门禁滑条同一先例）。
+        changed |= IntSliderRow(list, ref diagnosticLevel, "MWAH.Settings.DiagLevel", "MWAH.Settings.DiagLevelDesc",
+            Constants.DiagnosticLevelRange, raw => DiagLabel((MwahDiag)Mathf.Clamp(raw, (int)MwahDiag.Off, (int)MwahDiag.Verbose)), withField: false);
         list.Gap();
         list.Label("MWAH.Settings.TimingHint".Translate());
         list.Gap();

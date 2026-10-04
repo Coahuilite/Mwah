@@ -24,14 +24,14 @@
 
 - [ ] Settings page: four section headers in order; the Add-ons block shows the wall group — "允许亲吻墙壁" switch + "亲吻一堵墙：思想持续" slider (factory 30000 t / 500 s / 12 h); flipping the switch off still silences every wall surface (addon constitution unchanged, storage moved); "restore defaults" reverts both dictionaries (switch back to on, duration back to factory).
 - [ ] Wall slot live: two wall kisses in a row (mood-duration long, cooldown short) → **one** entry only, its tier/label/narration from the latest roll, timer restarted; the fate short message still fires per kiss.
-- [ ] Copy terminology sweep (maintainer ruling 2026-10-05): Chinese copy must say **pawn**, not 小人, wherever the referent is not human-only — confirmed hits in `MWAH_Strings.xml`: `PawnCooldownDesc` / `PairCooldownDesc` / `MoodMultiplierDesc` / `DirectorButtonDesc` / `AutonomousDesc` (L96 lists 野生动物/机械族 under 小人, self-contradictory). Established mixed-CN register "Pawn" is the replacement (cf. 所有 Pawn 都互相亲吻). Sweep all Chinese files (Keyed + DefInjected) at the same pass.
+- [x] Copy terminology sweep (done same session): 5 hits rewritten to the mixed-CN register "Pawn" (`PawnCooldownDesc` / `PairCooldownDesc` / `MoodMultiplierDesc` / `DirectorButtonDesc` / `AutonomousDesc` — the last now reads "所有 Pawn 都互相亲吻", no longer listing animals under 小人); full-tree grep for 小人 across `1.6/Languages/` returns zero.
 
 ## Live verification matrix (maintainer executes; the agent builds no junctions and never runs the game)
 
 ### Loading and logging
 
 - [ ] Load: copy the mod into `Mods/` → enable → start with no red lines; after a new game all four files under `1.6/Defs/Kiss/*` parse.
-- [ ] Logging surface: (1) start with diagnostics off → Player.log still carries one `[MWAH] Mwah! (Every Pawn Kisses Each Other) v0.1.0 build=dev startup OK` line; (2) diagnostics on → any kiss shows `dev: stage/kiss begin/perform/return` lines and savedata's `Mwah-trace.log` advances every second; (3) turning it off mid-game stops both at once, the banner unaffected; (4) "restore defaults" puts the toggle back to this channel's default (dev package = on).
+- [ ] Logging surface (four-rung slider, 0.2.x): (1) **Off** → only the startup banner `[MWAH] Mwah! … build=dev startup OK` and Warn/Error remain; (2) **Simple** → per settled kiss one `[MWAH] note: fate …: … row=…` line (both the pawn-narration path and the thing/message paths), plus every abnormal exit as `note:` (damage break / walk fail / cut short / unmatched scope); no `dev:` lines, trace file frozen; (3) **Verbose** → full `dev:` narration (stage/begin/perform/return, pick generations) and `Mwah-trace.log` advances every second; (4) **Auto** (factory) → dev package behaves Verbose, Steam/GitHub package behaves Simple — same package, switch the slider to verify both faces; (5) mid-game level changes take effect on the next line printed; "restore defaults" returns the slider to 自动/Auto.
 - [ ] Fate table live self-proof: startup Player.log carries **no** `MWAH_FateDef is not a Def type` line; after kissing a wall the mood entry shows a per-row narration (not the static fallback description) and the short message pops normally; the "fate table edit loop" row presupposes this one.
 - [ ] Translation self-proof: after installing the new package, the bottom bar "亲吻导演台", panel title, thought "被{名字}亲吻过", report string "亲吻{名字}。", and right-slot placeholder "（先选发起方）" are all Chinese; re-save the translation report — MWAH entries must be gone from "missing".
 - [ ] Clean startup log: no `Dialog_KissDirector probably needs a StaticConstructorOnStartup attribute` warning.
@@ -112,8 +112,8 @@
 ### Cooldowns and the settings page
 
 - [ ] Cooldowns: repeatedly kissing one person → greyed item shows the remaining time readable in all three units; pair cooldown at 0 → back-to-back kisses allowed.
-- [ ] Numeric fields: every slider has a right-side input box (tick items take ticks); Enter or click-away commits, quantized by step and clamped; garbage/empty re-echoes the old value; the "who may kiss whom" slider has **no** box (a tier is not a quantity).
-- [ ] Settings scrolling (re-fixed 2026-09-30): wheel/drag reaches the **very bottom** — "诊断日志" and "恢复默认值" fully visible and clickable; **no** control ghosts beyond the window's right edge (the old bug: overflow entries column-switched outside, the orange restore button floated past the frame); verify in both languages and at two window sizes.
+- [ ] Numeric fields: every slider has a right-side input box (tick items take ticks); Enter or click-away commits, quantized by step and clamped; garbage/empty re-echoes the old value; the two tier sliders — "谁能亲谁" and "诊断档位" — have **no** box (a tier is not a quantity).
+- [ ] Settings scrolling (re-fixed 2026-09-30): wheel/drag reaches the **very bottom** — "诊断档位" and "恢复默认值" fully visible and clickable; **no** control ghosts beyond the window's right edge (the old bug: overflow entries column-switched outside, the orange restore button floated past the frame); verify in both languages and at two window sizes.
 - [ ] Three-unit readout and persistence: every duration row shows `tick / seconds / game hours`; edits take effect immediately and survive reopening; "restore defaults" returns everything to `Constants`.
 
 ## Explicitly deferred / never

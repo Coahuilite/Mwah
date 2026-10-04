@@ -18,6 +18,7 @@ $ErrorActionPreference = "Stop"
 #   8   分发卫生与隐私红线：无 PublishedFileId、无绝对本地路径
 #   9   设置项三处锁死：字段名 ↔ Scribe key ↔ Constants 默认值
 #  10   门禁档位 ↔ 双语档位名键 ↔ Constants 档位范围
+#  11   诊断档位 ↔ 双语档位名键 ↔ 范围与出厂 Auto
 # 全部通过后 -PackDev 才出 dev 包。
 
 $root = [System.IO.Path]::GetFullPath($ProjectRoot)
@@ -103,12 +104,19 @@ if ($scopeCs -match '(?s)public enum KissScope\s*\r?\n\{(.*?)\r?\n\}') {
     $scopeRungs = @([regex]::Matches($matches[1], '(?m)^\s{4}(\w+)\s*=\s*(\d+)') | ForEach-Object { ,@($_.Groups[1].Value, [int]$_.Groups[2].Value) })
 }
     $scopeKeys = @($scopeRungs | ForEach-Object { "MWAH.Settings.Scope." + $_[0] })
+    # 诊断档位名键同样是拼出来的（"MWAH.Settings.Diag." + level），从 MwahLog.cs 的枚举展开。
+    $diagCs = Get-Content -Raw -LiteralPath (Join-Path $root "Source\$modName\MwahLog.cs")
+    $diagRungs = @()
+    if ($diagCs -match '(?s)public enum MwahDiag\s*\r?\n\{(.*?)\r?\n\}') {
+        $diagRungs = @([regex]::Matches($matches[1], '(?m)^\s{4}(\w+)\s*=\s*(\d+)') | ForEach-Object { ,@($_.Groups[1].Value, [int]$_.Groups[2].Value) })
+    }
+    $diagKeys = @($diagRungs | ForEach-Object { "MWAH.Settings.Diag." + $_[0] })
     # Defs 内容提前算好：天意表的旁白/短讯键写在 XML 里，正反两个方向都要把它们算进"被使用"。
     $defXml = @(Get-ChildItem (Join-Path $root '1.6\Defs') -Recurse -Filter *.xml | Get-Content -Raw) -join "`n"
     $literalKeys = @([regex]::Matches($code, '"(MWAH\.[A-Za-z0-9_.]+)"') | ForEach-Object { $_.Groups[1].Value })
     $fateKeys = @([regex]::Matches($defXml, '<(?:narrationKey|messageKey)>(MWAH\.[A-Za-z0-9_.]+)</') | ForEach-Object { $_.Groups[1].Value })
     # 以点结尾的匹配是拼接前缀，不是键名。
-    $used = @((($literalKeys + $scopeKeys + $fateKeys) | Where-Object { $_ -notmatch '\.$' } | Sort-Object -Unique))
+    $used = @((($literalKeys + $scopeKeys + $diagKeys + $fateKeys) | Where-Object { $_ -notmatch '\.$' } | Sort-Object -Unique))
 $missing = @($used | Where-Object { $en -notcontains $_ -or $zh -notcontains $_ })
 Assert-True ("all $($used.Count) C#-referenced keys exist in both languages") ($missing.Count -eq 0) ($missing -join ', ')
 # 反向信息项：定义了却没人用的键（不失败，只提示，防止语言文件攒尸体）
@@ -259,6 +267,18 @@ $rangeLine = [regex]::Match($constantsCs, 'PairScopeRange = new\(\(int\)KissScop
 Assert-True 'scope range constants match the enum ends' ($rangeLine.Success -and $rangeLine.Groups[1].Value -eq $scopeRungs[0][0] -and $rangeLine.Groups[2].Value -eq $scopeRungs[$scopeRungs.Count - 1][0])
 $defaultLine = [regex]::Match($constantsCs, 'PairScopeDefault = \(int\)KissScope\.(\w+)')
 Assert-True ("factory default scope is the widest rung ($($defaultLine.Groups[1].Value))") ($defaultLine.Groups[1].Value -eq $scopeRungs[$scopeRungs.Count - 1][0])
+
+# 11. 诊断档位与门禁滑条同规：每档双语名、编号连续、范围常量对齐枚举两端、出厂默认 = Auto。
+Assert-True ("diagnostic level enum parsed ($($diagRungs.Count) rungs)") ($diagRungs.Count -ge 4)
+$missingDiagKeys = @($diagRungs | Where-Object { $en -notcontains ("MWAH.Settings.Diag." + $_[0]) -or $zh -notcontains ("MWAH.Settings.Diag." + $_[0]) } | ForEach-Object { $_[0] })
+Assert-True ("every diagnostic rung has a label in both languages ($($diagRungs.Count) rungs)") ($missingDiagKeys.Count -eq 0) ($missingDiagKeys -join ', ')
+$diagSequential = $true
+for ($k = 0; $k -lt $diagRungs.Count; $k++) { if ($diagRungs[$k][1] -ne $k) { $diagSequential = $false } }
+Assert-True 'diagnostic rungs are numbered from 0 without gaps' $diagSequential
+$diagRangeLine = [regex]::Match($constantsCs, 'DiagnosticLevelRange = new\(\(int\)MwahDiag\.(\w+),\s*\(int\)MwahDiag\.(\w+)\)')
+Assert-True 'diagnostic range constants match the enum ends' ($diagRangeLine.Success -and $diagRangeLine.Groups[1].Value -eq $diagRungs[0][0] -and $diagRangeLine.Groups[2].Value -eq $diagRungs[$diagRungs.Count - 1][0])
+$diagDefaultLine = [regex]::Match($constantsCs, 'DiagnosticLevelDefault = \(int\)MwahDiag\.(\w+)')
+Assert-True ("factory default diagnostic level is Auto ($($diagDefaultLine.Groups[1].Value))") ($diagDefaultLine.Groups[1].Value -eq 'Auto')
 
 if ($failures.Count -gt 0) {
     Write-Host ''

@@ -67,7 +67,7 @@ public class JobDriver_KissThing : JobDriver
         base.Notify_DamageTaken(dinfo);
         if (dinfo.Def.ExternalViolenceFor(base.pawn) && dinfo.Def.canInterruptJobs)
         {
-            MwahLog.Dev("thing kiss broken by damage: " + base.pawn.LabelShort + " (dmg=" + dinfo.Def.defName + ")");
+            MwahLog.Note("thing kiss broken by damage: " + base.pawn.LabelShort + " (dmg=" + dinfo.Def.defName + ")");
             EndJobWith(JobCondition.Incompletable);
         }
     }

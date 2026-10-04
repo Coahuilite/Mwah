@@ -103,8 +103,12 @@
 
   <MWAH.Settings.ReturnHome>Return to original spot</MWAH.Settings.ReturnHome>
   <MWAH.Settings.ReturnHomeDesc>Afterwards both pawn go back to where the kiss was ordered. A polite request - urgent needs and work still win.</MWAH.Settings.ReturnHomeDesc>
-  <MWAH.Settings.Diagnostics>Diagnostic logs</MWAH.Settings.Diagnostics>
-  <MWAH.Settings.DiagnosticsDesc>Writes [MWAH] dev events to Player.log and lets the 1 Hz phase sampler append to Mwah-trace.log in the game's save data folder. The startup banner and error lines print regardless. Default on in dev builds, off in release builds.</MWAH.Settings.DiagnosticsDesc>
+  <MWAH.Settings.DiagLevel>Diagnostic level</MWAH.Settings.DiagLevel>
+  <MWAH.Settings.DiagLevelDesc>Off: only the startup banner and error lines. Simple: notable events only — one fate line per settled kiss and every abnormal exit (damage break, walk failure, mid-kiss scatter). Verbose: the full phase narration (stage/begin/perform/return, pick generations, settings persistence) plus the 1 Hz Mwah-trace.log sampler. Auto follows the build channel: dev builds run Verbose, Steam/GitHub builds run Simple.</MWAH.Settings.DiagLevelDesc>
+  <MWAH.Settings.Diag.Off>Off</MWAH.Settings.Diag.Off>
+  <MWAH.Settings.Diag.Auto>Auto</MWAH.Settings.Diag.Auto>
+  <MWAH.Settings.Diag.Simple>Simple</MWAH.Settings.Diag.Simple>
+  <MWAH.Settings.Diag.Verbose>Verbose</MWAH.Settings.Diag.Verbose>
 
   <MWAH.Settings.Reset>Restore defaults</MWAH.Settings.Reset>
   <MWAH.Settings.WallKissing>Allow kissing walls</MWAH.Settings.WallKissing>

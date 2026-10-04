@@ -6,9 +6,9 @@ using Verse;
 namespace Mwah;
 
 /// <summary>
-/// 旁路阶段采样器 —— 逐 tick 的"插桩"，与 MwahLog.Dev 同受设置页「诊断日志」开关管
+/// 旁路阶段采样器 —— 逐 tick 的"插桩"，与 MwahLog.Dev 同闸：只有诊断档走到**详细**才写
 /// （2026-09-30 起全构建编译进来，旧写法用 #if MWAH_DEV 造出空壳类在编译期剔除，
-/// 发行档连"事后开诊断"的机会都没有；现在开关一勾即生效，不用换包）。
+/// 发行档连"事后开诊断"的机会都没有；现在档位滑到详细即生效，不用换包）。
 ///
 /// 为什么需要它：dnSpy 一类 .NET 调试器 attach 走 ICorDebug，只认 CLR，
 /// 对 RimWorld 的 MonoBleedingEdge 拿不到托管栈；Mono 软调试器又要求启动时带
@@ -99,9 +99,9 @@ public static class KissTrace
     {
         try
         {
-            // 诊断开关是唯一的闸：关 ⇒ 什么都不写（"此后静默"承诺的一部分）。
+            // 详细档是唯一的闸：其余档位什么都不写（"此后静默"承诺的一部分）。
             // Settings 在 MwahMod 构造器里先于 Start() 赋值，线程可见性由 Timer 创建边沿保证。
-            if (!MwahMod.Settings.DiagnosticsEnabled)
+            if (!MwahLog.Detail)
             {
                 return;
             }
