@@ -1,35 +1,51 @@
 # AGENTS.md — Mwah! (Every Pawn Kisses Each Other)
 
-> 本文件每次会话都注入上下文，是成本。只允许四类内容：驱动记忆文档的协议、不可漂移的项目身份、漏看即做错的硬边界、指向权威流程文件的指针。
-> **禁止**易变内容：目录结构、文件清单、命令行、版本目录字面量、进度与验证矩阵——那些进 `MEMORY.md` / `TODO.md`。
-> 预算 ≤ 40 行；超出即视为放错了东西。
+> This file is the memory agreement for AI agents working in this repository. Human contributors should read `README.md`.
 
-## 记忆协定
+## Project identity
 
-- 会话开始：先读 `MEMORY.md` 再声称了解项目上下文；先读 `TODO.md` 再继续工作。
-- `OBLIVIONIS.md` 仅在历史冲突或维护者明确要求时读；冷归档不覆盖现行事实。
-- 写入判定：只有耐久事实、决定、约束、任务面、阻塞、归档状态变化才写。会话叙事、原始日志、已完成的验证矩阵、提交链不写。
-- 文档编辑本身不是记忆事件。
-- 权威序：源码与 git 事实 > `MEMORY.md` > 本文件措辞 > 会话印象。冲突即停工核验，再改文档。
+- Project: RimWorld 1.6 mod, brand short name **`Mwah!`**, full name **`Every Pawn Kisses Each Other`**; neither is ever translated, normalized, or copy-edited. The Simplified-Chinese display name **`所有Pawn都给我啵嘴！`** lives only in the Chinese language pack (`MWAH.SettingsCategory`): 1.6 `About.xml` has no per-language rename, so the mod list always shows the English name.
+- Permanent `packageId` `coahuilite.mwah` (immutable after release). Engineering identity is `Mwah`: C# namespace, assembly, and source folder share it. No solution file — the IDE opens the csproj, and build/pack scripts only ever point at the csproj.
+- Naming prefixes: Defs `MWAH_`, Keyed keys `MWAH.`, logs `[MWAH] ` (hard-coded English, never localized, no placeholder keys).
+- Product version source: `Source/Mwah/Mwah.csproj <Version>` is primary; `About/About.xml <modVersion>` follows it; product version is SemVer. License is **MPL-2.0** for the whole Coahuilite mod series.
+- Repo, remote, and publication state are not pinned here — read `MEMORY.md`.
 
-## 项目身份（不可漂移）
+## Project philosophy
 
-- RimWorld mod，品牌短名 **`Mwah!`**，全称 **`Every Pawn Kisses Each Other`**；两者不翻译、不归一化、不改写。中文显示名 **`所有Pawn都给我啵嘴！`**（2026-09-02 定名；1.6 的 `About.xml` 没有按语言改名的机制，所以中文名只活在中文语言包里，模组列表仍显示英文名）。
-- `packageId` = `coahuilite.mwah`，发布后不可改。工程身份标识为 `Mwah`（命名空间、程序集与源码目录同名同源；无解决方案文件）。
-- 命名前缀：Def 用 `MWAH_`，Keyed 键用 `MWAH.`，日志用 `[MWAH] `（硬编码英文，不本地化、不用占位键）。
-- 版本单一主源是 csproj 的 `<Version>`，`About.xml` 的 `modVersion` 只跟随；产品版本是 SemVer。
+- Zero Harmony is a hard boundary: no reference, no declared dependency, no runtime patch. Any capability that would need a patch to unlock is judged "not done".
+- Live map only, single-player only: the world map, caravan tiles, and multiplayer sync are out of scope.
+- Pure entertainment with the lowest workable gate: no faction/species/draft restriction by default. The maintainer's stance (reaffirmed 2026-09-02): a player wish to "only matchmake the colony" is absorbed by the gate slider (factory far-right = unrestricted), never by changing the default. "Zero gate" was never true and is not faked — vanilla `CanTakeOrder` / `ShouldGenerateFloatMenuForPawn` pre-filter, so animals and neutrals cannot initiate and downed pawns get no menu.
+- The player is super-intelligence's hand: a hand-issued order (right-click / director) overrides cooldowns and the combat gate — "if the super-intelligence wants two pawns to kiss, they kiss" (maintainer ruling). Only the ambient dispatcher obeys the combat gate.
+- Silent invalidation is constitutional: when an addon switch is off or a target collapses, it vanishes from every pick surface with zero nag — no greyed item, no dispatched job, no "no longer valid" message.
+- Player-facing text must ship with identical key sets in every language; durations are stored in ticks only and the UI must show tick / real seconds / game hours together.
+- Never create, verify, or assume a junction/symlink into a game install; copying the mod and live testing are the maintainer's own actions.
 
-## 硬边界
+## Memory protocol
 
-- **零 Harmony**：不引用、不声明依赖、不做运行时补丁；需要补丁才能解锁的能力直接判为不做。
-- **仅游戏内地图、仅单机**：世界地图与商队途中、多人联机同步都不做。
-- **永不做 junction**：不创建、不校验、不假设游戏安装目录存在；复制模组与实机测试由维护者本人执行。
-- 玩家可见文字必须各语言键集合一致；时长只以 tick 为存储单位，界面必须同时给出 tick / 现实秒 / 游戏小时。
-- 运行时内容只放版本目录内；仓库、文档、产物与可达历史中零绝对本地路径、零凭据、零工坊 ID 文件。
-- 未经维护者同意，不新增运行时依赖、不改 `packageId`、不重写已存在的设计依据而不留记录。
+At every non-trivial session:
 
-## 分支模型与发布
+- Read `MEMORY.md` before claiming project context; it stores confirmed durable facts, decisions, constraints, and evidence pointers.
+- Read `TODO.md` before continuing work; it stores only current goals, open actions, blockers, and explicit deferrals.
+- Read `OBLIVIONIS.md` only for a historical conflict or explicit request; it is cold archive evidence and cannot override current sources.
+- The three active memory files (`AGENTS.md`, `MEMORY.md`, `TODO.md`) are maintained in accurate English; `OBLIVIONIS.md` is the cold archive and follows the same language rule when appended.
 
-- `main` 只做 release；开发分支按 minor 命名（当前 `0.1.x`），不再有 `dev`。历史 **append-only**：不 amend、不 rebase、不回写。
-- 本地 commit 自由；一切远端面（push、PR、merge、tag、GitHub Release、工坊上传）逐次授权。
-- 唯一流程入口：`docs/release-runbook-zh.md`（三命令契约、发布顺序、证据边界）；本文件只钉原则，不复制命令细节。
+Maintain these boundaries:
+
+- Update `MEMORY.md` only when durable facts or the open action surface changes; keep it compact.
+- Compact by default: settled release/implementation detail and superseded decisions move to `OBLIVIONIS.md` (cold archive) or `docs/`; MEMORY keeps only durable facts and pointers. Do not grow MEMORY with finished work.
+- Update `TODO.md` only when its current task surface changes.
+- Do not store session narratives, transient artifacts, raw logs, completed test matrices, commit chains, or release checklists in either active memory file.
+- Documentation edits alone are not memory events; external-state summaries never override their authoritative source.
+
+## Privacy and security
+
+- Default scope is this repository root. Reading outside it requires path-specific authorization and remains read-only; the named RimWorld `Player.log` troubleshooting directory is the standing read-only exception.
+- Never place personal local paths, diagnostic-log excerpts, credentials, API keys, tokens, private keys, or `PublishedFileId.txt` values in Git, documentation, generated artifacts, staging, or reachable history. Runtime content ships only inside the version folder.
+- Every push is preceded by a privacy review of the complete reachable range (`scripts/privacy-audit.ps1 -FullHistory`); CI runs the default scan on every push and PR.
+
+## External-state boundaries
+
+- Local commits are permitted without a separate step: reversible, never leave the machine, and how a release is assembled. Remote-facing operations — `git remote`, push, PR, merge, tag, GitHub Release, Workshop upload — each require explicit maintainer authorization.
+- Branch model: `main` is release-only (a tag must lie on main's history; release CI checks ancestry); development happens on the per-minor branch (currently `0.1.x`). History is append-only: no amend, rebase, or rewrite.
+- The pre-push ceremony is deliberately minimal: `scripts/privacy-audit.ps1 -FullHistory -PrePush` plus maintainer authorization. Everything else is automated by `verify-local` and the workflows — do not re-add manual ritual.
+- The single process entry point is `docs/release-runbook-zh.md` (three-command contract, release order, evidence boundaries); this file fixes only the principles, never the command details.
