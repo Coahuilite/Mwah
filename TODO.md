@@ -16,6 +16,7 @@
 - 2026-09-28 完成**停火窗口**：双方 job 发起同帧起（定台挪进 `KissStage`、角色认 `TargetIndex.C`），离开段改为 job 内回程（`KissReturn` 共享 toil，双人版与亲 Thing 版都用，硬顶 1200 tick）；敌对 pawn 亲完一律"等会翻脸"（不分机械族/有机体）；**战斗闸只拦自主派发**（AttackMelee/AttackStatic/SocialFight），玩家下令路径无视（维护者裁定："超凡智能想让谁亲嘴，谁就得亲嘴"）；**伤害自毁闸重写在两个 driver 的 `Notify_DamageTaken`**——查证发现原版伤害打断链被 `playerForced`+180 tick 冷却挡死，导演台/自主路径靠原版永不散场（MEMORY 旧依据已修正）。Keyed 163、门 25 项、符号 34。**旧档不兼容**（job 结构变更，0.1.0 未发布不留兼容层）。
 - 2026-09-30 完成**日志面改造**（维护者播报纪律）：启动横幅 `[MWAH] Mwah! … v… build=… startup OK/FAILED` 无条件播（FAILED 后异常原样抛回）；诊断面（Dev 事件 + KissTrace 采样）从编译期剔除改为运行时开关 `diagnosticLogs`（设置项第 17 项；dev 默认开、发行档默认关），关 ⇒ 此后静默；Warn/Error 不受开关管。KissTrace 全构建常驻。Keyed 165。
 - 2026-09-30 实机首启爆雷两处、当轮修复：**天意表整表被丢**（`MWAH_FateDef` 住 Mwah 命名空间，def 加载器按短名只认 RimWorld/Verse 等白名单——类搬进 RimWorld + verify 第 6b 门钉死）；**设置页溢出条目画到窗外**（旧自动测高写局部变量从不生效，Listing 换列把底部条目与「恢复默认值」甩出窗口——改跨帧缓存高度 + 单列 Begin）。启动横幅与诊断开关实机自证通过（`startup OK` 已见）。
+- 2026-10-04 实机回报**双人发配不欢而散**（危宿三×左爻）：trace+日志定罪为**换座死锁**——定台允许把某方的台放在对方脚下，双 job 同帧起后两人各以对方站位为目标、互等挪窝，走位预算烧光在 begin 后一秒内双双静默散场。修复：`KissStage.Usable` 一律拒绝对方脚下格；同时给一切静默出口补日志（`stage:` 定台结果、`kiss walk fail:` 带原因、`kiss abort in walk:` 对方离场、`kiss cut short:`）。注意：回报者当时跑的仍是 cc0244f 旧包（FateDef/滚动修复未装，亲墙走的是兜底分布）。
 - **设置项 key 改名一处**：`thoughtDurationGameHours`（浮点游戏时）→ `thoughtDurationTicks`（整数 tick，粒度 1/4 游戏时）。老 `Settings.xml` 里这一项读不到 ⇒ 回到出厂默认 1 游戏日，其余 14 项不受影响。0.1.0 未发布，不留兼容层。
 - 唯一在途事项 = 下面的实机矩阵，执行者是维护者本人。agent 侧的下一步只在两种情况下出现：矩阵回报缺陷、或维护者批准发布/二期动作。
 - 若要发布：先定 `LICENSE` 与远端（均属外部操作，需授权）；`packageId coahuilite.mwah` 自此不可再改。
@@ -102,6 +103,7 @@
 - [ ] 战争女皇案（查证销案的实测确认）：发配殖民者亲 idle 女皇 → 她在 job 里（走近/贴脸/回程）**既不开 ChargeBlaster 也不产战争海胆**（两条都是 think tree job 通道，RimSage 已证；若仍见开火/产崽 = 新 bug，推翻查证结论）。她此前产出的海胆照打你的人——第一发命中即掐吻（回归到上一条）；亲完她恢复敌对的瞬间可能立刻甩一批海胆（冷却在 job 内照走），想安全亲先清海胆。
 - [ ] 日志面（本轮新增）：①关着诊断启动 → Player.log 仍有一行 `[MWAH] Mwah! (Every Pawn Kisses Each Other) v0.1.0 build=dev startup OK`；②开诊断 → 任意一桩吻可见 `dev: kiss begin/perform/return` 行、savedata 的 `Mwah-trace.log` 每秒走行；③局中关掉 → 两者立即停，横幅不受影响；④恢复默认值按钮应把诊断勾回本渠道默认（dev 包=开）。
 - [ ] 天意表实机自证（命名空间事故回归）：启动 Player.log **无** `MWAH_FateDef is not a Def type` 行；亲墙后心情条目显示逐行旁白（非静态兜底描述）、短讯正常弹出；「天意表编辑回路」条以此为前提。
+- [ ] 换座死锁回归（本轮主修）：两个**紧贴站立**的殖民者互相发配 → 双方各让开一步、在中间空出的相邻对格亲成（旧版两人杵在原地互等，begin 后一秒内双双散场）；日志序列应为 `stage: A=… B=…` → 两条 `kiss begin` → `kiss perform` → `kiss return`；任何 `kiss walk fail`/`kiss abort in walk` 行都意味着还有别的走位问题，带上原文回报。
 - [ ] 接近段被亲者不反击：对袭击者发起右键吻（或快速发配）→ 你的小人走向它的路上**不被射击/不再对射**（旧版被动方 late-start 时它会边射边走过来）。
 - [ ] 战斗闸：开自主派发 + 让袭击者处于攻击 job（正在对射）→ 它**不被系统**拽去亲嘴；同一时刻你用导演台点名它 → **照亲**（玩家下令无视战斗闸）。"无视亲吻冷却"开着时战斗闸仍生效。
 - [ ] 回程段：亲完双方各自走回原位（开"亲完回原位"时）；回程被人堵住 → 三次重发后就地散场，由队列接着送；把回程起点设在离原位很远的地方（长路）→ 20 现实秒封顶，到点就地结束，不无限挂。亲墙的人/机械体亲完也在 job 内走回原位。

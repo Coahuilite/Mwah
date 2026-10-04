@@ -183,7 +183,12 @@ public class JobDriver_Kiss : JobDriver
         toil.AddFailCondition(delegate
         {
             // 对方已经不在亲吻 job 里（走位失败、受击散场）就别继续走向空台。
-            return Partner.CurJob == null || Partner.CurJob.def != MWAH_JobDefOf.MWAH_Kiss;
+            if (Partner.CurJob == null || Partner.CurJob.def != MWAH_JobDefOf.MWAH_Kiss)
+            {
+                MwahLog.Dev("kiss abort in walk: " + base.pawn.LabelShort + " partner " + Partner.LabelShort + " left the kiss");
+                return true;
+            }
+            return false;
         });
         toil.socialMode = RandomSocialMode.Off;
         toil.defaultCompleteMode = ToilCompleteMode.Never;
@@ -200,6 +205,8 @@ public class JobDriver_Kiss : JobDriver
         }
         else if (!BeginWalk())
         {
+            MwahLog.Dev("kiss walk fail: " + base.pawn.LabelShort + " stage=" + StageCell
+                + " canMove=" + KissUtility.CanMoveNow(base.pawn) + " attempts=" + walkAttempts);
             EndJobWith(JobCondition.Incompletable);
         }
     }
@@ -237,6 +244,7 @@ public class JobDriver_Kiss : JobDriver
                 // 对方中途掉出这场亲（被拉走、受击）：独角戏没有意义，直接进回程。
                 if (Partner.CurJob == null || Partner.CurJob.def != MWAH_JobDefOf.MWAH_Kiss)
                 {
+                    MwahLog.Dev("kiss cut short: " + base.pawn.LabelShort + " partner " + Partner.LabelShort + " gone at t-" + ticksLeft);
                     ReadyForNextToil();
                     return;
                 }

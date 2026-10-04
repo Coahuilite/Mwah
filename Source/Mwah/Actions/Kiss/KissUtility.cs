@@ -227,6 +227,9 @@ public static class KissUtility
     private static void Start(Pawn doer, Pawn receiver, bool forced)
     {
         KissStage.TryFind(doer, receiver, out IntVec3 mine, out IntVec3 theirs);
+        MwahLog.Dev("stage: " + doer.LabelShort + "=" + (mine.IsValid ? mine.ToString() : "touch")
+            + " " + receiver.LabelShort + "=" + (theirs.IsValid ? theirs.ToString() : "touch")
+            + (forced ? " forced" : ""));
         var doerJob = JobMaker.MakeJob(MWAH_JobDefOf.MWAH_Kiss, receiver);
         var passiveJob = JobMaker.MakeJob(MWAH_JobDefOf.MWAH_Kiss, doer);
         if (mine.IsValid)
