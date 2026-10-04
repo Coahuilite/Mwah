@@ -111,12 +111,23 @@ if ($scopeCs -match '(?s)public enum KissScope\s*\r?\n\{(.*?)\r?\n\}') {
         $diagRungs = @([regex]::Matches($matches[1], '(?m)^\s{4}(\w+)\s*=\s*(\d+)') | ForEach-Object { ,@($_.Groups[1].Value, [int]$_.Groups[2].Value) })
     }
     $diagKeys = @($diagRungs | ForEach-Object { "MWAH.Settings.Diag." + $_[0] })
+    # 设置字段行的键从字段名派生（UI 侧 CallerArgumentExpression 捕获，
+    # "MWAH.Settings."+Pascal(field)[+"Desc"]）。门按同一规则展开算进"被使用"：
+    # 双语缺键 = 红；键名打错在构造上不可能（调用点根本没有键字符串可打）。
+    $settingsCs = Get-Content -Raw -LiteralPath (Join-Path $root "Source\$modName\MwahSettings.cs")
+    $constantsCs = Get-Content -Raw -LiteralPath (Join-Path $root "Source\$modName\Constants.cs")
+    $decls = @([regex]::Matches($settingsCs, 'public\s+(?:bool|int|float)\s+(\w+)\s*=\s*Constants\.(\w+)\s*;'))
+    $settingKeys = @($decls | ForEach-Object {
+        $stem = 'MWAH.Settings.' + $_.Groups[1].Value.Substring(0, 1).ToUpper() + $_.Groups[1].Value.Substring(1)
+        $stem
+        $stem + 'Desc'
+    })
     # Defs 内容提前算好：天意表的旁白/短讯键写在 XML 里，正反两个方向都要把它们算进"被使用"。
     $defXml = @(Get-ChildItem (Join-Path $root '1.6\Defs') -Recurse -Filter *.xml | Get-Content -Raw) -join "`n"
     $literalKeys = @([regex]::Matches($code, '"(MWAH\.[A-Za-z0-9_.]+)"') | ForEach-Object { $_.Groups[1].Value })
     $fateKeys = @([regex]::Matches($defXml, '<(?:narrationKey|messageKey)>(MWAH\.[A-Za-z0-9_.]+)</') | ForEach-Object { $_.Groups[1].Value })
     # 以点结尾的匹配是拼接前缀，不是键名。
-    $used = @((($literalKeys + $scopeKeys + $diagKeys + $fateKeys) | Where-Object { $_ -notmatch '\.$' } | Sort-Object -Unique))
+    $used = @((($literalKeys + $scopeKeys + $diagKeys + $settingKeys + $fateKeys) | Where-Object { $_ -notmatch '\.$' } | Sort-Object -Unique))
 $missing = @($used | Where-Object { $en -notcontains $_ -or $zh -notcontains $_ })
 Assert-True ("all $($used.Count) C#-referenced keys exist in both languages") ($missing.Count -eq 0) ($missing -join ', ')
 # 反向信息项：定义了却没人用的键（不失败，只提示，防止语言文件攒尸体）
@@ -225,9 +236,6 @@ Assert-True 'no absolute local paths in tracked text files' ($privacyHits.Count 
 
 # 9. Settings fields, Scribe keys and Constants defaults must name the same thing.
 #    改设置项字段名时最容易只改一半：字段改了、Scribe key 没改，老存档的值就静默回到默认。
-$settingsCs = Get-Content -Raw -LiteralPath (Join-Path $root "Source\$modName\MwahSettings.cs")
-$constantsCs = Get-Content -Raw -LiteralPath (Join-Path $root "Source\$modName\Constants.cs")
-$decls = @([regex]::Matches($settingsCs, 'public\s+(?:bool|int|float)\s+(\w+)\s*=\s*Constants\.(\w+)\s*;'))
 $badSettings = @()
 foreach ($d in $decls) {
     $field = $d.Groups[1].Value

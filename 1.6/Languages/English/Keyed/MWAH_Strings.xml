@@ -57,23 +57,23 @@
   <MWAH.Settings.AddonDuration>Kissing {0}: thought duration</MWAH.Settings.AddonDuration>
   <MWAH.Settings.AddonDurationDesc>How long the mood memory of kissing {0} lingers. Independent of the core mood duration — add-ons keep their own clocks.</MWAH.Settings.AddonDurationDesc>
 
-  <MWAH.Settings.Enabled>Enable kissing</MWAH.Settings.Enabled>
-  <MWAH.Settings.EnabledDesc>Master switch. Off removes the right-click option; ongoing kisses finish normally.</MWAH.Settings.EnabledDesc>
+  <MWAH.Settings.ModEnabled>Enable kissing</MWAH.Settings.ModEnabled>
+  <MWAH.Settings.ModEnabledDesc>Master switch. Off removes the right-click option; ongoing kisses finish normally.</MWAH.Settings.ModEnabledDesc>
 
-  <MWAH.Settings.Duration>Kiss length</MWAH.Settings.Duration>
-  <MWAH.Settings.DurationDesc>How long the two stand there kissing. Hearts spawn repeatedly inside this window.</MWAH.Settings.DurationDesc>
+  <MWAH.Settings.KissDurationTicks>Kiss length</MWAH.Settings.KissDurationTicks>
+  <MWAH.Settings.KissDurationTicksDesc>How long the two stand there kissing. Hearts spawn repeatedly inside this window.</MWAH.Settings.KissDurationTicksDesc>
 
-  <MWAH.Settings.FleckInterval>Heart interval</MWAH.Settings.FleckInterval>
-  <MWAH.Settings.FleckIntervalDesc>Gap between heart bursts. Vanilla lovemakin' uses 100 t.</MWAH.Settings.FleckIntervalDesc>
+  <MWAH.Settings.HeartFleckIntervalTicks>Heart interval</MWAH.Settings.HeartFleckIntervalTicks>
+  <MWAH.Settings.HeartFleckIntervalTicksDesc>Gap between heart bursts. Vanilla lovemakin' uses 100 t.</MWAH.Settings.HeartFleckIntervalTicksDesc>
 
-  <MWAH.Settings.PawnCooldown>Cooldown per pawn</MWAH.Settings.PawnCooldown>
-  <MWAH.Settings.PawnCooldownDesc>How long a pawn must wait before kissing anyone again. Vanilla social interactions only cool down for 120 t.</MWAH.Settings.PawnCooldownDesc>
+  <MWAH.Settings.PawnCooldownTicks>Cooldown per pawn</MWAH.Settings.PawnCooldownTicks>
+  <MWAH.Settings.PawnCooldownTicksDesc>How long a pawn must wait before kissing anyone again. Vanilla social interactions only cool down for 120 t.</MWAH.Settings.PawnCooldownTicksDesc>
 
-  <MWAH.Settings.PairCooldown>Cooldown per pair</MWAH.Settings.PairCooldown>
-  <MWAH.Settings.PairCooldownDesc>How long the same two pawns must wait before kissing each other again. Set to 0 for free-for-all.</MWAH.Settings.PairCooldownDesc>
+  <MWAH.Settings.PairCooldownTicks>Cooldown per pair</MWAH.Settings.PairCooldownTicks>
+  <MWAH.Settings.PairCooldownTicksDesc>How long the same two pawns must wait before kissing each other again. Set to 0 for free-for-all.</MWAH.Settings.PairCooldownTicksDesc>
 
-  <MWAH.Settings.ThoughtDuration>Mood duration</MWAH.Settings.ThoughtDuration>
-  <MWAH.Settings.ThoughtDurationDesc>How long the mood bonus lingers after a kiss.</MWAH.Settings.ThoughtDurationDesc>
+  <MWAH.Settings.ThoughtDurationTicks>Mood duration</MWAH.Settings.ThoughtDurationTicks>
+  <MWAH.Settings.ThoughtDurationTicksDesc>How long the mood bonus lingers after a kiss.</MWAH.Settings.ThoughtDurationTicksDesc>
 
   <MWAH.Settings.MoodMultiplier>Mood strength</MWAH.Settings.MoodMultiplier>
   <MWAH.Settings.MoodMultiplierDesc>Scales the final mood bonus. Actual bonus = thought base x this x the pawn's own social impact, so a smooth talker gets more out of a kiss than a mute grump.</MWAH.Settings.MoodMultiplierDesc>
@@ -92,19 +92,19 @@
   <MWAH.Settings.Scope.AllFlesh>+ all flesh (adds wild animals, insects, fleshbeasts)</MWAH.Settings.Scope.AllFlesh>
   <MWAH.Settings.Scope.Everything>every pawn kisses each other</MWAH.Settings.Scope.Everything>
 
-  <MWAH.Settings.Autonomous>Autonomous kissing</MWAH.Settings.Autonomous>
-  <MWAH.Settings.AutonomousDesc>Pawns you cannot give orders to - raiders, visitors, wild animals, mechanoids - start kissing on their own. Player-controlled pawns are never auto-ordered; they still wait for your right-click. This is the only way to reach "every pawn" without patching the game.</MWAH.Settings.AutonomousDesc>
-  <MWAH.Settings.AutonomousInterval>Kissing urge interval</MWAH.Settings.AutonomousInterval>
-  <MWAH.Settings.AutonomousIntervalDesc>How often the map gets one chance to start an autonomous kiss. The per-pawn and per-pair cooldowns still apply, so this is a ceiling, not a guarantee.</MWAH.Settings.AutonomousIntervalDesc>
-  <MWAH.Settings.AutonomousRadius>Willing to walk this far</MWAH.Settings.AutonomousRadius>
-  <MWAH.Settings.AutonomousRadiusDesc>Only pawns already this close will consider it. Without a limit a raider would cross the whole map to kiss someone, and the battle turns into a sightseeing tour.</MWAH.Settings.AutonomousRadiusDesc>
+  <MWAH.Settings.AutonomousKissing>Autonomous kissing</MWAH.Settings.AutonomousKissing>
+  <MWAH.Settings.AutonomousKissingDesc>Pawns you cannot give orders to - raiders, visitors, wild animals, mechanoids - start kissing on their own. Player-controlled pawns are never auto-ordered; they still wait for your right-click. This is the only way to reach "every pawn" without patching the game.</MWAH.Settings.AutonomousKissingDesc>
+  <MWAH.Settings.AutonomousIntervalTicks>Kissing urge interval</MWAH.Settings.AutonomousIntervalTicks>
+  <MWAH.Settings.AutonomousIntervalTicksDesc>How often the map gets one chance to start an autonomous kiss. The per-pawn and per-pair cooldowns still apply, so this is a ceiling, not a guarantee.</MWAH.Settings.AutonomousIntervalTicksDesc>
+  <MWAH.Settings.AutonomousRadiusCells>Willing to walk this far</MWAH.Settings.AutonomousRadiusCells>
+  <MWAH.Settings.AutonomousRadiusCellsDesc>Only pawns already this close will consider it. Without a limit a raider would cross the whole map to kiss someone, and the battle turns into a sightseeing tour.</MWAH.Settings.AutonomousRadiusCellsDesc>
   <MWAH.Settings.ChangeOpinion>Affection leaves a mark</MWAH.Settings.ChangeOpinion>
   <MWAH.Settings.ChangeOpinionDesc>Also shift how the two pawns feel about each other. This feeds the vanilla romance chain - keep it off if you just want silly kissing.</MWAH.Settings.ChangeOpinionDesc>
 
-  <MWAH.Settings.ReturnHome>Return to original spot</MWAH.Settings.ReturnHome>
-  <MWAH.Settings.ReturnHomeDesc>Afterwards both pawn go back to where the kiss was ordered. A polite request - urgent needs and work still win.</MWAH.Settings.ReturnHomeDesc>
-  <MWAH.Settings.DiagLevel>Diagnostic level</MWAH.Settings.DiagLevel>
-  <MWAH.Settings.DiagLevelDesc>Off: only the startup banner and error lines. Simple: notable events only — one fate line per settled kiss and every abnormal exit (damage break, walk failure, mid-kiss scatter). Verbose: the full phase narration (stage/begin/perform/return, pick generations, settings persistence) plus the 1 Hz Mwah-trace.log sampler. Auto follows the build channel: dev builds run Verbose, Steam/GitHub builds run Simple.</MWAH.Settings.DiagLevelDesc>
+  <MWAH.Settings.ReturnHomeAfterKiss>Return to original spot</MWAH.Settings.ReturnHomeAfterKiss>
+  <MWAH.Settings.ReturnHomeAfterKissDesc>Afterwards both pawn go back to where the kiss was ordered. A polite request - urgent needs and work still win.</MWAH.Settings.ReturnHomeAfterKissDesc>
+  <MWAH.Settings.DiagnosticLevel>Diagnostic level</MWAH.Settings.DiagnosticLevel>
+  <MWAH.Settings.DiagnosticLevelDesc>Off: only the startup banner and error lines. Simple: notable events only — one fate line per settled kiss and every abnormal exit (damage break, walk failure, mid-kiss scatter). Verbose: the full phase narration (stage/begin/perform/return, pick generations, settings persistence) plus the 1 Hz Mwah-trace.log sampler. Auto follows the build channel: dev builds run Verbose, Steam/GitHub builds run Simple.</MWAH.Settings.DiagnosticLevelDesc>
   <MWAH.Settings.Diag.Off>Off</MWAH.Settings.Diag.Off>
   <MWAH.Settings.Diag.Auto>Auto</MWAH.Settings.Diag.Auto>
   <MWAH.Settings.Diag.Simple>Simple</MWAH.Settings.Diag.Simple>
