@@ -1,43 +1,48 @@
 # OBLIVIONIS
 
-冷归档。只在出现历史冲突、被复活的话题、或维护者明确要求时读取；本文件内容不能覆盖 `MEMORY.md`、`AGENTS.md` 与源码。
+Cold archive. Read only on a historical conflict, a resurrected topic, or an explicit maintainer request; nothing in this file can override `MEMORY.md`, `AGENTS.md`, or the source.
 
-条目格式：`## <日期> — <主题>` + `source:` + `reason:` + 压缩后的结论。不存原始日志、会话叙事或已完成的任务清单。
+Entry format: `## <date> — <topic>` + `source:` + `reason:` + compressed conclusions. No raw logs, session narratives, or completed task lists.
 
-## 2026-09-02 — 允许性双开关（allowHostileTargets / allowMoodless）
+## 2026-09-02 — The permissiveness booleans (allowHostileTargets / allowMoodless)
 
-source: 提交 `01d0c44`（把 `allowNonHumanlike` 改名为 `allowMoodless`，判据从种族换成运行时 `needs.mood`）与其后的门禁滑条改动。
-reason: 两个布尔开关各自表达"范围放宽到哪一步"的一个切面，组合起来仍然表达不了玩家真正想要的那条线（只撮合殖民地）。七档 `KissScope` 把同一维度收成一条单调阶梯后，`allowHostileTargets` 恰等于"档位 ≥ 3"、`allowMoodless` 恰等于"档位 ≥ 2/5"，两者成为真子集而被删除。改名那条结论（判据必须是运行时 need 而不是 `RaceProps.Humanlike`）**仍然有效**，只是搬进了 `KissBoundary.HasMood` 与门禁的档位定义里。
-replaced by: `Source/Mwah/Actions/Kiss/KissScope.cs` 的七档门禁（`MwahSettings.pairScope`）。
-status: 已替代。
-evidence: 出厂默认 `KissScope.Everything` 下，门禁判断恒真，与被删前的两个开关同时为 true 的行为逐位一致（结构层不再有任何允许性过滤）。
-复活条件：若将来需要表达"跨档组合"（例如要自家动物但不要袭击者），单滑条表达不了，届时按第二维度加控件，而不是复活这两个布尔项。
+source: commit `01d0c44` (renamed `allowNonHumanlike` to `allowMoodless`, moving the test from race to the runtime `needs.mood`) and the later gate-slider change.
+reason: each boolean expressed one facet of "how far the range widens", and the combination still could not draw the line players actually asked for (matchmake only the colony). Once the seven-tier `KissScope` collapsed the same dimension into a monotone ladder, `allowHostileTargets` became exactly "tier ≥ 3" and `allowMoodless` exactly "tier ≥ 2/5" — true subsets, deleted. The renaming conclusion (the test must be the runtime need, never `RaceProps.Humanlike`) **remains valid**; it merely moved into `KissBoundary.HasMood` and the tier definitions.
+replaced by: the seven-tier gate in `Source/Mwah/Actions/Kiss/KissScope.cs` (`MwahSettings.pairScope`).
+status: superseded.
+evidence: under the factory default `KissScope.Everything` the gate test is constantly true and behaves bit-identically to both old booleans being true (the structure layer holds no permissiveness filter at all).
+revival condition: if a future need requires cross-tier combinations (e.g. own animals yes but raiders no), the single slider cannot express it — add a control along the second dimension then; do not resurrect these booleans.
 
-## 2026-10-04 — 0.1.0 开发周期叙事与作废矩阵行（收尾轮降噪归档）
+## 2026-10-04 — 0.1.0 development-cycle narrative and retired matrix rows (noise-reduction archive)
 
-source: TODO「下一会话入口」的完成叙事行（2026-09-21 收尾轮 / 09-22 面板化与二次修正 / 09-28 addon 天意表与停火窗口 / 09-30 日志面与首启爆雷 / 10-04 换座死锁），MEMORY 命名候选淘汰理由与"checkOverrideOnDamage 旧依据证伪"叙事，及下列实机矩阵行。
-reason: 已完成的工作叙事与已作废的检查项不再指导未来行为；其耐久结论均已吸收进 MEMORY/AGENTS/代码注释，此处只留压缩存根供历史核验。
-status: 已归档。
+source: the completion narrative rows in TODO "entry point" (2026-09-21 wrap-up / 09-22 panelization and its second correction / 09-28 addon+fate tables and the truce window / 09-30 logging surface and first-launch landmines / 10-04 seat-swap deadlock), the naming-candidate elimination rationale in MEMORY, the disproven `checkOverrideOnDamage` claim, and the matrix rows listed below.
+reason: completed work narratives and obsolete checks no longer guide future behavior; their durable conclusions have all been absorbed into MEMORY/AGENTS/code comments — only compressed stubs remain here for historical verification.
+status: archived.
 
-### 完成叙事（细节以 git log 为准）
-- 09-21 收尾轮：删 `Mwah.slnx`（此后无解决方案文件，IDE 直开 csproj）；判定链整理（一次判定拿原因、Settings 永不 null、派发上限、边界不互跑）；修 Steam/GitHub 渠道编译并加三渠道构建门；心情重标 +5/1日/×0.5 + Psychopath/Inhumanized 归零；HUD 与心情阶梯两份调研。
-- 09-22：导演台面板化（非模态、UI.screen 逻辑画布、可拖重摆）+ 二次修正（标题行高、WordWrap 帧末、心形半颗）+ 设置页数值框 + 亲墙首发。
-- 09-28：addon 层重构 + 天意表 `MWAH_FateDef` + 实例旁白（零补丁）；停火窗口三件套（双 job 同帧起、job 内回程、completed 旗标离场）+ 战斗闸 + `Notify_DamageTaken` 伤害自毁闸。
-- 09-30：日志面（无条件启动横幅 + 运行时诊断开关）；实机首启爆雷两处当日修复（FateDef 命名空间、设置页跨帧测高）。
-- 10-04：换座死锁修复（`Usable` 拒绝对方脚下格）+ 静默出口全量补日志；上云（`Coahuilite/Mwah` public，MPL 2.0，CI/隐私门/README/CONTRIBUTING 齐备）。
+### Completion narrative (details in git log)
 
-### 作废矩阵行（含作废理由）
-- 崩溃判别 A/B/C 与"递归回归"：真凶 2026-09-04 已定（finish action 同步起 job 递归）并修复（队列化 + 幂等闸）；Steam 覆盖层/Defender 假设当日已证伪。判别类行完成使命。
-- "卡死定位"：操作指引而非检查项，已并入 MEMORY「调试器选型」与日志面条目。
-- "心情开关收紧（关闭'纳入没有心情的生物'）"：该设置项随七档门禁改造删除，行指向不存在的控件；无心情单位的可见性由门禁档覆盖。
-- "敌对与派系：对袭击者下令→可能立即反击属预期"：与停火窗口裁定直接矛盾（现在接近+表演+离开全程不反击），由「停火窗口」「接近段被亲者不反击」两行取代。
-- "不互相绕圈：只有 thingIDNumber 较小的那方走位"：定台模型下双方各走自己的台格，thingID 单侧走位是 Touch 追逐时代遗物；由「左右对向」「路人挤台」覆盖。
+- 09-21 wrap-up: deleted `Mwah.slnx` (no solution files since; the IDE opens the csproj); decision-chain cleanup (one evaluation returning the reason, dev instrumentation without #if in performance code, `MwahMod.Settings` never null, ambient per-cycle cap, cooldown sweep dedup, settings sliders collapsed into two generic helpers); fixed the **Steam / GitHub channel compile failures** and added the channel build gate; mood values re-anchored with the `Psychopath`/`Inhumanized` nullify lists; two research deliverables (mood ladder + linkage hooks; player HUD surfaces → `docs/hud-ui-surfaces-1.6.md`).
+- 09-22: director panelized (non-modal, `UI.screen*` logical canvas, draggable, re-anchoring) + second correction (title row in the height formula, WordWrap frame-end contract, half-heart fill) + settings numeric fields + wall-kissing shipped (five tiers −2/0/+1/+3/+6, weights 20/30/25/17/8, own switch default on, outside the gate).
+- 09-28: addon-layer rework + fate tables `MWAH_FateDef` + per-instance narration (zero patches); truce window trio (same-frame dual job start, in-job return leg, completed-flag exit) + combat gate + `Notify_DamageTaken` damage self-destruct gate.
+- 09-30: logging overhaul (unconditional startup banner + runtime diagnostics switch); first-launch incidents fixed same round: the **fate table dropped whole** (Mwah-namespace class invisible to the def loader → moved to RimWorld + verify gate 6b) and the **settings page painting overflow outside the window** (broken auto-measure → cross-frame cached height + single-column Begin).
+- 10-04: seat-swap deadlock fixed (`Usable` rejects the partner's current cell) + all silent exits instrumented; cloud onboarding (`Coahuilite/Mwah` public, MPL 2.0, CI/privacy gate/README/CONTRIBUTING).
 
-### 命名候选淘汰理由（定稿见 MEMORY「命名决定」）
-`KISS_` 检索噪音最高（原版 defName 实无占用，rimsage 核过）；`PECK_` 被"鸟啄"义稀释且拼不出全称；`CHUU_` 英文玩家不直觉；`XOXO_` 含未实现的拥抱语义且 X 视觉歧义；`SMOOCH_` 过长。`Mwah/Peck/Chuu/Snog/Xoxo/Smooch` 在 1.6+Odyssey 的 defName 与人名部件中均无占用。MWAH 不做首字母展开，是拟声词。
+### Retired matrix rows (with reasons)
 
-### 伤害打断旧依据（结论已修正进 MEMORY「停火窗口」条）
-2026-09-28 曾记"`checkOverrideOnDamage=Always` 让打一枪即散场"——只对右键路径成立且带 180 tick 迟滞，对 playerForced 路径完全无效；当日查证改写为 driver 钩子方案。留此存根警示"未验证的机制断言"。
+- Crash discriminators A/B/C and the "recursion regression" row: the real culprit was settled on 2026-09-04 (finish-action synchronous StartJob recursion) and fixed (queue + idempotency gates); the Steam-overlay/Defender hypotheses were falsified the same day. Diagnostic rows have completed their mission.
+- "Hang localization" row: an operating instruction, not a check — merged into MEMORY's debugger-choice entry and the logging-surface row.
+- "Mood switch tightening (turn off 'include moodless creatures')": that setting was deleted with the seven-tier gate rework; the row pointed at a control that no longer exists; moodless visibility is covered by the gate tiers.
+- "Hostile and faction: ordering a raider at tier 6 → may counterattack immediately, expected": directly contradicted by the truce-window ruling (no counterattack during approach+performance+return now); replaced by the "truce window" and "passive side no longer shoots during approach" rows.
+- "No mutual circling: only the smaller-thingID side walks": a relic of the Touch-chase era (under the fixed stage both walk to their own cells); covered by "side-by-side facing" and "passerby steals the stage".
 
-### 分支沿革
-2026-09-02 建 `dev`（此前 9 条提交落 main，fast-forward 对齐，未动历史）；2026-10-04 起 `dev` 退役，由版本分支 `0.1.x` 接替（内容与退役时的 dev 相同），main 收缩为 release-only。
+### Naming candidate elimination rationale (the settled decision lives in MEMORY "Naming decisions")
+
+`KISS_`: most literal but highest collision noise in Workshop search (note: **not** occupied by vanilla — rimsage verified zero defNames containing "kiss"; only a "deeply kissing" string in `Tales_DoublePawn_Relationships.xml`); `PECK_`: a real word for a light kiss but diluted by "bird-peck/tap" senses and cannot be spelled forward from the full name; `CHUU_` (ちゅっ): works for CN/ACG audiences, unintuitive for English players; `XOXO_`: the X reads as execution/cancel and carries hug semantics we never implemented; `SMOOCH_`: prefix too long. Token-occupancy audit: `Mwah / Peck / Chuu / Snog / Xoxo / Smooch` are all unoccupied in 1.6+Odyssey defNames and `Defs/Core/Names` name parts (rimsage, empty results). MWAH is deliberately **not** an initialism — it is onomatopoeia; the full name carries the "every pawn kisses each other" meaning, the abbreviation carries the mouth noise in menus and logs.
+
+### Damage-break stale claim (the corrected conclusion lives in MEMORY "truce window")
+
+On 2026-09-28 MEMORY recorded "checkOverrideOnDamage=Always makes one shot break the kiss" — that holds only on the right-click path (and lags up to 180 ticks); for playerForced jobs the vanilla chain never fires at all. Kept as a stub against unverified mechanism claims.
+
+### Branch lineage
+
+`dev` created 2026-09-02 (the first 9 commits actually landed on main; dev was fast-forwarded onto main without touching history). On 2026-10-04 `dev` retired in favor of the per-minor branch `0.1.x` (identical content at retirement); `main` contracted to release-only.
