@@ -232,7 +232,9 @@ public class Dialog_KissDirector : Window
         Rect inner = rect.ContractedBy(3f * Scale);
         if (thing is Pawn pawn)
         {
-            GUI.DrawTexture(inner, PortraitsCache.Get(pawn, inner.size * 1.25f, Rot4.North));
+            // 1.6 实机+反编译双重定案：vanilla 六处显式 rotation 的 Get 全用 Rot4.South
+            // （South = 面向镜头露脸；North = 背对镜头后脑勺）。旧钉的 North 是错的。
+            GUI.DrawTexture(inner, PortraitsCache.Get(pawn, inner.size * 1.25f, Rot4.South));
         }
         else if (thing != null)
         {
