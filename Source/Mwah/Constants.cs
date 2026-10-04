@@ -25,6 +25,13 @@ public static class Constants
     /// </summary>
     public const int ThoughtDurationTicks = 60000;
 
+    /// <summary>
+    /// addon 心情记忆的出厂时长（墙：0.5 游戏日）。每个 addon 的时长是独立设置项
+    /// （存进 MwahSettings.addonThoughtDurations 字典，key=addon 稳定 Id），
+    /// 这里只是"字典里没有这个 Id"时的兜底；跨度沿用 AddonDurationTicksRange。
+    /// </summary>
+    public const int WallThoughtDurationTicks = 30000;
+
     public const float MoodMultiplier = 1f;
     /// <summary>心情倍率粒度 0.05 倍。</summary>
     public const float MoodMultiplierStep = 0.05f;
@@ -54,6 +61,8 @@ public static class Constants
     // 心情持续的跨度 0.5 游戏时 ~ 10 游戏日，粒度 1/4 游戏时：更细的跨度体感上没有区别，
     // 却会往配置里写没意义的数字。
     public static readonly IntRange ThoughtDurationTicksRange = new(1250, 600000);
+    // addon 思想时长与心情持续共用同一把尺（0.5 游戏时 ~ 10 游戏日，1/4 游戏时粒度）。
+    public static readonly IntRange AddonDurationTicksRange = new(1250, 600000);
     public const int ThoughtDurationStepTicks = MwahTime.TicksPerGameHour / 4;
     public static readonly FloatRange MoodMultiplierRange = new(0f, 5f);
     public static readonly IntRange PairScopeRange = new((int)KissScope.FreeColonists, (int)KissScope.Everything);

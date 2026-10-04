@@ -47,24 +47,26 @@ public static class KissFate
     /// <summary>
     /// 抽一行并落地。返回 false = 表空，调用方兜底。
     /// 心情的有无、旁白的有无、短讯的有无全部由行数据决定，代码不做任何"应该怎样"的假设。
+    /// <paramref name="thoughtDurationTicks"/> &gt; 0 时写进记忆实例的时长覆盖（addon 独立时长设置）；
+    /// 0 = 不吃覆盖，走 def 自带时长（消息通道表恒传 0：那些行根本不发 thought）。
     /// </summary>
-    public static bool Grant(Pawn doer, Thing target, string scope)
+    public static bool Grant(Pawn doer, Thing target, string scope, int thoughtDurationTicks = 0)
     {
         MWAH_FateDef? row = Roll(scope);
         if (row == null)
         {
             return false;
         }
-        GrantRow(doer, target, row);
+        GrantRow(doer, target, row, thoughtDurationTicks);
         return true;
     }
 
     /// <summary>把一行结果发出去 —— 兜底路径也复用这一步，保证两条路落地形状一致。</summary>
-    public static void GrantRow(Pawn doer, Thing target, MWAH_FateDef row)
+    public static void GrantRow(Pawn doer, Thing target, MWAH_FateDef row, int thoughtDurationTicks = 0)
     {
         if (row.thought != null && doer.needs?.mood?.thoughts?.memories != null)
         {
-            GrantFatedMemory(doer, target, row);
+            GrantFatedMemory(doer, target, row, thoughtDurationTicks);
         }
         if (!row.messageKey.NullOrEmpty())
         {
@@ -77,10 +79,10 @@ public static class KissFate
     /// <summary>
     /// 关系槽语义（2026-10-05 裁定，见 MEMORY "0.2.x mood architecture rulings"）：
     /// 这类"单主体、无对象"的心情记忆按 (pawn, def) 各占一个槽，新抽签**就地顶替**——
-    /// 换档、换旁白、重计时。vanilla 的组满行为是"刷新最旧、丢弃新条"，旧档会骑在新抽签
-    /// 头上常驻，所以顶替由结算侧显式做；找不到槽才新建。
+    /// 换档、换旁白、重计时、重取时长。vanilla 的组满行为是"刷新最旧、丢弃新条"，
+    /// 旧档会骑在新抽签头上常驻，所以顶替由结算侧显式做；找不到槽才新建。
     /// </summary>
-    private static void GrantFatedMemory(Pawn doer, Thing target, MWAH_FateDef row)
+    private static void GrantFatedMemory(Pawn doer, Thing target, MWAH_FateDef row, int thoughtDurationTicks)
     {
         MemoryThoughtHandler memories = doer.needs.mood.thoughts.memories;
         List<Thought_Memory> list = memories.Memories;
@@ -102,6 +104,7 @@ public static class KissFate
                 fatedSlot.NarrationSubject = target.LabelCap;
             }
             slot.Renew();
+            ApplyDuration(slot, thoughtDurationTicks);
             return;
         }
         if (ThoughtMaker.MakeThought(row.thought, row.stageIndex) is Thought_Memory memory)
@@ -111,7 +114,17 @@ public static class KissFate
                 fated.NarrationKey = row.narrationKey;
                 fated.NarrationSubject = target.LabelCap;
             }
+            ApplyDuration(memory, thoughtDurationTicks);
             memories.TryGainMemory(memory, null);
+        }
+    }
+
+    /// <summary>时长覆盖只在 &gt;0 时写入；0 = 保留 def 自带时长（顶替路径同样尊重"不吃覆盖"）。</summary>
+    private static void ApplyDuration(Thought_Memory memory, int thoughtDurationTicks)
+    {
+        if (thoughtDurationTicks > 0)
+        {
+            memory.durationTicksOverride = thoughtDurationTicks;
         }
     }
 }

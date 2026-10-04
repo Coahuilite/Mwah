@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -31,6 +32,13 @@ public class MwahSettings : ModSettings
     public int thoughtDurationTicks = Constants.ThoughtDurationTicks;
     public float moodMultiplier = Constants.MoodMultiplier;
     public bool diagnosticLogs = Constants.DiagnosticLogs;
+
+    /// <summary>
+    /// addon 心情记忆时长，按 addon 稳定 Id 索引（"wall" → tick）。字典而不是散字段：
+    /// 新 addon（树/工作台/机器）零设置类改动——注册表长出它的滑条，这里长出它的槽。
+    /// 读侧一律 clamp；缺 Id = 用该 addon 声明的出厂值（<see cref="Constants.WallThoughtDurationTicks"/> 一类）。
+    /// </summary>
+    public Dictionary<string, int> addonThoughtDurations = new();
 
     private Vector2 scrollPos;
 
@@ -69,6 +77,12 @@ public class MwahSettings : ModSettings
     /// <summary>诊断总闸：MwahLog.Dev 与 KissTrace 采样共用；横幅与 Warn/Error 不归它管。</summary>
     public bool DiagnosticsEnabled => diagnosticLogs;
 
+    /// <summary>addon 时长的唯一读法：字典有 Id 则 clamp 取出，没有则用该 addon 声明的出厂值。</summary>
+    public int AddonThoughtDuration(string addonId, int factoryDefault) =>
+        addonThoughtDurations.TryGetValue(addonId, out int ticks)
+            ? Mathf.Clamp(ticks, Constants.AddonDurationTicksRange.min, Constants.AddonDurationTicksRange.max)
+            : factoryDefault;
+
     public override void ExposeData()
     {
         base.ExposeData();
@@ -89,9 +103,13 @@ public class MwahSettings : ModSettings
         Scribe_Values.Look(ref thoughtDurationTicks, "thoughtDurationTicks", Constants.ThoughtDurationTicks);
         Scribe_Values.Look(ref moodMultiplier, "moodMultiplier", Constants.MoodMultiplier);
         Scribe_Values.Look(ref diagnosticLogs, "diagnosticLogs", Constants.DiagnosticLogs);
+        // addon 时长字典：整表一次入档（LookMode.Value×2，string→int 都是值类型）。
+        Scribe_Collections.Look(ref addonThoughtDurations, "addonThoughtDurations", LookMode.Value, LookMode.Value);
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
+            // 手改/损坏的 XML 可能把整表置 null：先补回空表再归一，读侧永不判空。
+            addonThoughtDurations ??= new();
             Normalize();
         }
     }
@@ -107,6 +125,12 @@ public class MwahSettings : ModSettings
         pairScope = (int)Scope;
         autonomousIntervalTicks = AutonomousIntervalTicks;
         autonomousRadiusCells = AutonomousRadius;
+        // 字典逐项 clamp：手改 XML 不能把 addon 时长带出合法区间。
+        foreach (string key in new List<string>(addonThoughtDurations.Keys))
+        {
+            addonThoughtDurations[key] = Mathf.Clamp(addonThoughtDurations[key],
+                Constants.AddonDurationTicksRange.min, Constants.AddonDurationTicksRange.max);
+        }
     }
 
     public void RestoreDefaults()
@@ -128,6 +152,8 @@ public class MwahSettings : ModSettings
         thoughtDurationTicks = Constants.ThoughtDurationTicks;
         moodMultiplier = Constants.MoodMultiplier;
         diagnosticLogs = Constants.DiagnosticLogs;
+        // 字典没有"逐字段的 Constants.*"可回，恢复默认 = 清空整表 ⇒ 全部读侧落回各 addon 出厂值。
+        addonThoughtDurations.Clear();
     }
 
     public void DoSettingsWindowContents(Rect inRect)

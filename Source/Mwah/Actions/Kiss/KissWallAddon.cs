@@ -22,6 +22,11 @@ public sealed class KissWallAddon : KissThingAddon
 
     public override string Scope => ScopeConst;
 
+    /// <summary>稳定 Id：设置字典的 key（"wall"）。改名即迁移，定死。</summary>
+    public override string Id => "wall";
+
+    public override int DefaultThoughtDurationTicks => Constants.WallThoughtDurationTicks;
+
     public override bool Active => MwahMod.Settings.Enabled && MwahMod.Settings.WallKissingEnabled;
 
     public override bool Accepts(Thing thing)
@@ -86,7 +91,7 @@ public sealed class KissWallAddon : KissThingAddon
             messageKey = messageKeys[tier],
             messageType = tier <= 1 ? MessageTypeDefOf.NegativeEvent : MessageTypeDefOf.PositiveEvent,
         };
-        KissFate.GrantRow(doer, target, row);
+        KissFate.GrantRow(doer, target, row, ThoughtDurationTicks);
     }
 
     private const string ScopeConst = "KissWall";

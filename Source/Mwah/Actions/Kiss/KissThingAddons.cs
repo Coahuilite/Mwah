@@ -51,6 +51,17 @@ public abstract class KissThingAddon
     /// <summary>天意表作用域（MWAH_FateDef.scope）。</summary>
     public abstract string Scope { get; }
 
+    /// <summary>
+    /// addon 的稳定 Id：设置字典的 key、存档里的名字。**改名即迁移**，定死不动。
+    /// </summary>
+    public abstract string Id { get; }
+
+    /// <summary>本 addon 心情记忆的出厂时长（tick）；玩家覆盖走设置字典。</summary>
+    public abstract int DefaultThoughtDurationTicks { get; }
+
+    /// <summary>当前生效时长：设置字典按 Id 查，缺槽落出厂值（读侧已 clamp）。</summary>
+    public int ThoughtDurationTicks => MwahMod.Settings.AddonThoughtDuration(Id, DefaultThoughtDurationTicks);
+
     /// <summary>总开关 ∧ 本 addon 自己的开关。</summary>
     public abstract bool Active { get; }
 
@@ -151,10 +162,10 @@ public abstract class KissThingAddon
         return proposal;
     }
 
-    /// <summary>结算：先查天意表；表空落回 addon 自带的兜底分布。</summary>
+    /// <summary>结算：先查天意表；表空落回 addon 自带的兜底分布。心情记忆吃本 addon 的时长设置。</summary>
     public void Settle(Pawn doer, Thing target)
     {
-        if (!KissFate.Grant(doer, target, Scope))
+        if (!KissFate.Grant(doer, target, Scope, ThoughtDurationTicks))
         {
             SettleWithoutTable(doer, target);
         }
