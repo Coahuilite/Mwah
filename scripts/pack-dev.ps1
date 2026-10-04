@@ -1,5 +1,10 @@
 param(
-    [string]$ProjectRoot = (Split-Path -Parent $PSScriptRoot)
+    [string]$ProjectRoot = (Split-Path -Parent $PSScriptRoot),
+    # dev 预演是整目录拷进 Mods/ 的文件夹，不是压缩包：默认不产 zip。
+    # -Zip 留给真需要归档产物的调用方（CI 的 artifact 上传）；stage-package 里的
+    # 写手保证 zip 根在唯一顶层 Mwah/ 下且逐条目盖 commit 日期（解压即合法模组目录，
+    # 同一 commit 两次打包哈希一致）。
+    [switch]$Zip
 )
 
 Set-StrictMode -Version Latest
@@ -40,8 +45,18 @@ if ($LASTEXITCODE -ne 0) {
 }
 $commitLabel = $shortCommit + $(if ($statusOutput.Count -gt 0) { '-dirty' } else { '' })
 
-& (Join-Path $PSScriptRoot 'stage-package.ps1') -ProjectRoot $root -StageDir $stageDir `
-    -VersionLabel $version -BuildFlavor dev -CommitLabel $commitLabel -CreateZip
+# 先清历史 zip 再暂存：不点名 -Zip 时不产 zip，也绝不让上一轮的 zip 冒充本轮产物。
+Get-ChildItem -LiteralPath (Split-Path -Parent $stageDir) -File -Filter "$modName-dev-v*.zip" -ErrorAction SilentlyContinue |
+    Remove-Item -Force
+$stageArgs = @{
+    ProjectRoot  = $root
+    StageDir     = $stageDir
+    VersionLabel = $version
+    BuildFlavor  = 'dev'
+    CommitLabel  = $commitLabel
+}
+if ($Zip) { $stageArgs['CreateZip'] = $true }
+& (Join-Path $PSScriptRoot 'stage-package.ps1') @stageArgs
 
 # 旧版脚本遗留在 dist/dev 的 .txt 标签文件，见到就清（一次性迁移，不报错）。
 Get-ChildItem -LiteralPath (Split-Path -Parent $stageDir) -File -Filter "$modName-dev-v*.txt" -ErrorAction SilentlyContinue |

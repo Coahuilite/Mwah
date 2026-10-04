@@ -46,10 +46,12 @@ jobs:
         shell: pwsh
         run: ./scripts/privacy-audit.ps1
 
+      # pack-dev 默认只暂存文件夹（dev 的用途是整目录拷进 Mods/）；CI 要归档产物，
+      # 所以点名 -Zip——stage-package 的写手保证 zip 根在 Mwah/ 下且盖 commit 日期。
       - name: Pack (dev snapshot)
         if: github.event_name == 'push'
         shell: pwsh
-        run: ./scripts/pack-dev.ps1
+        run: ./scripts/pack-dev.ps1 -Zip
 
       - name: Upload dev artifact
         if: github.event_name == 'push'

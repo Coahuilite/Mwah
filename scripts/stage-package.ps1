@@ -61,14 +61,42 @@ if (-not [string]::IsNullOrWhiteSpace($VersionLabel)) {
     [System.IO.File]::WriteAllText((Join-Path $stageDir 'version.txt'), $labelContent)
 }
 
-# 成功路径只打一行、只用仓库相对路径（输出纪律见 build-dev.ps1 头注释）。
+# zip 只为点名要它的调用方存在（pack-dev -Zip，目前唯一用户是 CI 的 artifact 上传）。
+# 两个坑照抄 UniversalSqueaker 的评审教训：
+#   S2 —— 从 stage 目录的 *内容* 打 zip（Compress-Archive 'stage\*'）解压到 Mods/ 会撒出
+#         散件的 LoadFolders.xml；正确形态是根在唯一顶层目录 Mwah/ 下，解压即合法模组目录。
+#   S4 —— Compress-Archive 拿暂存过程刚重写过的文件 mtime 给条目盖章，同一 commit 两次
+#         打包哈希不同，产物不可比对；故手写归档：条目排序、名字归一 `/`、目录条目入档、
+#         全部盖 commit author date（含最后补的根条目——不盖章的条目默认"现在"，正是漂移源）。
 $zipName = ''
 if ($CreateZip) {
+    $commitDate = [DateTimeOffset]::Parse((& git -C $root log -1 --format=%aI)).ToUniversalTime()
     $zipPath = Join-Path (Split-Path -Parent $stageDir) "$modName-$BuildFlavor-v$VersionLabel-$CommitLabel.zip"
     if (Test-Path -LiteralPath $zipPath -PathType Leaf) { Remove-Item -LiteralPath $zipPath -Force }
-    Compress-Archive -Path (Join-Path $stageDir '*') -DestinationPath $zipPath
-    $zipName = (Resolve-Path -LiteralPath $zipPath).Path.Substring($root.Length + 1)
+    $top = Split-Path -Leaf $stageDir
+    Add-Type -AssemblyName System.IO.Compression
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    $archive = [System.IO.Compression.ZipFile]::Open($zipPath, [System.IO.Compression.ZipArchiveMode]::Create)
+    try {
+        $entries = @(Get-ChildItem -LiteralPath $stageDir -Recurse -Force | ForEach-Object {
+            $rel = $_.FullName.Substring($stageDir.Length + 1).Replace('\', '/')
+            if ($_.PSIsContainer) { "$rel/" } else { $rel }
+        } | Sort-Object)
+        foreach ($rel in $entries) {
+            $entry = $archive.CreateEntry("$top/$rel", [System.IO.Compression.CompressionLevel]::Optimal)
+            $entry.LastWriteTime = $commitDate
+            if ($rel.EndsWith('/')) { continue }
+            $in = [System.IO.File]::OpenRead((Join-Path $stageDir ($rel.Replace('/', '\'))))
+            $out = $entry.Open()
+            try { $in.CopyTo($out) } finally { $out.Dispose(); $in.Dispose() }
+        }
+        $rootEntry = $archive.CreateEntry("$top/", [System.IO.Compression.CompressionLevel]::NoCompression)
+        $rootEntry.LastWriteTime = $commitDate
+    } finally { $archive.Dispose() }
+    $zipName = $zipPath.Substring($root.Length + 1)
 }
 $fileCount = (Get-ChildItem -LiteralPath $stageDir -Recurse -File | Measure-Object).Count
 $relStage = $stageDir.Substring($root.Length + 1)
-Write-Host "[stage-package] $zipName  ($fileCount files -> $relStage, build=$BuildFlavor commit=$CommitLabel)"
+# 成功路径只打一行、只用仓库相对路径（输出纪律见 build-dev.ps1 头注释）。
+$produced = if ($zipName) { "$zipName ($relStage)" } else { $relStage }
+Write-Host "[stage-package] $produced  ($fileCount files, build=$BuildFlavor commit=$CommitLabel)"
