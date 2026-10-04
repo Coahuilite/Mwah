@@ -182,6 +182,17 @@ public class JobDriver_Kiss : JobDriver
         };
         toil.AddFailCondition(delegate
         {
+            // 启动帧宽限：双方 job 同帧起（被动方先、发起方后），而 vanilla 在 StartJob 调用处
+            // **同步**跑 ReadyForNextToil —— Instant 的 ToilBegin 当场链进本 toil，入场即评估
+            // 这条 endCondition（JobDriver.CheckCurrentToilEndOrFail 早于 initAction）。那一刻
+            // 后起的一方 CurJob 还没落地，"对方离场"会被误读成"对方还没起 job"，双方当场互判
+            // 散场（2026-09-28 停火窗口改造埋下的时序死锁，2026-10-04 实机才炸出）。落地当 tick
+            // 一律不判离场：StartJob 已把 newJob.startTick 设为本 tick，故 TicksGame<=startTick
+            // 恰覆盖启动帧；真实离场（死亡 / 被抢 job / 受击散场）都在后续 tick，照常捕获。
+            if (Find.TickManager.TicksGame <= job.startTick)
+            {
+                return false;
+            }
             // 对方已经不在亲吻 job 里（走位失败、受击散场）就别继续走向空台。
             if (Partner.CurJob == null || Partner.CurJob.def != MWAH_JobDefOf.MWAH_Kiss)
             {
