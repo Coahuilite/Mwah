@@ -171,6 +171,14 @@ $missingSyms = @($symbols | Where-Object { -not $text.Contains($_) })
 Assert-True ("DLL contains all $($symbols.Count) key symbols") ($missingSyms.Count -eq 0) ($missingSyms -join ', ')
 Assert-True 'zero-Harmony: no Harmony/HarmonyLib reference in DLL' (-not ($text.Contains('HarmonyLib') -or $text.Contains('Harmony')))
 
+# 6b. 自定义 Def 类的 XML 可解析性（2026-09-30 实机事故的回归门）：
+# DirectXmlLoader.DefFromNode 按 XML 根元素**短名**查类，只命中
+# GenTypes.IgnoredNamespaceNames 白名单（RimWorld/Verse/LudeonTK/…/System）或无命名空间；
+# MWAH_FateDef 若搬回 Mwah 命名空间，整张天意表被静默丢弃且 ErrorOnce 只留一行日志。
+$fateDefSrc = Get-Content -Raw (Join-Path $root "Source\$modName\Defs\MWAH_FateDef.cs")
+$fateNs = [regex]::Match($fateDefSrc, '(?m)^namespace\s+([^;]+);').Groups[1].Value.Trim()
+Assert-True 'MWAH_FateDef sits in an XML-resolvable namespace' (@('RimWorld','Verse','LudeonTK','System','') -contains $fateNs) "actual: '$fateNs'"
+
 # 7. Version discipline
 [xml]$csproj = Get-Content -LiteralPath $projectFile -Raw
 $csprojVersion = $csproj.SelectSingleNode('/Project/PropertyGroup/Version').InnerText.Trim()

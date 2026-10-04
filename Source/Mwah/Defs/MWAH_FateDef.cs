@@ -1,7 +1,11 @@
-using RimWorld;
 using Verse;
 
-namespace Mwah;
+// 命名空间是生存问题，不是风格问题：def 的 XML 根元素按**短名**解析
+// （DirectXmlLoader.DefFromNode → GenTypes.GetTypeInAnyAssembly），只有落在
+// GenTypes.IgnoredNamespaceNames 白名单（RimWorld/Verse/LudeonTK/…/System）或无命名空间
+// 的类才按短名可达。放 Mwah 命名空间 = 整张天意表被静默丢弃（2026-09-30 实机首爆的教训，
+// verify-local 有门钉住这条）。类名带 MWAH_ 前缀保证在共享命名空间里也不撞原版。
+namespace RimWorld;
 
 /// <summary>
 /// 天意表的一行（纯数据，XML 驱动，见 1.6/Defs/Kiss/MWAH_FateDefs.xml）。
