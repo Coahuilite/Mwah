@@ -595,6 +595,78 @@
     <messageKey>MWAH.KissPawn.Mech.Line.9</messageKey>
     <messageType>NeutralEvent</messageType>
   </MWAH_FateDef>
+  <!-- 实体表（KissPawnMutant）：蹒跚者/尸鬼/唤醒尸体——有人形、无心情（disableNeeds），
+       2026-10-05 维护者裁定与机械族同等待遇：可被亲、无收益、有自己的空壳叙事。 -->
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_PawnEntity_Line_0</defName>
+    <scope>KissPawnMutant</scope>
+    <weight>10</weight>
+    <messageKey>MWAH.KissPawn.Entity.Line.0</messageKey>
+    <messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_PawnEntity_Line_1</defName>
+    <scope>KissPawnMutant</scope>
+    <weight>10</weight>
+    <messageKey>MWAH.KissPawn.Entity.Line.1</messageKey>
+    <messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_PawnEntity_Line_2</defName>
+    <scope>KissPawnMutant</scope>
+    <weight>10</weight>
+    <messageKey>MWAH.KissPawn.Entity.Line.2</messageKey>
+    <messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_PawnEntity_Line_3</defName>
+    <scope>KissPawnMutant</scope>
+    <weight>10</weight>
+    <messageKey>MWAH.KissPawn.Entity.Line.3</messageKey>
+    <messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_PawnEntity_Line_4</defName>
+    <scope>KissPawnMutant</scope>
+    <weight>10</weight>
+    <messageKey>MWAH.KissPawn.Entity.Line.4</messageKey>
+    <messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_PawnEntity_Line_5</defName>
+    <scope>KissPawnMutant</scope>
+    <weight>10</weight>
+    <messageKey>MWAH.KissPawn.Entity.Line.5</messageKey>
+    <messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_PawnEntity_Line_6</defName>
+    <scope>KissPawnMutant</scope>
+    <weight>10</weight>
+    <messageKey>MWAH.KissPawn.Entity.Line.6</messageKey>
+    <messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_PawnEntity_Line_7</defName>
+    <scope>KissPawnMutant</scope>
+    <weight>10</weight>
+    <messageKey>MWAH.KissPawn.Entity.Line.7</messageKey>
+    <messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_PawnEntity_Line_8</defName>
+    <scope>KissPawnMutant</scope>
+    <weight>10</weight>
+    <messageKey>MWAH.KissPawn.Entity.Line.8</messageKey>
+    <messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_PawnEntity_Line_9</defName>
+    <scope>KissPawnMutant</scope>
+    <weight>10</weight>
+    <messageKey>MWAH.KissPawn.Entity.Line.9</messageKey>
+    <messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
   <MWAH_FateDef>
     <defName>MWAH_Fate_PawnBeast_Line_0</defName>
     <scope>KissPawnBeast</scope>

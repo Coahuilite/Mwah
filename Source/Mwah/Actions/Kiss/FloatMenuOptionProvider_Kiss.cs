@@ -29,8 +29,9 @@ public class FloatMenuOptionProvider_Kiss : FloatMenuOptionProvider
 
     /// <summary>
     /// 故意不调用 base：base 开头用 MutantDef.whitelistedFloatMenuProviders（原版三个 mutant 都是空表）
-    /// 把所有 mutant 一刀切屏蔽。本模组改由参与层逐条判：只有
-    /// <c>incapableOfSocialInteractions</c> 的（蹒跚者/尸鬼/唤醒尸体）被挡，别的照旧放行。
+    /// 把所有 mutant 一刀切屏蔽。本模组自 2026-10-05 起对蹒跚者/尸鬼/唤醒尸体按**机械族同等待遇**
+    /// 放行（维护者裁定）：谁能亲谁由门禁滑条判（它们是 Humanlike，天然落在第 3/4 档），
+    /// 参与层不再为 mutant 设语义门；无心情 ⇒ 无收益，结算走实体天意表的消息通道。
     /// </summary>
     public override bool SelectedPawnValid(Pawn pawn, FloatMenuContext context)
     {

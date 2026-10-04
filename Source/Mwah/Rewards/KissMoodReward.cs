@@ -21,19 +21,23 @@ public static class KissMoodReward
         GiveTo(initiator, receiver);
         GiveTo(receiver, initiator);
         // 没有心情系统的参与者拿不到 thought，改走天意表的消息通道：
-        // 机械族/无人机的冷笑话、动物的嗅觉叙事各查各的表；
-        // 异象实体（有人形没心情）两头都不占，维持静默 —— 它们连"做做样子"都懒得解释。
+        // 机械族/无人机的冷笑话、动物的嗅觉叙事、实体（蹒跚者/尸鬼/唤醒尸体——有人形
+        // 没心情，2026-10-05 起同机械族待遇，维护者裁定）的空壳叙事各查各的表。
         TellMoodless(initiator, receiver);
         TellMoodless(receiver, initiator);
     }
 
     private static void TellMoodless(Pawn pawn, Pawn other)
     {
-        if (pawn.needs?.mood?.thoughts?.memories != null || pawn.RaceProps.Humanlike)
+        if (pawn.needs?.mood?.thoughts?.memories != null)
         {
             return;
         }
-        string scope = pawn.RaceProps.IsFlesh ? "KissPawnBeast" : "KissPawnMechanoid";
+        // Humanlike 且无 mood 的原版实体只有 BaseMutantEntity 三族（disableNeeds 摘掉需求，
+        // 见 MEMORY「Trap」）；按人形判别而不是 IsMutant，mod 种族撞进这个组合也拿到
+        // 最不离谱的待遇：有句话，不装死。
+        string scope = pawn.RaceProps.Humanlike ? "KissPawnMutant"
+            : pawn.RaceProps.IsFlesh ? "KissPawnBeast" : "KissPawnMechanoid";
         KissFate.Grant(pawn, other, scope);
     }
 

@@ -20,7 +20,6 @@
   <MWAH.Fail.Burning>{PAWN} is on fire</MWAH.Fail.Burning>
   <MWAH.Fail.NoMouth>{PAWN} has no working mouth to kiss with</MWAH.Fail.NoMouth>
   <MWAH.Fail.TooYoung>{PAWN} is not old enough to start a kiss</MWAH.Fail.TooYoung>
-  <MWAH.Fail.SociallyIncapable>{PAWN} is past anything as subtle as affection</MWAH.Fail.SociallyIncapable>
   <MWAH.Fail.RitualAbsorbed>{PAWN} is wrapped up in the ritual</MWAH.Fail.RitualAbsorbed>
   <MWAH.Fail.CannotReach>cannot reach {TARGET}</MWAH.Fail.CannotReach>
   <MWAH.Fail.Busy>already in the middle of a kiss</MWAH.Fail.Busy>
@@ -183,6 +182,17 @@
   <MWAH.KissPawn.Mech.Line.7>The advantage of kissing a mechanoid: it never holds a grudge. The disadvantage: it never remembers either.</MWAH.KissPawn.Mech.Line.7>
   <MWAH.KissPawn.Mech.Line.8>{PAWN}'s IFF briefly classified {WALL} as "unknown but harmless" — the ceiling of its romance.</MWAH.KissPawn.Mech.Line.8>
   <MWAH.KissPawn.Mech.Line.9>The only technical consequence: {PAWN}'s idle pose has been off by two degrees ever since.</MWAH.KissPawn.Mech.Line.9>
+  <!-- entities kissed or kissing (humanlike shells without mood system, message channel; {PAWN}=entity {WALL}=partner name) -->
+  <MWAH.KissPawn.Entity.Line.0>{PAWN} accepted the kiss the way a door accepts a push — it learned this shape long ago, and nobody is watching inside anymore.</MWAH.KissPawn.Entity.Line.0>
+  <MWAH.KissPawn.Entity.Line.1>For a moment {PAWN}'s hand rose as if to caress back — then it remembered it had no reason to, and let it fall.</MWAH.KissPawn.Entity.Line.1>
+  <MWAH.KissPawn.Entity.Line.2>{PAWN} made a sound halfway between a word and a groan. The colony's linguist has officially stopped translating.</MWAH.KissPawn.Entity.Line.2>
+  <MWAH.KissPawn.Entity.Line.3>{PAWN} stood through the whole kiss like a coat rack wearing a person. Afterwards it shuffled off, unchanged and unbothered.</MWAH.KissPawn.Entity.Line.3>
+  <MWAH.KissPawn.Entity.Line.4>Whatever {PAWN} used to be, it returned the kiss on pure muscle memory — and muscle memory is all that came back.</MWAH.KissPawn.Entity.Line.4>
+  <MWAH.KissPawn.Entity.Line.5>The kiss landed somewhere deep in {PAWN}'s old habits, a floor above the parts that were taken away.</MWAH.KissPawn.Entity.Line.5>
+  <MWAH.KissPawn.Entity.Line.6>For one flicker {PAWN}'s eyes tracked {WALL} the way they used to. Then the flicker went out, politely.</MWAH.KissPawn.Entity.Line.6>
+  <MWAH.KissPawn.Entity.Line.7>{PAWN} did not kiss back, did not pull away, did not comment. Everyone agrees this counts as responsive.</MWAH.KissPawn.Entity.Line.7>
+  <MWAH.KissPawn.Entity.Line.8>The hollow one tolerated the kiss the way a house tolerates a letter slipped under the door: received, unread.</MWAH.KissPawn.Entity.Line.8>
+  <MWAH.KissPawn.Entity.Line.9>Somewhere inside {PAWN}, a reflex smiled. The whole crew agreed not to mention it.</MWAH.KissPawn.Entity.Line.9>
 
   <!-- 动物被吻或吻人（无心情系统，走消息；{PAWN}=动物 {WALL}=对方名） -->
   <MWAH.KissPawn.Beast.Line.0>{PAWN} shook its head, filing {WALL}'s scent beside the seventeenth smell of today.</MWAH.KissPawn.Beast.Line.0>

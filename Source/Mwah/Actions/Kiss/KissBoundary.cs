@@ -47,10 +47,6 @@ public static class KissBoundary
         {
             return new AcceptanceReport("MWAH.Fail.Burning".Translate(pawn.Named("PAWN")));
         }
-        if (pawn.IsMutant && pawn.mutant.Def.incapableOfSocialInteractions)
-        {
-            return new AcceptanceReport("MWAH.Fail.SociallyIncapable".Translate(pawn.Named("PAWN")));
-        }
         // interaction 传 null：mental state 不参与判定（玩家强行下令的动作，且发起方已在
         // CanTakeOrder 处被精神状态排除），只认 HediffDef.blocksSocialInteraction（仪式沉浸态）。
         if (pawn.IsInteractionBlocked(null, isInitiator: false, isRandom: false))

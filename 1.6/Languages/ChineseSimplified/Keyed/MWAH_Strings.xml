@@ -20,7 +20,6 @@
   <MWAH.Fail.Burning>{PAWN} 正在燃烧</MWAH.Fail.Burning>
   <MWAH.Fail.NoMouth>{PAWN} 没有能用来亲的嘴</MWAH.Fail.NoMouth>
   <MWAH.Fail.TooYoung>{PAWN} 还太小，不会主动亲</MWAH.Fail.TooYoung>
-  <MWAH.Fail.SociallyIncapable>{PAWN} 已经顾不上这种细腻的东西了</MWAH.Fail.SociallyIncapable>
   <MWAH.Fail.RitualAbsorbed>{PAWN} 正沉浸在仪式里</MWAH.Fail.RitualAbsorbed>
   <MWAH.Fail.CannotReach>够不到{TARGET}</MWAH.Fail.CannotReach>
   <MWAH.Fail.Busy>已经在亲了</MWAH.Fail.Busy>
@@ -183,6 +182,17 @@
   <MWAH.KissPawn.Mech.Line.7>亲机械族的好处是它从不记仇，坏处是它也从不记得。</MWAH.KissPawn.Mech.Line.7>
   <MWAH.KissPawn.Mech.Line.8>{PAWN} 的敌我识别短暂地把 {WALL} 归为"未知但无害"——这是它浪漫的上限。</MWAH.KissPawn.Mech.Line.8>
   <MWAH.KissPawn.Mech.Line.9>这次接触唯一的技术后果：{PAWN} 的待机姿势从此歪了两度。</MWAH.KissPawn.Mech.Line.9>
+  <!-- 实体被吻或吻人（有人形、无心情系统，走消息；{PAWN}=实体 {WALL}=对方名） -->
+  <MWAH.KissPawn.Entity.Line.0>{PAWN} 接受了这个吻，像一扇门接受一次推——这个形状很久以前就学会了，里面已经没有人看着了。</MWAH.KissPawn.Entity.Line.0>
+  <MWAH.KissPawn.Entity.Line.1>有那么一瞬间，{PAWN} 的手抬了起来，像是要回抚——然后它想起自己没有任何理由，又放下了。</MWAH.KissPawn.Entity.Line.1>
+  <MWAH.KissPawn.Entity.Line.2>{PAWN} 发出一个介于词和呻吟之间的声音。队里的语言学家已正式放弃翻译。</MWAH.KissPawn.Entity.Line.2>
+  <MWAH.KissPawn.Entity.Line.3>{PAWN} 全程站得像一个人形衣帽架。亲完它晃晃悠悠走开了，没变，也不在乎。</MWAH.KissPawn.Entity.Line.3>
+  <MWAH.KissPawn.Entity.Line.4>不管 {PAWN} 从前是什么，它全凭肌肉记忆回了吻——而回来的也只有肌肉记忆。</MWAH.KissPawn.Entity.Line.4>
+  <MWAH.KissPawn.Entity.Line.5>这个吻落在 {PAWN} 旧习惯的某个深处——在被摘走的那些东西上面一层。</MWAH.KissPawn.Entity.Line.5>
+  <MWAH.KissPawn.Entity.Line.6>有一瞬间，{PAWN} 的眼睛像从前那样追随 {WALL}。然后那簇火苗很礼貌地熄了。</MWAH.KissPawn.Entity.Line.6>
+  <MWAH.KissPawn.Entity.Line.7>{PAWN} 没有回吻，没有躲开，也没有评论。大家一致认为这已经算有反应。</MWAH.KissPawn.Entity.Line.7>
+  <MWAH.KissPawn.Entity.Line.8>这具空壳容忍了这个吻，像房子容忍一封从门缝塞进来的信：收到了，没读。</MWAH.KissPawn.Entity.Line.8>
+  <MWAH.KissPawn.Entity.Line.9>{PAWN} 身体里某个反射笑了一下。全船人一致决定不提这件事。</MWAH.KissPawn.Entity.Line.9>
 
   <!-- 动物被吻或吻人（无心情系统，走消息；{PAWN}=动物 {WALL}=对方名） -->
   <MWAH.KissPawn.Beast.Line.0>{PAWN} 甩了甩头，把 {WALL} 留下的气味和今天的第十七种味道排在一起。</MWAH.KissPawn.Beast.Line.0>
