@@ -182,17 +182,17 @@
   <MWAH.KissPawn.Mech.Line.7>亲机械族的好处是它从不记仇，坏处是它也从不记得。</MWAH.KissPawn.Mech.Line.7>
   <MWAH.KissPawn.Mech.Line.8>{PAWN} 的敌我识别短暂地把 {WALL} 归为"未知但无害"——这是它浪漫的上限。</MWAH.KissPawn.Mech.Line.8>
   <MWAH.KissPawn.Mech.Line.9>这次接触唯一的技术后果：{PAWN} 的待机姿势从此歪了两度。</MWAH.KissPawn.Mech.Line.9>
-  <!-- 实体被吻或吻人（有人形、无心情系统，走消息；{PAWN}=实体 {WALL}=对方名） -->
-  <MWAH.KissPawn.Entity.Line.0>{PAWN} 接受了这个吻，像一扇门接受一次推——这个形状很久以前就学会了，里面已经没有人看着了。</MWAH.KissPawn.Entity.Line.0>
-  <MWAH.KissPawn.Entity.Line.1>有那么一瞬间，{PAWN} 的手抬了起来，像是要回抚——然后它想起自己没有任何理由，又放下了。</MWAH.KissPawn.Entity.Line.1>
+  <!-- 实体被吻或吻人（mutant 空壳／有人形没心情，走消息；文案零外形描述——维护者裁定 2026-10-05：只写心理，不写形体；{PAWN}=实体 {WALL}=对方名） -->
+  <MWAH.KissPawn.Entity.Line.0>{PAWN} 接受了这个吻，像一扇门接受一次推——这个动作很久以前就学会了，里面已经没有人看着了。</MWAH.KissPawn.Entity.Line.0>
+  <MWAH.KissPawn.Entity.Line.1>在 {PAWN} 之内某处，一个想要回应的冲动开始了，走完一半的弧线，还没变成动作就消散了。</MWAH.KissPawn.Entity.Line.1>
   <MWAH.KissPawn.Entity.Line.2>{PAWN} 发出一个介于词和呻吟之间的声音。队里的语言学家已正式放弃翻译。</MWAH.KissPawn.Entity.Line.2>
-  <MWAH.KissPawn.Entity.Line.3>{PAWN} 全程站得像一个人形衣帽架。亲完它晃晃悠悠走开了，没变，也不在乎。</MWAH.KissPawn.Entity.Line.3>
-  <MWAH.KissPawn.Entity.Line.4>不管 {PAWN} 从前是什么，它全凭肌肉记忆回了吻——而回来的也只有肌肉记忆。</MWAH.KissPawn.Entity.Line.4>
-  <MWAH.KissPawn.Entity.Line.5>这个吻落在 {PAWN} 旧习惯的某个深处——在被摘走的那些东西上面一层。</MWAH.KissPawn.Entity.Line.5>
-  <MWAH.KissPawn.Entity.Line.6>有一瞬间，{PAWN} 的眼睛像从前那样追随 {WALL}。然后那簇火苗很礼貌地熄了。</MWAH.KissPawn.Entity.Line.6>
+  <MWAH.KissPawn.Entity.Line.3>{PAWN} 全程在场，像一间空房出席一场音乐会：一切发生了，什么都没有抵达。</MWAH.KissPawn.Entity.Line.3>
+  <MWAH.KissPawn.Entity.Line.4>不管 {PAWN} 从前是什么，它全凭习惯回了吻——而回来的也只有习惯。</MWAH.KissPawn.Entity.Line.4>
+  <MWAH.KissPawn.Entity.Line.5>这个吻落在 {PAWN} 旧习惯的某个深处——在被带走的那些东西上面一层。</MWAH.KissPawn.Entity.Line.5>
+  <MWAH.KissPawn.Entity.Line.6>有一瞬间，{PAWN} 几乎要说出一句对着 {WALL} 的话。那簇火苗很礼貌地熄了。</MWAH.KissPawn.Entity.Line.6>
   <MWAH.KissPawn.Entity.Line.7>{PAWN} 没有回吻，没有躲开，也没有评论。大家一致认为这已经算有反应。</MWAH.KissPawn.Entity.Line.7>
   <MWAH.KissPawn.Entity.Line.8>这具空壳容忍了这个吻，像房子容忍一封从门缝塞进来的信：收到了，没读。</MWAH.KissPawn.Entity.Line.8>
-  <MWAH.KissPawn.Entity.Line.9>{PAWN} 身体里某个反射笑了一下。全船人一致决定不提这件事。</MWAH.KissPawn.Entity.Line.9>
+  <MWAH.KissPawn.Entity.Line.9>{PAWN} 之内某个曾经可能是"觉得好笑"的东西动了一下，找不到要汇报的人，又落回去了。</MWAH.KissPawn.Entity.Line.9>
 
   <!-- 动物被吻或吻人（无心情系统，走消息；{PAWN}=动物 {WALL}=对方名） -->
   <MWAH.KissPawn.Beast.Line.0>{PAWN} 甩了甩头，把 {WALL} 留下的气味和今天的第十七种味道排在一起。</MWAH.KissPawn.Beast.Line.0>

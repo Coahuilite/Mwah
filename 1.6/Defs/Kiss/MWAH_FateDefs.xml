@@ -595,8 +595,8 @@
     <messageKey>MWAH.KissPawn.Mech.Line.9</messageKey>
     <messageType>NeutralEvent</messageType>
   </MWAH_FateDef>
-  <!-- 实体表（KissPawnMutant）：蹒跚者/尸鬼/唤醒尸体——有人形、无心情（disableNeeds），
-       2026-10-05 维护者裁定与机械族同等待遇：可被亲、无收益、有自己的空壳叙事。 -->
+  <!-- 实体表（KissPawnMutant）：mutant 空壳与"有人形没心情"的 mod 种族——无心情 ⇒ 无 thought，
+       走消息通道。2026-10-05 维护者裁定：与机械族同等待遇，文案零外形描述（只写心理）。 -->
   <MWAH_FateDef>
     <defName>MWAH_Fate_PawnEntity_Line_0</defName>
     <scope>KissPawnMutant</scope>

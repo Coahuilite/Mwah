@@ -33,10 +33,10 @@ public static class KissMoodReward
         {
             return;
         }
-        // Humanlike 且无 mood 的原版实体只有 BaseMutantEntity 三族（disableNeeds 摘掉需求，
-        // 见 MEMORY「Trap」）；按人形判别而不是 IsMutant，mod 种族撞进这个组合也拿到
-        // 最不离谱的待遇：有句话，不装死。
-        string scope = pawn.RaceProps.Humanlike ? "KissPawnMutant"
+        // 实体 = mutant 空壳（原版三族：人形却被 disableNeeds 摘掉心情）**或**任何"有人形
+        // 没心情"的 mod 种族。判别取并集而不是单看人形：非人形的 mutant（mod 可造）不该
+        // 掉进动物的嗅觉表。文案零外形描述（维护者裁定 2026-10-05），形体随便它长什么样。
+        string scope = pawn.RaceProps.Humanlike || pawn.IsMutant ? "KissPawnMutant"
             : pawn.RaceProps.IsFlesh ? "KissPawnBeast" : "KissPawnMechanoid";
         KissFate.Grant(pawn, other, scope);
     }
