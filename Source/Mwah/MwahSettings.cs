@@ -34,6 +34,9 @@ public class MwahSettings : ModSettings
 
     private Vector2 scrollPos;
 
+    /// <summary>上一帧量出的内容高度（跨帧缓存，见 DoSettingsWindowContents 顶注）。不存盘。</summary>
+    private float scrollContentHeight;
+
     // 数值输入框的编辑态：同一时刻最多一个框在编辑（IMGUI 的 keyboardControl 本来就互斥）。
     private string? editingField;
     private string editBuf = "";
@@ -130,16 +133,21 @@ public class MwahSettings : ModSettings
     public void DoSettingsWindowContents(Rect inRect)
     {
         bool changed = false;
-        var viewRect = new Rect(0f, 0f, inRect.width - 16f, inRect.height);
-        // 自动测高：先用窗口高度开滚动，list 结束后用真实内容高度回写 viewRect。
-        // 固定 ContentHeight 的写法在控件增删或译文变长后会截断底部控件。
+        float viewWidth = inRect.width - 16f;
+        // 滚动范围用**上一帧量出的内容高度**：viewRect 是局部变量，"End 之后回写高度"
+        // 对本帧的滚动条毫无作用（2026-09-10 的自动测高就是这么坏的：范围恒等于窗口高，
+        // 滚不动，溢出内容还被 Listing_Standard 换列画到窗外右侧——"恢复默认值"飘出窗口）。
+        // 跨帧缓存后第 2 帧起范围即真实内容高度；首帧最多少滚一屏，无感。
+        var viewRect = new Rect(0f, 0f, viewWidth, Mathf.Max(scrollContentHeight, inRect.height));
         // 可见轨道：BeginScrollView 只画滑块、滑块在暗底上近乎隐形（实机裁定"滚动条完全看不到"），
         // 先垫一条低透明黑轨，让"这里能滚"看得出来。
         Widgets.DrawBoxSolid(new Rect(inRect.xMax - 15f, inRect.y, 15f, inRect.height), new Color(0f, 0f, 0f, 0.3f));
         Widgets.BeginScrollView(inRect, ref scrollPos, viewRect);
         var list = new Listing_Standard(GameFont.Small);
-        list.ColumnWidth = viewRect.width - 24f;
-        list.Begin(viewRect);
+        list.ColumnWidth = viewWidth - 24f;
+        // 单列铁律：Begin 的 maxRect.height 给到近乎无穷，"装不下就换列"永不触发。
+        // 换列 = 溢出内容画到右边窗外（实机截图里被挤到另一侧、再也点不到的设置项）。
+        list.Begin(new Rect(0f, 0f, viewWidth, 100000f));
 
         list.Label("MWAH.Settings.Header".Translate());
         list.GapLine();
@@ -188,7 +196,7 @@ public class MwahSettings : ModSettings
             changed = true;
         }
         list.End();
-        viewRect.height = list.CurHeight + 16f;
+        scrollContentHeight = list.CurHeight + 16f;
         Widgets.EndScrollView();
         if (changed)
         {
