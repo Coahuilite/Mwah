@@ -109,7 +109,6 @@
   <MWAH.Settings.Diag.Auto>Auto</MWAH.Settings.Diag.Auto>
   <MWAH.Settings.Diag.Simple>Simple</MWAH.Settings.Diag.Simple>
   <MWAH.Settings.Diag.Verbose>Verbose</MWAH.Settings.Diag.Verbose>
-  <MWAH.Settings.Version>Mwah! version: {0}</MWAH.Settings.Version>
 
   <MWAH.Settings.Reset>Restore defaults</MWAH.Settings.Reset>
   <MWAH.Settings.WallKissing>Allow kissing walls</MWAH.Settings.WallKissing>

@@ -109,7 +109,6 @@
   <MWAH.Settings.Diag.Auto>自动</MWAH.Settings.Diag.Auto>
   <MWAH.Settings.Diag.Simple>简化</MWAH.Settings.Diag.Simple>
   <MWAH.Settings.Diag.Verbose>详细</MWAH.Settings.Diag.Verbose>
-  <MWAH.Settings.Version>Mwah! 当前版本：{0}</MWAH.Settings.Version>
 
   <MWAH.Settings.Reset>恢复默认值</MWAH.Settings.Reset>
   <MWAH.Settings.WallKissing>允许亲吻墙壁</MWAH.Settings.WallKissing>

@@ -31,11 +31,11 @@ public class MwahMod : Mod
     private long failedGeneration = -1;
 
 #if MWAH_STEAM
-    private const string BuildFlavor = "steam";
+    internal const string BuildFlavor = "steam";
 #elif MWAH_GITHUB
-    private const string BuildFlavor = "github";
+    internal const string BuildFlavor = "github";
 #else
-    private const string BuildFlavor = "dev";
+    internal const string BuildFlavor = "dev";
 #endif
 
     public MwahMod(ModContentPack content) : base(content)

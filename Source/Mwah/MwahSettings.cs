@@ -180,16 +180,23 @@ public class MwahSettings : ModSettings
     public void DoSettingsWindowContents(Rect inRect)
     {
         bool changed = false;
-        float viewWidth = inRect.width - 16f;
+        // 固定身份行（2026-10-05 维护者裁定）：vanilla 的标题行只画 SettingsCategory
+        // （Dialog_ModSettings.DoWindowContents 反编译实锤），版本进不了那一行——除非 Harmony，
+        // 那是硬边界。所以在自己区域顶部常驻一行"品牌 · 版本 · 渠道"，滚动区从它下面开始：
+        // 滚到哪里截图都带着构建身份。字符串与启动横幅同源（MwahMod.VersionString()）。
+        Rect identityRect = inRect.TopPartPixels(24f);
+        Rect scrollRect = inRect.BottomPartPixels(inRect.height - 24f);
+        DrawIdentityRow(identityRect);
+        float viewWidth = scrollRect.width - 16f;
         // 滚动范围用**上一帧量出的内容高度**：viewRect 是局部变量，"End 之后回写高度"
         // 对本帧的滚动条毫无作用（2026-09-10 的自动测高就是这么坏的：范围恒等于窗口高，
         // 滚不动，溢出内容还被 Listing_Standard 换列画到窗外右侧——"恢复默认值"飘出窗口）。
         // 跨帧缓存后第 2 帧起范围即真实内容高度；首帧最多少滚一屏，无感。
-        var viewRect = new Rect(0f, 0f, viewWidth, Mathf.Max(scrollContentHeight, inRect.height));
+        var viewRect = new Rect(0f, 0f, viewWidth, Mathf.Max(scrollContentHeight, scrollRect.height));
         // 可见轨道：BeginScrollView 只画滑块、滑块在暗底上近乎隐形（实机裁定"滚动条完全看不到"），
         // 先垫一条低透明黑轨，让"这里能滚"看得出来。
-        Widgets.DrawBoxSolid(new Rect(inRect.xMax - 15f, inRect.y, 15f, inRect.height), new Color(0f, 0f, 0f, 0.3f));
-        Widgets.BeginScrollView(inRect, ref scrollPos, viewRect);
+        Widgets.DrawBoxSolid(new Rect(scrollRect.xMax - 15f, scrollRect.y, 15f, scrollRect.height), new Color(0f, 0f, 0f, 0.3f));
+        Widgets.BeginScrollView(scrollRect, ref scrollPos, viewRect);
         var list = new Listing_Standard(GameFont.Small);
         list.ColumnWidth = viewWidth - 24f;
         // 单列铁律：Begin 的 maxRect.height 给到近乎无穷，"装不下就换列"永不触发。
@@ -245,9 +252,6 @@ public class MwahSettings : ModSettings
         // 档位是"档"不是"量"：输入 2 没有意义，滑条刻意不带数值框（与门禁滑条同一先例）。
         changed |= IntSliderRow(list, ref diagnosticLevel, "MWAH.Settings.DiagLevel", "MWAH.Settings.DiagLevelDesc",
             Constants.DiagnosticLevelRange, raw => DiagLabel((MwahDiag)Mathf.Clamp(raw, (int)MwahDiag.Off, (int)MwahDiag.Verbose)), withField: false);
-        // 版本身份行：与启动横幅同一个 VersionString()（dev 带 commit hash、发行只报版本号），
-        // 玩家报障时截图这一行就够定位到构建。
-        list.Label("MWAH.Settings.Version".Translate(MwahMod.VersionString()));
         list.Gap();
         list.Label("MWAH.Settings.TimingHint".Translate());
         list.Gap();
@@ -263,6 +267,21 @@ public class MwahSettings : ModSettings
         {
             MwahMod.Instance?.RequestSettingsSave();
         }
+    }
+
+    /// <summary>身份行：Tiny、半透明、不可交互——它是水印不是控件，读的是横幅同一份真相。</summary>
+    private static void DrawIdentityRow(Rect row)
+    {
+        GameFont fontBefore = Text.Font;
+        TextAnchor anchorBefore = Text.Anchor;
+        Color colorBefore = GUI.color;
+        Text.Font = GameFont.Tiny;
+        Text.Anchor = TextAnchor.MiddleLeft;
+        GUI.color = new Color(1f, 1f, 1f, 0.55f);
+        Widgets.Label(row, "Mwah!  ·  v" + MwahMod.VersionString() + "  ·  build=" + MwahMod.BuildFlavor);
+        GUI.color = colorBefore;
+        Text.Anchor = anchorBefore;
+        Text.Font = fontBefore;
     }
 
     /// <summary>段标题：一条分隔线 + 加粗感的裸标签（键双语齐备由门把关）。</summary>
