@@ -13,12 +13,17 @@
 
 ## 0.2.x design line (slices; rulings recorded in MEMORY "0.2.x mood architecture rulings")
 
-- [ ] Version axis → **0.2.0** (csproj `<Version>` + About `modVersion` in the first feature commit).
-- [ ] **A — fate scope registry**: `KissFateScopes` ordered (scope, predicate) table replaces the ternary chain in `KissMoodReward.TellMoodless`; first match wins, **no else-catchall** — unmatched moodless creature stays silent plus one dev log line.
-- [ ] **B — wall thought collapse**: five `MWAH_KissedWall_*` defs → one def + 5 stages (`stackLimit 1`); `MWAH_FateDef` gains `stageIndex`; grant path **replaces in place** (existing wall memory: `SetForcedStage` + swap instance narration + `Renew`; else add new). Matrix rows rewritten in the same commit (stack-cap row → per-partner independence, no cross-group cap; wall rows → single-entry semantics).
-- [ ] **C — per-addon duration**: `MwahSettings.addonDurations` dictionary keyed by stable addon id (wall factory 30000 ticks = 0.5 game day); addon declares its own default/range/label-key; settlement writes `durationTicksOverride`; gate 9b extended to dictionary coverage.
-- [ ] **D — settings page reorg**: four sections — core / ambient / addons (registry-driven groups) / system.
-- [ ] **E — Keyed split**: one file per fate table (`MWAH_Fate_KissWall.xml` etc., both languages); verify-local parity gate globs the Keyed directory instead of pinning `MWAH_Strings.xml`.
+- [x] Version axis → **0.2.0** (csproj `<Version>` + About `modVersion`, landed with slice A).
+- [x] **A — fate scope registry**: `KissFateScopes` ordered (scope, predicate) table replaces the ternary chain; first match wins, no else-catchall — unmatched moodless creature stays silent plus one dev log line.
+- [x] **B — wall thought collapse**: one def + 5 stages, `stageIndex` on fate rows, in-place replacement at grant; matrix rows rewritten same commit.
+- [x] **C — per-addon duration**: `addonThoughtDurations` dictionary keyed by stable addon id (wall factory 30000 t = 0.5 game day); addon declares defaults; settlement writes `durationTicksOverride`; gate 9c locks dictionary persistence.
+- [x] **D — settings page reorg**: four sections (core / autonomous / addons / system); the wall switch itself migrated into the `addonSwitches` dictionary — the addon block grows from the registry, each addon row = switch + duration; numeric-field focus keys made per-addon unique.
+- [x] **E — Keyed split**: five fate files × two languages; verify-local merges the whole Keyed directory and fails on cross-file duplicate keys.
+
+### 0.2.x live checks (new surfaces, maintainer executes)
+
+- [ ] Settings page: four section headers in order; the Add-ons block shows the wall group — "允许亲吻墙壁" switch + "亲吻一堵墙：思想持续" slider (factory 30000 t / 500 s / 12 h); flipping the switch off still silences every wall surface (addon constitution unchanged, storage moved); "restore defaults" reverts both dictionaries (switch back to on, duration back to factory).
+- [ ] Wall slot live: two wall kisses in a row (mood-duration long, cooldown short) → **one** entry only, its tier/label/narration from the latest roll, timer restarted; the fate short message still fires per kiss.
 
 ## Live verification matrix (maintainer executes; the agent builds no junctions and never runs the game)
 
