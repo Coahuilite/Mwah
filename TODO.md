@@ -11,6 +11,15 @@
 - Working branch `0.2.x` (branched 2026-10-05 from the archived `0.1.x` head; its remote branch appears at the first authorized push); `0.1.x` never receives new commits; `main` only advances at release time. Current hash: `git log --oneline -1` — this file pins no hash.
 - The in-flight surface is the 0.2.x design line; the live matrix below is 0.1.x evidence, executed by the maintainer personally. The agent's next step appears in exactly two cases: the matrix reports a defect (fixed on 0.2.x), or the maintainer authorizes release actions (for 0.2.0).
 
+## 0.2.x design line (slices; rulings recorded in MEMORY "0.2.x mood architecture rulings")
+
+- [ ] Version axis → **0.2.0** (csproj `<Version>` + About `modVersion` in the first feature commit).
+- [ ] **A — fate scope registry**: `KissFateScopes` ordered (scope, predicate) table replaces the ternary chain in `KissMoodReward.TellMoodless`; first match wins, **no else-catchall** — unmatched moodless creature stays silent plus one dev log line.
+- [ ] **B — wall thought collapse**: five `MWAH_KissedWall_*` defs → one def + 5 stages (`stackLimit 1`); `MWAH_FateDef` gains `stageIndex`; grant path **replaces in place** (existing wall memory: `SetForcedStage` + swap instance narration + `Renew`; else add new). Matrix rows rewritten in the same commit (stack-cap row → per-partner independence, no cross-group cap; wall rows → single-entry semantics).
+- [ ] **C — per-addon duration**: `MwahSettings.addonDurations` dictionary keyed by stable addon id (wall factory 30000 ticks = 0.5 game day); addon declares its own default/range/label-key; settlement writes `durationTicksOverride`; gate 9b extended to dictionary coverage.
+- [ ] **D — settings page reorg**: four sections — core / ambient / addons (registry-driven groups) / system.
+- [ ] **E — Keyed split**: one file per fate table (`MWAH_Fate_KissWall.xml` etc., both languages); verify-local parity gate globs the Keyed directory instead of pinning `MWAH_Strings.xml`.
+
 ## Live verification matrix (maintainer executes; the agent builds no junctions and never runs the game)
 
 ### Loading and logging
