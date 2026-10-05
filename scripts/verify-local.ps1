@@ -241,7 +241,7 @@ Assert-True "Constants.ModId == About packageId ($packageId)" ($constMatch -eq $
 Assert-True 'packageId is lowercase' ($packageId -eq $packageId.ToLowerInvariant())
 
 # 7b. 版本跟随面一致（2026-10-05 校准）：全仓库唯一字面量是 csproj <Version>；产品可见的
-#     跟随面（About modVersion、工坊页目标行 + 中英版本行、双语 changelog 的 Unreleased 标题）
+#     跟随面（About modVersion、工坊页目标行 + 中英版本行、双语 changelog 的置顶版本条目，
 #     必须全部等于它。手工同步的跟随面漏改就是静默分家，门把它变成红字。
 $wsCopy = Get-Content -Raw -LiteralPath (Join-Path $root 'docs\steam-workshop-page.md')
 $wsVersions = @([regex]::Matches($wsCopy, '目标：([0-9]+\.[0-9]+\.[0-9]+)|Mod version:[[]/b[]] *([0-9]+\.[0-9]+\.[0-9]+)|模组版本：[[]/b[]]([0-9]+\.[0-9]+\.[0-9]+)') |
@@ -249,8 +249,8 @@ $wsVersions = @([regex]::Matches($wsCopy, '目标：([0-9]+\.[0-9]+\.[0-9]+)|Mod
 $clEn = Get-Content -Raw -LiteralPath (Join-Path $root 'docs\CHANGELOG.md')
 $clZh = Get-Content -Raw -LiteralPath (Join-Path $root 'docs\CHANGELOG.zh-CN.md')
 $clVersions = @(
-    [regex]::Match($clEn, 'Unreleased — ([0-9]+\.[0-9]+\.[0-9]+)').Groups[1].Value
-    [regex]::Match($clZh, '未发布 — ([0-9]+\.[0-9]+\.[0-9]+)').Groups[1].Value
+    [regex]::Match($clEn, '(?m)^## (?:\[.*?\] Version |Unreleased — )([0-9]+\.[0-9]+\.[0-9]+)').Groups[1].Value
+    [regex]::Match($clZh, '(?m)^## (?:\[.*?\] 版本 |未发布 — )([0-9]+\.[0-9]+\.[0-9]+)').Groups[1].Value
 )
 $followerVersions = @($wsVersions + $clVersions)
 Assert-True "release-copy versions all track csproj <Version> ($csprojVersion)" (

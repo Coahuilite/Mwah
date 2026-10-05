@@ -9,7 +9,7 @@ Structure and categories:
 - Heading uses local release time: `[YYYY-MM-DD HH:MM UTC+8] Version X.Y.Z`; an unreleased entry uses `Unreleased — X.Y.Z` and gets the actual time at publish.
 - Sections use the Keep a Changelog types: **Added**, **Changed**, **Fixed**, **Deprecated**, **Removed**, **Security**; this project additionally allows **Packaging** and **Notes**. Never keep empty sections.
 - Breaking changes (save compatibility, settings migration, incompatible behavior shifts) always come first, with the impact and the action the player must take spelled out.
-- `Initial Workshop Upload` is reserved for the first Steam Workshop upload; later updates use ordinary version entries.
+- `Initial Workshop Upload` is reserved for the first Steam Workshop upload; when it ships the same build as the first version on the same day, record it inside that version's Notes instead of adding a separate entry; later updates use ordinary version entries.
 
 Writing entries:
 - One entry = one notable change, phrased as what the user can now do or what problem is gone — never as a mechanism walkthrough. Operational detail belongs to the README; an entry may carry at most a one-line pointer.
@@ -42,7 +42,7 @@ One-line release summary.
 - ...
 ```
 
-## Unreleased — 0.2.2
+## [2026-10-05 23:57 UTC+8] Version 0.2.2
 
 First public release: any pawn kisses any pawn. Mechanics and details live in the README.
 
@@ -65,3 +65,4 @@ First public release: any pawn kisses any pawn. Mechanics and details live in th
 
 ### Notes
 - The 0.1.x line was archived without shipping, and 0.2.0 / 0.2.1 were never tagged; everything above ships together in 0.2.2, the first public release.
+- This version is also the initial Steam Workshop upload (published earlier the same day, same steam-flavor build). The GitHub Release went out at 23:57 UTC+8.
