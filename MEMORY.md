@@ -33,7 +33,7 @@ Full design records live in **`docs/design-decisions.md`** (sections: initiation
 - Logging: Player.log only, banner unconditional, four-rung slider with Auto=channel; KissTrace is a crash bypass, not a logging subsystem.
 - **No custom trait/xenotype kiss-value table, ever**; the phase-two differentiation axis is relationships (`pawn.relations` + `ThoughtDef.stages`).
 - **Attribution discipline (cross-project)**: trust the engine's authoritative output; never default-explain with "user installed an old package"; instrument lines must carry unique fields (`t=`/counters) or Unity's fold-at-99 hides the re-entry.
-- Remote discipline: pre-push audit runs **standalone with the exit code checked — never piped** (a pipe masked a dirty-tree failure once, 2026-10-06); debts ledger lives in the script header; runbook is the process authority.
+- Remote discipline: the push gate is mechanical — pre-push hook + CI both run `privacy-audit -FullHistory` (full clone), so no human ritual is remembered or skipped (two skips in one day, 2026-10-06, killed the manual ceremony; approvals now guard public surfaces only: main merge, tag, Release, Workshop). Debts ledger lives in the script header; runbook is the process authority.
 - Skeleton/packaging patterns abstracted into `modding_documents/RimWorld_Mod_RepoInit_AgentMemory_And_Packaging_Guide_zh.md`; sibling projects read it first; `modding_documents/` is not in git.
 
 ## Repository structure and navigation

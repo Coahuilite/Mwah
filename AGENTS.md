@@ -42,11 +42,11 @@ Maintain these boundaries:
 
 - Default scope is this repository root. Reading outside it requires path-specific authorization and remains read-only; the named RimWorld `Player.log` troubleshooting directory is the standing read-only exception.
 - Never place personal local paths, diagnostic-log excerpts, credentials, API keys, tokens, private keys, or `PublishedFileId.txt` values in Git, documentation, generated artifacts, staging, or reachable history. Runtime content ships only inside the version folder.
-- Every push is preceded by a privacy review of the complete reachable range (`scripts/privacy-audit.ps1 -FullHistory`); CI runs the default scan on every push and PR.
+- Pushes are privacy-audited mechanically, twice: the pre-push hook (`scripts/githooks/pre-push`, installed once per clone via `scripts/install-hooks.ps1`) runs `privacy-audit.ps1 -FullHistory` and blocks on failure; CI re-runs the same full-history audit on a full clone, so `--no-verify` hides nothing.
 
 ## External-state boundaries
 
-- Local commits are permitted without a separate step: reversible, never leave the machine, and how a release is assembled. Remote-facing operations — `git remote`, push, PR, merge, tag, GitHub Release, Workshop upload — each require explicit maintainer authorization.
-- Branch model: `main` is release-only (a tag must lie on main's history; release CI checks ancestry); development happens on the per-minor branch (currently `0.1.x`). History is append-only: no amend, rebase, or rewrite.
-- The pre-push ceremony is deliberately minimal: `scripts/privacy-audit.ps1 -FullHistory -PrePush` plus maintainer authorization. Everything else is automated by `verify-local` and the workflows — do not re-add manual ritual.
+- Local commits and pushes to version branches need no per-instance authorization — the danger of a push is answered by the mechanical gate above, not by ritual memory. Public-surface operations each require explicit maintainer authorization: PR/merge into `main`, tag, GitHub Release, Workshop upload, `git remote` changes. (Simplified 2026-10-06: two human skips of the old manual pre-push ritual proved the gate must live on the operation itself.)
+- Branch model: `main` is release-only (a tag must lie on main's history; release CI checks ancestry); development happens on the current per-minor version branch (which one: `MEMORY.md` / `git branch --show-current`). History is append-only: no amend, rebase, or rewrite.
+- The push gate is mechanical (hook + CI), not ceremonial; `-PrePush`'s self-checks (clean tree / main exists / pending tags) are release-only. Do not re-add manual ritual — automation replaces memory, and memory fails.
 - The single process entry point is `docs/release-runbook-zh.md` (three-command contract, release order, evidence boundaries); this file fixes only the principles, never the command details.

@@ -14,6 +14,7 @@
 
 - 先读 `MEMORY.md` 耐久状态；动某子系统前读 `docs/design-decisions.md` 对应节；发布相关只认 `docs/release-runbook-zh.md`。当前 hash 用 `git log --oneline -1`，本文不钉 hash。
 - 工坊页面文案唯一维护源 = `docs/steam-workshop-page.md`；版本历史 = `docs/CHANGELOG*.md`（发布时把 Unreleased 头替换为 UTC+8 时间）。工坊上传与页面维护永远是维护者本人。
+- 新 clone 先跑 `pwsh scripts/install-hooks.ps1`（`core.hooksPath` 是本机设置，不入库；不装则 hook 缺席，CI 兜底仍在）。
 
 ## Regression checklist（下一轮发布模板；0.2.2 已按此矩阵于 2026-10-05 以 dev 包全量验收，记录见 OBLIVIONIS 与 release review）
 
