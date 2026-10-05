@@ -46,8 +46,8 @@ public static class KissStage
             return false;
         }
 
-        bool aMoves = KissUtility.CanMoveNow(a);
-        bool bMoves = KissUtility.CanMoveNow(b);
+        bool aMoves = KissBoundary.CanMoveNow(a);
+        bool bMoves = KissBoundary.CanMoveNow(b);
         if (!aMoves && !bMoves)
         {
             return false;

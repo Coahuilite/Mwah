@@ -67,7 +67,7 @@ public static class KissReturnQueue
         {
             return;
         }
-        if (!KissUtility.CanMoveNow(pawn) || pawn.jobs == null)
+        if (!KissBoundary.CanMoveNow(pawn) || pawn.jobs == null)
         {
             return;
         }

@@ -27,12 +27,12 @@ PRs welcome. Read the "Hard boundaries" section of [`README.md`](./README.md) fi
 pwsh scripts/verify-local.ps1
 ```
 
-25 道离线门（三渠道构建、双语键一致、DefOf 解析、天意表完整性、DLL 符号审计、零 Harmony 反证等）必须全绿。实机测试由维护者本人执行（不建 junction、不代跑游戏），贡献者只需保证离线门与代码可读性。
+全套离线门（三渠道构建、双语键一致、DefOf 解析、天意表完整性、版本跟随面一致、DLL 符号审计、零 Harmony 反证等；确切条目与数量以脚本自身输出为准）必须全绿。实机测试由维护者本人执行（不建 junction、不代跑游戏），贡献者只需保证离线门与代码可读性。
 
-All 25 offline gates (three-channel builds, bilingual key parity, DefOf resolution, fate-table integrity, DLL symbol audit, zero-Harmony proof, …) must pass. In-game testing is the maintainer's own workflow; contributors only owe green gates and readable code.
+The full offline gate suite (three-channel builds, bilingual key parity, DefOf resolution, fate-table integrity, version-follower parity, DLL symbol audit, zero-Harmony proof, …; the script's own output is the authority on count) must pass. In-game testing is the maintainer's own workflow; contributors only owe green gates and readable code.
 
 ## 代码口味 / Taste
 
-面向人类的代码优先：命名说人话，注释写"为什么"而不是"是什么"，判定逻辑集中在 `KissBoundary`，表演逻辑集中在 job driver。新"亲非 pawn 目标"内容请继承 `KissThingAddon`（注册表加一行 = 全通路接通），不要另起管线。
+面向人类的代码优先：命名说人话，注释写"为什么"而不是"是什么"，准入四层判定集中在 `KissBoundary`、即时可用性编排收在 `KissUtility.Propose` 单入口，表演逻辑集中在 job driver。新"亲非 pawn 目标"内容请继承 `KissThingAddon`（注册表加一行 = 全通路接通），不要另起管线。
 
-Human-facing code first: names that speak plainly, comments that say *why* rather than *what*, boundary checks living in `KissBoundary`, performance logic in the job driver. New kissable non-pawn targets should extend `KissThingAddon` (one registry line wires up every path) instead of starting a second pipeline.
+Human-facing code first: names that speak plainly, comments that say *why* rather than *what*, the four admission layers living in `KissBoundary` with immediate availability orchestrated by the single `KissUtility.Propose` entry, performance logic in the job drivers. New kissable non-pawn targets should extend `KissThingAddon` (one registry line wires up every path) instead of starting a second pipeline.

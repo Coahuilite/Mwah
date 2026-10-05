@@ -20,8 +20,6 @@ namespace Mwah;
 /// </summary>
 public static class KissReturn
 {
-    /// <summary>同一段路重复发第 3 次即判定走不动（与定台走位的止损同值同义）。</summary>
-    private const int WalkAttemptBudget = 3;
 
     /// <summary>回程段硬顶：1200 tick = 20 现实秒。到点就地结束，剩下的路交给队列兜底。</summary>
     private const int PhaseTicksCap = 1200;
@@ -84,29 +82,20 @@ public static class KissReturn
         return toil;
     }
 
-    /// <summary>一段回家路的记账本：目标格与重发次数。闭包捕获变量不能作 ref 实参，所以收进小类。</summary>
+    /// <summary>一段回家路的记账本：止损计数用共享 WalkTally（与两个 job driver 同一把尺），
+    /// 这里只剩发路动作。闭包捕获变量不能作 ref 实参，所以收进小类。</summary>
     private sealed class Walker
     {
-        private IntVec3 lastWalkTarget = IntVec3.Invalid;
-        private int walkAttempts;
+        private readonly WalkTally tally = new();
 
-        /// <summary>起（或重发）一段路。动不了、够不到、同一段路发到第 4 次，都算走不动。</summary>
+        /// <summary>起（或重发）一段路。动不了、够不到、同一段路超预算，都算走不动。</summary>
         public bool Begin(Pawn pawn, IntVec3 dest)
         {
-            if (!dest.IsValid || !KissUtility.CanMoveNow(pawn))
+            if (!dest.IsValid || !KissBoundary.CanMoveNow(pawn))
             {
                 return false;
             }
-            if (dest == lastWalkTarget)
-            {
-                walkAttempts++;
-            }
-            else
-            {
-                lastWalkTarget = dest;
-                walkAttempts = 1;
-            }
-            if (walkAttempts > WalkAttemptBudget || !pawn.CanReach(dest, PathEndMode.OnCell, Danger.Deadly))
+            if (!tally.KeepTrying(dest) || !pawn.CanReach(dest, PathEndMode.OnCell, Danger.Deadly))
             {
                 return false;
             }

@@ -266,16 +266,4 @@ public static class KissUtility
 
     public static bool IsKissing(Pawn pawn) => pawn.CurJobDef == MWAH_JobDefOf.MWAH_Kiss;
 
-    /// <summary>
-    /// 1.6 已无 Pawn.CanMove，移动能力唯一可靠读法是 Moving 容量 + pather 存在；
-    /// doesntMove 的种族（树精一类）永远算"动不了"。
-    /// </summary>
-    public static bool CanMoveNow(Pawn pawn)
-    {
-        if (pawn == null || pawn.Downed || pawn.RaceProps.doesntMove || pawn.pather == null)
-        {
-            return false;
-        }
-        return pawn.health?.capacities != null && pawn.health.capacities.CapableOf(PawnCapacityDefOf.Moving);
-    }
 }

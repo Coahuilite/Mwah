@@ -73,7 +73,7 @@ public static class KissMoodReward
 
         // 类人双人吻的旁白：查 KissPawn 表抽一句挂到这条记忆实例上（表空则维持静态描述，
         // 心情数值与时长完全不受表影响 —— 表只管"这句话怎么说"）。
-        if (memory is IFatedNarration fated && KissFate.Roll("KissPawn") is { } row && !row.narrationKey.NullOrEmpty())
+        if (memory is IFatedNarration fated && KissFate.Roll(KissFateScopes.PawnNarrationScope) is { } row && !row.narrationKey.NullOrEmpty())
         {
             fated.NarrationKey = row.narrationKey;
             fated.NarrationSubject = other.LabelShort;

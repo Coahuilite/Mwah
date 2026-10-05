@@ -15,6 +15,10 @@ namespace Mwah;
 /// </summary>
 public static class KissFateScopes
 {
+    /// <summary>类人双人吻的旁白表作用域（MWAH_FateDef.scope）：只出句子、不掷心情。
+    /// 与下面三张"无心情消息通道"表不同族，但同受"grep 一词贯穿"纪律管。</summary>
+    public const string PawnNarrationScope = "KissPawn";
+
     private static readonly (string Scope, Func<Pawn, bool> Accepts)[] Table =
     {
         // 实体：mutant 空壳（原版三族被 disableNeeds 摘掉需求）或"有人形没心情"的 mod 种族。

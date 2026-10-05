@@ -13,13 +13,15 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
 
-  <!-- 版本单一源头：SemVer，内测 0.x.y。tag 使用 v<version>。 -->
+  <!-- 版本单一源头：SemVer，全仓库唯一字面量（2026-10-05 校准：旧形 Version/VersionPrefix
+       双字面量同值重复，改一处漏一处即静默分家）。派生属性一律引用 $(Version)；
+       SDK 会把 commit sha 追加进 InformationalVersion，发行侧由 MwahMod.VersionString 裁掉。
+       tag 使用 v<version>。 -->
   <PropertyGroup>
-    <Version>0.2.1</Version>
-    <VersionPrefix>0.2.1</VersionPrefix>
-    <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
-    <FileVersion>$(VersionPrefix).0</FileVersion>
-    <InformationalVersion>$(VersionPrefix)</InformationalVersion>
+    <Version>0.2.2</Version>
+    <AssemblyVersion>$(Version).0</AssemblyVersion>
+    <FileVersion>$(Version).0</FileVersion>
+    <InformationalVersion>$(Version)</InformationalVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">

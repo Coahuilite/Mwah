@@ -27,8 +27,6 @@ public class JobDriver_Kiss : JobDriver
 {
     private const int InvalidCell = -999999;
 
-    /// <summary>同一段路重复发第 3 次即判定走不动（门被关、被人堵住），结束 job，不再原地打转。</summary>
-    private const int WalkAttemptBudget = 3;
 
     private readonly TargetIndex partnerInd = TargetIndex.A;
 
@@ -47,8 +45,7 @@ public class JobDriver_Kiss : JobDriver
     private int homeX = InvalidCell;
     private int homeZ = InvalidCell;
 
-    private IntVec3 lastWalkTarget = IntVec3.Invalid;
-    private int walkAttempts;
+    private readonly WalkTally walkTally = new();
 
     private Pawn Partner => (Pawn)job.GetTarget(partnerInd).Thing;
 
@@ -217,7 +214,7 @@ public class JobDriver_Kiss : JobDriver
         else if (!BeginWalk())
         {
             MwahLog.Note("kiss walk fail: " + base.pawn.LabelShort + " stage=" + StageCell
-                + " canMove=" + KissUtility.CanMoveNow(base.pawn) + " attempts=" + walkAttempts);
+                + " canMove=" + KissBoundary.CanMoveNow(base.pawn) + " attempts=" + walkTally.Attempts);
             EndJobWith(JobCondition.Incompletable);
         }
     }
@@ -317,7 +314,7 @@ public class JobDriver_Kiss : JobDriver
         {
             return true;
         }
-        if (!KissUtility.CanMoveNow(base.pawn))
+        if (!KissBoundary.CanMoveNow(base.pawn))
         {
             return false;
         }
@@ -328,35 +325,17 @@ public class JobDriver_Kiss : JobDriver
             {
                 return false;
             }
-            lastWalkTarget = Partner.Position;
+            // 贴脸兜底不记预算：目标是会动的对方，"同一段路"这个概念在这里不成立；
+            // 这段的止损靠表演段的 ticksLeft 与受击闸，不靠计数。
             base.pawn.pather.StartPath(Partner, PathEndMode.Touch);
             return true;
         }
-        if (!PathProgressing(stage) || !base.pawn.CanReach(stage, PathEndMode.OnCell, Danger.Deadly))
+        if (!walkTally.KeepTrying(stage) || !base.pawn.CanReach(stage, PathEndMode.OnCell, Danger.Deadly))
         {
             return false;
         }
         base.pawn.pather.StartPath(stage, PathEndMode.OnCell);
         return true;
-    }
-
-    /// <summary>
-    /// 走位止损：路径被截断（门被关、被人堵住）时 pawn 会停在半路，此时目标格不变，
-    /// 每 tick 重发同一段路就是原地打转且 job 永不结束。同一格连发三次即判定走不动。
-    /// 计数器不进存档：读档后允许多试一次，比永久卡死便宜。
-    /// </summary>
-    private bool PathProgressing(IntVec3 c)
-    {
-        if (c == lastWalkTarget)
-        {
-            walkAttempts++;
-        }
-        else
-        {
-            lastWalkTarget = c;
-            walkAttempts = 1;
-        }
-        return walkAttempts <= WalkAttemptBudget;
     }
 
     /// <summary>

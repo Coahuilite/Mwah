@@ -76,7 +76,7 @@ public class KissAmbient : GameComponent
             {
                 continue;
             }
-            if (!KissUtility.CanMoveNow(doer) || doer.jobs == null || KissBoundary.InCombatNow(doer))
+            if (!KissBoundary.CanMoveNow(doer) || doer.jobs == null || KissBoundary.InCombatNow(doer))
             {
                 continue;
             }

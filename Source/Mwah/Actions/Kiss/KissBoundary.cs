@@ -68,7 +68,7 @@ public static class KissBoundary
     public static AcceptanceReport CanInitiate(Pawn pawn, out bool mobilityOnly)
     {
         mobilityOnly = false;
-        if (!KissUtility.CanMoveNow(pawn))
+        if (!KissBoundary.CanMoveNow(pawn))
         {
             mobilityOnly = true;
             return new AcceptanceReport("MWAH.Fail.Immobile".Translate(pawn.Named("PAWN")));
@@ -88,6 +88,20 @@ public static class KissBoundary
             return new AcceptanceReport("MWAH.Fail.TooYoung".Translate(pawn.Named("PAWN")));
         }
         return AcceptanceReport.WasAccepted;
+    }
+
+    /// <summary>
+    /// 这会儿走不走得动。1.6 已无 Pawn.CanMove，移动能力唯一可靠读法是 Moving 容量 + pather 存在；
+    /// doesntMove 的种族（树精一类）永远算"动不了"。
+    /// （2026-10-05 审查：从 KissUtility 搬来 —— 主动层依赖它，判定层不该对发起层留回边。）
+    /// </summary>
+    public static bool CanMoveNow(Pawn pawn)
+    {
+        if (pawn == null || pawn.Downed || pawn.RaceProps.doesntMove || pawn.pather == null)
+        {
+            return false;
+        }
+        return pawn.health?.capacities != null && pawn.health.capacities.CapableOf(PawnCapacityDefOf.Moving);
     }
 
     /// <summary>结构层：这一局里不会变、且不该在右键菜单里刷屏的条件。</summary>

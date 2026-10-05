@@ -18,8 +18,6 @@ namespace Mwah;
 /// </summary>
 public class JobDriver_KissThing : JobDriver
 {
-    /// <summary>同一段路重复发第 3 次即判定走不动（与双人版同一止损）。</summary>
-    private const int WalkAttemptBudget = 3;
 
     private const int InvalidCell = -999999;
 
@@ -33,9 +31,7 @@ public class JobDriver_KissThing : JobDriver
 
     private bool finished;
 
-    private IntVec3 lastWalkTarget = IntVec3.Invalid;
-
-    private int walkAttempts;
+    private readonly WalkTally walkTally = new();
 
     /// <summary>认领这个目标的 addon。不存盘：读档后按谓词重查（For 只看 Accepts，不看开关 ——
     /// 表演已经在跑了，中途关开关不打断它，与"已起的 job 跑完"的双人语义一致）。</summary>
@@ -136,21 +132,12 @@ public class JobDriver_KissThing : JobDriver
             ReadyForNextToil();
             return;
         }
-        if (stand == IntVec3.Invalid || !KissUtility.CanMoveNow(pawn))
+        if (stand == IntVec3.Invalid || !KissBoundary.CanMoveNow(pawn))
         {
             EndJobWith(JobCondition.Incompletable);
             return;
         }
-        if (stand == lastWalkTarget)
-        {
-            walkAttempts++;
-        }
-        else
-        {
-            lastWalkTarget = stand;
-            walkAttempts = 1;
-        }
-        if (walkAttempts > WalkAttemptBudget || !pawn.CanReach(stand, PathEndMode.OnCell, Danger.Deadly))
+        if (!walkTally.KeepTrying(stand) || !pawn.CanReach(stand, PathEndMode.OnCell, Danger.Deadly))
         {
             EndJobWith(JobCondition.Incompletable);
             return;
