@@ -81,7 +81,7 @@
   <MWAH.Settings.DirectorButton>亲吻导演台按钮</MWAH.Settings.DirectorButton>
   <MWAH.Settings.NoCooldowns>无视亲吻冷却</MWAH.Settings.NoCooldowns>
   <MWAH.Settings.NoCooldownsDesc>导演台的手是超凡智能的手：单人冷却与成对冷却都不再生效，想立刻再撮合同一对也行。正在亲吻的仍会先亲完。</MWAH.Settings.NoCooldownsDesc>
-  <MWAH.Settings.DirectorButtonDesc>在底栏放上「亲吻导演台」。地图上任意两个单位都能点来派发——包括你控制不了的那些。右键或再点一次按钮取消。</MWAH.Settings.DirectorButtonDesc>
+  <MWAH.Settings.DirectorButtonDesc>在底栏放上「亲吻导演台」。地图上任意两个 Pawn 都能点来派发——包括你控制不了的那些。右键或再点一次按钮取消。</MWAH.Settings.DirectorButtonDesc>
   <MWAH.Settings.PairScope>谁能亲谁</MWAH.Settings.PairScope>
   <MWAH.Settings.PairScopeDesc>门开多大。拖到最右就是不限阵营、不限种族——这本模组要的就是这个。想要撮合殖民地的玩法就往左拖。双方都必须在范围内；档位只会越往右越宽，每格多加一类人。</MWAH.Settings.PairScopeDesc>
   <MWAH.Settings.Scope.FreeColonists>只限自由殖民者</MWAH.Settings.Scope.FreeColonists>

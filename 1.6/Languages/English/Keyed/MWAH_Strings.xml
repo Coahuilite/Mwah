@@ -81,7 +81,7 @@
   <MWAH.Settings.DirectorButton>Kiss director button</MWAH.Settings.DirectorButton>
   <MWAH.Settings.NoCooldowns>Ignore kiss cooldowns</MWAH.Settings.NoCooldowns>
   <MWAH.Settings.NoCooldownsDesc>The director's hand is an archotech hand: per-pawn and per-pair cooldowns no longer apply, so you can pair anyone again immediately. Pawns already kissing still finish first.</MWAH.Settings.NoCooldownsDesc>
-  <MWAH.Settings.DirectorButtonDesc>Puts the kiss director on the bottom bar. Point at any two units on the map and send them - including ones you do not control. Right-click, or press the button again, to cancel.</MWAH.Settings.DirectorButtonDesc>
+  <MWAH.Settings.DirectorButtonDesc>Puts the kiss director on the bottom bar. Point at any two pawns on the map and send them - including ones you do not control. Right-click, or press the button again, to cancel.</MWAH.Settings.DirectorButtonDesc>
   <MWAH.Settings.PairScope>Who may kiss whom</MWAH.Settings.PairScope>
   <MWAH.Settings.PairScopeDesc>How wide the door stands. Fully right means no limit on faction or species - that is the point of the mod. Drag left to narrow it to your colony if you want a matchmaking toy instead. Both sides must be inside the range; it only ever widens, so each step adds exactly one group.</MWAH.Settings.PairScopeDesc>
   <MWAH.Settings.Scope.FreeColonists>free colonists only</MWAH.Settings.Scope.FreeColonists>

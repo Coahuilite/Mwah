@@ -15,7 +15,7 @@ $absDrivePathPattern = '[A-Za-z]:' + ($bs * 2)
 #   1   Release 构建（零警告零错误由 dotnet 自身把关）
 #   1b  三个构建渠道都要能编译（Dev / Steam / GitHub）
 #   2   全部 XML 良构
-#   3   Keyed 中英键集合一致
+#   3   Keyed 中英键集合一致 + 中文名词纪律（Pawn 借词，禁 单位/小人）
 #   4   C# 引用的 MWAH.* 键在两种语言里都存在
 #   5   defName(XML) ↔ DefOf 字段(C#) ↔ driverClass 字符串
 #   5a  天意表行完整性（scope/权重/thought/旁白与短讯键双语）
@@ -98,6 +98,14 @@ Assert-True "Keyed parity English/ChineseSimplified ($($en.Count)/$($zh.Count))"
 $dupEn = @($en | Group-Object | Where-Object Count -gt 1 | ForEach-Object Name)
 $dupZh = @($zh | Group-Object | Where-Object Count -gt 1 | ForEach-Object Name)
 Assert-True 'no duplicate keys across Keyed files' ($dupEn.Count -eq 0 -and $dupZh.Count -eq 0) (($dupEn + $dupZh) -join ', ')
+
+# 3b. 中文名词纪律（2026-10-05 维护者裁定，AGENTS"项目身份"）：被发配者的名词一律是
+#     借词 Pawn——中文语言文件里出现 单位/小人 即红；殖民者/机械族/动物等原版族名照常。
+$zhNounBad = @()
+foreach ($f in (Get-ChildItem -LiteralPath (Join-Path $root '1.6\Languages\ChineseSimplified') -Recurse -Filter *.xml)) {
+    if ((Get-Content -Raw -LiteralPath $f.FullName) -match '单位|小人') { $zhNounBad += $f.Name }
+}
+Assert-True 'Chinese language files use the Pawn loanword (no 单位/小人)' ($zhNounBad.Count -eq 0) ($zhNounBad -join ', ')
 
 $code = @(Get-ChildItem (Join-Path $root "Source\$modName") -Recurse -Filter *.cs | Get-Content -Raw) -join "`n"
 
