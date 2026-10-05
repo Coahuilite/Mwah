@@ -2,121 +2,28 @@
 
 ## Current goal
 
-- **0.1.x is archived without release** (2026-10-05 maintainer ruling; 0.1.0 never ships — the first release will be **0.2.0**). The live matrix below is now part of the **0.1.x archive record**: the maintainer may keep ticking rows as evidence, but it gates no release anymore; the release-process entry moves wholesale to the **0.2.x design line**.
-- The repository is on the cloud (`Coahuilite/Mwah`; `0.1.x` = pure archive line, development branch `0.2.x`; process: `docs/release-runbook-zh.md`); the offline surface is fully green. History and completed narratives live in `OBLIVIONIS.md` (2026-10-04 section); durable conclusions in `MEMORY.md`.
+- **0.2.1 发布流程**。实机矩阵已于 2026-10-05 由维护者全量观测通过（含墙单槽顶替与诊断四档；完整矩阵记录已压缩进 `OBLIVIONIS.md` 2026-10-05 节）。当前停在：发布整备文档（CHANGELOG×2、steam-workshop-page、README×2、日志文档状态头）待维护者审阅 → 审阅通过后提交 → tag / GitHub Release / 工坊上传逐项授权（流程唯一入口 `docs/release-runbook-zh.md`）。
+- 仓库：`Coahuilite/Mwah`，开发分支 `0.2.x`（已上云，CI 绿），`0.1.x` 冻结归档（从未发布），`main` release-only。版本轴 0.2.1。
 
 ## Entry point for the next session
 
-- Read `MEMORY.md`'s "Vanilla capability boundaries" and "Naming decisions" sections before touching code.
-- Working branch `0.2.x` (branched 2026-10-05 from the archived `0.1.x` head; its remote branch appears at the first authorized push); `0.1.x` never receives new commits; `main` only advances at release time. Current hash: `git log --oneline -1` — this file pins no hash.
-- The in-flight surface is the 0.2.x design line; the live matrix below is 0.1.x evidence, executed by the maintainer personally. The agent's next step appears in exactly two cases: the matrix reports a defect (fixed on 0.2.x), or the maintainer authorizes release actions (for 0.2.0).
+- 先读 `MEMORY.md` 耐久状态与 `docs/release-runbook-zh.md`；当前 hash 用 `git log --oneline -1`，本文不钉 hash。
+- Agent 的下一步只在两种情况出现：维护者对发布整备文档给出审阅意见/授权；或发布后维护请求。
+- 工坊页面文案唯一维护源 = `docs/steam-workshop-page.md`（中英 BBCode + 编辑约定）；版本历史 = `docs/CHANGELOG*.md`（发布时把 Unreleased 头替换为 UTC+8 时间）。
 
-## 0.2.x design line (slices; rulings recorded in MEMORY "0.2.x mood architecture rulings")
+## Regression checklist（供未来发布复用；0.2.1 全量矩阵见 OBLIVIONIS）
 
-- [x] Version axis → **0.2.0** (csproj `<Version>` + About `modVersion`, landed with slice A).
-- [x] **A — fate scope registry**: `KissFateScopes` ordered (scope, predicate) table replaces the ternary chain; first match wins, no else-catchall — unmatched moodless creature stays silent plus one dev log line.
-- [x] **B — wall thought collapse**: one def + 5 stages, `stageIndex` on fate rows, in-place replacement at grant; matrix rows rewritten same commit.
-- [x] **C — per-addon duration**: `addonThoughtDurations` dictionary keyed by stable addon id (wall factory 30000 t = 0.5 game day); addon declares defaults; settlement writes `durationTicksOverride`; gate 9c locks dictionary persistence.
-- [x] **D — settings page reorg**: four sections (core / autonomous / addons / system); the wall switch itself migrated into the `addonSwitches` dictionary — the addon block grows from the registry, each addon row = switch + duration; numeric-field focus keys made per-addon unique.
-- [x] **E — Keyed split**: five fate files × two languages; verify-local merges the whole Keyed directory and fails on cross-file duplicate keys.
+- [ ] 启动面：banner 身份正确（dev=`版本+完整sha`，发行=裸版本号）、双语齐备、天意表解析自证（无 `is not a Def type`）、无红字。
+- [ ] 核心流：右键 / 导演台两段点选 / 快速发配 / 心形半填；双人 `stage→begin×2→perform×2→return×2` 全链无 abort。
+- [ ] 墙与槽：五档短讯 + 逐实例旁白；"与墙的关系"任意时刻仅一条、新签就地顶替；天意表文件编辑回路（改权重/删行/删全表回落）。
+- [ ] 无心情面：动物/机械族/无人机/实体照亲、消息通道各归各表、心情零入账；实体可当发起方（导演台左槽）。
+- [ ] 停火：敌对者 job 全程免战、回程结束下一 tick 恢复敌对、一击即碎并反击；战争女皇充能炮/产虫双静默。
+- [ ] 门禁：七档逐档恰好掉一类；灰项真因；addon 关闭 = 全可选面静默消失零提示。
+- [ ] 心情数值：+5 × 自己 SocialImpact × 倍率；精神变态归零（面板无条目是读取时归零，不是 bug）；同对象刷新单条、跨对象独立无封顶。
+- [ ] 设置页：固定标题区（副标题+水印不裁切）、四段式、addon 组生长、tick 三读法、数量框量化回弹、诊断四档（Auto=渠道）、恢复默认清空双字典。
+- [ ] 存档卫生：job 中途存/读干净；关模残留行为已知且记录；跨局静态不泄漏。
 
-### 0.2.x live checks (new surfaces, maintainer executes)
+## 明确延后 / 不做
 
-- [ ] Settings page: four section headers in order; the Add-ons block shows the wall group — "允许亲吻墙壁" switch + "亲吻一堵墙：思想持续" slider (factory 30000 t / 500 s / 12 h); flipping the switch off still silences every wall surface (addon constitution unchanged, storage moved); "restore defaults" reverts both dictionaries (switch back to on, duration back to factory); **pinned identity row above the scroll area** — `Mwah! · v<identity> · build=dev` (dev: full commit hash; release: bare version), stays visible at any scroll position and matches the startup banner character for character.
-- [ ] Wall slot live: two wall kisses in a row (mood-duration long, cooldown short) → **one** entry only, its tier/label/narration from the latest roll, timer restarted; the fate short message still fires per kiss.
-- [x] Copy terminology sweep (done same session): 5 hits rewritten to the mixed-CN register "Pawn" (`PawnCooldownDesc` / `PairCooldownDesc` / `MoodMultiplierDesc` / `DirectorButtonDesc` / `AutonomousDesc` — the last now reads "所有 Pawn 都互相亲吻", no longer listing animals under 小人); full-tree grep for 小人 across `1.6/Languages/` returns zero.
-
-## Live verification matrix (maintainer executes; the agent builds no junctions and never runs the game)
-
-### Loading and logging
-
-- [ ] Load: copy the mod into `Mods/` → enable → start with no red lines; after a new game all four files under `1.6/Defs/Kiss/*` parse.
-- [ ] Logging surface (four-rung slider, 0.2.x): (1) **Off** → only the startup banner `[MWAH] Mwah! … build=dev startup OK` and Warn/Error remain; (2) **Simple** → per settled kiss one `[MWAH] note: fate …: … row=…` line (both the pawn-narration path and the thing/message paths), plus every abnormal exit as `note:` (damage break / walk fail / cut short / unmatched scope); no `dev:` lines, trace file frozen; (3) **Verbose** → full `dev:` narration (stage/begin/perform/return, pick generations) and `Mwah-trace.log` advances every second; (4) **Auto** (factory) → dev package behaves Verbose, Steam/GitHub package behaves Simple — same package, switch the slider to verify both faces; (5) mid-game level changes take effect on the next line printed; "restore defaults" returns the slider to 自动/Auto.
-- [ ] Fate table live self-proof: startup Player.log carries **no** `MWAH_FateDef is not a Def type` line; after kissing a wall the mood entry shows a per-row narration (not the static fallback description) and the short message pops normally; the "fate table edit loop" row presupposes this one.
-- [ ] Translation self-proof: after installing the new package, the bottom bar "亲吻导演台", panel title, thought "被{名字}亲吻过", report string "亲吻{名字}。", and right-slot placeholder "（先选发起方）" are all Chinese; re-save the translation report — MWAH entries must be gone from "missing".
-- [ ] Clean startup log: no `Dialog_KissDirector probably needs a StaticConstructorOnStartup attribute` warning.
-
-### Basic flow and performance
-
-- [ ] Basic flow: select colonist A, right-click colonist B → menu shows "亲吻B…?!" → both walk to their stage cells, face each other side-by-side, each throws hearts, each walks back to where they stood.
-- [ ] Seat-swap deadlock regression: dispatch two colonists standing **tight against each other** → both step aside one cell and kiss on the freed adjacent pair (the old build had them wait on each other until both silently scattered); the log sequence must be `stage: A=… B=…` → `kiss begin` ×2 → `kiss perform` → `kiss return`; any `kiss walk fail`/`kiss abort in walk` line means another pathing problem — report it verbatim.
-- [ ] **Side-by-side facing**: any two mobile 1x1 pawns must kiss left-right facing each other, never front-back overlapping or stacked vertically.
-- [ ] Kissing a downed pawn: the standing one circles to the downed one's left/right side — still side-by-side.
-- [ ] Furniture squeeze fallback: when all side cells are taken by tables/beds/walls, falling back to vertical adjacency (North/South facing) is acceptable, but the kiss must complete rather than spin in place.
-- [ ] Passerby steals the stage: another colonist walks into a stage cell mid-kiss → the side that cannot reach its cell gives up after 3 re-issues; it must never wedge permanently.
-- [ ] No mutual chasing: each walks to their own stage cell — no circling each other, no seat-swapping waits.
-- [ ] Sides unavailable: order in a 1-wide corridor / against a wall → fall back to vanilla Touch adjacency (vertical allowed), never deadlocks.
-- [ ] Walk stop-loss: route blocked en route → gives up after ~2 re-issues and either kisses (vertically adjacent) or ends cleanly; `Player.log` must not spam.
-- [ ] Drafted facing: order a kiss while drafted → both still face each other and do not both snap South (vanilla `Pawn_RotationTracker.UpdateRotation` forces South when drafted; `handlingFacing` blocks it).
-- [ ] Interrupted kisses pay no mood: either side pulled out of the job (death, ordered away) → the other ends immediately and **no** mood settles.
-- [ ] Passive-side settlement never lost: complete 10 consecutive full-length kisses (including slow-walking passive setups) → **each bout pays both sides exactly one mood entry** (clock-rework regression).
-- [ ] Save compatibility (**new saves only** — old saves incompatible by design): save mid-kiss (especially mid-return-leg) → load → the job continues cleanly or ends cleanly, no `ticksLeft`/`homeX` red lines.
-- [ ] Uninstall residue: disable the mod with `MWAH_Kissed*` memories and `MWAH_Kiss`/`MWAH_KissThing` jobs in the save → silent drop or error; decide from the result whether About.xml needs an uninstall note.
-
-### Truce window and combat gate
-
-- [ ] Truce window main case: director-dispatch an **idle** raider/mech to kiss your colonist → from the moment of the order it stops attacking anyone: walks over, kisses, walks back its original route, never re-acquiring targets; hostility resumes on the **tick after the return leg completes**. One shot mid-way → instant break and immediate counterattack (the anti-abuse self-destruct gate working, not a bug).
-- [ ] Damage-break timing: dispatch via the director (playerForced path) → fire one shot at either participant at any phase (approach/face-to-face/return) → they break and fight back **on the next tick**, Player.log shows `kiss broken by damage`; control case: non-external-violence damage (falls, friendly heals) does **not** break.
-- [ ] Passive side no longer shoots during approach: right-click a kiss on a raider → your pawn is not shot on its way over (the old late-start passive partner shot back mid-approach).
-- [ ] Warqueen case: dispatch a colonist to kiss an idle warqueen → while in the job (approach/perform/return) she **neither fires the ChargeBlaster nor spawns war urchins** (both are think-tree job channels, proven by source; seeing either = a new bug). Her already-spawned urchins keep shooting your pawn — the first hit breaks the kiss (previous row); the moment her job ends she may instantly release a fresh litter (the carrier cooldown kept ticking inside the job) — clear the urchins first for a safe kiss.
-- [ ] Combat gate: ambient on + a raider inside an attack job (in a firefight) → the **system** never pulls it into a kiss; at the same moment the director can name it → **it kisses** (player-issued overrides the gate). The gate still holds while "ignore kiss cooldowns" is on.
-- [ ] Return leg: both walk home inside the job (with "return home" on); blocked en route → 3 re-issues then end in place and the queue keeps delivering; long route → hard cap at 20 real seconds, ends in place, never hangs. Wall-kissers and mechs also return inside the job.
-
-### Gates and decisions
-
-- [ ] Moodless units: right-click an animal / mechanoid / Odyssey drone / anomaly entity → menu label carries "(没有心情系统，只是做做样子)", hearts and animation normal, mood panel gains **nothing**, no exceptions in Player.log.
-- [ ] Own animals only get kissed: select a colony animal and right-click anything → no kiss option (vanilla `CanTakeOrder`); it also never initiates via ambient; others kissing it works normally.
-- [ ] Mechs can initiate: select a friendly mech, right-click another mech → kissable (the "has a mouth" test deliberately applies to flesh only).
-- [ ] Role swap: select a legless/downed pawn, right-click a mobile one → the other walks over instead; both immobile → greyed item says "两个都动不了".
-- [ ] Participation-layer greyed items: ordering a sleeping pawn → "在睡着或不清醒"; a downed-but-awake one → kissable as normal (a deliberate distinction); a burning one → greyed.
-- [ ] Organs and life stages: a colonist without a jaw initiating → "没有能用来亲的嘴" (as a receiver no restriction); babies cannot initiate but can be kissed.
-- [ ] Entities (shambler / ghoul / awoken corpse — **mech-equal treatment**, 2026-10-05 ruling): as receiver, ordering one → the kiss completes (menu label carries the "没有心情系统" suffix), an **entity fate-table message** pops (`MWAH.KissPawn.Entity.*`, log line `fate KissPawnMutant: ... row=MWAH_Fate_PawnEntity_Line_N`), mood panel gains **nothing**; **as initiator, director left slot = idle shambler → it walks over and kisses** (`BeginDirected` skips `CanTakeOrder`, and the 10-05 deletion removed our last semantic gate — right-click still can't, that's vanilla's subhuman rule); admission follows the gate slider (they are Humanlike: tier ≥3 non-hostile, tier ≥4 hostile) — below that expect the ordinary tier wording, the old "已经顾不上" rejection key is gone; spot-check the 10 entity messages: **no body/appearance words** (psychology only — entities may not be humanoid).
-- [ ] Ritual absorbed: a target whose hediff sets `blocksSocialInteraction` (Biotech/Odyssey rituals) → "正沉浸在仪式里".
-- [ ] Prisoners and slaves: initiating or receiving → mood entries appear normally (vanilla `Mood` gates on neither faction nor bondage).
-- [ ] Gate narrowing, tier by tier: drag 6→0 and confirm **exactly one population class drops per notch** (6→5 mechs/drones/void entities, 5→4 wild animals and fleshbeasts, 4→3 hostile humanlikes, 3→2 visitors/traders/allies, 2→1 own animals and colony mechs, 1→0 slaves and prisoners).
-- [ ] Gate factory value and wording: a fresh save shows "谁能亲谁: 所有 Pawn 都互相亲吻" / "every pawn kisses each other"; greyed items read "{the out-of-tier side} 不想和 {the other} 亲吻" with **no** system-speak about settings or ranges.
-- [ ] Any combination: enemy×enemy, enemy×colonist, animal×mech, downed×standing all work (via panel or quick chain, one BeginDirected gate).
-- [ ] Cross-session static reset: kiss a few times → back to main menu → new game/load an old save → ID-colliding pawns must not inherit last session's cooldowns (right-click kisses immediately); no Goto error on the new session's first tick.
-
-### Director panel
-
-- [ ] Panel basics (non-modal): click the bottom bar → a small panel appears centered above the bar, **no pause**, map keeps normal box-select; **arrow panning and wheel zoom must keep working** (the `preventCameraMotion=false` regression point — the first live version killed exactly this); left slot "谁要发起亲吻？", right slot "（先选发起方）", grey heart.
-- [ ] Single-hop picking: click the left slot → map picking with the prompt "谁要发起亲吻？" → pick someone → avatar fills the slot, caption becomes "{名字} 要发起亲吻。", right slot becomes "{名字} 想要和谁亲吻？", **left half of the heart turns red**; click the right slot → pick a second pawn **or a wall** (walls show their uiIcon) → **right half red = whole heart red**, caption "{左} 想要和 {右/墙名} 亲吻。"; click the red heart → dispatch (walls take the wall-kiss chain, playerForced). With one side empty the heart does nothing.
-- [ ] Heart dispatch failure: pair still gated/cooldown-unreachable → a message with the **real reason** (never silent); re-clicking inside the pair cooldown states the remaining time. Slots stay filled after dispatch.
-- [ ] Secondary operations: left-click a filled avatar = re-pick that hop; right-click the left slot = clear it and the right slot with it (the referent changed); right-click the right slot = clear only the right; with the left empty, clicking the right slot does nothing.
-- [ ] Quick chain: the panel's bottom button skips the avatar frames — two map hops directly (second hop also accepts a wall), dispatch on the second commit **and echo both into the avatar slots**.
-- [ ] Wall fog filter: a fogged wall is unpickable and never highlights; with the wall-kissing switch off the right slot cannot pick walls either (pawns still selectable).
-- [ ] Responsiveness: change resolution or UI scale (`Prefs.UIScale`) → the panel re-lays out proportionally; a dragged panel keeps its relative position mapped and clamped on-screen, an untouched one re-anchors above the bar; on the smallest canvas (1024×768) captions stay single-line, never poke the frame, never crowd "快速发配" (the fix: the height formula's missing title row `Margin+25f`); with the panel open the Dev palette shows no red `Word wrap was false at end of frame` (frame-end contract fixed). The vanilla settings window clipping at UIScale>1 is vanilla's fixed 650×600 — test at UIScale 1.0.
-- [ ] Drag and close: any spot drags (base `GUI.DragWindow`); × or re-clicking the bar button closes; if picking is still live when closing, the Targeter is collected too (no invisible pick mode left behind); Esc only cancels picking, never closes the panel.
-- [ ] Director off via settings: turning off "亲吻导演台按钮" → the bar cell vanishes, an open panel closes immediately, an in-flight pick ends immediately; factory default **on**.
-- [ ] Stacked-cell disambiguation: with a dog standing on a person, which one a pick grabs must match what the right-click menu picks at the same spot (both use vanilla `Find.Targeter`).
-- [ ] Bar position: the button sits left of the gear and right of all tabs (order=200).
-- [ ] Swap boundaries (dispatch side): director-initiating a jawless raider → rejection message and **your colonist is never drafted as a proxy kisser**; with ambient on your drafted colonists never get pulled out of combat.
-- [ ] Panel × Dev palette coexistence: with the Dev palette open the panel still pops, picks, and commits (clicks landing on windows never pick; on the map they do); `[MWAH] dev: pick start/ok/end (generation N)` lines pair up, and at a chain hand-off hop one's cleanup is suppressed by the generation token — no spurious end.
-
-### Wall kissing and fate tables
-
-- [ ] Wall basics (fate-table era): select a colonist, right-click a **man-made wall** → "亲吻{墙名}…?!" → walks to a touching cell, faces it, hearts at interval, duration completes → a **five-tier short message** (e.g. "{PAWN} 亲吻了 {WALL}。什么也没有发生——…") plus the matching mood entry (−2/0/+1/+3/+6); **open that memory and its description is the drawn 1-of-10 narration line** (per-instance, zero patches). **Single relationship slot (0.2.x)**: the mood panel holds **at most one** wall-kiss entry — a second kiss (same or another wall) **replaces in place**: tier flips to the new draw, narration swaps, timer restarts; never two wall entries side by side. Natural rock and buried veins also get the menu; doors/furniture/art do not.
-- [ ] Silent invalidation (the addon constitution): with "允许亲吻墙壁" off — right-clicking a wall shows **not even a greyed item**; the director's right slot and quick-chain hop two cannot hit walls (no highlight); a wall already stored in the right slot clears silently; with the menu open, flip the switch off and click the stale item → **nothing pops at all**. No red lines anywhere in Player.log throughout.
-- [ ] Fate table edit loop (file-driven acceptance): edit a row's weight in `MWAH_FateDefs.xml` (e.g. all Devoted 160 → 1000) → restart → noticeably more "fell in love with this wall"; delete a row → that narration never appears again; delete **every** scope=KissWall row → the five tiers and messages still fire (built-in fallback distribution), memory descriptions fall back to static text.
-- [ ] Wall edges: a wall unreachable from the room center → greyed item says no standable reachable spot exists; already kissing (person or wall) → "已经在亲了"; inside cooldown → remaining time shown; wall-kissing shares the per-pawn cooldown with two-person kisses. **Note: with "ignore kiss cooldowns" on, every cooldown above is skipped (walls included)** — a "walls have no cooldown" report checks this switch first. A wall destroyed mid-performance → the job ends cleanly with no settlement.
-- [ ] Wall switch: turning "允许亲吻墙壁" off in settings → the wall menu disappears immediately (menu open, switch off, click the stale item → silent no-op, see the constitution row); factory default **on**; it is independent of the gate slider (gate at the far left still kisses walls).
-
-### Mood and values
-
-- [ ] Mood values: the "被X亲吻过" entry = +5 × own SocialImpact × multiplier, duration matching the "mood duration" setting (factory 60000 t / 1000 s / 24 game hours); a level-10 social pawn's entry is visibly higher than a level-0 one (the 0.82→1.37 curve); mute/deaf pawns score lower (Talking weight 0.9, Hearing 0.3); a hat wearer slightly higher.
-- [ ] Relationship slots (0.2.x ruling; the old "+7.5 stack cap" anchor was a mechanism misread — `stackedEffectMultiplier` only decays within one same-label group): same partner kissed twice → still exactly **one** entry, refreshed in place; different partners → **independent entries, no cross-partner cap** (kissing A then B shows both, each +5 × own SocialImpact × multiplier) — player-orchestrated stacking is accepted entertainment, pacing stays on the two cooldowns.
-- [ ] Psychopath nullify: a colonist with Psychopath (or, with Anomaly, the `Inhumanized` hediff) gets kissed → animation and hearts as normal, but the mood panel shows **no entry** and total mood is untouched (nullification happens at read time; the entry still exists in memory, filtered out — do not treat "panel shows nothing" as a bug).
-- [ ] Leaving a mark (`changeOpinion` on): the social tab shows "我们的那一吻" ≈ +6 × the same multiplier, still bound by "mood duration", one entry per pair maximum (`stackLimitForSameOtherPawn`).
-
-### Cooldowns and the settings page
-
-- [ ] Cooldowns: repeatedly kissing one person → greyed item shows the remaining time readable in all three units; pair cooldown at 0 → back-to-back kisses allowed.
-- [ ] Numeric fields: every slider has a right-side input box (tick items take ticks); Enter or click-away commits, quantized by step and clamped; garbage/empty re-echoes the old value; the two tier sliders — "谁能亲谁" and "诊断档位" — have **no** box (a tier is not a quantity).
-- [ ] Settings scrolling (re-fixed 2026-09-30): wheel/drag reaches the **very bottom** — "诊断档位" and "恢复默认值" fully visible and clickable; **no** control ghosts beyond the window's right edge (the old bug: overflow entries column-switched outside, the orange restore button floated past the frame); verify in both languages and at two window sizes.
-- [ ] Three-unit readout and persistence: every duration row shows `tick / seconds / game hours`; edits take effect immediately and survive reopening; "restore defaults" returns everything to `Constants`.
-
-## Explicitly deferred / never
-
-- [ ] Never: world-map / caravan-tile right-clicks; RimWorld Multiplayer sync; true body-contact kiss pose (needs a custom `PawnRenderNodeWorker` + art — not an API limit).
-- [ ] Never: downed pawns as initiators (would need Harmony on `FloatMenuMakerMap.ShouldGenerateFloatMenuForPawn`, conflicting with the zero-Harmony boundary).
+- [ ] 不做：世界地图/商队途中右键；RimWorld Multiplayer 同步；真·贴合亲吻姿势（需自定义 `PawnRenderNodeWorker` + 美术，非 API 限制）。
+- [ ] 不做：Downed 者当右键发起方（需 Harmony 放开原版门，与零 Harmony 冲突；导演台代发不受此限）。

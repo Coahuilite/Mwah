@@ -46,3 +46,17 @@ On 2026-09-28 MEMORY recorded "checkOverrideOnDamage=Always makes one shot break
 ### Branch lineage
 
 `dev` created 2026-09-02 (the first 9 commits actually landed on main; dev was fast-forwarded onto main without touching history). On 2026-10-04 `dev` retired in favor of the per-minor branch `0.1.x` (identical content at retirement); `main` contracted to release-only.
+
+## 2026-10-05 — 0.2.x cycle: live-test findings, rulings, and the 0.2.1 acceptance record
+
+source: live sessions 2026-10-04/05 (maintainer-executed matrix runs on dev packages `fc7ebe5`→`c8c4b60`), decompiled 1.6.4871 evidence, commits `7638cb6`…`8f6ce79` plus the uncommitted release-prep docs.
+reason: the 0.2.1 live matrix served its purpose and is retired from `TODO.md` down to a regression checklist; the superseded artifacts of this cycle need one cold record so nobody resurrects them.
+status: archived.
+
+**What live testing caught** (all fixed and re-verified in-session): the same-frame dual-start startup race that made every two-person dispatch self-abort (mechanism and general law live in MEMORY — this is the ledger that the matrix exists to catch exactly this class); director portraits rendered `Rot4.North` = back of the head (South faces the camera; all six explicit-rotation vanilla call sites agree — MEMORY's 09-22 nail was wrong and is corrected); pinned settings header clipped twice because band heights were guessed, fixed by measuring with `Text.CalcHeight` (two-axis rule in MEMORY).
+
+**Rulings of the cycle** (full text in MEMORY "0.2.x mood architecture rulings" and "Logging ruling"): entities = mech-equal treatment with a dedicated `KissPawnMutant` table and body-agnostic (psychology-only) copy; monolyn-style race mods clarified as ordinary humanlike colonists, not entities; no cross-group mood cap (relationship slots independent); per-addon settings dictionaries keyed by stable addon ids; four-section settings page with registry-grown add-on block; diagnostics as a four-rung slider (Off/Auto/Simple/Verbose); channel-tied build identity (dev = version+full sha, release = bare version) pinned in a measured-height header; dev rehearsal = folder, zip opt-in and deterministic; Chinese copy says "Pawn" where the referent is not human-only; FerriteLib considered and rejected as a dependency (measure-not-guess is a vanilla primitive).
+
+**Superseded artifacts — do not resurrect**: five separate `MWAH_KissedWall_*` thought defs (now one def + 5 stages, `stageIndex` on fate rows); the `MWAH.Fail.SociallyIncapable` rejection key (deleted with the mutant gate); the `wallKissing` bool field (now `addonSwitches["wall"]`); the `diagnosticLogs` bool (now `diagnosticLevel`); hand-typed settings key literals (now derived from field names); old Keyed hand names `Enabled`/`Duration`/`FleckInterval`/`PawnCooldown`/`PairCooldown`/`ReturnHome`/`Autonomous`/`AutonomousInterval`/`AutonomousRadius`/`ThoughtDuration`/`DiagLevel` (renamed to field stems); the always-zipped dev package; the full 90-line 0.2.1 verification matrix (acceptance observed 2026-10-05, maintainer, dev package `c8c4b60` — including wall single-slot replacement and the four diagnostics rungs; future releases use the slim regression checklist in `TODO.md`).
+
+**Release posture**: 0.1.x archived without release, 0.2.0 never tagged — the public axis starts at 0.2.1; tag/Release/Workshop remain separately gated per runbook.
