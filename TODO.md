@@ -4,12 +4,6 @@
 
 - **发布后维护态**（0.2.2 已双渠道发布，证据见 `docs/release_review/release-0.2.2-review-zh.md`）。无进行中开发任务；下一条指令来自维护者（bug 报告 / 功能请求 / 下一版本整备）。
 
-## Open items
-
-- [ ] Release CI 正文目前是 GitHub 自动 "Full Changelog" 链接，未注入 `docs/CHANGELOG.md` 对应条目；若要注入，改 `release.yml` 的 body 生成步骤（未排期，维护者裁决）。
-- [ ] 发行 flavor（steam/github 包）的 Player.log 级实机验收未做；如需补，装 GitHub 资产开简化诊断跑一桩吻即可（低优先，行为面已由 dev 包矩阵覆盖）。
-- [ ] 工坊页面 agent 只读核验：等维护者提供 item URL（ID 永不入库）。
-
 ## Entry point for the next session
 
 - 先读 `MEMORY.md` 耐久状态；动某子系统前读 `docs/design-decisions.md` 对应节；发布相关只认 `docs/release-runbook-zh.md`。当前 hash 用 `git log --oneline -1`，本文不钉 hash。
