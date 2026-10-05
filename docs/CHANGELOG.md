@@ -42,7 +42,7 @@ One-line release summary.
 - ...
 ```
 
-## [2026-10-05 23:57 UTC+8] Version 0.2.2
+## [2026-10-06 00:00 UTC+8] Version 0.2.2
 
 First public release: any pawn kisses any pawn. Mechanics and details live in the README.
 
@@ -65,4 +65,4 @@ First public release: any pawn kisses any pawn. Mechanics and details live in th
 
 ### Notes
 - The 0.1.x line was archived without shipping, and 0.2.0 / 0.2.1 were never tagged; everything above ships together in 0.2.2, the first public release.
-- This version is also the initial Steam Workshop upload (published earlier the same day, same steam-flavor build). The GitHub Release went out at 23:57 UTC+8.
+- This version is also the initial Steam Workshop upload (published 2026-10-05, same steam-flavor build). The GitHub Release went out at 2026-10-06 00:00 UTC+8.

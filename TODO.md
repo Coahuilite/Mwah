@@ -2,13 +2,14 @@
 
 ## Current goal
 
-- **0.2.1 发布流程**。实机矩阵已于 2026-10-05 由维护者全量观测通过（含墙单槽顶替与诊断四档；完整矩阵记录已压缩进 `OBLIVIONIS.md` 2026-10-05 节）。当前停在：发布整备文档（CHANGELOG×2、steam-workshop-page、README×2、日志文档状态头）待维护者审阅 → 审阅通过后提交 → tag / GitHub Release / 工坊上传逐项授权（流程唯一入口 `docs/release-runbook-zh.md`）。
-- 仓库：`Coahuilite/Mwah`，开发分支 `0.2.x`（已上云，CI 绿），`0.1.x` 冻结归档（从未发布），`main` release-only。版本轴 0.2.1。
+- **0.2.2 已发布**（2026-10-05/06）：工坊首发（维护者本人上传，steam flavor）+ GitHub Release `v0.2.2`（main 发布提交 `32a9d94`，Release CI 绿，资产 `Mwah-v0.2.2.zip`）。当前进入发布后维护态。
+- 仓库：`Coahuilite/Mwah`，开发分支 `0.2.x`（已上云，CI 绿），`0.1.x` 冻结归档（从未发布），`main` release-only（现与 0.2.2 同步）。版本轴 0.2.2。
 
 ## Entry point for the next session
 
 - 先读 `MEMORY.md` 耐久状态与 `docs/release-runbook-zh.md`；当前 hash 用 `git log --oneline -1`，本文不钉 hash。
-- Agent 的下一步只在两种情况出现：维护者对发布整备文档给出审阅意见/授权；或发布后维护请求。
+- Agent 的下一步只在两种情况出现：维护者给出 bug 报告/功能请求的处理授权；或下一个版本的发布整备指令。工坊页面维护与上传永远是维护者本人。
+- 已知改进候选（未排期）：Release CI 目前用 GitHub 自动生成的 "Full Changelog" 链接作为 Release 正文，未注入 `docs/CHANGELOG.md` 对应条目；若要注入，改 release.yml 的 body 生成步骤。
 - 工坊页面文案唯一维护源 = `docs/steam-workshop-page.md`（中英 BBCode + 编辑约定）；版本历史 = `docs/CHANGELOG*.md`（发布时把 Unreleased 头替换为 UTC+8 时间）。
 
 ## Regression checklist（供未来发布复用；0.2.1 全量矩阵见 OBLIVIONIS）
