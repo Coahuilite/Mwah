@@ -15,8 +15,12 @@ public static class KissFate
 {
     private static readonly List<MWAH_FateDef> Scratch = new();
 
-    /// <summary>按 scope 抽一行；null = 该表没有任何有效行。</summary>
-    public static MWAH_FateDef? Roll(string scope)
+    /// <summary>按 scope 抽一行；null = 该表没有任何有效行。
+    /// <paramref name="exclude"/> = 同一事件里已被同伴结算用掉的行，优先跳过 ——
+    /// 一桩吻的两份结算若同表独立抽，撞车就会把同一句镜像输出两遍（2026-10-05 实机：
+    /// 两只动物同抽"闻口袋"）。排除是尽力而为：表里只剩被排除那一行时照抽它，
+    /// 沉默比复读更糟。</summary>
+    public static MWAH_FateDef? Roll(string scope, MWAH_FateDef? exclude = null)
     {
         Scratch.Clear();
         int total = 0;
@@ -32,16 +36,41 @@ public static class KissFate
         {
             return null;
         }
+        // 排除只在"该行确实在表里且表不止一行"时生效；行只按 weight>0 收集，
+        // 所以 count>1 时扣掉 exclude 的权重后 total 必然仍 >0。
+        int excludeIndex = exclude == null ? -1 : Scratch.IndexOf(exclude);
+        if (excludeIndex >= 0)
+        {
+            if (Scratch.Count <= 1)
+            {
+                excludeIndex = -1;
+            }
+            else
+            {
+                total -= Scratch[excludeIndex].weight;
+            }
+        }
         int roll = Rand.RangeInclusive(0, total - 1);
         for (int i = 0; i < Scratch.Count; i++)
         {
+            if (i == excludeIndex)
+            {
+                continue;
+            }
             roll -= Scratch[i].weight;
             if (roll < 0)
             {
                 return Scratch[i];
             }
         }
-        return Scratch[Scratch.Count - 1]; // 理论不可达（总和已按同一集合算），防御空转
+        for (int i = Scratch.Count - 1; i >= 0; i--)
+        {
+            if (i != excludeIndex)
+            {
+                return Scratch[i]; // 理论不可达（总和按同一集合算），防御空转
+            }
+        }
+        return null;
     }
 
     /// <summary>
