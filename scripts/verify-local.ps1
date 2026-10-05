@@ -6,6 +6,11 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
+# 隐私自咬纪律（2026-10-05 校准）：本文件的正则不得以字面量包含"两个连续反斜杠"——
+# privacy-audit 的 UNC 检测会把它当真实泄漏逮住（实锤两处）。分隔符用 char 码构造，语义不变。
+$bs = [string][char]92
+$buildDirsPattern = ($bs * 2) + '(obj|bin|dist|' + $bs + '.git)' + ($bs * 2)
+$absDrivePathPattern = '[A-Za-z]:' + ($bs * 2)
 # 本模组的本地验证：无测试工程，因此检查顺序为
 #   1   Release 构建（零警告零错误由 dotnet 自身把关）
 #   1b  三个构建渠道都要能编译（Dev / Steam / GitHub）
@@ -14,7 +19,7 @@ $ErrorActionPreference = "Stop"
 #   4   C# 引用的 MWAH.* 键在两种语言里都存在
 #   5   defName(XML) ↔ DefOf 字段(C#) ↔ driverClass 字符串
 #   5a  天意表行完整性（scope/权重/thought/旁白与短讯键双语）
-#   7   版本纪律：csproj <Version> == About.xml <modVersion>
+#   7   版本纪律：csproj <Version> 唯一字面量；About/工坊页/双语 changelog 跟随面全一致
 #   8   分发卫生与隐私红线：无 PublishedFileId、无绝对本地路径
 #   9   设置项三处锁死：字段名 ↔ Scribe key ↔ Constants 默认值
 #  10   门禁档位 ↔ 双语档位名键 ↔ Constants 档位范围
@@ -77,7 +82,7 @@ Assert-True 'built assembly present' (Test-Path -LiteralPath $assemblyPath -Path
 
 # 2. XML well-formedness
 $xmlFiles = Get-ChildItem -LiteralPath $root -Recurse -Filter *.xml |
-    Where-Object { $_.FullName -notmatch '\\(obj|bin|dist|\.git)\\' }
+    Where-Object { $_.FullName -notmatch $buildDirsPattern }
 $bad = @()
 foreach ($f in $xmlFiles) {
     try { $null = [xml](Get-Content -Raw -LiteralPath $f.FullName) }
@@ -227,11 +232,27 @@ Assert-True "csproj <Version> == About <modVersion> ($csprojVersion)" ($csprojVe
 Assert-True "Constants.ModId == About packageId ($packageId)" ($constMatch -eq $packageId)
 Assert-True 'packageId is lowercase' ($packageId -eq $packageId.ToLowerInvariant())
 
+# 7b. 版本跟随面一致（2026-10-05 校准）：全仓库唯一字面量是 csproj <Version>；产品可见的
+#     跟随面（About modVersion、工坊页目标行 + 中英版本行、双语 changelog 的 Unreleased 标题）
+#     必须全部等于它。手工同步的跟随面漏改就是静默分家，门把它变成红字。
+$wsCopy = Get-Content -Raw -LiteralPath (Join-Path $root 'docs\steam-workshop-page.md')
+$wsVersions = @([regex]::Matches($wsCopy, '目标：([0-9]+\.[0-9]+\.[0-9]+)|Mod version:[[]/b[]] *([0-9]+\.[0-9]+\.[0-9]+)|模组版本：[[]/b[]]([0-9]+\.[0-9]+\.[0-9]+)') |
+    ForEach-Object { @($_.Groups[1], $_.Groups[2], $_.Groups[3]) | Where-Object { $_.Success } | ForEach-Object { $_.Value } })
+$clEn = Get-Content -Raw -LiteralPath (Join-Path $root 'docs\CHANGELOG.md')
+$clZh = Get-Content -Raw -LiteralPath (Join-Path $root 'docs\CHANGELOG.zh-CN.md')
+$clVersions = @(
+    [regex]::Match($clEn, 'Unreleased — Version ([0-9]+\.[0-9]+\.[0-9]+)').Groups[1].Value
+    [regex]::Match($clZh, '未发布 — 版本 ([0-9]+\.[0-9]+\.[0-9]+)').Groups[1].Value
+)
+$followerVersions = @($wsVersions + $clVersions)
+Assert-True "release-copy versions all track csproj <Version> ($csprojVersion)" (
+    $followerVersions.Count -eq 5 -and -not ($followerVersions | Where-Object { $_ -ne $csprojVersion })
+) "actual: $($followerVersions -join ', ')"
 # 8. Distribution hygiene + privacy red line
 Assert-True 'no About/PublishedFileId.txt in repo' (-not (Test-Path -LiteralPath (Join-Path $root 'About\PublishedFileId.txt')))
 $textFiles = Get-ChildItem -LiteralPath $root -Recurse -File -Include *.cs, *.xml, *.ps1, *.md, .gitignore, .gitattributes |
-    Where-Object { $_.FullName -notmatch '\\(obj|bin|dist|\.git)\\' }
-$privacyHits = @($textFiles | Select-String -Pattern '[A-Za-z]:\\' | Where-Object { $_.Line -notmatch '^\s*#' })
+    Where-Object { $_.FullName -notmatch $buildDirsPattern }
+$privacyHits = @($textFiles | Select-String -Pattern $absDrivePathPattern | Where-Object { $_.Line -notmatch '^\s*#' })
 Assert-True 'no absolute local paths in tracked text files' ($privacyHits.Count -eq 0) (($privacyHits | Select-Object -First 3 | ForEach-Object { "$($_.Path):$($_.LineNumber)" }) -join ' | ')
 
 # 9. Settings fields, Scribe keys and Constants defaults must name the same thing.

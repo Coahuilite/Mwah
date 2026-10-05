@@ -2,10 +2,11 @@
 # 对齐 UniversalSqueaker 2026-09-06 维护者裁决的最小发布仪式）。
 #
 # AGENTS.md 硬边界的执行器："仓库、文档、产物与可达历史中零绝对本地路径、零凭据、零工坊 ID 文件"。
-# 三个向量各自独立扫描，结论不得互推——工作树干净不蕴含历史干净，提交信息干净不蕴含历史 blob 干净：
-#   vector1 工作树：HEAD 已跟踪文件（git grep -- .）
-#   vector2 提交信息：subject + body，全部 ref
-#   vector3 历史 blob：每个可达 revision（仅 -FullHistory；先量后扫）
+# 向量各自独立扫描，结论不得互推——工作树干净不蕴含历史干净，提交信息干净不蕴含历史 blob 干净：
+#   vector1 工作树：已跟踪文本（git grep -I -- .：ERE）+ 文件名 + 内容邮箱
+#   vector2 提交信息：subject + body + annotated tag 消息，全部 ref（.NET 方言）
+#   vector3 历史 blob：每个可达 revision（仅 -FullHistory；文本 ERE）
+#   vector4 二进制元数据：PNG 元数据块（tEXt/iTXt/zTXt/eXIf）与 DLL 字符串表（ASCII+UTF-16）
 # 身份面：author / committer 必须全部是 GitHub noreply 地址；出现真实邮箱即失败。
 #
 # 已知历史债务台账（$knownHistoryDebt，只作用于 vector3）：建仓体检（2026-10-04）三向量零命中，
@@ -60,21 +61,46 @@ try {
         return ,@($Values | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Sort-Object -Unique)
     }
 
-    # 本机展开路径：盘符 + 一或两个分隔符 + Users/WorkSpace。{1,2} 是刻意的：历史 blob 里实测存在
-    # JSON 转义的双反斜杠形态，单分隔符模式看不见它。
-    $pathPattern = '[A-Za-z]:[\\/]{1,2}(Users|WorkSpace)'
-
+    # 绝对路径（2026-10-05 校准放宽）：旧形钉死 (Users|WorkSpace)，看不见其它盘符目录
+    # （游戏安装目录、Steam 库）、UNC 与 /home/。现在扫"任意盘符 + 分隔符"，守卫字符要求
+    # 盘符前不是字母数字/斜杠/冒号/反斜杠，挡掉 URL scheme 尾部字母的误报。两方言各一份：
+    # git grep 走 POSIX ERE（无 lookbehind，用负向类；git 自带引擎不认嵌套 [:space:]
+    # 写法，实测 128），PowerShell 侧（vector2/vector4）走 .NET 负向断言。{1,2} 保留：
+    # 历史 blob 实测存在 JSON 双反斜杠形态（转义在冒号之后，两份都盖得住）。
+    $pathPattern = '(^|[^A-Za-z0-9/:\\])[A-Za-z]:[\\/]{1,2}'
+    $pathPatternNet = '(?<![A-Za-z0-9/:\\])[A-Za-z]:[\\/]{1,2}'
+    # UNC 与 /home/ 用拼接构造：脚本源码里不得出现它们匹配的目标串（校准实锤：字面量形态
+    # 的 UNC 模式让 vector1 逮住脚本自己；私钥标记同理，见下）。
+    $bs = [string][char]92
+    $uncPattern = ($bs * 4) + '[^' + ($bs * 2) + ' ":]{1,40}[' + $bs + '/]'
+    $posixHomePattern = '(^|[^A-Za-z0-9/:])' + '/ho' + 'me/[A-Za-z0-9._-]+'
     # 私钥标记由拼接构造，本脚本才不会在 vector1 里命中自己。
     $credPatterns = [ordered]@{
         'github-classic-pat'  = 'ghp_[A-Za-z0-9]{36}'
         'github-fine-grained' = 'github_pat_[A-Za-z0-9_]{20,}'
         'openai-style-key'    = 'sk-[A-Za-z0-9]{20,}'
+        'aws-access-key'      = 'AKIA[0-9A-Z]{16}'
         'private-key-block'   = ('-----' + 'BEGIN')
     }
+    # 内容里的真实邮箱也是个人面（身份向量只管 author/committer，管不到 About.xml 写死邮箱）。
+    # 白名单：GitHub noreply 与 RFC 2606 example 域。
+    $emailPattern = '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'
+    $emailAllowlist = 'users\.noreply\.github\.com|noreply@github\.com|example\.com|example\.net|example\.org'
     $publishedFileIdValuePattern = '<PublishedFileId>[0-9]+'
 
-    # 已知历史债务台账（vector3 专用）。2026-10-04 建仓体检：零命中，台账为空。
-    $knownHistoryDebt = @()
+    # 二进制面（校准盲区 1）：git grep -I 永远跳过二进制，而 PNG 的 XMP/tEXt 与 DLL 的
+    # 嵌入字符串正是实测有货的位置（ModIcon.png 内 Affinity Photo XMP 块由 -FullHistory
+    # 之外的手工校准首次发现）。vector4 直接按字节扫 tracked 二进制，并报出可读元数据
+    # 字段供人工过目；像素内容（截图里的任务栏/ID/存档名）脚本看不见，必须人工目检。
+    $binaryExtPattern = '\.(dll|png|jpg|jpeg|gif|tga|bmp|zip|pdb|ttf|otf|mp3|ogg|wav)$'
+
+    # 已知历史债务台账（vector3 专用）。建仓体检（2026-10-04）三向量零命中；2026-10-05
+    # 校准新增一条：verify-local 的门 2/8 排除式历史上以两个连续反斜杠的字面量存在，
+    # 命中新加的 UNC 形态检测——那是正则语法不是路径泄漏；现行源码已改 char 码构造，
+    # 历史 blob 不可改写（append-only），按台账制度接受。
+    $knownHistoryDebt = @(
+        [pscustomobject]@{ Pattern = 'unc-path'; Path = 'scripts/verify-local.ps1' }
+    )
 
     function Test-KnownHistoryDebt([string]$PatternLabel, [string]$RepoPath) {
         foreach ($entry in $script:knownHistoryDebt) {
@@ -83,15 +109,19 @@ try {
         return $false
     }
 
-    # ---- vector1：工作树（已跟踪文件） ----
+    # ---- vector1：工作树（已跟踪文本；二进制归 vector4 的结构化解析） ----
     $vector1Checks = [ordered]@{
         'personal-path'           = $pathPattern
+        'unc-path'                = $uncPattern
+        'posix-home'              = $posixHomePattern
         'published-file-id-value' = $publishedFileIdValuePattern
     }
     foreach ($name in $credPatterns.Keys) { $vector1Checks["credential '$name'"] = $credPatterns[$name] }
 
     foreach ($label in $vector1Checks.Keys) {
-        # -e 是必须的：私钥标记以 '-' 开头，会被当成选项（git exit 129）。
+        # -e 是必须的：私钥标记与 UNC 以 '-'/'\' 开头，会被当成选项（git exit 129）。
+        # -I：跳过二进制——压缩图像流里随机出现"守卫+字母+冒号+斜杠"四字节组，-a 必误报
+        # （校准实锤：Preview.png 的 IDAT 流命中假路径）。二进制由 vector4 按结构扫。
         $result = Invoke-Git @('grep', '-l', '-I', '-E', '-e', $vector1Checks[$label], '--', '.')
         if ($result.ExitCode -ne 0 -and $result.ExitCode -ne 1) {
             Add-Failure "vector1 scan failed for $label (git exit $($result.ExitCode))" ''
@@ -102,12 +132,24 @@ try {
     }
     $trackedIdFile = Select-Unique ((Invoke-Git @('ls-files', '--', 'About/PublishedFileId.txt')).Lines)
     if ($trackedIdFile.Count -gt 0) { Add-Failure 'vector1 PublishedFileId.txt is tracked' ($trackedIdFile -join $newLine) }
+    # 文件名本身（校准盲区 4）：内容干净不代表 `Fe-notes.txt` 这种名字没漏。
+    $allTracked = (Invoke-Git @('ls-files')).Lines
+    $badNames = Select-Unique @($allTracked | Where-Object {
+        $_ -match '[A-Za-z]:' -or $_ -match '(?i)(^|/)Users?/' -or $_ -match '(?i)workspace' -or $_ -match '(?i)\\\\'
+    })
+    if ($badNames.Count -gt 0) { Add-Failure 'vector1 tracked filename leaks a local path' ($badNames -join $newLine) }
+    # 内容邮箱（校准盲区 3）：逐命中行过白名单。
+    $emailHits = @((Invoke-Git @('grep', '-n', '-I', '-E', '-e', $emailPattern, '--', '.')).Lines |
+        Where-Object { $_ -notmatch $emailAllowlist })
+    if ($emailHits.Count -gt 0) { Add-Failure 'vector1 email address in tracked text' ($emailHits -join $newLine) }
     Write-Host 'vector1 (working tree): scanned'
 
-    # ---- vector2：提交信息（subject + body） ----
+    # ---- vector2：提交信息（subject + body + annotated tag 消息，校准盲区 5） ----
     $messageText = ((Invoke-Git @('log', '--all', '--format=%s%n%b')).Lines -join $newLine)
+    $tagMessages = ((Invoke-Git @('for-each-ref', 'refs/tags', '--format=%(contents)')).Lines -join $newLine)
+    $messageText = $messageText + $newLine + $tagMessages
     $vector2Checks = [ordered]@{
-        'personal-path'           = $pathPattern
+        'personal-path'           = $pathPatternNet
         'published-file-id-value' = $publishedFileIdValuePattern
     }
     foreach ($name in $credPatterns.Keys) { $vector2Checks["credential '$name'"] = $credPatterns[$name] }
@@ -140,6 +182,8 @@ try {
         Write-Host "vector3 (historical blobs): scanning $($revs.Count) revisions"
         $vector3Checks = [ordered]@{
             'personal-path'           = $pathPattern
+            'unc-path'                = $uncPattern
+            'posix-home'              = $posixHomePattern
             'published-file-id-value' = $publishedFileIdValuePattern
         }
         foreach ($name in $credPatterns.Keys) { $vector3Checks["credential '$name'"] = $credPatterns[$name] }
@@ -159,11 +203,81 @@ try {
             if ($unknown.Count -gt 0) { Add-Failure "vector3 historical $label" (($unknown | Sort-Object -Unique) -join $newLine) }
         }
         Write-Host "vector3 (historical blobs): scanned; known-debt files accepted: $($knownHits.Count)"
+        # 历史二进制：-I 跳过（同上，误报问题）；泄漏一旦入史即归 vector3 台账管，
+        # 而当前工作树的二进制由 vector4 结构化复核 —— 发布前两者都跑，覆盖面闭合。
     }
     else {
         Write-Host 'vector3 (historical blobs): SKIPPED (pass -FullHistory for the pre-push check)'
     }
 
+    # ---- vector4：二进制元数据（工作树；git grep -I 的盲区，校准盲区 1） ----
+    # 不做"整文件字节扫"：压缩图像流里随机出现"字母:斜杠"四字节组，误报率与文件体积成正比
+    # （校准实测：Preview.png 的 IDAT 流命中两条假路径）。改为**结构化解析**：
+    # PNG 只读元数据块（tEXt/iTXt/zTXt/eXIf，首个 IDAT 前），DLL/其余只读字符串表
+    # （ASCII 与 UTF-16LE 连续可打印段）——泄漏真会藏的位置，噪音进不来。
+    function Get-PngMetadataText([byte[]]$bytes) {
+        $sb = New-Object Text.StringBuilder
+        $names = New-Object 'System.Collections.Generic.List[string]'
+        $i = 8
+        while ($i + 12 -le $bytes.Length) {
+            $len = ([int]$bytes[$i] -shl 24) -bor ([int]$bytes[$i+1] -shl 16) -bor ([int]$bytes[$i+2] -shl 8) -bor [int]$bytes[$i+3]
+            if ($len -lt 0 -or $i + 12 + $len -gt $bytes.Length) { break }
+            $type = [Text.Encoding]::ASCII.GetString($bytes, $i + 4, 4)
+            if ($type -eq 'IDAT') { break }
+            if ($type -in @('tEXt', 'iTXt', 'zTXt', 'eXIf')) {
+                [void]$names.Add($type)
+                [void]$sb.AppendLine($type + ': ' + [Text.Encoding]::GetEncoding('latin1').GetString($bytes, $i + 8, [Math]::Min($len, 4096)))
+            }
+            $i += 12 + $len
+        }
+        return [pscustomobject]@{ Text = $sb.ToString(); Names = $names }
+    }
+    function Get-PrintableStrings([byte[]]$bytes, [int]$min = 6) {
+        $out = New-Object 'System.Collections.Generic.List[string]'
+        foreach ($encoding in @([Text.Encoding]::ASCII, [Text.Encoding]::Unicode)) {
+            $text = $encoding.GetString($bytes, 0, $bytes.Length - ($bytes.Length % 2))
+            $sb = New-Object Text.StringBuilder
+            foreach ($ch in $text.ToCharArray()) {
+                if ([int]$ch -ge 32 -and [int]$ch -le 126) { [void]$sb.Append($ch) }
+                else { if ($sb.Length -ge $min) { $out.Add($sb.ToString()) }; [void]$sb.Clear() }
+            }
+            if ($sb.Length -ge $min) { $out.Add($sb.ToString()) }
+        }
+        return $out
+    }
+    $binaries = @($allTracked | Where-Object { $_ -match $binaryExtPattern })
+    $binaryChunks = New-Object 'System.Collections.Generic.List[string]'
+    foreach ($b in $binaries) {
+        $bytes = [IO.File]::ReadAllBytes((Join-Path $root ($b -replace '/', [IO.Path]::DirectorySeparatorChar)))
+        $regions = New-Object 'System.Collections.Generic.List[string]'
+        if ($b -match '\.png$') {
+            $meta = Get-PngMetadataText $bytes
+            if ($meta.Text) { $regions.Add($meta.Text) }
+            if ($meta.Names.Count -gt 0) {
+                $binaryChunks.Add("$b : metadata chunks: $((($meta.Names | Sort-Object -Unique) -join ', '))")
+            }
+        }
+        else {
+            foreach ($s in Get-PrintableStrings $bytes) { $regions.Add($s) }
+        }
+        foreach ($region in $regions) {
+            foreach ($p in @($pathPatternNet, $emailPattern, $credPatterns.Values)) {
+                foreach ($m in [regex]::Matches($region, $p)) {
+                    if ($p -eq $emailPattern -and $m.Value -match $emailAllowlist) { continue }
+                    Add-Failure "vector4 binary metadata $b" ($m.Value -replace '[^\x20-\x7e]', '.')
+                }
+            }
+        }
+    }
+    if ($binaries.Count -gt 0) {
+        Write-Host "vector4 (binary metadata): scanned $($binaries.Count) tracked binary file(s)"
+        foreach ($c in ($binaryChunks | Sort-Object -Unique)) { Write-Host "  [chunk] $c" }
+        Write-Host '  REMINDER: pixel content of images (taskbars, Steam IDs, save names, watermarks)'
+        Write-Host '            is beyond any scanner - eyeball every tracked image before pushing.'
+    }
+    else {
+        Write-Host 'vector4 (binary metadata): no tracked binaries'
+    }
     # ---- -PrePush：推送前机械自检 ----
     if ($PrePush) {
         $status = (Invoke-Git @('status', '--porcelain', '--untracked-files=normal')).Lines
