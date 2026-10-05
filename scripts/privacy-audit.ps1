@@ -7,6 +7,7 @@
 #   vector2 提交信息：subject + body + annotated tag 消息，全部 ref（.NET 方言）
 #   vector3 历史 blob：每个可达 revision（仅 -FullHistory；文本 ERE）
 #   vector4 二进制元数据：PNG 元数据块（tEXt/iTXt/zTXt/eXIf）与 DLL 字符串表（ASCII+UTF-16）
+#   vector5 自匿名：从 $env 派生个人 token 反查仓库，证明扫描器自身不存隐私（仅本地跑）
 # 身份面：author / committer 必须全部是 GitHub noreply 地址；出现真实邮箱即失败。
 #
 # 已知历史债务台账（$knownHistoryDebt，只作用于 vector3）：建仓体检（2026-10-04）三向量零命中，
@@ -133,7 +134,7 @@ try {
     }
     $trackedIdFile = Select-Unique ((Invoke-Git @('ls-files', '--', 'About/PublishedFileId.txt')).Lines)
     if ($trackedIdFile.Count -gt 0) { Add-Failure 'vector1 PublishedFileId.txt is tracked' ($trackedIdFile -join $newLine) }
-    # 文件名本身（校准盲区 4）：内容干净不代表 `Fe-notes.txt` 这种名字没漏。
+    # 文件名本身（校准盲区 4）：内容干净不代表"含个人用户名的文件名"没漏（示例刻意不写真名，见 vector5）。
     $allTracked = (Invoke-Git @('ls-files')).Lines
     $badNames = Select-Unique @($allTracked | Where-Object {
         $_ -match '[A-Za-z]:' -or $_ -match '(?i)(^|/)Users?/' -or $_ -match '(?i)workspace' -or $_ -match '(?i)\\\\'
@@ -278,6 +279,36 @@ try {
     }
     else {
         Write-Host 'vector4 (binary metadata): no tracked binaries'
+    }
+
+    # ---- vector5：扫描器自匿名（2026-10-05 校准）----
+    # 维护隐私的表不得自身成为隐私：扫描器源码、台账、注释里不得存任何真实个人值。
+    # 本门从运行时环境派生 token（用户名、机器名）—— 源码只引用 $env 变量、绝不写字面量 ——
+    # 再反查全部已跟踪文本：个人 token 以独立词出现即判定"有人把隐私写进了仓库"（可能就是本脚本）。
+    # 结构性保证：个人值只活在跑门的这台机器上，从不落进门的文本或仓库。
+    # 只在真正的托管 runner 上跳过：GitHub/Azure runner 的用户名是通用构建账号（常是 "admin"、
+    # "runner" 这类高频词，反查必误报），且那不是维护者的秘密。本地即便 shell 设了泛 CI=true
+    # 也要跑 —— 那台机器的 $env:USERNAME 恰恰就是本门要护住的真值。
+    if ($env:GITHUB_ACTIONS -eq 'true' -or $env:TF_BUILD -eq 'true') {
+        Write-Host 'vector5 (scanner anonymity): SKIPPED on hosted runner (runner identity is not the maintainer secret)'
+    }
+    else {
+        $anonTokens = @($env:USERNAME, $env:COMPUTERNAME) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique
+        $anonLeaks = New-Object 'System.Collections.Generic.List[string]'
+        foreach ($tok in $anonTokens) {
+            # -F 定值搜（避开 ERE 转义地狱），再在 PowerShell 侧用 .NET 词边界精判，
+            # 挡掉 interface/safety 这类长词里的巧合子串，只逮独立个人词。
+            $raw = (Invoke-Git @('grep', '-n', '-I', '-F', '-e', $tok, '--', '.')).Lines
+            $pattern = '(?<![A-Za-z0-9])' + [regex]::Escape($tok) + '(?![A-Za-z0-9])'
+            foreach ($line in $raw) {
+                $content = (@($line -split ':', 3))[-1]
+                if ([regex]::IsMatch($content, $pattern)) { $anonLeaks.Add($line) }
+            }
+        }
+        if ($anonLeaks.Count -gt 0) {
+            Add-Failure 'vector5 anonymity: a runtime personal token leaked into tracked files' ($anonLeaks -join $newLine)
+        }
+        Write-Host "vector5 (scanner anonymity): checked $($anonTokens.Count) runtime-derived token(s), zero literals stored"
     }
     # ---- -PrePush：推送前机械自检 ----
     if ($PrePush) {
