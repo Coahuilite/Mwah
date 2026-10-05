@@ -1,6 +1,6 @@
 # 工坊页面文案维护源（Workshop page copy, single source）
 
-> **目标：0.2.1（未发布）。** 首次上传时整块粘贴对应语言，勾选后按页面预览核对一次。发布状态以本页头部与 `MEMORY.md` 耐久状态为准，不以本文件历史版本为准。
+> **目标：0.2.2（未发布）。** 首次上传时整块粘贴对应语言，勾选后按页面预览核对一次。发布状态以本页头部与 `MEMORY.md` 耐久状态为准，不以本文件历史版本为准。
 
 本文是中英工坊描述的唯一维护源，不是 changelog 也不是发布记录。页面编辑、双预览、上传由维护者执行；agent 只做公开页面只读核验。
 
@@ -21,7 +21,7 @@
 本模组由 AI 规划、AI 编程、AI 维护，并由人类维护者审查、测试、打包和发布。
 
 [h1]所有Pawn都给我啵嘴！[/h1]
-[b]模组版本：[/b]0.2.1
+[b]模组版本：[/b]0.2.2
 [b]适用版本：[/b]RimWorld 1.6
 
 [b]Mwah! · Every Pawn Kisses Each Other[/b]
@@ -59,7 +59,7 @@
 This mod is planned, coded and maintained by AI, and reviewed, tested, packaged and published by a human maintainer.
 
 [h1]Mwah! — Every Pawn Kisses Each Other[/h1]
-[b]Mod version:[/b] 0.2.1
+[b]Mod version:[/b] 0.2.2
 [b]For:[/b] RimWorld 1.6
 
 Let any Pawn kiss any Pawn — tolerate the audacity of affection.

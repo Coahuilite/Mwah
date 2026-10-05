@@ -9,7 +9,7 @@ Rules:
 - One change per bullet; player-facing wording; bug fixes stay brief unless behavior visible to players changed.
 - Keep the Simplified Chinese version synchronized in `docs/CHANGELOG.zh-CN.md`.
 
-## Unreleased — Version 0.2.1
+## Unreleased — Version 0.2.2
 
 First public release. The 0.1.x development line was archived without ever shipping (2026-10-05 maintainer ruling), so everything below ships together. Mwah! is a joke mod with serious boundaries: live maps only, single-player only, zero Harmony, no dependencies beyond Core.
 
@@ -27,7 +27,7 @@ First public release. The 0.1.x development line was archived without ever shipp
 
 ### Packaging
 - Dev rehearsal is a folder dropped into `Mods/` (no zip by default); GitHub release zips are deterministic (single top-level folder, commit-stamped entries).
-- Bilingual (English / Simplified Chinese) key sets verified by 27 offline gates, including fate-table completeness, zero-Harmony proof and a full-history privacy audit before any push.
+- Bilingual (English / Simplified Chinese) key sets verified by the full offline gate suite, including fate-table completeness, zero-Harmony proof and a full-history privacy audit before any push.
 
 ## Notes
-- 0.1.0 was never tagged, never uploaded, never shipped; the version axis starts publicly at 0.2.1.
+- 0.1.0 was never tagged, never uploaded, never shipped; 0.2.0 and 0.2.1 likewise never tagged — the version axis advanced during pre-release copy work, and the first public release is 0.2.2.
