@@ -95,11 +95,12 @@ try {
     $binaryExtPattern = '\.(dll|png|jpg|jpeg|gif|tga|bmp|zip|pdb|ttf|otf|mp3|ogg|wav)$'
 
     # 已知历史债务台账（vector3 专用）。建仓体检（2026-10-04）三向量零命中；2026-10-05
-    # 校准新增一条：verify-local 的门 2/8 排除式历史上以两个连续反斜杠的字面量存在，
-    # 命中新加的 UNC 形态检测——那是正则语法不是路径泄漏；现行源码已改 char 码构造，
-    # 历史 blob 不可改写（append-only），按台账制度接受。
+    # 校准新增两条同一族：verify-local 的门 2/8 排除式、以及 MEMORY 记录该事故时引用的
+    # 那个字面量，历史上都以"两个连续反斜杠"存在，命中新加的 UNC 形态检测——那是被引用的
+    # 正则语法不是路径泄漏；现行文件均已改写，历史 blob 不可改写（append-only），按台账接受。
     $knownHistoryDebt = @(
         [pscustomobject]@{ Pattern = 'unc-path'; Path = 'scripts/verify-local.ps1' }
+        [pscustomobject]@{ Pattern = 'unc-path'; Path = 'MEMORY.md' }
     )
 
     function Test-KnownHistoryDebt([string]$PatternLabel, [string]$RepoPath) {
