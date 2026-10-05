@@ -10,6 +10,7 @@ Rules:
 - An unreleased top entry may use `Unreleased — X.Y.Z`; replace it with the actual UTC+8 release time when publishing.
 - Use `Initial Workshop Upload` only for the first Steam Workshop upload; subsequent updates use ordinary version entries.
 - Keep items short and visible. Prefer one change per bullet.
+- Write precisely and describe behavior; jokes belong to the in-game copy, not to the changelog.
 - Separate feature additions, changes, fixes, packaging notes, and release notes when useful.
 - Bug fixes should be concise unless the fix changes player-facing behavior.
 - Mention both GitHub and Steam only when the entry affects both release surfaces.
@@ -41,16 +42,16 @@ One-line release summary.
 First public release: any pawn kisses any pawn on the live map — single-player only, zero Harmony, Core only.
 
 ### Added
-- Added right-click kissing: select a pawn, right-click another; the one that can walk walks over, they kiss, vanilla lovemakin' hearts float up, and both head back.
-- Added the Kiss Director: a bottom-bar panel that dispatches any two units on the map, including ones you cannot command.
-- Added wall kissing: right-click a built wall, natural rock or a buried vein; the outcome rolls on an editable XML fate table (five tiers, fifty narration lines) and lands as a single "relationship with walls" memory.
-- Added animals, mechanoids and anomaly entities as kissable participants: no mood for them, but each gets its own fate-table commentary line.
-- Added a truce window: a commanded pair will not fight until the kiss ends; one real hit breaks it.
-- Added a mood bonus scaled by the receiver's own social impact; psychopaths feel nothing (vanilla nullify lists).
-- Added the seven-tier "who kisses whom" gate slider, fully open by default.
-- Added ambient kissing (off by default): the game matchmakes pawns you cannot order around and never touches your colonists.
-- Added the four-section settings page; every duration is shown in ticks, real seconds and game hours.
-- Added four diagnostic levels: quiet during normal play, readable when something looks off.
+- Added right-click kissing: select a pawn, right-click another; the one that can move walks over, the kiss happens, hearts float above both, and each returns to their original spot.
+- Added the Kiss Director: a bottom-bar panel that orders any two pawns on the map to kiss, including pawns you cannot order, with a two-click quick-dispatch mode.
+- Added wall kissing: built walls, natural rock and buried ore veins are valid targets; the outcome is rolled on an editable XML fate table (five mood tiers, fifty narration lines) and stored as a single "relationship with walls" memory that the next kiss replaces.
+- Added animals, mechanoids and anomaly entities as kissable participants: they have no mood system, gain no mood, and receive one fate-table message from their own channel instead.
+- Added a truce window: pawns ordered to kiss do not attack each other until it ends; any effective damage interrupts the kiss immediately.
+- Added a mood bonus scaled by the receiver's own social impact; traits on the vanilla nullify list (e.g. psychopath) cancel it entirely.
+- Added the "who kisses whom" gate slider: seven cumulative tiers, factory default fully open (no faction or species limit).
+- Added ambient kissing (off by default): matchmakes pawns the player cannot order, on a configurable interval and radius; never orders player-controlled pawns.
+- Added the four-section settings page (core / autonomous matchmaking / add-ons / system); every duration displays ticks, real seconds and game hours together.
+- Added four diagnostic levels (off / auto / simple / verbose); auto follows the build channel, while the startup banner and error lines are never gated.
 
 ### Packaging
 - Packages carry a version.txt identity label (version, build flavor, commit).
