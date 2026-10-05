@@ -4,7 +4,7 @@
   <MWAH.KissPawn.Mech.Line.0>{PAWN} 的视觉处理器把这次接触标记为"非战斗液体交换事件"，然后继续巡逻。</MWAH.KissPawn.Mech.Line.0>
   <MWAH.KissPawn.Mech.Line.1>没有心跳，没有激素——但 {PAWN} 的运动脚本在原地多待了 0.4 秒。这就是它的脸红。</MWAH.KissPawn.Mech.Line.1>
   <MWAH.KissPawn.Mech.Line.2>{PAWN} 检索了全部已知礼节协议，没有找到"被吻"的应对方案，于是选择了待机。</MWAH.KissPawn.Mech.Line.2>
-  <MWAH.KissPawn.Mech.Line.3>这次亲吻没有为 {PAWN} 产生任何心情数据，却产生了一条无法归档的日志。</MWAH.KissPawn.Mech.Line.3>
+  <MWAH.KissPawn.Mech.Line.3>这次亲吻没有产生任何可上报的数据，却产生了一条无法归档的日志。</MWAH.KissPawn.Mech.Line.3>
   <MWAH.KissPawn.Mech.Line.4>{PAWN} 的扬声器发出一声短促的电流音。在场的人一致选择把它翻译成"嗯"。</MWAH.KissPawn.Mech.Line.4>
   <MWAH.KissPawn.Mech.Line.5>若问 {PAWN} 感觉如何，它会如实回答"没有感觉"——并且听不出这不是回答。</MWAH.KissPawn.Mech.Line.5>
   <MWAH.KissPawn.Mech.Line.6>{PAWN} 把 {WALL} 的唇温记进了环境采样表，和昨天的雨归档在一起。</MWAH.KissPawn.Mech.Line.6>

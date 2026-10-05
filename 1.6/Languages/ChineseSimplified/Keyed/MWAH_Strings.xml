@@ -2,8 +2,8 @@
 <LanguageData>
   <!-- 右键菜单 -->
   <MWAH.FloatMenu.Kiss>亲吻{TARGET}</MWAH.FloatMenu.Kiss>
-  <MWAH.FloatMenu.KissTooltip>走过去、与{TARGET}面对面、亲一个，然后各自回到刚才站的地方。</MWAH.FloatMenu.KissTooltip>
-  <MWAH.FloatMenu.KissNoMood>（没有心情系统，只是做做样子）</MWAH.FloatMenu.KissNoMood>
+  <MWAH.FloatMenu.KissTooltip>走过去，与 {TARGET} 面对面，亲一个。</MWAH.FloatMenu.KissTooltip>
+  <MWAH.FloatMenu.KissNoMood>（它没有心情，这一吻只是做做样子）</MWAH.FloatMenu.KissNoMood>
   <MWAH.KissWall.Option>亲吻{0}</MWAH.KissWall.Option>
   <MWAH.KissWall.OptionHumanlike>亲吻{0}…?!</MWAH.KissWall.OptionHumanlike>
   <MWAH.KissWall.OptionTooltip>走过去，对着{WALL}亲一个。墙不会回应，心情全凭天意。</MWAH.KissWall.OptionTooltip>
@@ -39,7 +39,7 @@
   <MWAH.Director.HeartReady>{PAWN} 想要和 {OTHER} 亲吻 —— 点这里派发。</MWAH.Director.HeartReady>
   <MWAH.Director.HeartWaiting>两边都选好，心形就亮。</MWAH.Director.HeartWaiting>
   <MWAH.Director.QuickSend>快速发配</MWAH.Director.QuickSend>
-  <MWAH.Director.QuickSendDesc>跳过头像框直接进地图点选：第一段点发起方，第二段点对象，第二段落点即派发；选完的双方照样回显到头像框里。</MWAH.Director.QuickSendDesc>
+  <MWAH.Director.QuickSendDesc>跳过头像框，直接在地图上点发起方、再点对象，落点即派发。</MWAH.Director.QuickSendDesc>
 
   <MWAH.Director.Started>{PAWN} 去亲 {OTHER}。</MWAH.Director.Started>
 
@@ -54,7 +54,7 @@
   <MWAH.Settings.Section.Addons>附加功能——亲别的万物</MWAH.Settings.Section.Addons>
   <MWAH.Settings.Section.System>系统</MWAH.Settings.Section.System>
   <MWAH.Addon.Wall.Name>一堵墙</MWAH.Addon.Wall.Name>
-  <MWAH.Settings.AddonDuration>亲吻{0}：思想持续</MWAH.Settings.AddonDuration>
+  <MWAH.Settings.AddonDuration>亲吻{0}：想法持续</MWAH.Settings.AddonDuration>
   <MWAH.Settings.AddonDurationDesc>亲吻{0}留下的心情记忆存活多久。与上面的核心心情持续互不相干——附加功能各走各的钟。</MWAH.Settings.AddonDurationDesc>
 
   <MWAH.Settings.ModEnabled>启用亲吻</MWAH.Settings.ModEnabled>
@@ -80,20 +80,20 @@
 
   <MWAH.Settings.DirectorButton>亲吻导演台按钮</MWAH.Settings.DirectorButton>
   <MWAH.Settings.NoCooldowns>无视亲吻冷却</MWAH.Settings.NoCooldowns>
-  <MWAH.Settings.NoCooldownsDesc>导演台的手是超凡智能的手：单人冷却与成对冷却都不再生效，想立刻再撮合同一对或换一对都行。正在亲吻的仍会先亲完，镜像 job 不容第三者。</MWAH.Settings.NoCooldownsDesc>
-  <MWAH.Settings.DirectorButtonDesc>在底栏放上「亲吻导演台」。点一下，再点要发起亲吻的 Pawn，然后点他想亲的对象——地图上任意两个都行，包括你控制不了的那些。右键或再点一次按钮取消。</MWAH.Settings.DirectorButtonDesc>
+  <MWAH.Settings.NoCooldownsDesc>导演台的手是超凡智能的手：单人冷却与成对冷却都不再生效，想立刻再撮合同一对也行。正在亲吻的仍会先亲完。</MWAH.Settings.NoCooldownsDesc>
+  <MWAH.Settings.DirectorButtonDesc>在底栏放上「亲吻导演台」。地图上任意两个单位都能点来派发——包括你控制不了的那些。右键或再点一次按钮取消。</MWAH.Settings.DirectorButtonDesc>
   <MWAH.Settings.PairScope>谁能亲谁</MWAH.Settings.PairScope>
   <MWAH.Settings.PairScopeDesc>门开多大。拖到最右就是不限阵营、不限种族——这本模组要的就是这个。想要撮合殖民地的玩法就往左拖。双方都必须在范围内；档位只会越往右越宽，每格多加一类人。</MWAH.Settings.PairScopeDesc>
   <MWAH.Settings.Scope.FreeColonists>只限自由殖民者</MWAH.Settings.Scope.FreeColonists>
   <MWAH.Settings.Scope.ColonyPopulation>殖民地人口（加上奴隶与囚犯）</MWAH.Settings.Scope.ColonyPopulation>
-  <MWAH.Settings.Scope.ColonyOwned>自家一切（加上动物与机甲——没有心情，只是做做样子）</MWAH.Settings.Scope.ColonyOwned>
-  <MWAH.Settings.Scope.NonHostileHumanlike>＋非敌对人形（访客、商人、盟友）</MWAH.Settings.Scope.NonHostileHumanlike>
-  <MWAH.Settings.Scope.AllHumanlike>＋所有人形（加上袭击者与古人）</MWAH.Settings.Scope.AllHumanlike>
+  <MWAH.Settings.Scope.ColonyOwned>自家一切（加上动物与机械族——没有心情，只是做做样子）</MWAH.Settings.Scope.ColonyOwned>
+  <MWAH.Settings.Scope.NonHostileHumanlike>＋非敌对人类（访客、商人、盟友）</MWAH.Settings.Scope.NonHostileHumanlike>
+  <MWAH.Settings.Scope.AllHumanlike>＋所有人类（加上袭击者与古代人）</MWAH.Settings.Scope.AllHumanlike>
   <MWAH.Settings.Scope.AllFlesh>＋所有血肉（加上野生动物、昆虫、血肉兽）</MWAH.Settings.Scope.AllFlesh>
   <MWAH.Settings.Scope.Everything>所有 Pawn 都互相亲吻</MWAH.Settings.Scope.Everything>
 
   <MWAH.Settings.AutonomousKissing>自主亲吻</MWAH.Settings.AutonomousKissing>
-  <MWAH.Settings.AutonomousKissingDesc>你管不着的 Pawn——袭击者、访客、野生动物、机械族——会自己发起亲吻。玩家控制的 Pawn 永远不会被自动下令，它们照旧等你右键。这是不打补丁就能做到"所有 Pawn 都互相亲吻"的唯一路子。</MWAH.Settings.AutonomousKissingDesc>
+  <MWAH.Settings.AutonomousKissingDesc>你管不着的 Pawn——袭击者、访客、野生动物、机械族——会自己发起亲吻。玩家控制的 Pawn 永远不会被自动下令，它们照旧等你右键。</MWAH.Settings.AutonomousKissingDesc>
   <MWAH.Settings.AutonomousIntervalTicks>亲吻冲动间隔</MWAH.Settings.AutonomousIntervalTicks>
   <MWAH.Settings.AutonomousIntervalTicksDesc>地图上每隔多久获得一次促成自主亲吻的机会。单人冷却与成对冷却照常生效，所以这是上限而不是保证。</MWAH.Settings.AutonomousIntervalTicksDesc>
   <MWAH.Settings.AutonomousRadiusCells>愿意走多远</MWAH.Settings.AutonomousRadiusCells>
@@ -104,7 +104,7 @@
   <MWAH.Settings.ReturnHomeAfterKiss>亲完回原位</MWAH.Settings.ReturnHomeAfterKiss>
   <MWAH.Settings.ReturnHomeAfterKissDesc>结束后两人都回到被下令时站的位置。这只是个礼貌请求——紧急需求和排班工作仍然会插队。</MWAH.Settings.ReturnHomeAfterKissDesc>
   <MWAH.Settings.DiagnosticLevel>诊断档位</MWAH.Settings.DiagnosticLevel>
-  <MWAH.Settings.DiagnosticLevelDesc>关闭：只剩启动横幅与报错行。简化：只报值得知道的事——每桩结算吻一行天意落点，外加一切异常出口（受击散场、走位失败、中途离场）。详细：完整阶段流水（定台/开始/表演/回程）、点选代际、设置持久化，再加 1Hz 的 Mwah-trace.log 采样器。自动：跟随构建渠道——dev 包按详细跑，Steam/GitHub 包按简化跑。</MWAH.Settings.DiagnosticLevelDesc>
+  <MWAH.Settings.DiagnosticLevelDesc>关闭：只剩启动横幅与报错行。简化：每桩结算吻一行天意落点，外加一切异常出口。详细：完整阶段流水与诊断日志。自动：跟随构建渠道——dev 包按详细跑，Steam/GitHub 包按简化跑。</MWAH.Settings.DiagnosticLevelDesc>
   <MWAH.Settings.Diag.Off>关闭</MWAH.Settings.Diag.Off>
   <MWAH.Settings.Diag.Auto>自动</MWAH.Settings.Diag.Auto>
   <MWAH.Settings.Diag.Simple>简化</MWAH.Settings.Diag.Simple>
@@ -112,6 +112,6 @@
 
   <MWAH.Settings.Reset>恢复默认值</MWAH.Settings.Reset>
   <MWAH.Settings.WallKissing>允许亲吻墙壁</MWAH.Settings.WallKissing>
-  <MWAH.Settings.WallKissingDesc>右键可以亲吻墙：人造墙、天然岩壁、连压埋的矿脉都算。墙不会回应，所以心情全凭天意——可能越想越怪，也可能当场爱上。这一条与"谁能亲谁"无关，不受门禁滑条管。</MWAH.Settings.WallKissingDesc>
+  <MWAH.Settings.WallKissingDesc>右键可以亲吻墙：人造墙、天然岩壁、连被埋藏的矿脉都算。墙不会回应，所以心情全凭天意——可能越想越怪，也可能当场爱上。这一条与"谁能亲谁"无关，不受门禁滑条管。</MWAH.Settings.WallKissingDesc>
 
 </LanguageData>

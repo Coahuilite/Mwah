@@ -2,8 +2,8 @@
 <LanguageData>
   <!-- 右键菜单 -->
   <MWAH.FloatMenu.Kiss>kiss {TARGET}</MWAH.FloatMenu.Kiss>
-  <MWAH.FloatMenu.KissTooltip>Walk over, face {TARGET}, share a kiss, then both return to where they stood.</MWAH.FloatMenu.KissTooltip>
-  <MWAH.FloatMenu.KissNoMood>(no mood system - gesture only)</MWAH.FloatMenu.KissNoMood>
+  <MWAH.FloatMenu.KissTooltip>Walk over, face {TARGET}, share a kiss.</MWAH.FloatMenu.KissTooltip>
+  <MWAH.FloatMenu.KissNoMood>(it has no mood to move - this one is gesture only)</MWAH.FloatMenu.KissNoMood>
   <MWAH.KissWall.Option>kiss {0}</MWAH.KissWall.Option>
   <MWAH.KissWall.OptionHumanlike>kiss {0}...?!</MWAH.KissWall.OptionHumanlike>
   <MWAH.KissWall.OptionTooltip>Walk over and kiss the {WALL}. The wall won't answer — the mood is pure fate.</MWAH.KissWall.OptionTooltip>
@@ -39,7 +39,7 @@
   <MWAH.Director.HeartReady>{PAWN} wants to kiss {OTHER} - click to send them.</MWAH.Director.HeartReady>
   <MWAH.Director.HeartWaiting>Fill both slots and the heart turns red.</MWAH.Director.HeartWaiting>
   <MWAH.Director.QuickSend>quick send</MWAH.Director.QuickSend>
-  <MWAH.Director.QuickSendDesc>Skip the slots: click one pawn on the map to start, click the other to be kissed - dispatched the moment the second pick lands, and the slots show what was sent.</MWAH.Director.QuickSendDesc>
+  <MWAH.Director.QuickSendDesc>Skip the slots: click the kisser on the map, then the target - dispatched the moment the second pick lands.</MWAH.Director.QuickSendDesc>
 
   <MWAH.Director.Started>{PAWN} goes to kiss {OTHER}.</MWAH.Director.Started>
 
@@ -81,19 +81,19 @@
   <MWAH.Settings.DirectorButton>Kiss director button</MWAH.Settings.DirectorButton>
   <MWAH.Settings.NoCooldowns>Ignore kiss cooldowns</MWAH.Settings.NoCooldowns>
   <MWAH.Settings.NoCooldownsDesc>The director's hand is an archotech hand: per-pawn and per-pair cooldowns no longer apply, so you can pair anyone again immediately. Pawns already kissing still finish first.</MWAH.Settings.NoCooldownsDesc>
-  <MWAH.Settings.DirectorButtonDesc>Puts the kiss director on the bottom bar. Click it, click whoever starts the kiss, then click who they kiss - any two pawns on the map, including ones you do not control.</MWAH.Settings.DirectorButtonDesc>
+  <MWAH.Settings.DirectorButtonDesc>Puts the kiss director on the bottom bar. Point at any two units on the map and send them - including ones you do not control. Right-click, or press the button again, to cancel.</MWAH.Settings.DirectorButtonDesc>
   <MWAH.Settings.PairScope>Who may kiss whom</MWAH.Settings.PairScope>
   <MWAH.Settings.PairScopeDesc>How wide the door stands. Fully right means no limit on faction or species - that is the point of the mod. Drag left to narrow it to your colony if you want a matchmaking toy instead. Both sides must be inside the range; it only ever widens, so each step adds exactly one group.</MWAH.Settings.PairScopeDesc>
   <MWAH.Settings.Scope.FreeColonists>free colonists only</MWAH.Settings.Scope.FreeColonists>
   <MWAH.Settings.Scope.ColonyPopulation>colony population (adds slaves and prisoners)</MWAH.Settings.Scope.ColonyPopulation>
-  <MWAH.Settings.Scope.ColonyOwned>everything you own (adds animals and mechs - no mood, gesture only)</MWAH.Settings.Scope.ColonyOwned>
+  <MWAH.Settings.Scope.ColonyOwned>everything you own (adds animals and mechanoids - no mood, gesture only)</MWAH.Settings.Scope.ColonyOwned>
   <MWAH.Settings.Scope.NonHostileHumanlike>+ non-hostile humanlikes (visitors, traders, allies)</MWAH.Settings.Scope.NonHostileHumanlike>
   <MWAH.Settings.Scope.AllHumanlike>+ all humanlikes (adds raiders and ancients)</MWAH.Settings.Scope.AllHumanlike>
   <MWAH.Settings.Scope.AllFlesh>+ all flesh (adds wild animals, insects, fleshbeasts)</MWAH.Settings.Scope.AllFlesh>
   <MWAH.Settings.Scope.Everything>every pawn kisses each other</MWAH.Settings.Scope.Everything>
 
   <MWAH.Settings.AutonomousKissing>Autonomous kissing</MWAH.Settings.AutonomousKissing>
-  <MWAH.Settings.AutonomousKissingDesc>Pawns you cannot give orders to - raiders, visitors, wild animals, mechanoids - start kissing on their own. Player-controlled pawns are never auto-ordered; they still wait for your right-click. This is the only way to reach "every pawn" without patching the game.</MWAH.Settings.AutonomousKissingDesc>
+  <MWAH.Settings.AutonomousKissingDesc>Pawns you cannot give orders to - raiders, visitors, wild animals, mechanoids - start kissing on their own. Player-controlled pawns are never auto-ordered; they still wait for your right-click.</MWAH.Settings.AutonomousKissingDesc>
   <MWAH.Settings.AutonomousIntervalTicks>Kissing urge interval</MWAH.Settings.AutonomousIntervalTicks>
   <MWAH.Settings.AutonomousIntervalTicksDesc>How often the map gets one chance to start an autonomous kiss. The per-pawn and per-pair cooldowns still apply, so this is a ceiling, not a guarantee.</MWAH.Settings.AutonomousIntervalTicksDesc>
   <MWAH.Settings.AutonomousRadiusCells>Willing to walk this far</MWAH.Settings.AutonomousRadiusCells>
@@ -102,9 +102,9 @@
   <MWAH.Settings.ChangeOpinionDesc>Also shift how the two pawns feel about each other. This feeds the vanilla romance chain - keep it off if you just want silly kissing.</MWAH.Settings.ChangeOpinionDesc>
 
   <MWAH.Settings.ReturnHomeAfterKiss>Return to original spot</MWAH.Settings.ReturnHomeAfterKiss>
-  <MWAH.Settings.ReturnHomeAfterKissDesc>Afterwards both pawn go back to where the kiss was ordered. A polite request - urgent needs and work still win.</MWAH.Settings.ReturnHomeAfterKissDesc>
+  <MWAH.Settings.ReturnHomeAfterKissDesc>Afterwards both pawns go back to where the kiss was ordered. A polite request - urgent needs and work still win.</MWAH.Settings.ReturnHomeAfterKissDesc>
   <MWAH.Settings.DiagnosticLevel>Diagnostic level</MWAH.Settings.DiagnosticLevel>
-  <MWAH.Settings.DiagnosticLevelDesc>Off: only the startup banner and error lines. Simple: notable events only — one fate line per settled kiss and every abnormal exit (damage break, walk failure, mid-kiss scatter). Verbose: the full phase narration (stage/begin/perform/return, pick generations, settings persistence) plus the 1 Hz Mwah-trace.log sampler. Auto follows the build channel: dev builds run Verbose, Steam/GitHub builds run Simple.</MWAH.Settings.DiagnosticLevelDesc>
+  <MWAH.Settings.DiagnosticLevelDesc>Off: only the startup banner and error lines. Simple: one fate line per settled kiss, plus every abnormal exit. Verbose: full phase narration and diagnostic logs. Auto follows the build channel: dev builds run Verbose, Steam/GitHub builds run Simple.</MWAH.Settings.DiagnosticLevelDesc>
   <MWAH.Settings.Diag.Off>Off</MWAH.Settings.Diag.Off>
   <MWAH.Settings.Diag.Auto>Auto</MWAH.Settings.Diag.Auto>
   <MWAH.Settings.Diag.Simple>Simple</MWAH.Settings.Diag.Simple>

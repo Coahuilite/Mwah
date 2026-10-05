@@ -3,7 +3,7 @@
   <!-- 动物被吻或吻人（无心情系统，走消息；{PAWN}=动物 {WALL}=对方名） -->
   <MWAH.KissPawn.Beast.Line.0>{PAWN} 甩了甩头，把 {WALL} 留下的气味和今天的第十七种味道排在一起。</MWAH.KissPawn.Beast.Line.0>
   <MWAH.KissPawn.Beast.Line.1>{PAWN} 舔回了三下。在它的世界观里，这已经算一桩婚约。</MWAH.KissPawn.Beast.Line.1>
-  <MWAH.KissPawn.Beast.Line.2>没有语言，没有心情，只有一瞬间的、尾巴的迟疑。</MWAH.KissPawn.Beast.Line.2>
+  <MWAH.KissPawn.Beast.Line.2>它说不出这件事，只有一瞬间的、尾巴的迟疑。</MWAH.KissPawn.Beast.Line.2>
   <MWAH.KissPawn.Beast.Line.3>{PAWN} 记住了这个味道，然后用五分钟忘记了为什么要记住。</MWAH.KissPawn.Beast.Line.3>
   <MWAH.KissPawn.Beast.Line.4>这一吻换来 {PAWN} 歪头两秒——在场人类一致投票：拒绝解读。</MWAH.KissPawn.Beast.Line.4>
   <MWAH.KissPawn.Beast.Line.5>{PAWN} 唯一的回应是凑近闻了闻 {WALL} 的口袋。里面没有食物，兴致遂散。</MWAH.KissPawn.Beast.Line.5>
