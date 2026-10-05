@@ -5,12 +5,15 @@ using Verse;
 namespace Mwah;
 
 /// <summary>
-/// 亲吻冷却。会话内内存态（与 Let Me Gnaw On You 的 CooldownManager 同一取舍）：
-/// 不落盘、不占 tick，只在结算时顺带清过期项，避免字典无界增长。
+/// 亲吻冷却。进程内内存态，每局由 KissTicker 构造器清零（与 Let Me Gnaw On You 的
+/// CooldownManager 同一取舍）：不落盘、不占 tick，只在结算时顺带清过期项，避免字典无界增长。
 /// 读档后冷却归零是可接受的取舍：这是一个纯娱乐动作，不是经济系统。
 /// </summary>
 public static class KissCooldown
 {
+    /// <summary>表大到这个条数才开始扫过期项；再小直接跳过，扫的成本比省下来的还贵。</summary>
+    private const int PruneThreshold = 64;
+
     private static readonly Dictionary<int, int> PawnReadyAtTick = new();
     private static readonly Dictionary<long, int> PairReadyAtTick = new();
     private static readonly List<int> ExpiredPawnKeys = new();
@@ -25,7 +28,7 @@ public static class KissCooldown
         return Remaining(Find.TickManager.TicksGame, PawnReadyAtTick, pawn.thingIDNumber);
     }
 
-    public static int PairRemaining(Pawn a, Pawn b)
+    public static int PairRemaining(Pawn a, Thing b)
     {
         if (a == null || b == null)
         {
@@ -34,7 +37,11 @@ public static class KissCooldown
         return Remaining(Find.TickManager.TicksGame, PairReadyAtTick, PairKey(a, b));
     }
 
-    public static void Mark(Pawn a, Pawn b, int pawnTicks, int pairTicks)
+    /// <summary>
+    /// b 泛化为 Thing：双人亲吻传 pawn，亲墙传墙 —— 成对键只吃 thingIDNumber，
+    /// 天然兼容；单人冷却表则只登记 pawn（墙不进 PawnReadyAtTick，登记了也没人查）。
+    /// </summary>
+    public static void Mark(Pawn a, Thing b, int pawnTicks, int pairTicks)
     {
         int now = Find.TickManager.TicksGame;
         if (pawnTicks > 0)
@@ -43,9 +50,9 @@ public static class KissCooldown
             {
                 PawnReadyAtTick[a.thingIDNumber] = now + pawnTicks;
             }
-            if (b != null)
+            if (b is Pawn bp)
             {
-                PawnReadyAtTick[b.thingIDNumber] = now + pawnTicks;
+                PawnReadyAtTick[bp.thingIDNumber] = now + pawnTicks;
             }
         }
         if (pairTicks > 0 && a != null && b != null)
@@ -53,6 +60,17 @@ public static class KissCooldown
             PairReadyAtTick[PairKey(a, b)] = now + pairTicks;
         }
         PruneExpired(now);
+    }
+
+    /// <summary>
+    /// 每局清零。GameComponent 构造器在每次建局与读档时都会重新跑（Game.FillComponents），
+    /// 而本表是 static：TicksGame 每局从 0 重新计数，thingIDNumber 也从小号重新分配，
+    /// 上局残留的键值会把新局的 pawn 按上局的 until 判成超长冷却。
+    /// </summary>
+    public static void Reset()
+    {
+        PawnReadyAtTick.Clear();
+        PairReadyAtTick.Clear();
     }
 
     private static int Remaining<T>(int now, Dictionary<T, int> map, T key)
@@ -69,45 +87,43 @@ public static class KissCooldown
         return until - now;
     }
 
-    /// <summary>成对键与单人键分表存放，这里只需要保证同一对人不论谁亲谁都同键。</summary>
-    private static long PairKey(Pawn a, Pawn b)
+    /// <summary>成对键与单人键分表存放，这里只需要保证同一对（人或墙）不论谁亲谁都同键。</summary>
+    private static long PairKey(Thing a, Thing b)
     {
         int lo = Mathf.Min(a.thingIDNumber, b.thingIDNumber);
         int hi = Mathf.Max(a.thingIDNumber, b.thingIDNumber);
         return ((long)lo << 32) | (uint)hi;
     }
 
+    /// <summary>
+    /// 顺带清过期项：只在写入时跑，且要过 64 条才开始扫 —— 冷却条目活不过几游戏时，
+    /// 正常情况下表本来就长不了，这个门槛是给"玩家连点导演台"那种场面兜底的。
+    /// </summary>
     private static void PruneExpired(int now)
     {
-        if (PawnReadyAtTick.Count > 64)
+        Prune(PawnReadyAtTick, ExpiredPawnKeys, now);
+        Prune(PairReadyAtTick, ExpiredPairKeys, now);
+    }
+
+    /// <summary>复用同一个 scratch 列表：这里每 Mark 一次就跑一遍，没必要再各分配一个。</summary>
+    private static void Prune<T>(Dictionary<T, int> map, List<T> scratch, int now)
+    {
+        if (map.Count <= PruneThreshold)
         {
-            ExpiredPawnKeys.Clear();
-            foreach (KeyValuePair<int, int> entry in PawnReadyAtTick)
+            return;
+        }
+        scratch.Clear();
+        foreach (KeyValuePair<T, int> entry in map)
+        {
+            if (entry.Value <= now)
             {
-                if (entry.Value <= now)
-                {
-                    ExpiredPawnKeys.Add(entry.Key);
-                }
-            }
-            for (int i = 0; i < ExpiredPawnKeys.Count; i++)
-            {
-                PawnReadyAtTick.Remove(ExpiredPawnKeys[i]);
+                scratch.Add(entry.Key);
             }
         }
-        if (PairReadyAtTick.Count > 64)
+        for (int i = 0; i < scratch.Count; i++)
         {
-            ExpiredPairKeys.Clear();
-            foreach (KeyValuePair<long, int> entry in PairReadyAtTick)
-            {
-                if (entry.Value <= now)
-                {
-                    ExpiredPairKeys.Add(entry.Key);
-                }
-            }
-            for (int i = 0; i < ExpiredPairKeys.Count; i++)
-            {
-                PairReadyAtTick.Remove(ExpiredPairKeys[i]);
-            }
+            map.Remove(scratch[i]);
         }
+        scratch.Clear();
     }
 }

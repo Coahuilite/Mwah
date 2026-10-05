@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <!--
+    亲吻导演台：底栏按钮，点开一块不暂停、可拖动的小面板（左头像=谁发起，右头像=亲谁，
+    中间心形=派发，下面「快速发配」=沿用老版地图两段点选链）。存在的理由：右键菜单这条路对
+    "玩家管不着的 pawn"永远不通（原版 FloatMenuContext 先按 CanTakeOrder 过滤，敌人连被选中都做不到）。
+    零 Harmony 的自建面：按钮行为走 workerClass；面板是普通 Verse.Window（forcePause=false +
+    absorbInputAroundWindow=false + layer=GameUI，非模态）；两段点选走原版 Find.Targeter；
+    派发直接对目标起 job，不碰下令链。
+    注意：右下角那排显示开关（PlaySettings.DoMapControls）是硬编码的，没有可扩展点，
+    想挂进那一排必须 Harmony —— 已按零 Harmony 红线放弃。
+    order=200：原版底栏顺序是 Architect=1…Factions=90、Ideos=100、Menu(齿轮)=500，
+    200 落在"所有标签之后、齿轮之前"。底栏没有分组概念，order 就是唯一的位置旋钮。
+    按钮文本走 DefInjected/MainButtonDef/，不写在这里。
+  -->
+  <MainButtonDef>
+    <defName>MWAH_KissDirector</defName>
+    <label>kiss director</label>
+    <description>Opens the kiss director panel.</description>
+    <workerClass>Mwah.MainButtonWorker_KissDirector</workerClass>
+    <order>200</order>
+    <closesWorldView>true</closesWorldView>
+  </MainButtonDef>
+</Defs>

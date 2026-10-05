@@ -3,11 +3,9 @@
   <packageId>coahuilite.mwah</packageId>
   <name>Mwah! - Every Pawn Kisses Each Other</name>
   <author>Coahuilite</author>
-  <description>Mwah! Every pawn, kiss each other. Let anyone kiss anyone. Select any pawn on the map, right-click another pawn, and order a kiss: the one that can walk goes over, both turn to face each other, and vanilla lovemakin' hearts float up. If the pawn you selected cannot walk, the other one comes over instead. When it is over, both head back to where they stood.
-
-Pawns with a mood get a mood bonus scaled by their own social impact; pawns without one (animals, mechanoids, drones, entities) get nothing at all. Live maps only, single-player only. Romance, opinion and relationships stay untouched unless you turn that on in the mod settings.
+  <description>Mwah! Every pawn, kiss each other. Let any pawn kiss any pawn. Tolerate the audacity of affection.
   </description>
-  <modVersion>0.1.0</modVersion>
+  <modVersion>0.2.2</modVersion>
   <url>https://github.com/Coahuilite/Mwah</url>
   <supportedVersions>
     <li>1.6</li>

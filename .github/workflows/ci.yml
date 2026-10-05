@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    # 版本分支通配（0.1.x / 0.2.x / …）+ main：切 minor 分支不再手改触发器（本次差点漏推 0.2.x）。
+    branches: [main, '[0-9].[0-9].x']
+  pull_request:
+    branches: [main, '[0-9].[0-9].x']
+
+permissions:
+  contents: read
+
+# A new push cancels the in-flight check of the same branch instead of spending Windows minutes on
+# a superseded commit.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    # The gate suite is seconds of work; the minute is runner startup. A hung runner should burn 15,
+    # not the 360 default.
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          # Self-measured: the local evidence baseline for every gate is SDK 10.0.204 (no global.json),
+          # so the runner reproduces that machine. net472 targeting resolves from NuGet
+          # (Krafs.Rimworld.Ref) either way.
+          dotnet-version: '10.0.x'
+
+      # The gates a maintainer runs by hand are the gates CI runs, so a push cannot be green locally
+      # and untested on the runner. Mwah's verify-local owns its builds (Release + Steam + GitHub
+      # flavor compiles), so no separate restore/build step is needed before it.
+      - name: Verify (25 gates)
+        shell: pwsh
+        run: ./scripts/verify-local.ps1
+
+      # Privacy gate 的默认模式（工作树 + 提交信息 + 身份）跑在每次 CI 上，personal path 或凭据就
+      # 不可能跟着 commit 上 main；-FullHistory 仍是 push 前的人工步骤（runner 的 clone 是浅的，
+      # 扫不到全历史）。
+      - name: Privacy audit (working tree + commit messages + identity)
+        shell: pwsh
+        run: ./scripts/privacy-audit.ps1
+
+      # pack-dev 默认只暂存文件夹（dev 的用途是整目录拷进 Mods/）；CI 要归档产物，
+      # 所以点名 -Zip——stage-package 的写手保证 zip 根在 Mwah/ 下且盖 commit 日期。
+      - name: Pack (dev snapshot)
+        if: github.event_name == 'push'
+        shell: pwsh
+        run: ./scripts/pack-dev.ps1 -Zip
+
+      - name: Upload dev artifact
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mwah-dev-${{ github.sha }}
+          path: dist/dev/*.zip
+          retention-days: 14

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <!-- 类人双人吻旁白（进心情条目描述，每实例随机一句；{PAWN}=当事人 {WALL}=对方名） -->
+  <MWAH.KissPawn.Line.0>The moment their lips parted, {PAWN} understood every bad love song ever written.</MWAH.KissPawn.Line.0>
+  <MWAH.KissPawn.Line.1>The warmth of this kiss probably won't outlast the next rain — {PAWN} decides to keep it anyway.</MWAH.KissPawn.Line.1>
+  <MWAH.KissPawn.Line.2>{PAWN} stole a glance at {WALL} right after. Good: the glance was mutual.</MWAH.KissPawn.Line.2>
+  <MWAH.KissPawn.Line.3>The kiss was short. The work shifts spent replaying it were not.</MWAH.KissPawn.Line.3>
+  <MWAH.KissPawn.Line.4>If dopamine kept a ledger, {WALL} owes {PAWN} an entry today.</MWAH.KissPawn.Line.4>
+  <MWAH.KissPawn.Line.5>{PAWN} decides this one goes in no report. It stays on the face instead.</MWAH.KissPawn.Line.5>
+  <MWAH.KissPawn.Line.6>Being kissed and being colonized turn out to be different things — {PAWN} told them apart today for the first time.</MWAH.KissPawn.Line.6>
+  <MWAH.KissPawn.Line.7>That single moment outweighs the season's whole food ration, calories aside.</MWAH.KissPawn.Line.7>
+  <MWAH.KissPawn.Line.8>{PAWN} feels like laughing without knowing why, and returns to work anyway.</MWAH.KissPawn.Line.8>
+  <MWAH.KissPawn.Line.9>{WALL}'s lips were colder than expected and the afterglow warmer. {PAWN} files both under accurate.</MWAH.KissPawn.Line.9>
+</LanguageData>

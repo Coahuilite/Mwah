@@ -1,42 +1,129 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Defs>
   <!--
-    默认使用 MWAH_Kissed：纯 Thought_Memory，只给心情，不写入好感度，不动浪漫链。
-    stage 的 baseMoodEffect 是"社交影响 = 1.0（殖民者 0 级社交、容量满）"时的基准值；
-    实际强度 = baseMoodEffect × moodPowerFactor，而 moodPowerFactor = 自己的 SocialImpact × 设置里的倍率。
-    实际时长由设置项写入 durationTicksOverride；这里的 durationDays 只是兜底值（0.25 日 = 6 游戏小时）。
+    ===== 数值依据（1.6 原版锚点；强度 = 心情 × 存活游戏日）=====
+      GotSomeLovin  +8 / 3日（意见 +6）    ← 上限：要床、要休闲时段、要恋爱关系
+      KindWordsMood +5 / 2日（意见 +15/20日）← "被人说了句好话"
+      Nuzzled       +4 / 1日 stackLimit3 ×0.5 ← 被自家 bonded 动物蹭一下
+      AteFineMeal   +5 / 1日；AttendedParty +8 / 10日
+    一次"仅仅亲亲嘴"要落在"被狗蹭"与"被说好话"之间，并且**必须严格低于滚床单**：
+    亲吻是本模组里玩家随手可下的令，滚床单却有一串前提，所以单次强度取 +5，
+    存活取 1 游戏日（原版最短的社交记忆就是 1 日；旧的 0.25 日=6 游戏时低于一切原版锚点，
+    心情面板里基本看不见，玩家会误判成"没生效"）。
+    stackLimit 2 + stackedEffectMultiplier 0.5 ⇒ 连亲两人的上限 5 + 2.5 = 7.5，
+    仍然低于一次性一滚的 +8 —— 这就是"收益面保守"的落点。
+
+    ===== 实际强度怎么算 =====
+    强度 = ThoughtStage.baseMoodEffect × Thought_Memory.moodPowerFactor，
+    moodPowerFactor = 自己的 SocialImpact × 设置里的倍率（KissMoodReward 里赋）。
+    SocialImpact（原版 Stats_Pawns_Social.xml）自带：社交技能 0 级 0.82 → 20 级 1.37、
+    Talking 容量权重 0.9（哑到 allowedDefect 0.05 就趋零）、Hearing 权重 0.3、帽子类装备 +10%~20%。
+    ⇒ 社交达人/戴礼帽的亲亲更值钱，哑巴与失聪者明显缩水 —— 这条联动是原版机制自带的，不另写表。
+
+    durationDays 只是兜底；运行时时长由设置项写进 durationTicksOverride（默认同为 1 游戏日）。
+
+    ===== 特质 / 种族联动：只用原版的口子 =====
+    nullifyingTraits / nullifyingHediffs 是原版对"这类人吃这套没用"的唯一表达方式
+    （Psychopath 对 Chitchat/DeepTalk/Nuzzled/WasTaught 全归零；Anomaly 的 Inhumanized 对
+    KindWordsMood/AttendedParty 归零）。归零发生在读取时（ThoughtUtility.ThoughtNullified
+    → Thought.MoodOffset 首行 return 0f），条目仍存进记忆表但被心情列表按 0 过滤，不显示也不加数。
+    原版**没有**任何"按特质给社交心情加成/减成"的机制，XenotypeDef 在 1.6 里也不带 statOffsets
+    （基因才带 statOffsets，且没有任何原版基因动 SocialImpact）⇒ 不自造表，只挂原版两个名单。
   -->
   <ThoughtDef>
     <defName>MWAH_Kissed</defName>
-    <thoughtClass>Thought_Memory</thoughtClass>
-    <durationDays>0.25</durationDays>
-    <stackLimit>3</stackLimit>
-    <stackedEffectMultiplier>0.6</stackedEffectMultiplier>
+    <thoughtClass>Mwah.Thought_MemoryFated</thoughtClass>
+    <durationDays>1</durationDays>
+    <stackLimit>2</stackLimit>
+    <stackedEffectMultiplier>0.5</stackedEffectMultiplier>
     <nullifiedIfNotColonist>false</nullifiedIfNotColonist>
+    <nullifyingTraits>
+      <li>Psychopath</li>
+    </nullifyingTraits>
+    <nullifyingHediffs>
+      <li MayRequire="Ludeon.RimWorld.Anomaly">Inhumanized</li>
+    </nullifyingHediffs>
     <stages>
       <li>
         <label>kissed by {0}</label>
         <description>Someone kissed me, and I kissed them back. My face still feels warm.</description>
-        <baseMoodEffect>6</baseMoodEffect>
+        <baseMoodEffect>5</baseMoodEffect>
       </li>
     </stages>
   </ThoughtDef>
-
-  <!-- 设置里打开"影响好感度"后才使用：Thought_MemorySocial，额外写入对对方的意见。 -->
+  <!-- 设置里打开"影响好感度"后才使用：Thought_MemorySocial，额外写入对对方的意见。
+       意见 +6 对齐原版滚床单（GotSomeLovin，+8 心情 / +6 意见 / 3 日）的意见份量。
+       注：KissMoodReward 里 SocialImpact×倍率 这一个值同时乘进 moodPowerFactor 与 opinionOffset
+       （原版 AddInteractionThought 就是两边共用一个 statValue）；此外意见在运行时还按 AgeFactor
+       在尾段线性衰减（ThoughtDef.lerpOpinionToZeroAfterDurationPct 默认 0.7 ⇒ 过 30% 时长后开始掉）。 -->
   <ThoughtDef>
     <defName>MWAH_KissedBond</defName>
-    <thoughtClass>Thought_MemorySocial</thoughtClass>
-    <durationDays>0.25</durationDays>
-    <stackLimit>3</stackLimit>
+    <thoughtClass>Mwah.Thought_MemorySocialFated</thoughtClass>
+    <durationDays>1</durationDays>
+    <stackLimit>2</stackLimit>
     <stackLimitForSameOtherPawn>1</stackLimitForSameOtherPawn>
-    <stackedEffectMultiplier>0.6</stackedEffectMultiplier>
+    <stackedEffectMultiplier>0.5</stackedEffectMultiplier>
+    <nullifiedIfNotColonist>false</nullifiedIfNotColonist>
+    <nullifyingTraits>
+      <li>Psychopath</li>
+    </nullifyingTraits>
+    <nullifyingHediffs>
+      <li MayRequire="Ludeon.RimWorld.Anomaly">Inhumanized</li>
+    </nullifyingHediffs>
     <stages>
       <li>
         <label>kissed by {0}</label>
         <labelSocial>our kiss</labelSocial>
         <description>Someone kissed me, and I kissed them back. My face still feels warm.</description>
+        <baseMoodEffect>5</baseMoodEffect>
+        <baseOpinionOffset>6</baseOpinionOffset>
+      </li>
+    </stages>
+  </ThoughtDef>
+  <!--
+    ===== 亲墙天意五档（单 def + 五 stages，互斥，权重 20/30/25/17/8，出厂表在 MWAH_FateDefs.xml）=====
+    锚点同上一条：滚床单 +8/3日 > 美言 +5/2日 > 被蹭 +4/1日；双人吻 +5/1日。
+    亲墙是"没有回应的单向多情"：期望 ≈ +0.84/次（远低于双人吻），方差全社交最大 —— 笑点即方差。
+    "毫无感觉"档 moodOffset 0 也保留 thought：心情列表挂着"亲了一堵墙（毫无感觉）"比什么都不加更有戏。
+    刻意不挂 nullifyingTraits：Psychopath 归零的是"对方接住你"的社交温度；墙本来无人回应，
+    反社会人格恰恰是全场最适合亲墙的人 —— 归零反而会误伤笑点。
+    2026-10-05 维护者裁定（0.2.x 架构条）：五个独立 def 合并为**单 def + 五档 stages**——
+    墙记忆是"与墙的关系"这一个槽，新抽签**就地顶替**旧档（vanilla 组满行为是"刷新最旧、
+    丢弃新条"，旧档会骑脸常驻，故顶替由 KissFate 结算侧显式做）。旧的"五档各有时长节拍"
+    就此退役：时长权威移进 addon 独立设置项（墙出厂 0.5 游戏日），durationDays 只是
+    设置未加载时的兜底。
+  -->
+  <ThoughtDef>
+    <defName>MWAH_KissedWall</defName>
+    <thoughtClass>Mwah.Thought_MemoryFated</thoughtClass>
+    <durationDays>0.5</durationDays>
+    <stackLimit>1</stackLimit>
+    <nullifiedIfNotColonist>false</nullifiedIfNotColonist>
+    <stages>
+      <li>
+        <label>kissed a wall; feels wrong now</label>
+        <description>The kiss itself felt like nothing. The thinking-afterwards is what unsettles me. Why did I kiss a wall? It didn't even flinch.</description>
+        <baseMoodEffect>-2</baseMoodEffect>
+      </li>
+      <li>
+        <label>kissed a wall; felt nothing</label>
+        <description>Cold stone, honest silence. No flutter, no regret — this page can simply be turned.</description>
+        <baseMoodEffect>0</baseMoodEffect>
+      </li>
+      <li>
+        <label>kissed a wall, and it was nice</label>
+        <description>The wall did nothing at all. It just stood there. Strangely, that was comforting.</description>
+        <baseMoodEffect>1</baseMoodEffect>
+      </li>
+      <li>
+        <label>a deep kiss with a wall</label>
+        <description>There was a hint of moss-moisture in the seam. I choose to call that an answer.</description>
+        <baseMoodEffect>3</baseMoodEffect>
+      </li>
+      <li>
+        <label>I fell in love with a wall</label>
+        <description>It doesn't speak, doesn't leave, doesn't judge. It simply holds — the roof, the weather, and now, apparently, the full weight of my affection. Today it felt closer to love than any coworker.</description>
         <baseMoodEffect>6</baseMoodEffect>
-        <baseOpinionOffset>8</baseOpinionOffset>
       </li>
     </stages>
   </ThoughtDef>

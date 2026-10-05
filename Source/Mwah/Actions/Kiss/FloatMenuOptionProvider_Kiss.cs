@@ -29,8 +29,9 @@ public class FloatMenuOptionProvider_Kiss : FloatMenuOptionProvider
 
     /// <summary>
     /// 故意不调用 base：base 开头用 MutantDef.whitelistedFloatMenuProviders（原版三个 mutant 都是空表）
-    /// 把所有 mutant 一刀切屏蔽。本模组改由参与层逐条判：只有
-    /// <c>incapableOfSocialInteractions</c> 的（蹒跚者/尸鬼/唤醒尸体）被挡，别的照旧放行。
+    /// 把所有 mutant 一刀切屏蔽。本模组自 2026-10-05 起对蹒跚者/尸鬼/唤醒尸体按**机械族同等待遇**
+    /// 放行（维护者裁定）：谁能亲谁由门禁滑条判（它们是 Humanlike，天然落在第 3/4 档），
+    /// 参与层不再为 mutant 设语义门；无心情 ⇒ 无收益，结算走实体天意表的消息通道。
     /// </summary>
     public override bool SelectedPawnValid(Pawn pawn, FloatMenuContext context)
     {
@@ -64,7 +65,8 @@ public class FloatMenuOptionProvider_Kiss : FloatMenuOptionProvider
 
     private static FloatMenuOption? BuildOption(Pawn selected, Pawn clickedPawn, FloatMenuContext context)
     {
-        KissProposal proposal = KissUtility.Propose(selected, clickedPawn);
+        // 右键 = 玩家亲自下令：swap 允许、战斗闸放行。
+        KissProposal proposal = KissUtility.Propose(selected, clickedPawn, allowRoleSwap: true, allowCombatInterrupt: true);
         if (!proposal.Visible)
         {
             return null;
@@ -82,15 +84,14 @@ public class FloatMenuOptionProvider_Kiss : FloatMenuOptionProvider
             label = selected.LabelShort + ": " + label;
         }
 
-        if (!proposal.Allowed || proposal.Doer == null || proposal.Receiver == null)
+        // Allowed 为真时双方必然都在（见 KissProposal.TryGetPair），这里顺手把双方取出来用。
+        if (!proposal.TryGetPair(out Pawn doer, out Pawn receiver))
         {
             // 原版灰项惯例：action 传 null 即禁用，原因写在括号里。
             return new FloatMenuOption(label + " (" + proposal.BlockedReason + ")", null,
                 MenuOptionPriority.InitiateSocial, null, clickedPawn);
         }
 
-        Pawn doer = proposal.Doer;
-        Pawn receiver = proposal.Receiver;
         var option = new FloatMenuOption(label, delegate { KissUtility.BeginKiss(selected, clickedPawn); },
             MenuOptionPriority.InitiateSocial, null, clickedPawn)
         {

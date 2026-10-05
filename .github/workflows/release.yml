@@ -1,0 +1,83 @@
+name: Release
+
+# 推 v* 格式的 tag（如 v0.1.0）触发：校验 tag ↔ csproj 版本轴 ↔ main 血统 → 跑全部门 →
+# 构建 GitHub flavor → 打 zip → 发 GitHub Release。
+# main 只做 release：tag 必须落在 origin/main 的历史上（开发分支的提交不许直接发布）。
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write   # 创建 GitHub Release 需写权限
+
+jobs:
+  release:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          # 与 ci.yml 同一依据：本地证据基线是 SDK 10.0.204（无 global.json），runner 复现它。
+          dotnet-version: '10.0.x'
+
+      - name: Verify release tag
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $tag = $env:RELEASE_TAG
+          if ([string]::IsNullOrWhiteSpace($tag)) {
+            throw 'Release tag environment variable is empty.'
+          }
+          $semVerTagPattern = '^v(?<base>(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*))(?:-(?:(?:0|[1-9]\d*)|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:(?:0|[1-9]\d*)|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*))*)?$'
+          $tagMatch = [regex]::Match($tag, $semVerTagPattern)
+          if (-not $tagMatch.Success) {
+            throw "Release tag must be a strict SemVer 2.0 tag: vMAJOR.MINOR.PATCH with an optional prerelease suffix: $tag"
+          }
+
+          [xml]$projectXml = Get-Content -LiteralPath 'Source/Mwah/Mwah.csproj' -Raw
+          $versionNodes = @($projectXml.SelectNodes('/Project/PropertyGroup/Version'))
+          if ($versionNodes.Count -ne 1 -or [string]::IsNullOrWhiteSpace($versionNodes[0].InnerText)) {
+            throw 'Source/Mwah/Mwah.csproj must contain exactly one non-empty <Version>.'
+          }
+          $projectVersion = $versionNodes[0].InnerText.Trim()
+          $tagBaseVersion = $tagMatch.Groups['base'].Value
+          if ($tagBaseVersion -ne $projectVersion) {
+            throw "Release tag base version '$tagBaseVersion' does not match project <Version> '$projectVersion'."
+          }
+
+          git fetch --no-tags origin '+refs/heads/main:refs/remotes/origin/main'
+          if ($LASTEXITCODE -ne 0) {
+            throw 'Failed to fetch origin/main; cannot verify the release tag commit belongs to main history.'
+          }
+          $tagCommit = (git rev-parse 'HEAD^{commit}').Trim()
+          git merge-base --is-ancestor $tagCommit origin/main
+          if ($LASTEXITCODE -ne 0) {
+            throw "Release tag commit $tagCommit is not in origin/main history. Merge the release commit into main before tagging."
+          }
+
+      # 发布门与维护者本地跑的是同一套（25 门 + 双语键 + 渠道构建 + 天意表完整性）。
+      - name: Verify (25 gates)
+        shell: pwsh
+        run: ./scripts/verify-local.ps1
+
+      - name: Pack GitHub release
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: ./scripts/pack-github.ps1 -Version $env:RELEASE_TAG
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/github/Mwah-${{ github.ref_name }}.zip
+          generate_release_notes: true   # 自动从 commits 生成 Release notes
+          prerelease: ${{ contains(github.ref_name, '-') }}   # v0.1.0-rc1 自动标记 pre-release

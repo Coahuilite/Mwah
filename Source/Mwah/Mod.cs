@@ -16,7 +16,12 @@ public class MwahMod : Mod
     private const float SaveDebounceSeconds = 0.35f;
     private const float SaveRetrySeconds = 2f;
 
-    public static MwahSettings Settings = null!;
+    /// <summary>
+    /// 玩家配置。出厂就是一个装着默认值的实例，**永不为 null** —— 各判定入口因此不必
+    /// 各写一遍"配置没读到就当禁用"。Mod 构造时它被 GetSettings&lt;MwahSettings&gt;()
+    /// （已从 Settings.xml 恢复的真实配置）整个替换。
+    /// </summary>
+    public static MwahSettings Settings { get; private set; } = new MwahSettings();
     public static MwahMod? Instance { get; private set; }
 
     private bool savePending;
@@ -26,18 +31,31 @@ public class MwahMod : Mod
     private long failedGeneration = -1;
 
 #if MWAH_STEAM
-    private const string BuildFlavor = "steam";
+    internal const string BuildFlavor = "steam";
 #elif MWAH_GITHUB
-    private const string BuildFlavor = "github";
+    internal const string BuildFlavor = "github";
 #else
-    private const string BuildFlavor = "dev";
+    internal const string BuildFlavor = "dev";
 #endif
 
     public MwahMod(ModContentPack content) : base(content)
     {
-        Instance = this;
-        Settings = GetSettings<MwahSettings>();
-        MwahLog.Info($"loaded [{BuildFlavor} {VersionString()}]");
+        // 启动横幅：无条件播报（诊断开关关掉也要能确认模组活着），格式固定
+        // "[MWAH] <模组名> v<版本> build=<渠道> startup OK/FAILED"，全局检索 [MWAH] 即得。
+        // FAILED 的成因 = 入口自身炸了（设置反序列化、路径准备）；播完横幅把异常原样抛回，
+        // 让原版照常记堆栈 —— 半初始化的模组不能装作活着。
+        try
+        {
+            Instance = this;
+            Settings = GetSettings<MwahSettings>();
+            KissTrace.Start();
+            MwahLog.Banner($"Mwah! (Every Pawn Kisses Each Other) v{VersionString()} build={BuildFlavor} startup OK");
+        }
+        catch (Exception ex)
+        {
+            MwahLog.Banner($"Mwah! (Every Pawn Kisses Each Other) v{VersionString()} build={BuildFlavor} startup FAILED: {ex.GetBaseException().Message}");
+            throw;
+        }
     }
 
     /// <summary>返回非空字符串是设置页在"模式选项"里出现的唯一条件。</summary>
@@ -98,10 +116,25 @@ public class MwahMod : Mod
         savePending = false;
     }
 
-    private static string VersionString()
+    /// <summary>
+    /// 横幅与设置页共用的版本身份（2026-10-05 维护者裁定，机制同 UniversalSqueaker）：
+    /// dev 包带完整 commit hash——同版本号的不同构建必须能在日志里分辨（"打包必构建"
+    /// 事故的账本）；Steam/GitHub 发行包只报版本号——+sha 是构建账本，不是玩家信息。
+    /// #if 只改返回值不改成员存废，三渠道编译面一致（渠道纪律）。
+    /// </summary>
+    internal static string VersionString()
     {
         string? informational = typeof(MwahMod).Assembly
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
-        return string.IsNullOrEmpty(informational) ? "unknown" : informational!;
+        if (string.IsNullOrEmpty(informational))
+        {
+            return "unknown";
+        }
+#if MWAH_DEV
+        return informational!;
+#else
+        int plus = informational!.IndexOf('+');
+        return plus < 0 ? informational : informational[..plus];
+#endif
     }
 }
