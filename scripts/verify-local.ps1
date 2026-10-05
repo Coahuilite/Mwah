@@ -241,8 +241,8 @@ $wsVersions = @([regex]::Matches($wsCopy, '目标：([0-9]+\.[0-9]+\.[0-9]+)|Mod
 $clEn = Get-Content -Raw -LiteralPath (Join-Path $root 'docs\CHANGELOG.md')
 $clZh = Get-Content -Raw -LiteralPath (Join-Path $root 'docs\CHANGELOG.zh-CN.md')
 $clVersions = @(
-    [regex]::Match($clEn, 'Unreleased — Version ([0-9]+\.[0-9]+\.[0-9]+)').Groups[1].Value
-    [regex]::Match($clZh, '未发布 — 版本 ([0-9]+\.[0-9]+\.[0-9]+)').Groups[1].Value
+    [regex]::Match($clEn, 'Unreleased — ([0-9]+\.[0-9]+\.[0-9]+)').Groups[1].Value
+    [regex]::Match($clZh, '未发布 — ([0-9]+\.[0-9]+\.[0-9]+)').Groups[1].Value
 )
 $followerVersions = @($wsVersions + $clVersions)
 Assert-True "release-copy versions all track csproj <Version> ($csprojVersion)" (

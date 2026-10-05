@@ -1,32 +1,61 @@
 # Changelog
 
-The public release record for Mwah! Maintenance rules:
+## Changelog Template
 
-- Released entries in chronological order, oldest first; the Unreleased entry sits on top.
-- Heading uses local release time: `[YYYY-MM-DD HH:MM UTC+8] Version X.Y.Z`; replace `Unreleased — Version X.Y.Z` at publish time.
-- The "Initial Workshop Upload" wording is reserved for the first Steam upload.
-- One change per bullet, written for players; technical fixes a player cannot feel get one line.
+This file is the canonical English changelog for Mwah! (Every Pawn Kisses Each Other).
+
+Rules:
+- Keep released entries in chronological order, oldest first and newest last; place an Unreleased entry at the top.
+- Use local release time in the heading: `[YYYY-MM-DD HH:MM UTC+8] Version X.Y.Z`.
+- An unreleased top entry may use `Unreleased — X.Y.Z`; replace it with the actual UTC+8 release time when publishing.
+- Use `Initial Workshop Upload` only for the first Steam Workshop upload; subsequent updates use ordinary version entries.
+- Keep items short and visible. Prefer one change per bullet.
+- Separate feature additions, changes, fixes, packaging notes, and release notes when useful.
+- Bug fixes should be concise unless the fix changes player-facing behavior.
+- Mention both GitHub and Steam only when the entry affects both release surfaces.
+- Do not put unaccepted plans here. An accepted, not-yet-released version may use the explicit Unreleased entry above.
 - Keep the Simplified Chinese version synchronized in `docs/CHANGELOG.zh-CN.md`.
 
-## Unreleased — Version 0.2.2
+Recommended entry shape:
 
-The first public release. The 0.1.x development line was scrapped without ever shipping, so everything arrives at once.
+```text
+## [YYYY-MM-DD HH:MM UTC+8] Version X.Y.Z
 
-The fine print up front: this is a joke mod. Live maps only, single-player only, no Harmony, no dependencies beyond Core.
+One-line release summary.
 
 ### Added
+- ...
 
-- Right-click a kiss. Select a pawn, right-click another. The one that can walk walks over, they kiss, hearts float up, and both head home.
-- Kiss Director. A new bottom-bar button opens a small panel: point at any two units on the map and send them to kiss. Raiders, traders, wild animals - anyone you cannot command can still be arranged.
-- Kiss a wall. Right-click a wall, a slab of natural rock, or even a buried ore vein. Walls do not answer back, so the mood is a dice roll: five outcomes, fifty narration lines, all in editable XML.
-- Animals, mechanoids and anomaly entities are kissable too. They have no mood to move, but each gets its own brand of commentary: mechs crack cold jokes, animals talk about smells.
-- A truce while it lasts. A commanded pair will not fight each other until the kiss is over; one real hit breaks the spell immediately.
-- Mood scales with the receiver. The bonus is multiplied by the kissed pawn's own social impact: charming pawns profit, quiet ones get less, psychopaths feel nothing.
-- A gate slider. "Who kisses whom" in seven steps, from colonists-only to everything-kissing-everything. Fully open by default.
-- Ambient kissing (off by default). Once enabled, the game matchmakes the pawns you cannot order around, on an interval and radius you set. It never touches your colonists.
-- The settings page comes in four sections: core, autonomous matchmaking, add-ons, system. Every duration is shown in ticks, real seconds and game hours at once.
-- Four diagnostic levels. Quiet during normal play, and worth reading when something looks off.
+### Changed
+- ...
+
+### Fixed
+- ...
+
+### Packaging
+- ...
+```
+
+## Unreleased — 0.2.2
+
+First public release: any pawn kisses any pawn on the live map — single-player only, zero Harmony, Core only.
+
+### Added
+- Added right-click kissing: select a pawn, right-click another; the one that can walk walks over, they kiss, vanilla lovemakin' hearts float up, and both head back.
+- Added the Kiss Director: a bottom-bar panel that dispatches any two units on the map, including ones you cannot command.
+- Added wall kissing: right-click a built wall, natural rock or a buried vein; the outcome rolls on an editable XML fate table (five tiers, fifty narration lines) and lands as a single "relationship with walls" memory.
+- Added animals, mechanoids and anomaly entities as kissable participants: no mood for them, but each gets its own fate-table commentary line.
+- Added a truce window: a commanded pair will not fight until the kiss ends; one real hit breaks it.
+- Added a mood bonus scaled by the receiver's own social impact; psychopaths feel nothing (vanilla nullify lists).
+- Added the seven-tier "who kisses whom" gate slider, fully open by default.
+- Added ambient kissing (off by default): the game matchmakes pawns you cannot order around and never touches your colonists.
+- Added the four-section settings page; every duration is shown in ticks, real seconds and game hours.
+- Added four diagnostic levels: quiet during normal play, readable when something looks off.
+
+### Packaging
+- Packages carry a version.txt identity label (version, build flavor, commit).
+- GitHub release zips are deterministic (single top-level folder, commit-stamped entries).
+- Bilingual key sets are verified by the offline gate suite, with a full-history privacy audit before any push.
 
 ### Notes
-
-- 0.1.0, 0.2.0 and 0.2.1 were never tagged; the first public release is 0.2.2.
+- The 0.1.x development line was archived without ever shipping, and 0.2.0 / 0.2.1 were never tagged; everything above ships together in 0.2.2, the first public release.
