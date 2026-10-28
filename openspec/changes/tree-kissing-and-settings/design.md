@@ -16,6 +16,8 @@ Keep common gameplay sources and the two cohesive drivers. Do not introduce a ge
 
 Share occupancy detection between paired and Thing requests without making core code depend on wall/tree implementations. Pair jobs need matching partner identity and a ready barrier before the initiator clock starts. Dispatch returns actual admission, not only proposal eligibility. Keep normal departure inside the job; register fallback only for an appropriate final exit, preserving idempotency and newer player orders. Vanilla whole-job finish actions are available; starting a job synchronously inside cleanup remains prohibited.
 
+Prefer the vanilla finalizer-job handoff over a static next-tick queue when its invocation conditions distinguish successful natural exit from interruption on both supported APIs. A return fallback is only for normal completion still away from home; violence and replacement orders must not acquire a return prefix. The existing queue is an implementation detail, not a required product capability.
+
 ### Resolve addons once, use data for content
 
 Use small Def-backed addon descriptions for stable identity, targeting category, outcome scope, settings metadata, and explicit match precedence; keep special behavior in workers. Reuse the Thing driver. Preserve `MWAH_KissThing` as the wall job identity; a tree JobDef can point through a ModExtension to its addon definition, making the selected identity durable without repurposing unrelated Job fields. Validate registry identity and precedence at Def initialization.
@@ -29,6 +31,8 @@ Add a contextual outcome resolver (for example, `ResolveFateScope(Pawn, Thing)`)
 Use `Trees_Desired` for tree-affirming outcomes. A specialized Gauranlen rule also checks `GauranlenConnection_Strong` and `CompTreeConnection.ConnectedPawn`. Resolve overlapping rules once rather than stacking a meme bonus on its own precept bonus. Do not call `Prune`, link/ritual events, or mutate native sightings. `ThoughtWorker_TreesDesired` reads surroundings and is not a completed-kiss memory.
 
 Basic and cultural outcomes use the same new tree ThoughtDef and refresh the same slot. Preserve `wall`, existing Def names, narration fields, setting names, and their meanings. Use distinct new identities for tree and cultural preferences. Numerical tree defaults and outcome weights must be specified before editing the corresponding runtime content; they are not inferred from the wall distribution.
+
+The focused [tree/Ideology research](../../../docs/research/tree-kissing-ideology.md) records the native Def/API evidence and wall-pipeline comparison. Use own connected Gauranlen plus the strong-connection precept before the general tree-affirming precept, otherwise basic settlement. Shared presentation needs a neutral target argument for new content while retaining the existing `WALL` alias and saved narration meanings. Other DLC trees remain ordinary eligible tree targets, not evidence for a Gauranlen cultural rule.
 
 ### Separate settings data from presentation
 

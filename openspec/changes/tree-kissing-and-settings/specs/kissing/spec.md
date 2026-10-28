@@ -26,6 +26,10 @@ A paired kiss SHALL use mirrored participant jobs with a single initiator-owned 
 - **WHEN** interrupting external violence reaches either participant during approach, performance, or departure
 - **THEN** that participant's kiss job ends without a global faction or hostility rewrite.
 
+#### Scenario: Interrupted departure releases ownership
+- **WHEN** violence or a replacement order interrupts departure away from home
+- **THEN** no automatic return job is inserted ahead of the Pawn's response or replacement order.
+
 #### Scenario: Stage selection and fallback
 - **WHEN** a pair is assigned positions
 - **THEN** stage selection prefers separate horizontal cells, keeps an immobile receiver in place, rejects exchanging occupied cells, and permits a touch fallback.

@@ -11,6 +11,7 @@ The current slice repairs existing paired/wall runtime behavior and researches I
 
 ## 2. Addons and tree content
 
+- [x] 2.0 Research native Ideology tree content and wall-pipeline reuse; record source evidence and remaining content decisions without implementing trees.
 - [ ] 2.1 Implement stable addon definitions/resolution, durable activity identity, plant targeting, and addon-owned menu text while preserving wall behavior.
 - [ ] 2.2 Select and write tree numeric defaults and fate weights into the affected spec before authoring runtime content.
 - [ ] 2.3 Implement basic tree content, the contextual outcome resolver, and optional per-Pawn Ideology rules; keep one tree thought slot and native tree systems unchanged.
@@ -38,3 +39,7 @@ The current slice repairs existing paired/wall runtime behavior and researches I
 2026-10-29: the installed OpenSpec CLI was upgraded from 1.2.0 to stable 1.15.0, and the standard layout was initialized with no generated tool integrations. Strict validation accepted the four baseline capabilities and this change, including preservation of baseline scenarios in modified requirements.
 
 The existing `pwsh scripts/verify-local.ps1` passed on the unchanged runtime source, including Dev/Steam/GitHub builds with zero warnings and errors. No game session or 1.7 runtime acceptance was performed. These results do not complete the implementation tasks above; their checks apply again after the corresponding runtime changes.
+
+## Tree research handoff
+
+2026-10-29: [tree-kissing-ideology.md](../../../docs/research/tree-kissing-ideology.md) records local RimSage 1.7.4990 rev1069 Def/API observations, native-system boundaries, optional-DLC behavior, and the shared Thing-job extension seams. The research supports the approved cultural direction; tree defaults, stage values, fate weights, and new persistent IDs remain content decisions before tree implementation. No tree runtime content or settings redesign was implemented by this research.
