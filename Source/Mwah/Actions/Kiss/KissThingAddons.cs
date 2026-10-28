@@ -100,7 +100,7 @@ public abstract class KissThingAddon
     public ThingKissProposal Propose(Pawn doer, Thing target)
     {
         MwahSettings settings = MwahMod.Settings;
-        if (!Active || !Accepts(target))
+        if (!Pickable(target))
         {
             return ThingKissProposal.Hidden();
         }
@@ -116,7 +116,7 @@ public abstract class KissThingAddon
             return ThingKissProposal.Blocked(initiator.Reason);
         }
 
-        if (KissUtility.IsKissing(doer) || IsKissingThing(doer))
+        if (KissActivity.IsOccupied(doer))
         {
             return ThingKissProposal.Blocked("MWAH.Fail.Busy".Translate());
         }
@@ -158,7 +158,11 @@ public abstract class KissThingAddon
                 new LookTargets(target), MessageTypeDefOf.RejectInput, historical: false);
             return;
         }
-        StartJob(doer, target, forced: false);
+        if (!StartJob(doer, target, forced: false))
+        {
+            Messages.Message("MWAH.Fail.Stale".Translate(), new LookTargets(target),
+                MessageTypeDefOf.RejectInput, historical: false);
+        }
     }
 
     /// <summary>导演台/快速发配的代发：Allowed 时 job 已起（playerForced），结果原样交回调用方弹信。</summary>
@@ -167,7 +171,10 @@ public abstract class KissThingAddon
         ThingKissProposal proposal = Propose(doer, target);
         if (proposal.Allowed && proposal.Doer != null)
         {
-            StartJob(doer, target, forced: true);
+            if (!StartJob(doer, target, forced: true))
+            {
+                return ThingKissProposal.Blocked("MWAH.Fail.Stale".Translate());
+            }
         }
         return proposal;
     }
@@ -184,14 +191,22 @@ public abstract class KissThingAddon
     /// <summary>
     /// 与双人代发同理：playerForced 否则 pawn 的 think tree 会在下一个 override 检查点把它拽回去。
     /// </summary>
-    private static void StartJob(Pawn doer, Thing target, bool forced)
+    private static bool StartJob(Pawn doer, Thing target, bool forced)
     {
         var job = JobMaker.MakeJob(MWAH_JobDefOf.MWAH_KissThing, target);
+        int jobId = job.loadID;
         if (forced)
         {
             job.playerForced = true;
         }
-        doer.jobs.StartJob(job, JobCondition.InterruptForced);
+        doer.jobs.StartJob(job, JobCondition.InterruptForced, preToilReservationsCanFail: true);
+        if (doer.CurJob != job || job.loadID != jobId)
+        {
+            return false;
+        }
+        MwahSettings settings = MwahMod.Settings;
+        KissCooldown.Mark(doer, target, settings.PawnCooldown, settings.PairCooldown);
+        return true;
     }
 
     /// <summary>busy 一条管住全族：亲着墙的人没空亲树，反之亦然。</summary>

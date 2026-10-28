@@ -1,6 +1,6 @@
 # Mwah 日志设计：保留意见、依据与更优雅的做法
 
-> 状态：**设计依据，核心已实现并演进**（2026-10-05 校正本头）。2026-09-02 裁定的三条早已落地——输出只走 Player.log、无环形缓冲/按需导出/自定义文件（KissTrace 的存档目录采样文件是崩溃旁路，不算日志子系统）、每行带 doer/recv 双身份。此后两轮演进：09-30 诊断从编译期 `#if` 改为运行时开关（全构建常驻），10-05 再升级为四档滑条（关闭/自动/简化/详细，Auto 随构建渠道；新增 `[MWAH] note:` 要事层与 KissPawn 旁白路径的结算打点）。当前权威口径见 `MEMORY.md` "Logging ruling" 条与设置页 `MWAH.Settings.DiagLevelDesc` 文案；本文保留的是**当初为什么这样设计**与被否决的更重方案，不再充当实现状态。
+> 状态：**历史设计依据**。2026-09-02 的日志讨论此后经历了运行时诊断开关和四档滑条等演进；KissTrace 的存档目录采样文件是崩溃旁路，不是普通日志子系统。当前行为合同见 `openspec/specs/settings/spec.md` 的诊断要求，实际输出见 `Source/Mwah/MwahLog.cs` 与设置页 `MWAH.Settings.DiagLevelDesc`。下文的备选方案、事件格式和待办表保留当时的讨论，不代表当前实现或活动任务；第 3 节另按 2026-10-29 的运行链路校正。
 > 本文记录 2026-09-02 与维护者达成的一条保留意见（一次亲吻的日志行形状），以及为"更优雅"而探索出的备选路线与代价。
 > 判据始终是维护者给的那句：**日志以 agent 能还原路径为准**。
 > 引擎侧事实（上限、折叠、路径、持久化）逐条经 RimSage 1.6 源码核验，标了文件与行号；本文不复制 `MEMORY.md` 的结论，只写日志这一面。
@@ -32,17 +32,18 @@
 | `GenFilePaths.FolderUnderSaveData` 是 **private** | `Source/Verse/GenFilePaths.cs:345` | 要数据目录只能从 public 的 `ConfigFolderPath` 取父级，或直接用 `consoleLogPath` |
 | `[DebugAction]` 静态方法被 `GenTypes.AllTypes` 全类型扫描发现，**无需 Harmony** | `Source/LudeonTK/DebugTabMenu_Actions.cs:27-45`、`Source/LudeonTK/DebugActionAttribute.cs` | mod 可以往游戏内 Debug 菜单加按钮/地图工具（需 DevMode 打开菜单） |
 
-## 3. 保留意见：一次亲吻的真实 tick 形状
+## 3. 一次配对亲吻的当前触发链
 
-不是 7 个时刻。按代码里的触发链，只有 3 个：
+同步调用链不等于多个独立 tick。当前配对流程把派发、共同就绪、结算和离开分开；双方到达与离开也不保证发生在同一 tick。
 
-| 时刻 | 同一 tick 内跑完的东西 | 原本误标 |
+| 时刻 | 触发链与阶段边界 | 日志解释 |
 |---|---|---|
-| **T0 下令** | `BeginKiss` → `jobs.StartJob` → `TryMakePreToilReservations` → `SetupToils()` → `ReadyForNextToil()` → `ToilGotoTouch.initAction`（记 home；已贴脸则直接 `ReadyForNextToil()`，否则 `StartPath`） | `order` + `start` + `toil:goto` |
-| **T1 到达** | `pather` 停止 → `ToilLockPartner`（`defaultCompleteMode = Instant`，同 tick 过）→ `ToilKiss.initAction` 面对面、`ticksLeft = DurationTicks` | `toil:lock` + `toil:kiss begin` |
-| **T2 = T1 + 时长** | `ticksLeft <= 0` → 末 toil → `EndCurrentJob(Succeeded)` → `AddFinishAction` 里 `Settle()` + `KissReturnQueue.Enqueue()` | `end` + `settle×2` |
+| **T0 下令** | `BeginKiss` / `BeginDirected` → 判定、定台 → 被动方与发起方依次 `StartJob`；各自预订、`SetupToils`、`ReadyForNextToil` 同步进入开场和走位；双方确实入场后绑定 job 身份并登记冷却 | `order` + `start` + `toil:goto` |
+| **T1 共同就绪** | 先到的一方进入 `ToilKiss` 等待；双方必须仍是相互匹配的 job、均在表演段且到位，发起方才累计扣减 `ticksLeft` | `toil:kiss begin` 不等于时钟已开始 |
+| **T2 表演完成** | 发起方倒计时走完 → 同步双方完成标记 → `ReadyForNextToil` 清理表演 toil；该 toil 的 finish action 幂等结算双方，随后进入各自 job 内回程 | `settle×2` 不等于 job 已结束 |
+| **T3 离开结束** | 各自越过最后回程 toil → `EndCurrentJob(Succeeded)`；原版先求 finalizer，再 cleanup，再按原版准入启动可选 Goto。仅自然结束且尚未到家时考虑兜底；受击或新命令替换不插回程前缀 | `end` 与结算分属不同阶段 |
 
-补充：`Settle` 一次调用算两人 ⇒ 该是一行两列；双方通常同 tick 结束但是两次独立调用 ⇒ 被动方另有一行 `role=passive`（对方接不下 job 时只有主动方一行，`partner=solo`）；已贴脸时 T1 == T0。
+`KissMoodReward.Settle` 仍由发起方调用一次处理两人；被动方不单独发奖。没有完成的表演不结算，派发失败也不报告成功。正常回程仍属于 kiss job，静态回位队列已移除。原版 finalizer 是预算耗尽后的尽力兜底，不保证绕过征召、倒地等原版 opportunistic gate。以上 1.7 调用顺序核对于本地 `1.7.4990 rev1069` 源码；1.6 已确认 API 签名可编译，实际运行验收由维护者执行。
 
 **为什么 T0 必须单独一行**：只留终止汇总的话，"下令了但 job 从没结束"（卡寻路、被征召打断、对象被移除）和"什么都没发生"在日志里长得一样。有 order 无 end = 卡在哪一段是明确可读的。
 

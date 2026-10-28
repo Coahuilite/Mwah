@@ -10,3 +10,14 @@ The mod SHALL support RimWorld 1.6 and 1.7 with Core alone and no required DLC, 
 #### Scenario: The same gameplay request on supported minors
 - **WHEN** equivalent valid inputs and settings are used on supported game minors
 - **THEN** admission, cooldown, addon-switch, and settlement semantics remain the same despite version-specific game adapters.
+
+### Requirement: Safe delivery and verification
+Build and packaging tools SHALL NOT install or link the mod into a game installation. Packages SHALL retain the established channel shapes and one top-level Mwah directory where archived. Repository content and distributed artifacts SHALL exclude personal local paths, credentials, and Workshop publication identifiers. Existing mandatory offline gates SHALL be retained; their success SHALL NOT be presented as in-game verification.
+
+#### Scenario: An offline package build
+- **WHEN** a developer builds or packages the mod
+- **THEN** the operation produces its build or distribution output without altering a game installation or claiming a game session passed.
+
+#### Scenario: Runtime owners are refactored
+- **WHEN** an approved refactor replaces an internal runtime owner without changing published entry points
+- **THEN** the existing assembly inventory check verifies the current owner and retained entry points rather than requiring the removed implementation type.

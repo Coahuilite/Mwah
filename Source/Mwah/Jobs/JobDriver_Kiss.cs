@@ -26,7 +26,8 @@ namespace Mwah;
 public class JobDriver_Kiss : JobDriver
 {
     private const int InvalidCell = -999999;
-
+    private const int PerformanceToilIndex = 2;
+    private const int ReturnToilIndex = 3;
 
     private readonly TargetIndex partnerInd = TargetIndex.A;
 
@@ -39,6 +40,9 @@ public class JobDriver_Kiss : JobDriver
     /// <summary>finish action 幂等闸：收尾栈被重入时只结算一次。</summary>
     private bool finished;
 
+    // Native Job.loadID survives save/load and distinguishes replacement jobs, including pooled Jobs.
+    private int partnerJobId = -1;
+
     /// <summary>被动方 = 不是发起方的那个（按 C 端判，开场定一次，之后不再改）。</summary>
     private bool isPassivePartner;
 
@@ -46,6 +50,7 @@ public class JobDriver_Kiss : JobDriver
     private int homeZ = InvalidCell;
 
     private readonly WalkTally walkTally = new();
+    private readonly KissReturn departure = new();
 
     private Pawn Partner => (Pawn)job.GetTarget(partnerInd).Thing;
 
@@ -54,17 +59,46 @@ public class JobDriver_Kiss : JobDriver
     /// <summary>本方台位；无效表示"没找到台"，走贴脸兜底。</summary>
     private IntVec3 StageCell => job.GetTarget(TargetIndex.B).Cell;
 
-    /// <summary>对方的 driver（可能已结束/换人），被动方靠它读发起方的时钟。</summary>
-    private JobDriver_Kiss? PartnerDriver => Partner?.jobs?.curDriver as JobDriver_Kiss;
+    /// <summary>Both admitted jobs bind before the next simulation tick.</summary>
+    internal void BindPartner(int loadId) => partnerJobId = loadId;
+
+    private JobDriver_Kiss? MatchingPartner
+    {
+        get
+        {
+            JobDriver_Kiss? other = Partner?.jobs?.curDriver as JobDriver_Kiss;
+            if (other == null || other.ended || other.Partner != pawn
+                || other.job.GetTarget(TargetIndex.C).Pawn != job.GetTarget(TargetIndex.C).Pawn)
+            {
+                return null;
+            }
+            // Older saves have no explicit pair IDs. Reconstruct only a reciprocal pair from
+            // the same dispatch tick, then retain the concrete IDs rather than reclassifying it.
+            if (partnerJobId < 0)
+            {
+                if (other.job.startTick != job.startTick
+                    || (other.partnerJobId >= 0 && other.partnerJobId != job.loadID))
+                {
+                    return null;
+                }
+                partnerJobId = other.job.loadID;
+                other.partnerJobId = job.loadID;
+            }
+            return other.job.loadID == partnerJobId && other.partnerJobId == job.loadID ? other : null;
+        }
+    }
 
     public override void ExposeData()
     {
         base.ExposeData();
         Scribe_Values.Look(ref ticksLeft, "ticksLeft", 0);
         Scribe_Values.Look(ref completed, "completed");
+        Scribe_Values.Look(ref finished, "finished", completed && CurToilIndex > PerformanceToilIndex);
+        Scribe_Values.Look(ref partnerJobId, "partnerJobId", -1);
         Scribe_Values.Look(ref isPassivePartner, "isPassivePartner");
         Scribe_Values.Look(ref homeX, "homeX", InvalidCell);
         Scribe_Values.Look(ref homeZ, "homeZ", InvalidCell);
+        departure.ExposeData();
     }
 
     public override bool TryMakePreToilReservations(bool errorOnFailed)
@@ -103,35 +137,22 @@ public class JobDriver_Kiss : JobDriver
         }
     }
 
-    /// <summary>
-    /// "回原位"兜底的登记点。JobDriver 没有"job 收尾"钩子（1.6 的 Cleanup 挂在 ThingComp
-    /// 一类，driver 上没有可重写的方法），所以登记放在 kiss 段的 finish action：它覆盖
-    /// "到过表演段之后的一切出口"（正常走完、受击散场、对方死亡），与旧写法同一覆盖面；
-    /// 走位段就失败的人本来也没走到需要送回家的地方。入队而非当场下令：finish action 跑在
-    /// job 收尾栈里，同步起新 job 就是上局的死循环（见 KissReturnQueue 类注释）。
-    /// 正常路径里 job 内回程先把人送回家，队列下一 tick 发放时被"已站在原位"的过滤消化；
-    /// job 内回程中途止损的，这条队列 Goto 正好接着送。
-    /// </summary>
-    private void EnqueueReturnFallback()
-    {
-        KissReturnQueue.Enqueue(base.pawn, HomeCell);
-    }
-
     protected override IEnumerable<Toil> MakeNewToils()
     {
         this.FailOnDespawnedOrNull(partnerInd);
         this.FailOn(() => Partner.Dead);
+        SetFinalizerJob(condition => KissReturn.Finalizer(pawn, HomeCell, condition,
+            CurToilIndex > ReturnToilIndex)!);
+        AddFinishAction(_ => KissTrace.Set(isPassivePartner, "end"));
 
         yield return ToilBegin();
         yield return ToilGotoStage();
         yield return ToilKiss();
-        yield return KissReturn.MakeToil("return", base.pawn, () => HomeCell, () => isPassivePartner, ReadyForNextToil);
+        yield return departure.MakeToil("return", base.pawn, () => HomeCell, () => isPassivePartner, ReadyForNextToil);
     }
 
     /// <summary>
-    /// 开场：认角色、记原位、记冷却。定台已经挪到 KissUtility.Start（双方 job 同帧起来，
-    /// 台位必须在 job 存在之前就定好）。冷却仍在这里记而不是 StartJob 之前：
-    /// 预订失败时 job 根本没落地，提前记账就是空罚一轮冷却。
+    /// Record role, home and duration. Dispatch commits cooldowns after both admissions succeed.
     /// </summary>
     private Toil ToilBegin()
     {
@@ -142,11 +163,6 @@ public class JobDriver_Kiss : JobDriver
             homeX = base.pawn.Position.x;
             homeZ = base.pawn.Position.z;
             ticksLeft = MwahMod.Settings.DurationTicks;
-            if (!isPassivePartner)
-            {
-                MwahSettings settings = MwahMod.Settings;
-                KissCooldown.Mark(base.pawn, Partner, settings.PawnCooldown, settings.PairCooldown);
-            }
             KissTrace.Set(isPassivePartner, "begin");
             MwahLog.Dev("kiss begin: " + base.pawn.LabelShort + " <-> " + Partner.LabelShort
                 + (isPassivePartner ? " (passive)" : " (initiator)"));
@@ -191,7 +207,7 @@ public class JobDriver_Kiss : JobDriver
                 return false;
             }
             // 对方已经不在亲吻 job 里（走位失败、受击散场）就别继续走向空台。
-            if (Partner.CurJob == null || Partner.CurJob.def != MWAH_JobDefOf.MWAH_Kiss)
+            if (MatchingPartner == null)
             {
                 MwahLog.Note("kiss abort in walk: " + base.pawn.LabelShort + " partner " + Partner.LabelShort + " left the kiss");
                 return true;
@@ -233,12 +249,40 @@ public class JobDriver_Kiss : JobDriver
         };
         toil.AddPreTickIntervalAction(delegate (int delta)
         {
-            // 每 tick 钉回原地：台位是算好的，被别的 job 插一步就走开就前功尽弃。
             base.pawn.pather?.StopDead();
-            // 时钟只归发起方倒数；被动方读发起方的旗标离场。两条离场路都进 **job 内的回程段**
-            // 而不是直接结束 job —— 敌对者的 think tree 只在 job 结束后接管，留在 job 里
-            // 走完离开段才有停火；真被攻击时 checkOverrideOnDamage 会把 job 掐掉，退回队列兜底。
-            // （不各自数各自的：同一 tick 里谁先被处理谁先结束，结算归属会随机丢一半。）
+            if (completed)
+            {
+                ReadyForNextToil();
+                return;
+            }
+            JobDriver_Kiss? other = MatchingPartner;
+            if (other == null)
+            {
+                // StartJob initializes toils synchronously, before the other job is installed.
+                // No countdown or reward is possible during that admission window.
+                if (Find.TickManager.TicksGame > job.startTick)
+                {
+                    MwahLog.Note("kiss cut short: " + base.pawn.LabelShort + " partner " + Partner.LabelShort + " gone at t-" + ticksLeft);
+                    ReadyForNextToil();
+                }
+                return;
+            }
+            if (other.CurToilIndex > PerformanceToilIndex)
+            {
+                ReadyForNextToil();
+                return;
+            }
+            // An early arrival waits inside its performance toil. Both matching jobs must be
+            // performing at their assigned positions before the initiator advances the clock.
+            if (other.CurToilIndex != PerformanceToilIndex)
+            {
+                return;
+            }
+            if (!InPosition() || !other.InPosition())
+            {
+                ReadyForNextToil();
+                return;
+            }
             if (!isPassivePartner)
             {
                 ticksLeft -= delta;
@@ -246,27 +290,16 @@ public class JobDriver_Kiss : JobDriver
                 if (ticksLeft <= 0)
                 {
                     completed = true;
-                    ReadyForNextToil();
-                    return;
-                }
-                // 对方中途掉出这场亲（被拉走、受击）：独角戏没有意义，直接进回程。
-                if (Partner.CurJob == null || Partner.CurJob.def != MWAH_JobDefOf.MWAH_Kiss)
-                {
-                    MwahLog.Note("kiss cut short: " + base.pawn.LabelShort + " partner " + Partner.LabelShort + " gone at t-" + ticksLeft);
+                    // Completion belongs to the initiator, but both jobs retain the result even
+                    // if the initiator finishes a zero-length departure before the next Pawn tick.
+                    other.completed = true;
                     ReadyForNextToil();
                     return;
                 }
             }
             else
             {
-                KissTrace.Ticks(true, ticksLeft);
-                // 发起方走完（completed）或已经离场（driver 没了/换人）⇒ 被动方跟进回程段。
-                JobDriver_Kiss? driver = PartnerDriver;
-                if (driver == null || driver.completed)
-                {
-                    ReadyForNextToil();
-                    return;
-                }
+                KissTrace.Ticks(true, other.ticksLeft);
             }
             FaceEachOther();
             int interval = MwahMod.Settings.FleckIntervalTicks;
@@ -284,8 +317,6 @@ public class JobDriver_Kiss : JobDriver
                 return;
             }
             finished = true;
-            // "回原位"兜底在这里登记（覆盖面与理由见 EnqueueReturnFallback 的注释）。
-            EnqueueReturnFallback();
             if (completed && !isPassivePartner)
             {
                 KissMoodReward.Settle(base.pawn, Partner);
@@ -325,8 +356,8 @@ public class JobDriver_Kiss : JobDriver
             {
                 return false;
             }
-            // 贴脸兜底不记预算：目标是会动的对方，"同一段路"这个概念在这里不成立；
-            // 这段的止损靠表演段的 ticksLeft 与受击闸，不靠计数。
+            // A moving touch target has no stable stage cell for the retry tally.
+            // Native path failure, partner loss and damage remain the cancellation paths.
             base.pawn.pather.StartPath(Partner, PathEndMode.Touch);
             return true;
         }
@@ -339,13 +370,11 @@ public class JobDriver_Kiss : JobDriver
     }
 
     /// <summary>
-    /// 双方各按自己的位置转向对方；并排时必然是 East/West。
-    /// 这里也顺手把对方的朝向摆正：被动方可能已经先一步结束并交回控制权。
+    /// Each driver owns its Pawn's facing; never rotate a partner after it leaves this job.
     /// </summary>
     private void FaceEachOther()
     {
         SetFacing(base.pawn, Partner);
-        SetFacing(Partner, base.pawn);
     }
 
     private static void SetFacing(Pawn looker, Pawn looked)

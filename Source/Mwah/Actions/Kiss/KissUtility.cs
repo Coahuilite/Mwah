@@ -125,7 +125,7 @@ public static class KissUtility
     /// <summary>即时可用性：正在亲、（自主派发时）正打着、冷却中、够不到。</summary>
     private static AcceptanceReport CheckAvailability(Pawn doer, Pawn receiver, bool allowCombatInterrupt)
     {
-        if (IsKissing(doer) || IsKissing(receiver))
+        if (KissActivity.IsOccupied(doer) || KissActivity.IsOccupied(receiver))
         {
             return new AcceptanceReport("MWAH.Fail.Busy".Translate());
         }
@@ -140,24 +140,21 @@ public static class KissUtility
                 return new AcceptanceReport("MWAH.Fail.InCombat".Translate(fighting.Named("PAWN")));
             }
         }
-        if (MwahMod.Settings.CooldownsIgnored)
+        if (!MwahMod.Settings.CooldownsIgnored)
         {
-            // 超凡智能的大手：冷却两条都跳过。"正在亲"不跳 —— 镜像 job 不允许三方。
-            return AcceptanceReport.WasAccepted;
-        }
+            int pawnRemaining = KissCooldown.PawnRemaining(doer);
+            if (pawnRemaining > 0)
+            {
+                return new AcceptanceReport("MWAH.Fail.CooldownPawn".Translate(
+                    doer.Named("PAWN"), MwahTime.FormatTicks(pawnRemaining).Named("TIME")));
+            }
 
-        int pawnRemaining = KissCooldown.PawnRemaining(doer);
-        if (pawnRemaining > 0)
-        {
-            return new AcceptanceReport("MWAH.Fail.CooldownPawn".Translate(
-                doer.Named("PAWN"), MwahTime.FormatTicks(pawnRemaining).Named("TIME")));
-        }
-
-        int pairRemaining = KissCooldown.PairRemaining(doer, receiver);
-        if (pairRemaining > 0)
-        {
-            return new AcceptanceReport("MWAH.Fail.CooldownPair".Translate(
-                doer.Named("PAWN"), receiver.Named("OTHER"), MwahTime.FormatTicks(pairRemaining).Named("TIME")));
+            int pairRemaining = KissCooldown.PairRemaining(doer, receiver);
+            if (pairRemaining > 0)
+            {
+                return new AcceptanceReport("MWAH.Fail.CooldownPair".Translate(
+                    doer.Named("PAWN"), receiver.Named("OTHER"), MwahTime.FormatTicks(pairRemaining).Named("TIME")));
+            }
         }
 
         if (!doer.CanReach(receiver.Position, PathEndMode.Touch, Danger.Deadly))
@@ -177,7 +174,11 @@ public static class KissUtility
                 new LookTargets(selected, target), MessageTypeDefOf.RejectInput, historical: false);
             return;
         }
-        Start(doer, receiver, forced: false);
+        if (!Start(doer, receiver, forced: false))
+        {
+            Messages.Message("MWAH.Fail.Stale".Translate(), new LookTargets(selected, target),
+                MessageTypeDefOf.RejectInput, historical: false);
+        }
     }
 
     /// <summary>
@@ -197,7 +198,10 @@ public static class KissUtility
         KissProposal proposal = Propose(first, second, allowRoleSwap: false, allowCombatInterrupt: playerIssued);
         if (proposal.TryGetPair(out Pawn doer, out Pawn receiver))
         {
-            Start(doer, receiver, forced: true);
+            if (!Start(doer, receiver, forced: true))
+            {
+                return KissProposal.Blocked("MWAH.Fail.Stale".Translate());
+            }
         }
         return proposal;
     }
@@ -213,6 +217,7 @@ public static class KissUtility
             && KissBoundary.CheckScope(a, b).Accepted
             && KissBoundary.CanParticipate(a).Accepted
             && KissBoundary.CanParticipate(b).Accepted
+            && !KissActivity.IsOccupied(a) && !KissActivity.IsOccupied(b)
             && !KissBoundary.InCombatNow(a) && !KissBoundary.InCombatNow(b);
     }
 
@@ -221,10 +226,10 @@ public static class KissUtility
     /// 发起方不该一个人跑去亲空气；发起方的 job 起不来（同 tick 被抢）就把刚起的被动 job
     /// 干净收掉。接近段停火的全部来源就是"被亲的一方从第 0 tick 起也在 job 里"。
     /// 台位在这里同步定好（<see cref="KissStage"/>，成本与旧写法定台 toil 的第一步同 tick 同量）。
-    /// 冷却与"亲完回哪儿"都不在这里：冷却由发起方的 ToilBegin 记（预订失败时 job 没落地，
-    /// 发起瞬间记账等于空罚一轮）；回程走 job 内收尾段，兜底在 kiss 段 finish action 排队。
+    /// Cooldowns are committed only after both jobs survive admission. Normal departure stays
+    /// inside each driver; vanilla finalizer jobs handle an unfinished normal departure.
     /// </summary>
-    private static void Start(Pawn doer, Pawn receiver, bool forced)
+    private static bool Start(Pawn doer, Pawn receiver, bool forced)
     {
         KissStage.TryFind(doer, receiver, out IntVec3 mine, out IntVec3 theirs);
         MwahLog.Dev("stage: " + doer.LabelShort + "=" + (mine.IsValid ? mine.ToString() : "touch")
@@ -232,6 +237,8 @@ public static class KissUtility
             + (forced ? " forced" : ""));
         var doerJob = JobMaker.MakeJob(MWAH_JobDefOf.MWAH_Kiss, receiver);
         var passiveJob = JobMaker.MakeJob(MWAH_JobDefOf.MWAH_Kiss, doer);
+        int doerJobId = doerJob.loadID;
+        int passiveJobId = passiveJob.loadID;
         if (mine.IsValid)
         {
             doerJob.SetTarget(TargetIndex.B, new LocalTargetInfo(mine));
@@ -252,16 +259,33 @@ public static class KissUtility
             passiveJob.playerForced = true;
         }
         // 1.6 的 StartJob 不回 bool：起没起来看 CurJob 是不是刚做的那个 job。
-        receiver.jobs.StartJob(passiveJob, JobCondition.InterruptForced);
-        if (receiver.CurJob != passiveJob)
+        receiver.jobs.StartJob(passiveJob, JobCondition.InterruptForced, preToilReservationsCanFail: true);
+        if (receiver.CurJob != passiveJob || passiveJob.loadID != passiveJobId)
         {
-            return;
+            // This job was never handed to a tracker.
+            JobMaker.ReturnToPool(doerJob);
+            return false;
         }
-        doer.jobs.StartJob(doerJob, JobCondition.InterruptForced);
-        if (doer.CurJob != doerJob)
+        doer.jobs.StartJob(doerJob, JobCondition.InterruptForced, preToilReservationsCanFail: true);
+        bool doerAdmitted = doer.CurJob == doerJob && doerJob.loadID == doerJobId;
+        bool receiverAdmitted = receiver.CurJob == passiveJob && passiveJob.loadID == passiveJobId;
+        if (!doerAdmitted || !receiverAdmitted)
         {
-            receiver.jobs.EndCurrentJob(JobCondition.Incompletable);
+            if (doerAdmitted)
+            {
+                doer.jobs.EndCurrentJob(JobCondition.Incompletable);
+            }
+            if (receiverAdmitted)
+            {
+                receiver.jobs.EndCurrentJob(JobCondition.Incompletable);
+            }
+            return false;
         }
+        ((JobDriver_Kiss)doer.jobs.curDriver).BindPartner(passiveJobId);
+        ((JobDriver_Kiss)receiver.jobs.curDriver).BindPartner(doerJobId);
+        MwahSettings settings = MwahMod.Settings;
+        KissCooldown.Mark(doer, receiver, settings.PawnCooldown, settings.PairCooldown);
+        return true;
     }
 
     public static bool IsKissing(Pawn pawn) => pawn.CurJobDef == MWAH_JobDefOf.MWAH_Kiss;
