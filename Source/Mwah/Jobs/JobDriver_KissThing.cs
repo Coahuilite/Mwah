@@ -7,7 +7,7 @@ using Verse.AI;
 namespace Mwah;
 
 /// <summary>
-/// 单人亲"非 pawn 目标"（墙，将来树等）的共享 job —— 全 addon 族就这一个 driver、一个 JobDef：
+/// 单人亲"非 pawn 目标"（墙，将来树等）的共享 job —— 全 addon 族共用 driver，由各自 JobDef 固定身份：
 /// 走到贴目标格、面向它、闭眼若干 tick、按间隔冒爱心，然后**在 job 内走回原位**收尾。
 /// 与双人镜像 job 的差别全部来自"目标不进 job"：没有定台（只挑自己的一格）、没有 lock。
 /// 回程段与双人版同一个理由：敌对者的 think tree 只在 job 结束后接管，离开段留在 job 内，
@@ -35,9 +35,8 @@ public class JobDriver_KissThing : JobDriver
     private readonly WalkTally walkTally = new();
     private readonly KissReturn departure = new();
 
-    /// <summary>认领这个目标的 addon。不存盘：读档后按谓词重查（For 只看 Accepts，不看开关 ——
-    /// 表演已经在跑了，中途关开关不打断它，与"已起的 job 跑完"的双人语义一致）。</summary>
-    private KissThingAddon? Addon => KissThingAddons.For(Target);
+    // JobDef metadata is saved activity identity, including legacy wall jobs.
+    private KissThingAddon? Addon => KissThingAddons.ForJob(job);
 
     private Thing Target => job.GetTarget(TargetIndex.A).Thing;
 

@@ -98,7 +98,10 @@ public static class KissDirector
     private static TargetingParameters PawnAndThingParams => new()
     {
         canTargetPawns = true,
-        canTargetBuildings = true,
+        canTargetBuildings = KissThingAddons.Targets(ThingCategory.Building),
+        canTargetPlants = KissThingAddons.Targets(ThingCategory.Plant),
+        canTargetItems = KissThingAddons.Targets(ThingCategory.Item),
+        mapObjectTargetsMustBeAutoAttackable = false,
         validator = delegate (TargetInfo ti)
         {
             return ti.Thing is Pawn || (ti.Thing != null && KissThingAddons.AnyPickable(ti.Thing));

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <MWAH.Addon.Tree.Name>trees</MWAH.Addon.Tree.Name>
+  <MWAH.Settings.TreeKissing>Kiss trees</MWAH.Settings.TreeKissing>
+  <MWAH.Settings.TreeKissingDesc>Let pawns kiss trees, including loaded mod trees.</MWAH.Settings.TreeKissingDesc>
+  <MWAH.Settings.TreeCulturalIntegration>Cultural tree outcomes</MWAH.Settings.TreeCulturalIntegration>
+  <MWAH.Settings.TreeCulturalIntegrationDesc>Use the acting pawn’s beliefs at completion. Switch off for basic outcomes; native tree systems stay unchanged.</MWAH.Settings.TreeCulturalIntegrationDesc>
+  <MWAH.KissTree.Option>Kiss {0}</MWAH.KissTree.Option>
+  <MWAH.KissTree.OptionTooltip>Kiss {TARGET_label}. A quiet moment beneath the leaves.</MWAH.KissTree.OptionTooltip>
+  <MWAH.Settings.Tab.Gameplay>Gameplay &amp; addons</MWAH.Settings.Tab.Gameplay>
+  <MWAH.Settings.Tab.Parameters>Parameters &amp; misc.</MWAH.Settings.Tab.Parameters>
+  <MWAH.Settings.Expand>Configure</MWAH.Settings.Expand>
+  <MWAH.Settings.Collapse>Collapse</MWAH.Settings.Collapse>
+  <MWAH.Settings.CultureUnavailable>Requires Ideology. Basic tree kissing remains available.</MWAH.Settings.CultureUnavailable>
+  <MWAH.KissTree.Result.Awkward>{PAWN_labelShort} kissed a tree and felt a little awkward.</MWAH.KissTree.Result.Awkward>
+  <MWAH.Fate.Tree.Basic.Awkward>Bark against my lips. Somehow I expected a less wooden response.</MWAH.Fate.Tree.Basic.Awkward>
+  <MWAH.Fate.Tree.Affirming.Awkward>My beliefs made this seem less foolish. The bark disagreed.</MWAH.Fate.Tree.Affirming.Awkward>
+  <MWAH.KissTree.Result.Quiet>{PAWN_labelShort} kissed a tree. The tree said nothing.</MWAH.KissTree.Result.Quiet>
+  <MWAH.Fate.Tree.Basic.Quiet>The tree kept its thoughts to itself. That seems fair.</MWAH.Fate.Tree.Basic.Quiet>
+  <MWAH.Fate.Tree.Affirming.Quiet>I wanted a revelation. The leaves offered a little ordinary silence.</MWAH.Fate.Tree.Affirming.Quiet>
+  <MWAH.Fate.Tree.Connected.Quiet>Our bond needed no answer today. I left a kiss anyway.</MWAH.Fate.Tree.Connected.Quiet>
+  <MWAH.KissTree.Result.Calm>{PAWN_labelShort} found a little calm with a tree.</MWAH.KissTree.Result.Calm>
+  <MWAH.Fate.Tree.Basic.Calm>For a moment, there was only shade and the rustle of leaves.</MWAH.Fate.Tree.Basic.Calm>
+  <MWAH.Fate.Tree.Affirming.Calm>A small kiss, a living tree. Small things can matter.</MWAH.Fate.Tree.Affirming.Calm>
+  <MWAH.Fate.Tree.Connected.Calm>I know this tree, and this quiet felt familiar.</MWAH.Fate.Tree.Connected.Calm>
+  <MWAH.KissTree.Result.Rooted>{PAWN_labelShort} left a kiss and felt more grounded.</MWAH.KissTree.Result.Rooted>
+  <MWAH.Fate.Tree.Basic.Rooted>The tree stayed put. For a little while, so did my worries.</MWAH.Fate.Tree.Basic.Rooted>
+  <MWAH.Fate.Tree.Affirming.Rooted>I have always valued trees. Today I took a moment to show it.</MWAH.Fate.Tree.Affirming.Rooted>
+  <MWAH.Fate.Tree.Connected.Rooted>This was not pruning or a ritual. Just a little affection for my own tree.</MWAH.Fate.Tree.Connected.Rooted>
+  <MWAH.KissTree.Result.Belonging>{PAWN_labelShort} felt at home among the branches.</MWAH.KissTree.Result.Belonging>
+  <MWAH.Fate.Tree.Basic.Belonging>Roots below, leaves above. For once, I felt exactly where I belonged.</MWAH.Fate.Tree.Basic.Belonging>
+  <MWAH.Fate.Tree.Affirming.Belonging>The canopy felt like company. My affection had somewhere to rest.</MWAH.Fate.Tree.Affirming.Belonging>
+  <MWAH.Fate.Tree.Connected.Belonging>My tree, my quiet place. For this moment, the bond was enough.</MWAH.Fate.Tree.Connected.Belonging>
+</LanguageData>

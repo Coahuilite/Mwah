@@ -26,7 +26,7 @@
   <MWAH.Fail.InCombat>{PAWN} 正在打架，抽不开身</MWAH.Fail.InCombat>
   <MWAH.Fail.CooldownPawn>{PAWN} 还得缓缓才能再亲（{TIME}）</MWAH.Fail.CooldownPawn>
   <MWAH.Fail.CooldownPair>{PAWN} 和 {OTHER} 刚亲过（{TIME}）</MWAH.Fail.CooldownPair>
-  <MWAH.KissThing.Fail.NoStandCell>{PAWN} 找不到能站下、又够得着的地方去亲那堵 {WALL}</MWAH.KissThing.Fail.NoStandCell>
+  <MWAH.KissThing.Fail.NoStandCell>{PAWN}找不到能站立且够得着的位置亲吻{TARGET}。</MWAH.KissThing.Fail.NoStandCell>
 
   <!-- 亲吻导演台 -->
   <MWAH.Director.PickFirst>谁要发起亲吻？</MWAH.Director.PickFirst>
@@ -49,9 +49,9 @@
   <MWAH.Settings.TimingFormat>{0} tick / {1} 秒 / {2} 游戏时</MWAH.Settings.TimingFormat>
   <MWAH.Settings.TimingHint>所有时长按 tick 存储，显示为 tick / 现实秒 / 游戏小时。换算：60 tick = 1 现实秒（1 倍速），2500 tick = 1 游戏小时，60000 tick = 1 游戏日。</MWAH.Settings.TimingHint>
 
-  <MWAH.Settings.Section.Core>核心——Pawn 与 Pawn 的吻</MWAH.Settings.Section.Core>
-  <MWAH.Settings.Section.Autonomous>自主撮合——游戏自己当红娘</MWAH.Settings.Section.Autonomous>
-  <MWAH.Settings.Section.Addons>附加功能——亲别的万物</MWAH.Settings.Section.Addons>
+  <MWAH.Settings.Section.Core>亲吻行为</MWAH.Settings.Section.Core>
+  <MWAH.Settings.Section.Autonomous>自主撮合</MWAH.Settings.Section.Autonomous>
+  <MWAH.Settings.Section.Addons>扩展</MWAH.Settings.Section.Addons>
   <MWAH.Settings.Section.System>系统</MWAH.Settings.Section.System>
   <MWAH.Addon.Wall.Name>一堵墙</MWAH.Addon.Wall.Name>
   <MWAH.Settings.AddonDuration>亲吻{0}：想法持续</MWAH.Settings.AddonDuration>
@@ -110,7 +110,7 @@
   <MWAH.Settings.Diag.Simple>简化</MWAH.Settings.Diag.Simple>
   <MWAH.Settings.Diag.Verbose>详细</MWAH.Settings.Diag.Verbose>
 
-  <MWAH.Settings.Reset>恢复默认值</MWAH.Settings.Reset>
+  <MWAH.Settings.Reset>恢复全部默认值</MWAH.Settings.Reset>
   <MWAH.Settings.WallKissing>允许亲吻墙壁</MWAH.Settings.WallKissing>
   <MWAH.Settings.WallKissingDesc>右键可以亲吻墙：人造墙、天然岩壁、连被埋藏的矿脉都算。墙不会回应，所以心情全凭天意——可能越想越怪，也可能当场爱上。这一条与"谁能亲谁"无关，不受门禁滑条管。</MWAH.Settings.WallKissingDesc>
 

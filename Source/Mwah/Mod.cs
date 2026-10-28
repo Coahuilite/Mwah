@@ -24,6 +24,8 @@ public class MwahMod : Mod
     public static MwahSettings Settings { get; private set; } = new MwahSettings();
     public static MwahMod? Instance { get; private set; }
 
+    private MwahSettingsView? settingsView;
+    private bool queuedWrite;
     private bool savePending;
     private float saveDueAt;
     private long requestedGeneration;
@@ -65,7 +67,7 @@ public class MwahMod : Mod
     public override void DoSettingsWindowContents(Rect inRect)
     {
         TickQueuedSave();
-        Settings.DoSettingsWindowContents(inRect);
+        (settingsView ??= new MwahSettingsView(Settings)).DoSettingsWindowContents(inRect);
     }
 
     /// <summary>设置页在拖 slider 时被高频调用，这里只在静默窗口期结束后真正落盘一次。</summary>
@@ -95,6 +97,7 @@ public class MwahMod : Mod
     {
         try
         {
+            queuedWrite = true;
             WriteSettings();
             persistedGeneration = requestedGeneration;
             savePending = false;
@@ -107,10 +110,12 @@ public class MwahMod : Mod
             saveDueAt = Time.realtimeSinceStartup + SaveRetrySeconds;
             MwahLog.Error($"settings save failed (generation {requestedGeneration}): {ex}");
         }
+        finally { queuedWrite = false; }
     }
 
     public override void WriteSettings()
     {
+        if (!queuedWrite) settingsView?.Close();
         base.WriteSettings();
         persistedGeneration = requestedGeneration;
         savePending = false;

@@ -22,6 +22,10 @@ public class FloatMenuOptionProvider_KissThing : FloatMenuOptionProvider
 
     protected override bool MechanoidCanDo => true;
 
+    // Same policy as paired kissing; vanilla orderability gates run before this provider.
+    public override bool SelectedPawnValid(Pawn pawn, FloatMenuContext context) =>
+        pawn != null && pawn.Spawned && !pawn.Dead;
+
     public override bool TargetThingValid(Thing thing, FloatMenuContext context)
     {
         return KissThingAddons.ActiveFor(thing);
@@ -76,7 +80,7 @@ public class FloatMenuOptionProvider_KissThing : FloatMenuOptionProvider
         return new FloatMenuOption(label, delegate { addon.BeginKiss(selected, target); },
             MenuOptionPriority.InitiateSocial, null, target)
         {
-            tooltip = new TipSignal("MWAH.KissWall.OptionTooltip".Translate(target.Named("WALL")))
+            tooltip = new TipSignal(addon.OptionTooltip(target))
         };
     }
 }

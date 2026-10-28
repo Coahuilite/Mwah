@@ -24,9 +24,9 @@ Partner identity uses saved `Job.loadID` values. Legacy valid mirrored jobs can 
 
 ### Resolve addons once, use data for content
 
-Use small Def-backed addon descriptions for stable identity, targeting category, outcome scope, settings metadata, and explicit match precedence; keep special behavior in workers. Reuse the Thing driver. Preserve `MWAH_KissThing` as the wall job identity; a tree JobDef can point through a ModExtension to its addon definition, making the selected identity durable without repurposing unrelated Job fields. Validate registry identity and precedence at Def initialization.
+Use small Def-backed addon descriptions for stable identity, targeting category, outcome scope, settings metadata, and explicit match precedence; keep special behavior in workers. Reuse the Thing driver. Preserve `MWAH_KissThing` as the wall job identity; a tree JobDef can point through a ModExtension to its addon definition, making the selected identity durable without repurposing unrelated Job fields. Validate descriptor identity and rule priorities at Def initialization. Diagnose ambiguous equal-priority target matches before dispatch, where the target predicates can actually be evaluated.
 
-The shared targeter must include plants, with the active addon predicate still filtering actual targets and fog. Replace wall-specific shared tooltip wording through addon-owned metadata. Do not add ThingComps to every tree or wall just to make it kissable.
+The shared targeter takes building/plant/item category flags from registered descriptors, with the active addon predicate still filtering actual targets and fog. It clears `mapObjectTargetsMustBeAutoAttackable`: the native default otherwise applies attack-only building/item gates to a non-attack interaction. Replace wall-specific shared tooltip wording through addon-owned metadata. Do not add ThingComps to every tree or wall just to make it kissable.
 
 ### Cultural settlement is a tree policy, not another target addon
 
@@ -46,7 +46,7 @@ Keep `MwahSettings` and its serialized keys. Move page, scrolling, expansion, an
 
 The view retains an active numeric edit's commit callback and range, so hiding or closing it can resolve the value without drawing the old control. Debounced writes persist canonical values only; the external settings-close write resolves the active edit before serialization. A descriptor flag exposes cultural options without branching on target identities in the shared settings view.
 
-## Source findings and verification implications
+## Pre-change source findings and verification implications
 
 | Finding | Consequence / relevant check |
 | --- | --- |
@@ -64,4 +64,4 @@ These are source-derived gaps, not reproduced game failures. Verification work a
 
 Retain existing entry points, 1.6 support, save identities, and settings keys. Add target-specific loading/build inputs only where needed. Existing wall jobs continue resolving as walls. No schema change may silently reinterpret their fields. Do not change product version, declare 1.7 runtime acceptance, install into a game, publish, or archive this change merely because specification validation succeeds.
 
-Historical engineering reasoning remains in `docs/design-decisions.md`; behavior authority is the baseline plus these approved deltas. Exact tree balance is a content decision to add to the relevant spec before content development, not an implementation-status note inside a spec.
+Historical engineering reasoning remains in `docs/design-decisions.md`; behavior authority is the baseline plus these approved deltas. Tree balance and stable identities are specified in the addon delta; implementation evidence remains in the task list.

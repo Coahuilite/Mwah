@@ -100,9 +100,9 @@ For DLC isolation, prefer cultural rule entries conditional on `MayRequire="Lude
 
 Primary locators for optional loading: `Source/Assembly-CSharp/RimWorld/PreceptDefOf.cs`, `MemeDefOf.cs`, `MayRequireIdeologyAttribute.cs`; native cross-DLC examples in `Defs/Core/CultureDefs/Cultures.xml`.
 
-## Decisions before the tree implementation slice
+## Content decision handoff
 
-The approved direction fixes target eligibility and culture behavior; these content values still need specification before authoring runtime Defs:
+These were the content decisions identified by the research. Their selected values now belong to the [approved addon delta](../../openspec/changes/tree-kissing-and-settings/specs/addons/spec.md); this list records the research handoff, not another current decision queue:
 
 - Tree addon default enable state, default thought-duration ticks, and cultural-integration default preference.
 - The new tree memory's stage meanings and mood values, including whether all policies share the wall's stage count or choose a different tree-specific ladder.

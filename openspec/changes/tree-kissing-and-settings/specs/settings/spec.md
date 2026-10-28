@@ -39,6 +39,10 @@ Settings SHALL become authoritative in memory immediately, use coalesced disk pe
 - **WHEN** numeric text parses as NaN or infinity
 - **THEN** it is treated as invalid and cannot replace a stored value.
 
+#### Scenario: Enter commits the active numeric field
+- **WHEN** the player presses Enter after typing a valid value in the active numeric field
+- **THEN** the canonical value is updated without requiring another click or leaving the field first.
+
 #### Scenario: Debounced persistence while editing
 - **WHEN** a prior setting change reaches its debounced save time while a numeric field is still being edited
 - **THEN** persistence does not commit that active edit before Enter, focus loss, hiding the control, or closing settings.

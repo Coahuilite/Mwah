@@ -99,7 +99,7 @@ public static class KissFate
         }
         if (!row.messageKey.NullOrEmpty())
         {
-            Messages.Message(row.messageKey.Translate(doer.Named("PAWN"), target.Named("WALL")),
+            Messages.Message(row.messageKey.Translate(doer.Named("PAWN"), target.Named("TARGET"), target.Named("WALL")),
                 new LookTargets(target), row.messageType ?? MessageTypeDefOf.NeutralEvent, historical: false);
         }
         MwahLog.Note("fate " + row.scope + ": " + doer.LabelShort + " -> " + target.LabelCap + " row=" + row.defName);

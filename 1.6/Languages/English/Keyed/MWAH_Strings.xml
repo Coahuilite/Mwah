@@ -26,7 +26,7 @@
   <MWAH.Fail.InCombat>{PAWN} is in a fight and can't be pulled away</MWAH.Fail.InCombat>
   <MWAH.Fail.CooldownPawn>{PAWN} needs a moment between kisses ({TIME})</MWAH.Fail.CooldownPawn>
   <MWAH.Fail.CooldownPair>{PAWN} and {OTHER} already kissed recently ({TIME})</MWAH.Fail.CooldownPair>
-  <MWAH.KissThing.Fail.NoStandCell>{PAWN} can't find a standable, reachable spot to kiss that {WALL}</MWAH.KissThing.Fail.NoStandCell>
+  <MWAH.KissThing.Fail.NoStandCell>{PAWN} cannot find a standable, reachable spot to kiss {TARGET}.</MWAH.KissThing.Fail.NoStandCell>
 
   <!-- 亲吻导演台 -->
   <MWAH.Director.PickFirst>Who is starting the kiss?</MWAH.Director.PickFirst>
@@ -49,9 +49,9 @@
   <MWAH.Settings.TimingFormat>{0} t / {1} s / {2} h</MWAH.Settings.TimingFormat>
   <MWAH.Settings.TimingHint>Every duration is stored in ticks and shown as ticks / real seconds / game hours. Reference: 60 t = 1 real second at 1x speed, 2500 t = 1 game hour, 60000 t = 1 game day.</MWAH.Settings.TimingHint>
 
-  <MWAH.Settings.Section.Core>Core — pawns kissing pawns</MWAH.Settings.Section.Core>
-  <MWAH.Settings.Section.Autonomous>Autonomous matchmaking — the game plays matchmaker</MWAH.Settings.Section.Autonomous>
-  <MWAH.Settings.Section.Addons>Add-ons — kissing everything else</MWAH.Settings.Section.Addons>
+  <MWAH.Settings.Section.Core>Kissing</MWAH.Settings.Section.Core>
+  <MWAH.Settings.Section.Autonomous>Ambient matchmaking</MWAH.Settings.Section.Autonomous>
+  <MWAH.Settings.Section.Addons>Addons</MWAH.Settings.Section.Addons>
   <MWAH.Settings.Section.System>System</MWAH.Settings.Section.System>
   <MWAH.Addon.Wall.Name>a wall</MWAH.Addon.Wall.Name>
   <MWAH.Settings.AddonDuration>Kissing {0}: thought duration</MWAH.Settings.AddonDuration>
@@ -110,7 +110,7 @@
   <MWAH.Settings.Diag.Simple>Simple</MWAH.Settings.Diag.Simple>
   <MWAH.Settings.Diag.Verbose>Verbose</MWAH.Settings.Diag.Verbose>
 
-  <MWAH.Settings.Reset>Restore defaults</MWAH.Settings.Reset>
+  <MWAH.Settings.Reset>Restore all defaults</MWAH.Settings.Reset>
   <MWAH.Settings.WallKissing>Allow kissing walls</MWAH.Settings.WallKissing>
   <MWAH.Settings.WallKissingDesc>Right-click to kiss a wall — built walls, natural rock, even buried ore veins. The wall never answers, so the mood is pure fate: it may haunt you, or you may fall in love on the spot. Independent of the "who kisses whom" scope slider.</MWAH.Settings.WallKissingDesc>
 

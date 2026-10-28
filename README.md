@@ -2,7 +2,7 @@
 
 **English** | [中文](./README.zh-CN.md)
 
-Mwah! lets anyone kiss anyone on the live map. Select a pawn, right-click another, and order a kiss — the one that can walk goes over, both turn to face each other, and vanilla lovemakin' hearts float up. Pawns with a mood get a mood bonus scaled by their own social impact; pawns without one (animals, mechanoids, drones, entities) get nothing at all. It is a joke mod with serious boundaries: **live maps only, single-player only, zero Harmony**.
+Mwah! lets anyone kiss anyone on the live map. Select a pawn, right-click another, and order a kiss — the one that can walk goes over, both turn to face each other, and vanilla lovemakin' hearts float up. Pawns with a mood get a mood bonus scaled by their own social impact; pawns without one (animals, mechanoids, drones, entities) still participate and can receive fate messages, without mood rewards. It is a joke mod with serious boundaries: **live maps only, single-player only, zero Harmony**.
 
 This README describes the current feature set and is not a release announcement; the single manually maintained version is `<Version>` in `Source/Mwah/Mwah.csproj` (`About/About.xml <modVersion>` follows it).
 
@@ -16,15 +16,18 @@ Install a published package into `RimWorld/Mods/`.
 ## What you can do
 
 - **Right-click a kiss.** Select any orderable pawn, right-click another pawn. If the selected one cannot move, the other comes over instead.
-- **Kiss Director panel.** A bottom-bar button opens a non-modal panel: two avatar slots pick any two pawns on the map — including ones you cannot order — via the vanilla targeter, and the heart fills half by half as sides are chosen. The right slot also accepts kissable things (a wall). Quick-chain mode dispatches in two map clicks.
+- **Kiss Director panel.** A bottom-bar button opens a non-modal panel: two avatar slots pick any two pawns on the map — including ones you cannot order — via the vanilla targeter, and the heart fills half by half as sides are chosen. The right slot also accepts kissable things such as walls and trees. Quick-chain mode dispatches in two map clicks.
 - **Ambient kissing (off by default).** The game itself pairs up pawns you cannot control (visitors, traders, raiders, wild animals, mechanoids) on an interval and radius you set. It never selects player-managed pawns as initiators, and drafted player-controlled pawns are excluded as receivers.
 - **Kiss a wall.** Right-click any wall, natural rock or buried vein and lean in. The outcome is rolled against an editable XML fate table (five tiers, 50 narration rows) and lands as exactly one "relationship with walls" memory — the next kiss replaces it in place.
+- **Kiss a tree.** Right-click a tree or select it in the director, including loaded mod trees marked as trees. Enabled by default, with a 30000-tick memory. Optional Ideology outcomes follow the acting pawn’s beliefs, favoring positive results and recognizing their own connected Gauranlen tree. Without the DLC, a matching belief, or with culture switched off, basic tree kissing still works. All tree outcomes renew one slot, separate from walls, without altering native pruning, connections or rituals.
 - **Anyone is kissable, mood or not.** Pawns with a mood need gain +5 × their own `SocialImpact` × multiplier (charming colonists profit more; psychopaths feel nothing, per vanilla nullify lists). Animals, mechanoids, drones and Anomaly entities (shambler/ghoul/awoken corpse) have no mood system: they get the animation, the hearts and a fate-table message from their own channel — and nothing else. They can also be the initiator via the director.
 - **A truce window.** A commanded kiss pacifies both participants for the whole job — approach, performance and walk-home — because vanilla job ownership suspends the think tree. Any violent hit breaks it instantly, and the pair cooldown plus per-pawn cooldown rate-limit the trick. The system never pulls a fighting unit into a kiss; you may.
 
 ## Settings
 
-The settings page is organized in four sections — core, autonomous matchmaking, add-ons, system — under a pinned identity header (subtitle + build watermark, visible at any scroll depth). The gate slider ("who kisses whom", seven tiers, factory default = everything) never hides an add-on — each has its own switch in the add-ons block, and switching it off makes its targets vanish from every pick surface without a single nag. All durations are stored in ticks and shown as tick / real seconds / game hours at once; every quantity slider carries an exact number field (tier sliders deliberately do not). Diagnostics are a four-rung slider (Off / Auto / Simple / Verbose; Auto follows the build channel), and the startup banner plus error lines print regardless.
+Settings open on **Gameplay & addons**: manage wall/tree extensions first, then the pairing scope, director, ambient kissing and other common switches. Choose **Configure** beside an addon for its own memory duration; tree culture controls sit inside the tree addon. Without Ideology, its availability is shown and basic trees remain configurable. Disabling the master switch or an addon retains its preferences.
+
+**Parameters & misc.** holds timing, cooldowns, paired-mood tuning, ambient parameters, diagnostics and **Restore all defaults**. Identity, master switch and navigation stay pinned; pages scroll independently. Durations show ticks / real seconds / game hours. Numeric edits commit on Enter, focus loss, page changes, collapsing or closing; invalid text retains the previous value. Pairing scope applies only to Pawn pairs, not addons.
 
 ## Development, packaging, and versioning
 

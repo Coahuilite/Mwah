@@ -17,14 +17,26 @@
     <alwaysShowReport>true</alwaysShowReport>
   </JobDef>
 
-  <!--
-    单人亲"非 pawn 目标"的共享 job（addon 族全用这一个：墙、将来的树……）。
-    TargetIndex.A = 目标；认领它的 addon 由 KissThingAddons.For 按谓词解析。
-    没有定台与回原位：只挑一格站定面向目标；结算走天意表（MWAH_FateDefs.xml）。
-  -->
+  <!-- Single-actor jobs keep stable addon identity through JobDef metadata. -->
   <JobDef>
     <defName>MWAH_KissThing</defName>
+    <modExtensions>
+      <li Class="RimWorld.KissAddonJobExtension"><addon>MWAH_WallAddon</addon></li>
+    </modExtensions>
     <driverClass>Mwah.JobDriver_KissThing</driverClass>
+    <reportString>kissing TargetA.</reportString>
+    <casualInterruptible>false</casualInterruptible>
+    <playerInterruptible>true</playerInterruptible>
+    <checkOverrideOnDamage>Always</checkOverrideOnDamage>
+    <allowOpportunisticPrefix>false</allowOpportunisticPrefix>
+    <alwaysShowReport>true</alwaysShowReport>
+  </JobDef>
+  <JobDef>
+    <defName>MWAH_KissTree</defName>
+    <driverClass>Mwah.JobDriver_KissThing</driverClass>
+    <modExtensions>
+      <li Class="RimWorld.KissAddonJobExtension"><addon>MWAH_TreeAddon</addon></li>
+    </modExtensions>
     <reportString>kissing TargetA.</reportString>
     <casualInterruptible>false</casualInterruptible>
     <playerInterruptible>true</playerInterruptible>

@@ -6,22 +6,10 @@ using Verse;
 namespace Mwah;
 
 /// <summary>
-/// 玩家配置（存储与生命周期半边；渲染在 MwahSettingsUI.cs，partial 同类）。
-/// 生命周期：immediate canonical + coalesced persistence。
-/// 控件改动立刻成为唯一权威值并即时生效；磁盘写入由 <see cref="MwahMod"/> 防抖合并，关窗时强制 flush。
-/// 所有时长按 tick 存储，界面同时给出 tick / 现实秒 / 游戏小时三种读法。
-///
-/// 命名四方格（2026-10-05 裁定）：字段名 = Scribe key = Restore 目标 = 语言键词根
-/// （`MWAH.Settings.&lt;Pascal(字段)&gt;`[Desc]，由 UI 侧 CallerArgumentExpression 派生，
-/// verify-local 门展开核对双语）。新增一项设置：字段 + Scribe + Restore + 一行 UI 调用
-/// （零字符串）+ 双语各一键，全部同词，grep 一词贯穿。
-///
-/// 页面分四段（2026-10-05 维护者裁定）：核心 / 自主撮合 / 附加功能 / 系统。
-/// 附加功能段按 <see cref="KissThingAddons.All"/> 注册表生长——新 addon 自动长出
-/// 自己的开关与思想时长行，设置类零改动；两份按 Id 索引的字典
-/// （<see cref="addonSwitches"/>、<see cref="addonThoughtDurations"/>）就是它的存储。
+/// Canonical settings and serialization. Transient page, scroll and numeric-edit state belong
+/// to MwahSettingsView. Durations use ticks; addon dictionaries retain stable content IDs.
 /// </summary>
-public partial class MwahSettings : ModSettings
+public class MwahSettings : ModSettings
 {
     public bool modEnabled = Constants.ModEnabled;
     public int pairScope = Constants.PairScopeDefault;
@@ -38,6 +26,7 @@ public partial class MwahSettings : ModSettings
     public int autonomousRadiusCells = Constants.AutonomousRadiusCells;
     public int thoughtDurationTicks = Constants.ThoughtDurationTicks;
     public float moodMultiplier = Constants.MoodMultiplier;
+    public bool treeCulturalIntegration = Constants.TreeCulturalIntegration;
     public int diagnosticLevel = Constants.DiagnosticLevelDefault;
 
     /// <summary>
@@ -106,6 +95,7 @@ public partial class MwahSettings : ModSettings
         Scribe_Values.Look(ref autonomousRadiusCells, "autonomousRadiusCells", Constants.AutonomousRadiusCells);
         Scribe_Values.Look(ref thoughtDurationTicks, "thoughtDurationTicks", Constants.ThoughtDurationTicks);
         Scribe_Values.Look(ref moodMultiplier, "moodMultiplier", Constants.MoodMultiplier);
+        Scribe_Values.Look(ref treeCulturalIntegration, "treeCulturalIntegration", Constants.TreeCulturalIntegration);
         Scribe_Values.Look(ref diagnosticLevel, "diagnosticLevel", Constants.DiagnosticLevelDefault);
         // addon 两张字典：整表入档（LookMode.Value；string→int / string→bool 都是值类型）。
         Scribe_Collections.Look(ref addonThoughtDurations, "addonThoughtDurations", LookMode.Value, LookMode.Value);
@@ -158,6 +148,7 @@ public partial class MwahSettings : ModSettings
         thoughtDurationTicks = Constants.ThoughtDurationTicks;
         moodMultiplier = Constants.MoodMultiplier;
         diagnosticLevel = Constants.DiagnosticLevelDefault;
+        treeCulturalIntegration = Constants.TreeCulturalIntegration;
         // 字典没有"逐字段的 Constants.*"可回，恢复默认 = 清空整表 ⇒ 全部读侧落回各 addon 出厂值。
         addonThoughtDurations.Clear();
         addonSwitches.Clear();

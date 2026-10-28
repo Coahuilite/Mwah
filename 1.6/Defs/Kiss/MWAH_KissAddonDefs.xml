@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <MWAH_KissAddonDef>
+    <defName>MWAH_WallAddon</defName>
+    <id>wall</id>
+    <workerClass>Mwah.KissWallAddon</workerClass>
+    <job>MWAH_KissThing</job>
+    <targetCategory>Building</targetCategory>
+    <fateScope>KissWall</fateScope>
+    <priority>100</priority>
+    <nameKey>MWAH.Addon.Wall.Name</nameKey>
+    <switchLabelKey>MWAH.Settings.WallKissing</switchLabelKey>
+    <switchDescKey>MWAH.Settings.WallKissingDesc</switchDescKey>
+    <tooltipKey>MWAH.KissWall.OptionTooltip</tooltipKey>
+    <defaultActive>true</defaultActive>
+    <defaultThoughtDurationTicks>30000</defaultThoughtDurationTicks>
+  </MWAH_KissAddonDef>
+  <MWAH_KissAddonDef>
+    <defName>MWAH_TreeAddon</defName>
+    <id>tree</id>
+    <workerClass>Mwah.KissTreeAddon</workerClass>
+    <job>MWAH_KissTree</job>
+    <targetCategory>Plant</targetCategory>
+    <fateScope>KissTree</fateScope>
+    <priority>100</priority>
+    <nameKey>MWAH.Addon.Tree.Name</nameKey>
+    <switchLabelKey>MWAH.Settings.TreeKissing</switchLabelKey>
+    <switchDescKey>MWAH.Settings.TreeKissingDesc</switchDescKey>
+    <tooltipKey>MWAH.KissTree.OptionTooltip</tooltipKey>
+    <defaultActive>true</defaultActive>
+    <defaultThoughtDurationTicks>30000</defaultThoughtDurationTicks>
+    <culturalOptions>true</culturalOptions>
+    <cultureRules>
+      <li MayRequire="Ludeon.RimWorld.Ideology">
+        <precept>GauranlenConnection_Strong</precept>
+        <requiresOwnConnection>true</requiresOwnConnection>
+        <priority>100</priority>
+        <fateScope>KissTreeConnected</fateScope>
+      </li>
+      <li MayRequire="Ludeon.RimWorld.Ideology">
+        <precept>Trees_Desired</precept>
+        <priority>50</priority>
+        <fateScope>KissTreeAffirming</fateScope>
+      </li>
+    </cultureRules>
+  </MWAH_KissAddonDef>
+</Defs>

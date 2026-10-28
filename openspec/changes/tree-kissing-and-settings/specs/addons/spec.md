@@ -1,3 +1,16 @@
+## MODIFIED Requirements
+
+### Requirement: Shared single-actor execution
+Thing-kisses SHALL use the common participation, initiation, cooldown, facing, heart-effect, damage-interruption, and return-home rules. Only the Pawn SHALL run a job. A target SHALL be reserved against concurrent kisses, and a reachable stand cell SHALL be selected near it. Completion SHALL settle once; cancellation before completion SHALL not grant the addon reward.
+
+#### Scenario: A target disappears during performance
+- **WHEN** a non-Pawn target is destroyed before the performance completes
+- **THEN** its job is canceled without granting a completion outcome.
+
+#### Scenario: A vanilla-orderable mutant initiator
+- **WHEN** an orderable mutant Pawn meets the common participation and initiation gates
+- **THEN** the Thing-kiss provider uses the same initiator policy as paired kissing rather than imposing a separate mutant whitelist.
+
 ## ADDED Requirements
 
 ### Requirement: Stable addon resolution
@@ -6,6 +19,14 @@ Addon registration SHALL provide stable identities, deterministic target resolut
 #### Scenario: Two addons accept a target
 - **WHEN** registered target rules overlap
 - **THEN** declared precedence selects the addon deterministically, or ambiguous equal precedence is diagnosed before dispatch rather than depending on incidental registration order.
+
+#### Scenario: A registered plant target category
+- **WHEN** an enabled tree addon declares plant targeting
+- **THEN** the shared right-click, director-slot, and quick-chain surfaces can select eligible trees through the addon metadata without altering paired-kiss behavior.
+
+#### Scenario: A kissable object is not an attack target
+- **WHEN** an addon accepts a non-Pawn object that is not marked as an auto-attackable map object
+- **THEN** director picking does not impose an attack-only target filter on the kiss request.
 
 ### Requirement: Basic tree kissing
 The tree addon SHALL accept spawned, non-destroyed game-marked tree Plants, including eligible loaded content. It SHALL have independent enable/duration preferences and use shared Thing-kiss execution. Basic action, narration, and applicable mood settlement SHALL work without Ideology. No minimum maturity, culture, faction, or extra species gate SHALL be imposed.

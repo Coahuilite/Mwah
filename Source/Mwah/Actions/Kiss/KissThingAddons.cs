@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -33,41 +35,19 @@ public readonly struct ThingKissProposal
     public static ThingKissProposal Blocked(string reason) => new(true, false, null, reason);
 }
 
-/// <summary>
-/// addon 层的宪法：core 只有"pawn 亲 pawn"；"pawn 亲非 pawn 目标"是一族附加功能 ——
-/// 本次是墙，下次可以是树。可动的永远是 pawn，所以每个 addon 只接"由 pawn 发起"的单向亲吻。
-///
-/// 管线（提案判定、落脚点、job、右键菜单、导演台取点与派发、静默失效语义、设置页生长）
-/// 全部在基类与注册表里现成完成；一个 addon 只提供：稳定 Id、天意表作用域（<see cref="Scope"/>）、
-/// 目标谓词（<see cref="Accepts"/>）、右键标签口径（<see cref="OptionLabel"/>），
-/// 以及设置页声明（名字键、开关标签/说明键、出厂开关与出厂时长）。
-/// 新加一种可亲的东西 = 一个子类 + 注册表一行 + 自己的 defs/语言键，零管线代码、零设置类改动。
-///
-/// 与双人吻共用冷却表与"正在亲"判定；**不进门禁滑条** —— 七档管的是"谁能亲谁"
-/// （两个 pawn 的关系），Thing 不是 pawn，各归各的开关。
-/// </summary>
+/// <summary>Shared single-actor admission and settlement; descriptors provide content metadata.</summary>
 public abstract class KissThingAddon
 {
-    /// <summary>天意表作用域（MWAH_FateDef.scope）。</summary>
-    public abstract string Scope { get; }
-
-    /// <summary>
-    /// addon 的稳定 Id：设置字典的 key、存档里的名字。**改名即迁移**，定死不动。
-    /// </summary>
-    public abstract string Id { get; }
-
-    /// <summary>设置页 addon 名（时长滑条标签的 {0}），如"墙"。</summary>
-    public abstract string NameKey { get; }
-
-    /// <summary>设置页开关行的标签/说明键（沿用各自既有键，文案不改）。</summary>
-    public abstract string SwitchLabelKey { get; }
-
-    public abstract string SwitchDescKey { get; }
-
-    /// <summary>开关与思想时长的出厂值；玩家覆盖走设置的两张 Id 字典。</summary>
-    public abstract bool DefaultActive { get; }
-
-    public abstract int DefaultThoughtDurationTicks { get; }
+    public MWAH_KissAddonDef Definition { get; internal set; } = null!;
+    public virtual string Scope => Definition.fateScope;
+    public virtual string Id => Definition.id;
+    public virtual string NameKey => Definition.nameKey;
+    public virtual string SwitchLabelKey => Definition.switchLabelKey;
+    public virtual string SwitchDescKey => Definition.switchDescKey;
+    public virtual bool DefaultActive => Definition.defaultActive;
+    public virtual int DefaultThoughtDurationTicks => Definition.defaultThoughtDurationTicks;
+    public virtual string ResolveFateScope(Pawn doer, Thing target) => Scope;
+    public string OptionTooltip(Thing target) => Definition.tooltipKey.Translate(target.Named("TARGET"), target.Named("WALL"));
 
     /// <summary>当前生效时长：字典按 Id 查，缺槽落出厂值（读侧已 clamp）。</summary>
     public int ThoughtDurationTicks => MwahMod.Settings.AddonThoughtDuration(Id, DefaultThoughtDurationTicks);
@@ -82,7 +62,7 @@ public abstract class KissThingAddon
     public abstract string OptionLabel(Pawn doer, Thing target);
 
     /// <summary>表为空（用户删干净了）时的兜底分布；默认什么都不发。</summary>
-    public virtual void SettleWithoutTable(Pawn doer, Thing target)
+    public virtual void SettleWithoutTable(Pawn doer, Thing target, string scope)
     {
     }
 
@@ -139,7 +119,7 @@ public abstract class KissThingAddon
         if (FindStandCell(doer, target) == IntVec3.Invalid)
         {
             return ThingKissProposal.Blocked("MWAH.KissThing.Fail.NoStandCell".Translate(
-                doer.Named("PAWN"), target.Named("WALL")));
+                doer.Named("PAWN"), target.Named("TARGET"), target.Named("WALL")));
         }
         return ThingKissProposal.Allow(doer);
     }
@@ -182,18 +162,19 @@ public abstract class KissThingAddon
     /// <summary>结算：先查天意表；表空落回 addon 自带的兜底分布。心情记忆吃本 addon 的时长设置。</summary>
     public void Settle(Pawn doer, Thing target)
     {
-        if (!KissFate.Grant(doer, target, Scope, ThoughtDurationTicks))
+        string scope = ResolveFateScope(doer, target);
+        if (!KissFate.Grant(doer, target, scope, ThoughtDurationTicks))
         {
-            SettleWithoutTable(doer, target);
+            SettleWithoutTable(doer, target, scope);
         }
     }
 
     /// <summary>
     /// 与双人代发同理：playerForced 否则 pawn 的 think tree 会在下一个 override 检查点把它拽回去。
     /// </summary>
-    private static bool StartJob(Pawn doer, Thing target, bool forced)
+    private bool StartJob(Pawn doer, Thing target, bool forced)
     {
-        var job = JobMaker.MakeJob(MWAH_JobDefOf.MWAH_KissThing, target);
+        var job = JobMaker.MakeJob(Definition.job, target);
         int jobId = job.loadID;
         if (forced)
         {
@@ -210,7 +191,7 @@ public abstract class KissThingAddon
     }
 
     /// <summary>busy 一条管住全族：亲着墙的人没空亲树，反之亦然。</summary>
-    public static bool IsKissingThing(Pawn pawn) => pawn.CurJobDef == MWAH_JobDefOf.MWAH_KissThing;
+    public static bool IsKissingThing(Pawn pawn) => pawn.jobs?.curDriver is JobDriver_KissThing;
 
     /// <summary>
     /// 挑一格"站得下、看得见目标、够得着"的落脚点：目标占格 8 周一圈里，离人最近者优先。
@@ -254,43 +235,54 @@ public abstract class KissThingAddon
     }
 }
 
-/// <summary>
-/// addon 注册表：导演台与派发只认这里，不点名任何具体 addon。
-/// 新加一个 addon（比如树）= 一个 KissThingAddon 子类 + 这里登记一行 + 自己的 defs/语言键。
-/// </summary>
+/// <summary>Def-load lifetime registry. Saved jobs resolve their descriptor, never reclassify a target.</summary>
+[StaticConstructorOnStartup]
 public static class KissThingAddons
 {
-    public static readonly KissThingAddon[] All =
-    {
-        KissWallAddon.Instance,
-    };
+    public static readonly KissThingAddon[] All;
 
-    /// <summary>这个 thing 此刻能不能被地图点选（任一开着的 addon 认领即可）。</summary>
-    public static bool AnyPickable(Thing thing)
+    static KissThingAddons()
     {
-        for (int i = 0; i < All.Length; i++)
+        var defs = DefDatabase<MWAH_KissAddonDef>.AllDefsListForReading;
+        var invalidIds = new HashSet<string>(defs.GroupBy(d => d.id).Where(g => g.Count() > 1).Select(g => g.Key));
+        var addons = new List<KissThingAddon>();
+        foreach (MWAH_KissAddonDef def in defs.OrderByDescending(d => d.priority).ThenBy(d => d.defName, StringComparer.Ordinal))
         {
-            if (All[i].Pickable(thing))
+            if (invalidIds.Contains(def.id) || def.ConfigErrors().Any())
             {
-                return true;
+                Log.Error("[MWAH] Invalid kiss addon descriptor: " + def.defName);
+                continue;
             }
+            addons.Add(def.Worker);
         }
-        return false;
+        All = addons.ToArray();
     }
 
-    /// <summary>这个非 pawn 目标归不归任何（哪怕关着的）addon 管 —— 归谁、开没开，调用方自己判。</summary>
+    public static bool AnyPickable(Thing thing) => For(thing)?.Pickable(thing) == true;
+    public static bool ActiveFor(Thing thing) => AnyPickable(thing);
+    public static bool Targets(ThingCategory category) => Array.Exists(All, addon => addon.Definition.targetCategory == category);
+
     public static KissThingAddon? For(Thing thing)
     {
-        for (int i = 0; i < All.Length; i++)
+        KissThingAddon? selected = null;
+        foreach (KissThingAddon addon in All)
         {
-            if (All[i].Accepts(thing))
+            if (addon.Definition.targetCategory != thing.def.category || !addon.Accepts(thing)) continue;
+            if (selected == null) selected = addon;
+            else if (selected.Definition.priority == addon.Definition.priority)
             {
-                return All[i];
+                Log.ErrorOnce("[MWAH] Ambiguous kiss addons: " + selected.Definition.defName + " / " + addon.Definition.defName,
+                    Gen.HashCombineInt(selected.Definition.shortHash, addon.Definition.shortHash));
+                return null;
             }
+            else break;
         }
-        return null;
+        return selected;
     }
 
-    /// <summary>槽位回收与右键入口预筛：目标仍被某个**开着的** addon 认领吗。</summary>
-    public static bool ActiveFor(Thing thing) => For(thing) is { Active: true };
+    public static KissThingAddon? ForJob(Job job)
+    {
+        MWAH_KissAddonDef? def = job.def.GetModExtension<KissAddonJobExtension>()?.addon;
+        return Array.Find(All, addon => addon.Definition == def);
+    }
 }

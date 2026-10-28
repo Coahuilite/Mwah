@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <MWAH.Addon.Tree.Name>树木</MWAH.Addon.Tree.Name>
+  <MWAH.Settings.TreeKissing>亲树</MWAH.Settings.TreeKissing>
+  <MWAH.Settings.TreeKissingDesc>让 Pawn 亲吻树木，也包括其他模组中标记为树木的植物。</MWAH.Settings.TreeKissingDesc>
+  <MWAH.Settings.TreeCulturalIntegration>文化亲树结果</MWAH.Settings.TreeCulturalIntegration>
+  <MWAH.Settings.TreeCulturalIntegrationDesc>完成时根据发起 Pawn 自己的文化选择结果。关闭则使用基础结果；不改动原版树木机制。</MWAH.Settings.TreeCulturalIntegrationDesc>
+  <MWAH.KissTree.Option>亲吻{0}</MWAH.KissTree.Option>
+  <MWAH.KissTree.OptionTooltip>亲吻{TARGET_label}，在枝叶下安静片刻。</MWAH.KissTree.OptionTooltip>
+  <MWAH.Settings.Tab.Gameplay>玩法与扩展</MWAH.Settings.Tab.Gameplay>
+  <MWAH.Settings.Tab.Parameters>参数与杂项</MWAH.Settings.Tab.Parameters>
+  <MWAH.Settings.Expand>设置</MWAH.Settings.Expand>
+  <MWAH.Settings.Collapse>收起</MWAH.Settings.Collapse>
+  <MWAH.Settings.CultureUnavailable>需要启用文化 DLC；仍可使用基础亲树。</MWAH.Settings.CultureUnavailable>
+  <MWAH.KissTree.Result.Awkward>{PAWN_labelShort}亲了一棵树，觉得有点尴尬。</MWAH.KissTree.Result.Awkward>
+  <MWAH.Fate.Tree.Basic.Awkward>嘴唇碰上树皮。我好像期待了一个不那么木讷的回应。</MWAH.Fate.Tree.Basic.Awkward>
+  <MWAH.Fate.Tree.Affirming.Awkward>文化让我觉得这没那么傻。树皮似乎另有看法。</MWAH.Fate.Tree.Affirming.Awkward>
+  <MWAH.KissTree.Result.Quiet>{PAWN_labelShort}亲了一棵树。树什么也没说。</MWAH.KissTree.Result.Quiet>
+  <MWAH.Fate.Tree.Basic.Quiet>树把心事留给了自己。也挺公平。</MWAH.Fate.Tree.Basic.Quiet>
+  <MWAH.Fate.Tree.Affirming.Quiet>我期待一点启示，枝叶只还给我寻常的安静。</MWAH.Fate.Tree.Affirming.Quiet>
+  <MWAH.Fate.Tree.Connected.Quiet>今天，这份联结不需要回答。我还是留了一吻。</MWAH.Fate.Tree.Connected.Quiet>
+  <MWAH.KissTree.Result.Calm>{PAWN_labelShort}从树木那里找到了一点平静。</MWAH.KissTree.Result.Calm>
+  <MWAH.Fate.Tree.Basic.Calm>有那么一会儿，只有树荫和叶片的轻响。</MWAH.Fate.Tree.Basic.Calm>
+  <MWAH.Fate.Tree.Affirming.Calm>轻轻一吻，一棵活树。微小的事也有分量。</MWAH.Fate.Tree.Affirming.Calm>
+  <MWAH.Fate.Tree.Connected.Calm>我认识这棵树，也熟悉它的安静。</MWAH.Fate.Tree.Connected.Calm>
+  <MWAH.KissTree.Result.Rooted>{PAWN_labelShort}留下一吻，心里安定了些。</MWAH.KissTree.Result.Rooted>
+  <MWAH.Fate.Tree.Basic.Rooted>树没有走。我的烦恼也暂时停下了脚步。</MWAH.Fate.Tree.Basic.Rooted>
+  <MWAH.Fate.Tree.Affirming.Rooted>我一直珍视树木，今天终于花点时间表达了出来。</MWAH.Fate.Tree.Affirming.Rooted>
+  <MWAH.Fate.Tree.Connected.Rooted>不是修剪，也不是仪式。只是给自己的树一点心意。</MWAH.Fate.Tree.Connected.Rooted>
+  <MWAH.KissTree.Result.Belonging>{PAWN_labelShort}在枝叶间感到了归属。</MWAH.KissTree.Result.Belonging>
+  <MWAH.Fate.Tree.Basic.Belonging>根在地下，叶在头顶。此刻，我恰好属于这里。</MWAH.Fate.Tree.Basic.Belonging>
+  <MWAH.Fate.Tree.Affirming.Belonging>树冠像是陪伴，让我的心意有了落脚处。</MWAH.Fate.Tree.Affirming.Belonging>
+  <MWAH.Fate.Tree.Connected.Belonging>我的树，我的安静角落。此刻，有这份联结就够了。</MWAH.Fate.Tree.Connected.Belonging>
+</LanguageData>

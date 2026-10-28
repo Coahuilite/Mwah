@@ -42,7 +42,7 @@ public class Thought_MemoryFated : Thought_Memory, IFatedNarration
             {
                 return base.Description;
             }
-            return narrationKey.Translate(pawn.Named("PAWN"), narrationSubject.Named("WALL"));
+            return narrationKey.Translate(pawn.Named("PAWN"), narrationSubject.Named("TARGET"), narrationSubject.Named("WALL"));
         }
     }
 
@@ -76,7 +76,7 @@ public class Thought_MemorySocialFated : Thought_MemorySocial, IFatedNarration
             {
                 return base.Description;
             }
-            return narrationKey.Translate(pawn.Named("PAWN"), narrationSubject.Named("WALL"));
+            return narrationKey.Translate(pawn.Named("PAWN"), narrationSubject.Named("TARGET"), narrationSubject.Named("WALL"));
         }
     }
 
