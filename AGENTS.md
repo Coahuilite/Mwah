@@ -11,13 +11,18 @@
 - Product version source: `Source/Mwah/Mwah.csproj <Version>` is primary; `About/About.xml <modVersion>` follows it; product version is SemVer. License is **MPL-2.0** for the whole Coahuilite mod series.
 - Repo, remote, and publication state are not pinned here — read `MEMORY.md`.
 
+## Spec-first development
+
+- Before every development change, read `openspec/README.md`, the affected baseline specs, and the relevant approved change deltas. Update the affected requirements or concrete acceptance scenarios **before** editing implementation, Defs, localization, settings, or packaging. Follow-up changes follow the same rule.
+- Specs contain behavior contracts only. Scope/approval belongs in `proposal.md`, technical reasoning in `design.md`, and implementation state, blockers, and verification evidence in `tasks.md`. `TODO.md` points to active work rather than duplicating its checklist.
+- OpenSpec plus approved deltas is the product-behavior authority. `MEMORY.md` is a navigation/state record; historical design notes do not override the specs. A passing spec validator does not establish runtime acceptance.
+- Use existing builds/checks and permitted real-path verification. Do not write new unit tests or add cases to existing unit tests. In-game execution remains the maintainer's responsibility.
+
 ## Project philosophy
 
 - Zero Harmony is a hard boundary: no reference, no declared dependency, no runtime patch. Any capability that would need a patch to unlock is judged "not done".
 - Live map only, single-player only: the world map, caravan tiles, and multiplayer sync are out of scope.
-- Pure entertainment with the lowest workable gate: no faction/species/draft restriction by default. The maintainer's stance (reaffirmed 2026-09-02): a player wish to "only matchmake the colony" is absorbed by the gate slider (factory far-right = unrestricted), never by changing the default. "Zero gate" was never true and is not faked — vanilla `CanTakeOrder` / `ShouldGenerateFloatMenuForPawn` pre-filter, so animals and neutrals cannot initiate and downed pawns get no menu.
-- The player is super-intelligence's hand: a hand-issued order (right-click / director) overrides cooldowns and the combat gate — "if the super-intelligence wants two pawns to kiss, they kiss" (maintainer ruling). Only the ambient dispatcher obeys the combat gate.
-- Silent invalidation is constitutional: when an addon switch is off or a target collapses, it vanishes from every pick surface with zero nag — no greyed item, no dispatched job, no "no longer valid" message.
+- Participation, permissive defaults, command/cooldown policy, and silent addon invalidation are defined in `openspec/specs/kissing/spec.md` and `openspec/specs/addons/spec.md`, plus approved deltas. In particular, player-issued status is not a cooldown exemption; do not infer one from `playerForced`.
 - Player-facing text must ship with identical key sets in every language; durations are stored in ticks only and the UI must show tick / real seconds / game hours together.
 - Never create, verify, or assume a junction/symlink into a game install; copying the mod and live testing are the maintainer's own actions.
 

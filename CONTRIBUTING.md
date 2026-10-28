@@ -6,6 +6,10 @@ PRs welcome. Read the "Hard boundaries" section of [`README.md`](./README.md) fi
 
 ## 规则 / Rules
 
+开发前先读 [`openspec/README.md`](./openspec/README.md)、相关规格和已批准变更。每次新增、修复或调整都先更新受影响的要求或验收场景，再改代码、Defs、设置、文案或打包。规格只写行为契约；技术设计、任务进度和验证结果分别放到变更目录的 `design.md`、`tasks.md`。
+
+Before development, read [`openspec/README.md`](./openspec/README.md), the relevant specs, and approved change deltas. Update affected requirements or acceptance scenarios before implementation, including follow-ups. Specs contain contracts only; technical design belongs in `design.md`, and progress/evidence in `tasks.md`.
+
 1. Fork 后从当前开发分支拉自己的分支，PR 对着它提即可；分支与合并模型由维护者在合并时决定，贡献者无需迁就。
    Fork, branch off the current development branch, and open your PR against it. The branching and merge model is the maintainer's call at merge time — contributors don't need to accommodate it.
 2. 提交信息用 Conventional Commits（`feat` / `fix` / `docs` / `refactor` / `chore` / `style` / `test`，模板见 `.gitmessage`）；一个 commit 只做一件事。
@@ -24,6 +28,7 @@ PRs welcome. Read the "Hard boundaries" section of [`README.md`](./README.md) fi
 ## 验证 / Verification
 
 ```powershell
+openspec validate --all --strict --no-interactive
 pwsh scripts/verify-local.ps1
 ```
 
@@ -31,8 +36,12 @@ pwsh scripts/verify-local.ps1
 
 The full offline gate suite (three-channel builds, bilingual key parity, DefOf resolution, fate-table integrity, version-follower parity, DLL symbol audit, zero-Harmony proof, …; the script's own output is the authority on count) must pass. In-game testing is the maintainer's own workflow; contributors only owe green gates and readable code.
 
+不新增单元测试，也不向现有单元测试添加用例；使用现有检查及维护者实机路径。OpenSpec 校验检查规格结构，不能代替功能验证。
+
+Do not write new unit tests or extend unit-test cases. Use existing checks and maintainer-run game paths. OpenSpec validation checks structure, not runtime behavior.
+
 ## 代码口味 / Taste
 
-面向人类的代码优先：命名说人话，注释写"为什么"而不是"是什么"，准入四层判定集中在 `KissBoundary`、即时可用性编排收在 `KissUtility.Propose` 单入口，表演逻辑集中在 job driver。新"亲非 pawn 目标"内容请继承 `KissThingAddon`（注册表加一行 = 全通路接通），不要另起管线。
+面向人类的代码优先：命名说人话，注释写"为什么"而不是"是什么"。共用参与规则、请求判定和 job 表演保持清楚边界；新非 Pawn 目标复用物体吻管线。架构变更按已批准变更的设计推进，不把旧类名和注册方式当作永久接口。
 
-Human-facing code first: names that speak plainly, comments that say *why* rather than *what*, the four admission layers living in `KissBoundary` with immediate availability orchestrated by the single `KissUtility.Propose` entry, performance logic in the job drivers. New kissable non-pawn targets should extend `KissThingAddon` (one registry line wires up every path) instead of starting a second pipeline.
+Human-facing code first: clear names, comments that explain *why*, and explicit boundaries between shared participation rules, request evaluation, and job performance. New non-Pawn targets reuse the Thing-kiss pipeline. Follow the approved change design for architecture work; old class names and registry mechanics are not permanent interfaces.

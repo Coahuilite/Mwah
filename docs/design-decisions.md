@@ -1,6 +1,8 @@
-# Design decisions (compendium)
+# Historical design decisions
 
-Moved out of `MEMORY.md` on 2026-10-06 (second compression pass). These are the matured design records of shipped behavior — still current, still binding, but the full prose lives here. `MEMORY.md` keeps one-line constitutions and points here by section.
+These notes preserve the reasoning and implementation history moved out of `MEMORY.md` on 2026-10-06. They are reference material, not a parallel requirements source. Product behavior is governed by [OpenSpec](../openspec/README.md) and approved change deltas; technical choices for active work belong in that change's `design.md`. Historical descriptions of four settings sections, fixed addon registration, API availability, and release procedures must be read at their recorded dates.
+
+The maintainer's 2026-10-29 cooldown clarification is reflected in the core specification: manual orders still check cooldowns unless `noCooldowns` is enabled. This corrects the former contradictory AGENTS wording without changing the released behavior.
 
 ## Initiation & ambient
 

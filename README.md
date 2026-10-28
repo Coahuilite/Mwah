@@ -17,7 +17,7 @@ Install a published package into `RimWorld/Mods/`.
 
 - **Right-click a kiss.** Select any orderable pawn, right-click another pawn. If the selected one cannot move, the other comes over instead.
 - **Kiss Director panel.** A bottom-bar button opens a non-modal panel: two avatar slots pick any two pawns on the map — including ones you cannot order — via the vanilla targeter, and the heart fills half by half as sides are chosen. The right slot also accepts kissable things (a wall). Quick-chain mode dispatches in two map clicks.
-- **Ambient kissing (off by default).** The game itself pairs up pawns you cannot control (visitors, traders, raiders, wild animals, mechanoids) on an interval and radius you set. It never touches your colonists.
+- **Ambient kissing (off by default).** The game itself pairs up pawns you cannot control (visitors, traders, raiders, wild animals, mechanoids) on an interval and radius you set. It never selects player-managed pawns as initiators, and drafted player-controlled pawns are excluded as receivers.
 - **Kiss a wall.** Right-click any wall, natural rock or buried vein and lean in. The outcome is rolled against an editable XML fate table (five tiers, 50 narration rows) and lands as exactly one "relationship with walls" memory — the next kiss replaces it in place.
 - **Anyone is kissable, mood or not.** Pawns with a mood need gain +5 × their own `SocialImpact` × multiplier (charming colonists profit more; psychopaths feel nothing, per vanilla nullify lists). Animals, mechanoids, drones and Anomaly entities (shambler/ghoul/awoken corpse) have no mood system: they get the animation, the hearts and a fate-table message from their own channel — and nothing else. They can also be the initiator via the director.
 - **A truce window.** A commanded kiss pacifies both participants for the whole job — approach, performance and walk-home — because vanilla job ownership suspends the think tree. Any violent hit breaks it instantly, and the pair cooldown plus per-pawn cooldown rate-limit the trick. The system never pulls a fighting unit into a kiss; you may.
@@ -29,6 +29,8 @@ The settings page is organized in four sections — core, autonomous matchmaking
 ## Development, packaging, and versioning
 
 The only manually maintained product version is `<Version>` in `Source/Mwah/Mwah.csproj`. Builds never install into RimWorld.
+
+Development follows the [spec-first workflow](./openspec/README.md): update the affected contract before code. Active change tasks, not specification files, track implementation progress.
 
 ```powershell
 pwsh scripts/pack-dev.ps1                           # dev: Release build + stage dist/dev/Mwah (folder; -Zip optional)
