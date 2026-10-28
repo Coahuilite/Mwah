@@ -36,11 +36,15 @@ Use `Trees_Desired` for tree-affirming outcomes. A specialized Gauranlen rule al
 
 Basic and cultural outcomes use the same new tree ThoughtDef and refresh the same slot. Preserve `wall`, existing Def names, narration fields, setting names, and their meanings. Use distinct new identities for tree and cultural preferences. Numerical tree defaults and outcome weights must be specified before editing the corresponding runtime content; they are not inferred from the wall distribution.
 
+Tree content uses the same five mood anchors as walls and the same 30000-tick default duration, with its own slot. The specified basic/affirming/own-connected weights increase the likelihood of a positive result rather than its reward ceiling. Addon descriptors own default enable/duration and job bindings; optional XML culture-rule entries reference native precepts only under `MayRequire` for Ideology. No optional native DefOf field is necessary.
+
 The focused [tree/Ideology research](../../../docs/research/tree-kissing-ideology.md) records the native Def/API evidence and wall-pipeline comparison. Use own connected Gauranlen plus the strong-connection precept before the general tree-affirming precept, otherwise basic settlement. Shared presentation needs a neutral target argument for new content while retaining the existing `WALL` alias and saved narration meanings. Other DLC trees remain ordinary eligible tree targets, not evidence for a Gauranlen cultural rule.
 
 ### Separate settings data from presentation
 
 Keep `MwahSettings` and its serialized keys. Move page, scrolling, expansion, and pending-field editing into a presentation owner invoked from the existing mod settings entry point. Preserve the existing measured header, numeric parsing/quantization, tick display, and coalesced save path. Resolve edits before hiding a control. Each page has its own measured height and scroll position. Render addon controls from their descriptors; keep cultural controls nested under tree kissing.
+
+The view retains an active numeric edit's commit callback and range, so hiding or closing it can resolve the value without drawing the old control. Debounced writes persist canonical values only; the external settings-close write resolves the active edit before serialization. A descriptor flag exposes cultural options without branching on target identities in the shared settings view.
 
 ## Source findings and verification implications
 

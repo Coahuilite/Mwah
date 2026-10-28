@@ -35,3 +35,4 @@ Affected areas are the request entry points, paired and Thing job drivers, addon
 - The maintainer explicitly retained the released manual-command policy: manual requests check cooldowns unless `noCooldowns` is enabled. Player-issued status alone is not an exemption.
 - Specifications contain contracts only. Implementation state and evidence are owned by [tasks.md](tasks.md); technical choices are owned by [design.md](design.md).
 - Current execution order: repair existing paired/wall runtime behavior while researching Ideology-aware tree kissing in parallel. Tree implementation, settings redesign, and 1.7 packaging follow in later slices; this repair slice does not declare them delivered.
+- The maintainer subsequently authorized tree content and the two-page settings implementation, with defaults, weights, and cultural rules specified first. Version-specific packaging and publication remain separate operations.

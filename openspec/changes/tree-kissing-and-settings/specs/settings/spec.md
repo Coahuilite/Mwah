@@ -35,6 +35,14 @@ Settings SHALL become authoritative in memory immediately, use coalesced disk pe
 - **WHEN** the active numeric editor is hidden by collapsing its addon or closing settings
 - **THEN** its pending edit is resolved with the same valid/invalid input rules before persistence.
 
+#### Scenario: Non-finite numeric input
+- **WHEN** numeric text parses as NaN or infinity
+- **THEN** it is treated as invalid and cannot replace a stored value.
+
+#### Scenario: Debounced persistence while editing
+- **WHEN** a prior setting change reaches its debounced save time while a numeric field is still being edited
+- **THEN** persistence does not commit that active edit before Enter, focus loss, hiding the control, or closing settings.
+
 ## ADDED Requirements
 
 ### Requirement: Contextual addon management

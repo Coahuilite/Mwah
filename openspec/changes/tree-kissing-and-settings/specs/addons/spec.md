@@ -18,6 +18,30 @@ The tree addon SHALL accept spawned, non-destroyed game-marked tree Plants, incl
 - **WHEN** the tree addon's enable preference is off
 - **THEN** tree targets disappear from map picking and stale dispatch remains silent, while the settings entry remains available for re-enabling.
 
+### Requirement: Tree defaults and identity
+Tree kissing SHALL default enabled, with a thought duration of 30000 ticks and cultural integration preferred on when available. Stable identities SHALL be `tree` for addon preferences, `treeCulturalIntegration` for culture preference, `MWAH_KissTree` for the job, and `MWAH_KissedTree` for the shared memory. New preferences SHALL NOT change stored wall preferences.
+
+#### Scenario: New tree preferences
+- **WHEN** an existing configuration has no tree entries
+- **THEN** basic tree kissing is enabled with a 30000-tick memory; culture is used only when its effective DLC and Pawn predicates match.
+
+### Requirement: Tree outcome distributions
+Tree memories SHALL use five stages with mood values -2, 0, 1, 3, and 6, without SocialImpact scaling or a bespoke psychopath nullifier. Default relative stage weights SHALL be as follows; an empty selected table SHALL use the same distribution and tree slot.
+
+| Policy | -2 | 0 | 1 | 3 | 6 |
+| --- | --- | --- | --- | --- | --- |
+| Basic | 10 | 30 | 35 | 20 | 5 |
+| Tree-affirming | 3 | 17 | 35 | 30 | 15 |
+| Own connected Gauranlen | 0 | 10 | 25 | 40 | 25 |
+
+#### Scenario: Cultural likelihood without a higher reward ceiling
+- **WHEN** default basic, tree-affirming, and own-connected tables are used
+- **THEN** positive-stage probabilities are respectively 60, 80, and 90 percent, with the same maximum mood value of 6.
+
+#### Scenario: Empty cultural table
+- **WHEN** the selected cultural fate table contains no positive-weight rows
+- **THEN** its fallback uses that policy's specified weights, not the wall distribution or an additional reward.
+
 ### Requirement: Tree relationship memory
 Basic and cultural outcomes SHALL share one tree-relationship slot, independent of the wall slot. A later tree outcome SHALL replace the slot's stage, narration, and duration rather than adding a second tree slot.
 
@@ -46,6 +70,14 @@ Tree kissing SHALL offer a separate cultural-integration preference. Ideology ab
 #### Scenario: Matching both a meme and its precept
 - **WHEN** a Pawn matches a tree-affirming precept and its associated meme
 - **THEN** one cultural policy is selected rather than awarding the same cultural benefit twice.
+
+#### Scenario: Both cultural predicates match
+- **WHEN** the Pawn has `GauranlenConnection_Strong`, the target is connected to that Pawn, and `Trees_Desired` also matches
+- **THEN** exactly the own-connected policy is selected, before the general tree-affirming policy.
+
+#### Scenario: Another Pawn's Gauranlen
+- **WHEN** a Gauranlen target is unconnected or connected to another Pawn
+- **THEN** settlement falls through to the acting Pawn's `Trees_Desired` policy or basic policy without rejecting the kiss.
 
 ### Requirement: Cultural integration preserves native tree systems
 Cultural tree settlement SHALL NOT manufacture tree sightings, grant a native situational thought as a memory, perform pruning or linking, change connection strength or production, or claim ritual/planting events. It SHALL NOT add resource substitutes for moodless Pawns. Turning integration off SHALL leave vanilla environmental culture effects intact.
