@@ -5,7 +5,7 @@ All notable changes to Mwah! (Every Pawn Kisses Each Other) are documented in th
 ## Changelog rules
 
 Structure and categories:
-- Released entries in chronological order, oldest first; the Unreleased entry sits on top.
+- Released entries in reverse chronological order, newest first; the Unreleased entry, when present, sits on top.
 - Heading uses local release time: `[YYYY-MM-DD HH:MM UTC+8] Version X.Y.Z`; an unreleased entry uses `Unreleased — X.Y.Z` and gets the actual time at publish.
 - Sections use the Keep a Changelog types: **Added**, **Changed**, **Fixed**, **Deprecated**, **Removed**, **Security**; this project additionally allows **Packaging** and **Notes**. Never keep empty sections.
 - Breaking changes (save compatibility, settings migration, incompatible behavior shifts) always come first, with the impact and the action the player must take spelled out.
@@ -43,7 +43,7 @@ One-line release summary.
 - ...
 ```
 
-## Unreleased — 0.3.0
+## [2026-10-30 02:16 UTC+8] Version 0.3.0
 
 ### Added
 - Kiss trees with basic outcomes even without Ideology, with optional results based on each pawn’s beliefs and own Gauranlen connection.

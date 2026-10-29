@@ -83,5 +83,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: dist/github/Mwah-${{ github.ref_name }}.zip
+          target_commitish: main
           generate_release_notes: true   # 自动从 commits 生成 Release notes
           prerelease: ${{ contains(github.ref_name, '-') }}   # v0.1.0-rc1 自动标记 pre-release
