@@ -33,6 +33,8 @@ settings → settings-use → 请求准入／适用结算 + 磁盘持久化
 4. **把实现与证据放对位置。** design 解释取舍、直接连接和责任；tasks 记录获准动作及完成依据。按项目允许的方法验证到实际消费层，复用仍适用的证据，不从场景自动生成测试任务。
 5. **明确采用和结束。** 候选注明状态及所属变更，在明确采用前不替代现行正文；`MODIFIED` 保留完整要求块和全部旧场景。采用时更新现行正文、入口和直接读取方，并保存旧文档。归档对应工作不代表发布，未完成验收不能靠归档关闭。
 
+社交收益压缩的追加采用记录见[本次 delta](../openspec/changes/social-impact-soft-cap/adoption.md)，实施与验收由其 [tasks](../openspec/changes/social-impact-soft-cap/tasks.md)管理；它不关闭原变更的实机缺口。
+
 当前只有 `openspec/specs/` 下的正文定义现行规则；change 可以包含候选 delta，不能自称第二套 current。既有实现收尾任务继续由[原变更任务](../openspec/changes/tree-kissing-and-settings/tasks.md)管理。
 
 ## 写作与工具
