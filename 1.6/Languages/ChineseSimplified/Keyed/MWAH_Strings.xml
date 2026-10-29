@@ -76,7 +76,10 @@
   <MWAH.Settings.ThoughtDurationTicksDesc>亲完之后这份心情能撑多久。</MWAH.Settings.ThoughtDurationTicksDesc>
 
   <MWAH.Settings.MoodMultiplier>心情强度</MWAH.Settings.MoodMultiplier>
-  <MWAH.Settings.MoodMultiplierDesc>缩放最终心情加成。实际数值 = 想法基准值 × 本倍率 × 该 Pawn 自身的社交影响，所以会说话的人亲一次更赚，闷葫芦收益更低。</MWAH.Settings.MoodMultiplierDesc>
+  <MWAH.Settings.MoodMultiplierDesc>双人吻的心情和已开启的好感共用此倍率。实际心情 = 想法基准值 × 有效社交影响 × 本倍率；有效社交影响由下方压缩开关决定。亲墙、亲树不受影响。</MWAH.Settings.MoodMultiplierDesc>
+
+  <MWAH.Settings.SocialImpactCompression>压缩超常社交收益</MWAH.Settings.SocialImpactCompression>
+  <MWAH.Settings.SocialImpactCompressionDesc>社交影响 137% 以内不变，超出部分收益递减，有效值趋近 150%；再乘心情强度，默认 1x 时单条基础心情趋近 +7.5。已开启的好感变化也使用此压缩。关闭恢复原公式。后续结算生效，与同搭档再次亲吻才更新其旧记忆；不影响亲墙、亲树。</MWAH.Settings.SocialImpactCompressionDesc>
 
   <MWAH.Settings.DirectorButton>亲吻导演台按钮</MWAH.Settings.DirectorButton>
   <MWAH.Settings.NoCooldowns>无视亲吻冷却</MWAH.Settings.NoCooldowns>

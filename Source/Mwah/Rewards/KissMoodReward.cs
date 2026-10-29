@@ -7,9 +7,9 @@ namespace Mwah;
 /// 亲吻奖励：只有带心情系统（needs.mood）的 pawn 才拿得到 —— 判据是运行时 need 实例，
 /// 不是种族：动物、机械族、无人机、异象实体本来就没有 mood，而 Anomaly 的蹒跚者/尸鬼/唤醒尸体
 /// 种族是 Human（Humanlike 为真）却被 MutantDef.disableNeeds 摘掉了全部需求，同样拿不到。
-/// 拿不到就是什么都不加，不做任何替代收益（结构层的开关会提前挡掉这种配对，
-/// 见 <see cref="KissBoundary.CheckStructure"/>；这里的判空只兜住菜单打开后的状态变化）。
-/// 强度 = ThoughtStage.baseMoodEffect × (自身 SocialImpact) × 设置倍率，
+/// 无心情者只走适用短讯通道，不替换成其他收益，也不因此排除参与。
+/// 强度 = ThoughtStage.baseMoodEffect × (自身有效 SocialImpact) × 设置倍率，
+/// 启用压缩时以 137% 为基准，超出部分有界趋近额外 13 个百分点。
 /// 心情由 Thought_Memory.moodPowerFactor 承载、意见由 opinionOffset 承载（原版 AddInteractionThought
 /// 对同一个倍率两边都乘，这里照做）。数值阶梯的取值依据见 1.6/Defs/Kiss/MWAH_ThoughtDefs.xml 的注释。
 /// </summary>
@@ -77,12 +77,16 @@ public static class KissMoodReward
             return;
         }
 
-        // SocialImpact 对"有心情的 pawn"必然取到有效值：该 StatDef 标了 neverDisabled，且
-        // SkillNeed_BaseBonus.ValueFor 在 pawn.skills == null 时直接返回 1f（依据见 MEMORY
-        // 「原版能力边界」）。所以这里不兜 NaN/0 —— 兜不住的东西不存在。
-        // 原版 Pawn_InteractionsTracker.AddInteractionThought 对同一个倍率既乘心情也乘意见，
-        // 这里照做：社交达人的吻在两边都更值钱，哑巴/失聪者在两边都更不值钱。
-        float impact = pawn.GetStatValue(StatDefOf.SocialImpact) * settings.MoodMult;
+        // 压缩最终 stat 而非技能等级，装备及模组的直接加成都采用同一规则。
+        // 先压缩社交来源，再乘玩家倍率；关闭时保留原公式，不改 Pawn 的全局属性。
+        float impact = pawn.GetStatValue(StatDefOf.SocialImpact);
+        if (settings.SocialImpactCompressed && impact > Constants.SocialImpactBaseline)
+        {
+            float excess = impact - Constants.SocialImpactBaseline;
+            impact = Constants.SocialImpactBaseline + Constants.SocialImpactHeadroom * excess /
+                (Constants.SocialImpactHeadroom + excess);
+        }
+        impact *= settings.MoodMult;
         memory.moodPowerFactor = impact;
         if (memory is Thought_MemorySocial socialMemory)
         {
@@ -102,4 +106,30 @@ public static class KissMoodReward
 
         pawn.needs.mood.thoughts.memories.TryGainMemory(memory, other);
     }
+
+    /// <summary>
+    /// 仅供配对记忆的原生合并钩子调用：此时 TryGainMemory 已通过思想／社交目标准入，
+    /// 并赋好 pawn 和 otherPawn。旧普通记忆满组时只 Renew，会吞掉新倍率；删除同搭档的
+    /// 旧配对槽，再由原版加入完整的新实例。非配对 Def 必须继续走自己的原版合并逻辑。
+    /// </summary>
+    internal static bool PreparePairMemoryReplacement(Thought_Memory memory)
+    {
+        if (memory.otherPawn == null || !IsPairMemory(memory))
+        {
+            return false;
+        }
+        MemoryThoughtHandler memories = memory.pawn.needs.mood.thoughts.memories;
+        for (int i = memories.Memories.Count - 1; i >= 0; i--)
+        {
+            Thought_Memory previous = memories.Memories[i];
+            if (previous.otherPawn == memory.otherPawn && IsPairMemory(previous))
+            {
+                memories.RemoveMemory(previous);
+            }
+        }
+        return true;
+    }
+
+    private static bool IsPairMemory(Thought_Memory memory) =>
+        memory.def == MWAH_ThoughtDefOf.MWAH_Kissed || memory.def == MWAH_ThoughtDefOf.MWAH_KissedBond;
 }

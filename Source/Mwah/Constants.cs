@@ -33,6 +33,9 @@ public static class Constants
     public const int WallThoughtDurationTicks = 30000;
 
     public const float MoodMultiplier = 1f;
+    public const bool SocialImpactCompression = true;
+    public const float SocialImpactBaseline = 1.37f;   // 原版 20 级社交技能因子。
+    public const float SocialImpactHeadroom = 0.13f;   // 有效值趋近 1.50；不截断玩家倍率。
     /// <summary>心情倍率粒度 0.05 倍。</summary>
     public const float MoodMultiplierStep = 0.05f;
 

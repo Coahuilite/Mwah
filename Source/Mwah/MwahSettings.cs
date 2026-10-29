@@ -26,6 +26,7 @@ public class MwahSettings : ModSettings
     public int autonomousRadiusCells = Constants.AutonomousRadiusCells;
     public int thoughtDurationTicks = Constants.ThoughtDurationTicks;
     public float moodMultiplier = Constants.MoodMultiplier;
+    public bool socialImpactCompression = Constants.SocialImpactCompression;
     public bool treeCulturalIntegration = Constants.TreeCulturalIntegration;
     public int diagnosticLevel = Constants.DiagnosticLevelDefault;
 
@@ -55,6 +56,7 @@ public class MwahSettings : ModSettings
     public int PairCooldown => Mathf.Clamp(pairCooldownTicks, Constants.CooldownTicksRange.min, Constants.CooldownTicksRange.max);
     public int ThoughtDurationTicks => Mathf.Clamp(thoughtDurationTicks, Constants.ThoughtDurationTicksRange.min, Constants.ThoughtDurationTicksRange.max);
     public float MoodMult => Mathf.Clamp(moodMultiplier, Constants.MoodMultiplierRange.min, Constants.MoodMultiplierRange.max);
+    public bool SocialImpactCompressed => socialImpactCompression;
     public bool DirectorEnabled => directorButton;
     public bool CooldownsIgnored => noCooldowns;
     public bool AutonomousEnabled => autonomousKissing;
@@ -95,6 +97,7 @@ public class MwahSettings : ModSettings
         Scribe_Values.Look(ref autonomousRadiusCells, "autonomousRadiusCells", Constants.AutonomousRadiusCells);
         Scribe_Values.Look(ref thoughtDurationTicks, "thoughtDurationTicks", Constants.ThoughtDurationTicks);
         Scribe_Values.Look(ref moodMultiplier, "moodMultiplier", Constants.MoodMultiplier);
+        Scribe_Values.Look(ref socialImpactCompression, "socialImpactCompression", Constants.SocialImpactCompression);
         Scribe_Values.Look(ref treeCulturalIntegration, "treeCulturalIntegration", Constants.TreeCulturalIntegration);
         Scribe_Values.Look(ref diagnosticLevel, "diagnosticLevel", Constants.DiagnosticLevelDefault);
         // addon 两张字典：整表入档（LookMode.Value；string→int / string→bool 都是值类型）。
@@ -147,6 +150,7 @@ public class MwahSettings : ModSettings
         autonomousRadiusCells = Constants.AutonomousRadiusCells;
         thoughtDurationTicks = Constants.ThoughtDurationTicks;
         moodMultiplier = Constants.MoodMultiplier;
+        socialImpactCompression = Constants.SocialImpactCompression;
         diagnosticLevel = Constants.DiagnosticLevelDefault;
         treeCulturalIntegration = Constants.TreeCulturalIntegration;
         // 字典没有"逐字段的 Constants.*"可回，恢复默认 = 清空整表 ⇒ 全部读侧落回各 addon 出厂值。

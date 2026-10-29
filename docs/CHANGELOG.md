@@ -49,6 +49,8 @@ One-line release summary.
 - Build a native .NET 10 package for RimWorld 1.7.4990 rev1069 alongside the retained 1.6 package.
 
 ### Changed
+- Compress paired-kiss social impact above 137% with bounded diminishing returns toward 150%; enabled by default, switchable back to the original formula. Enabled opinion effects share the compression; walls and trees do not.
+- Refresh the same partner’s old paired memory using current strength, duration and narration instead of renewing an outdated multiplier; replace prior plain/social variants in that partner slot.
 - Manage extensions first in the new two-page settings view; pending numeric edits are committed before hiding or closing controls.
 
 ### Fixed

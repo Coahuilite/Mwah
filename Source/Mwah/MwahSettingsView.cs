@@ -82,6 +82,7 @@ public sealed class MwahSettingsView
                 v => settings.thoughtDurationTicks = v, Constants.ThoughtDurationStepTicks);
             changed |= FloatSlider(list, ref settings.moodMultiplier, Constants.MoodMultiplierRange, Constants.MoodMultiplierStep,
                 v => v.ToString("0.##") + "x", v => settings.moodMultiplier = v);
+            changed |= Checkbox(list, ref settings.socialImpactCompression);
             Section(list, "MWAH.Settings.Section.Autonomous");
             changed |= IntSlider(list, ref settings.autonomousIntervalTicks, Constants.AutonomousIntervalTicksRange, MwahTime.FormatTicks,
                 v => settings.autonomousIntervalTicks = v);

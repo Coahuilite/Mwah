@@ -54,7 +54,7 @@
 ## settings-use
 
 ### Requirement: USE-01 提交后采用规范值
-有效控件改动或编辑提交 SHALL 立即成为唯一内存规范值；后续合法请求的消费者 SHALL 读取生效值，不因尚未落盘而沿用旧配置。界面按 [SET-03](../settings/spec.md) 提交；请求占用／冷却及扩展开关／文化采用仍分别由 [KISS-04、09](../kissing/spec.md) 和 [ADD-01、10](../addons/spec.md) 限定，不新增对已入场操作回溯取消或重新计时的保证。
+有效控件改动或编辑提交 SHALL 立即成为唯一内存规范值；后续合法请求的消费者 SHALL 读取生效值，不因尚未落盘而沿用旧配置。界面按 [SET-03](../../specs/settings/spec.md) 提交；请求占用／冷却及扩展开关／文化采用仍分别由 [KISS-04、09](../../specs/kissing/spec.md) 和 [ADD-01、10](../../specs/addons/spec.md) 限定，不新增对已入场操作回溯取消或重新计时的保证。
 
 #### Scenario: 保存尚未执行时的新请求
 - **WHEN** 有效设置已提交为规范值，但合并保存尚未执行，随后出现合法新请求

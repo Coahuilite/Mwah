@@ -76,7 +76,10 @@
   <MWAH.Settings.ThoughtDurationTicksDesc>How long the mood bonus lingers after a kiss.</MWAH.Settings.ThoughtDurationTicksDesc>
 
   <MWAH.Settings.MoodMultiplier>Mood strength</MWAH.Settings.MoodMultiplier>
-  <MWAH.Settings.MoodMultiplierDesc>Scales the final mood bonus. Actual bonus = thought base x this x the pawn's own social impact, so a smooth talker gets more out of a kiss than a mute grump.</MWAH.Settings.MoodMultiplierDesc>
+  <MWAH.Settings.MoodMultiplierDesc>Scales paired-kiss mood and, when enabled, opinion. Mood = thought base x effective social impact x this multiplier. Compression is controlled below; wall/tree outcomes are unaffected.</MWAH.Settings.MoodMultiplierDesc>
+
+  <MWAH.Settings.SocialImpactCompression>Compress excessive social impact</MWAH.Settings.SocialImpactCompression>
+  <MWAH.Settings.SocialImpactCompressionDesc>Keeps social impact up to 137% unchanged; higher values have diminishing returns toward 150%. Mood strength applies afterwards: at 1x, one base mood reward approaches +7.5. Also applies to enabled opinion effects. Off restores the original formula. Applies at the next settlement; kissing the same partner again updates their old memory. Does not affect walls or trees.</MWAH.Settings.SocialImpactCompressionDesc>
 
   <MWAH.Settings.DirectorButton>Kiss director button</MWAH.Settings.DirectorButton>
   <MWAH.Settings.NoCooldowns>Ignore kiss cooldowns</MWAH.Settings.NoCooldowns>
