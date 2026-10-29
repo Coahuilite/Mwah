@@ -1,5 +1,4 @@
-# 隐私审计门（Mwah!）：push 前唯一需要人工运行的检查（移植自 SqueakyRatkin 的同名门，
-# 对齐 UniversalSqueaker 2026-09-06 维护者裁决的最小发布仪式）。
+# 隐私审计门（Mwah!）：pre-push hook 自动执行，CI 全量 clone 再执行；也可手动检查实际包。
 #
 # AGENTS.md 硬边界的执行器："仓库、文档、产物与可达历史中零绝对本地路径、零凭据、零工坊 ID 文件"。
 # 向量各自独立扫描，结论不得互推——工作树干净不蕴含历史干净，提交信息干净不蕴含历史 blob 干净：
@@ -14,14 +13,16 @@
 # 台账为空。新增一条 = 一次维护者裁决 + 指向决定处；不得用它掩盖新泄漏。历史/tag 重写需维护者
 # 单独授权（AGENTS.md：append-only）——门禁不因已知债务失明，也不把债务当成每次人工复述的仪式。
 #
-# -FullHistory 全历史扫描（push 前人工步骤）；默认只扫工作树 + 提交信息 + 身份（CI 每次 push/PR 用）。
+# -FullHistory 全历史扫描（pre-push hook 与 CI 使用）；默认扫工作树、提交信息、身份及二进制元数据。
 # -PrePush     追加推送前机械自检：工作树干净、存在 main、报告将推送的提交与本地 tag 集合。
+# -PackageDir  同时扫描 dist 下已暂存的实际包（文本、PNG 元数据、DLL 可打印字符串）。
 #
 # 退出码 0 = 可推送（可含已知债务记录）；1 = 存在未接受的命中或机械自检失败。
 [CmdletBinding()]
 param(
     [switch]$FullHistory,
-    [switch]$PrePush
+    [switch]$PrePush,
+    [string]$PackageDir
 )
 
 Set-StrictMode -Version Latest
@@ -279,6 +280,49 @@ try {
     }
     else {
         Write-Host 'vector4 (binary metadata): no tracked binaries'
+    }
+
+    # Generated artifacts are ignored by Git; inspect the actual staged payload separately.
+    if ($PackageDir) {
+        $packagePath = if ([IO.Path]::IsPathRooted($PackageDir)) { $PackageDir } else { Join-Path $root $PackageDir }
+        $packageRoot = [IO.Path]::GetFullPath($packagePath)
+        $distPrefix = (Join-Path $root 'dist') + [IO.Path]::DirectorySeparatorChar
+        if (-not $packageRoot.StartsWith($distPrefix, [StringComparison]::OrdinalIgnoreCase) -or
+            -not (Test-Path -LiteralPath $packageRoot -PathType Container)) {
+            throw 'PackageDir must be an existing package directory beneath repository dist.'
+        }
+        $packageFiles = @(Get-ChildItem -LiteralPath $packageRoot -Recurse -File)
+        if ($packageFiles.Count -eq 0) { Add-Failure 'package is empty' '' }
+        $packageChecks = [ordered]@{
+            'personal-path' = $pathPatternNet
+            'unc-path' = $uncPattern
+            'posix-home' = $posixHomePattern
+            'published-file-id-value' = $publishedFileIdValuePattern
+        }
+        foreach ($name in $credPatterns.Keys) { $packageChecks["credential '$name'"] = $credPatterns[$name] }
+        if ($env:GITHUB_ACTIONS -ne 'true' -and $env:TF_BUILD -ne 'true') {
+            foreach ($token in @($env:USERNAME, $env:COMPUTERNAME) | Where-Object { $_ }) {
+                $packageChecks["runtime-personal-token-$($packageChecks.Count)"] = '(?<![A-Za-z0-9])' + [regex]::Escape($token) + '(?![A-Za-z0-9])'
+            }
+        }
+        foreach ($file in $packageFiles) {
+            $relative = [IO.Path]::GetRelativePath($packageRoot, $file.FullName)
+            if ($file.Name -eq 'PublishedFileId.txt' -or $file.Extension -eq '.pdb') {
+                Add-Failure 'package contains a forbidden file' $relative
+            }
+            $bytes = [IO.File]::ReadAllBytes($file.FullName)
+            $regions = if ($file.Extension -eq '.png') { (Get-PngMetadataText $bytes).Text }
+                elseif ($file.Name -match $binaryExtPattern) { (Get-PrintableStrings $bytes) -join $newLine }
+                else { [Text.Encoding]::UTF8.GetString($bytes) }
+            $regions = $relative + $newLine + $regions
+            foreach ($label in $packageChecks.Keys) {
+                if ([regex]::IsMatch($regions, $packageChecks[$label])) { Add-Failure "package $label" $relative }
+            }
+            if (@([regex]::Matches($regions, $emailPattern) | Where-Object { $_.Value -notmatch $emailAllowlist }).Count -gt 0) {
+                Add-Failure 'package email address' $relative
+            }
+        }
+        Write-Host "package: scanned $($packageFiles.Count) staged files (text, binary strings and PNG metadata)"
     }
 
     # ---- vector5：扫描器自匿名（2026-10-05 校准）----

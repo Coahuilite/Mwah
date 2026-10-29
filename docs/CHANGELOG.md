@@ -33,6 +33,7 @@ One-line release summary.
 - ...
 
 ### Changed
+- Refresh the cover art for 1.6 / 1.7, paired kisses, walls and trees.
 - ...
 
 ### Fixed
@@ -42,7 +43,33 @@ One-line release summary.
 - ...
 ```
 
-## [2026-10-05 23:57 UTC+8] Version 0.2.2
+## Unreleased — 0.3.0
+
+### Added
+- Kiss trees with basic outcomes even without Ideology, with optional results based on each pawn’s beliefs and own Gauranlen connection.
+- Build a native .NET 10 package for RimWorld 1.7.4990 rev1069 alongside the retained 1.6 package.
+
+### Changed
+- Compress paired-kiss social impact above 137% with bounded diminishing returns toward 150%; enabled by default, switchable back to the original formula. Enabled opinion effects share the compression; walls and trees do not.
+- Refresh the same partner’s old paired memory using current strength, duration and narration instead of renewing an outdated multiplier; replace prior plain/social variants in that partner slot.
+- Manage extensions first in the new two-page settings view; pending numeric edits are committed before hiding or closing controls.
+
+### Fixed
+- Keep crawl-capable downed receivers in passive kissing instead of interrupting them because of the kiss reservation; cancel unfinished pairs when either pawn loses participation eligibility.
+- Keep an immobile receiver at its own cell even when paired-stage selection falls back to Touch; allow manual director mobility fallback and report the actual walking pawn.
+- End kiss occupancy and reports at performance completion, release both jobs’ kiss reservations, and let eligible new orders replace departure without duplicate rewards or return hijacks.
+- Wait for both matching participants before advancing paired performance and report actual job admission.
+- Keep normal departure inside the kiss job without stealing a newer order; persist activity identity and settlement state.
+- Apply cooldown exemption consistently while preserving reachability and cross-target occupancy.
+
+### Packaging
+- Isolate the 1.6 and 1.7 assemblies, generate both minors from one content source, and reject incomplete or mixed packages.
+- Remove native-target compiler warnings without suppressions; retain the default 1.6 build entry.
+
+### Notes
+- The maintainer accepts 0.3.0 after confirming pairing in 1.6 and 1.7. Native support targets 1.7.4990 rev1069 alongside 1.6.
+
+## [2026-10-06 00:00 UTC+8] Version 0.2.2
 
 First public release: any pawn kisses any pawn. Mechanics and details live in the README.
 
@@ -65,4 +92,4 @@ First public release: any pawn kisses any pawn. Mechanics and details live in th
 
 ### Notes
 - The 0.1.x line was archived without shipping, and 0.2.0 / 0.2.1 were never tagged; everything above ships together in 0.2.2, the first public release.
-- This version is also the initial Steam Workshop upload (published earlier the same day, same steam-flavor build). The GitHub Release went out at 23:57 UTC+8.
+- This version is also the initial Steam Workshop upload (published 2026-10-05, same steam-flavor build). The GitHub Release went out at 2026-10-06 00:00 UTC+8.

@@ -5,9 +5,10 @@
   <author>Coahuilite</author>
   <description>Mwah! Every pawn, kiss each other. Let any pawn kiss any pawn. Tolerate the audacity of affection.
   </description>
-  <modVersion>0.2.2</modVersion>
+  <modVersion>0.3.0</modVersion>
   <url>https://github.com/Coahuilite/Mwah</url>
   <supportedVersions>
     <li>1.6</li>
+    <li>1.7</li>
   </supportedVersions>
 </ModMetaData>

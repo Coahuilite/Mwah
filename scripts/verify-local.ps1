@@ -63,22 +63,19 @@ function Assert-True([string]$Name, [bool]$Condition, [string]$Detail = '') {
     }
 }
 
-Invoke-Check "Release build ($modName.csproj)" {
-    & dotnet build $projectFile -nologo -c Release -p:DebugType=none -p:DebugSymbols=false | Out-Host
-}
-
-# 1b. 构建渠道纪律。MWAH_DEV 决定 dev 打点类是否存在，而它只随 MWAHBuildFlavor 变；
-#     真实踩过的坑：JobDriver 里一行没包 #if 的 KissTrace.Clear() 让 Steam/GitHub 渠道
-#     根本编译不过，而默认（Dev）构建一路绿。凡是 release 要发的包都必须各自过编译。
-foreach ($flavor in @('Steam', 'GitHub')) {
-    $probeOut = Join-Path ([System.IO.Path]::GetTempPath()) "mwah-flavor-$flavor"
-    Invoke-Check "flavor build compiles ($flavor)" {
-        & dotnet build $projectFile -nologo -c Release -p:DebugType=none -p:DebugSymbols=false `
-            -p:MWAHBuildFlavor=$flavor -o $probeOut | Out-Host
+# Both game targets use the same existing flavor/build checks; no game installation is needed.
+$gameVersions = @('1.6', '1.7')
+foreach ($game in $gameVersions) {
+    foreach ($flavor in @('Dev', 'Steam', 'GitHub')) {
+        $arguments = @('build', $projectFile, '-nologo', '-c', 'Release', '-p:DebugType=none', '-p:DebugSymbols=false',
+            "-p:MWAHGameVersion=$game", "-p:MWAHBuildFlavor=$flavor")
+        if ($flavor -ne 'Dev') {
+            $arguments += @('-o', (Join-Path ([IO.Path]::GetTempPath()) "mwah-flavor-$game-$flavor"))
+        }
+        Invoke-Check "RimWorld $game $flavor build" { & dotnet @arguments | Out-Host }
     }
+    Assert-True "RimWorld $game assembly present" (Test-Path -LiteralPath (Join-Path $root "$game/Assemblies/Mwah.dll") -PathType Leaf)
 }
-
-Assert-True 'built assembly present' (Test-Path -LiteralPath $assemblyPath -PathType Leaf)
 
 # 2. XML well-formedness
 $xmlFiles = Get-ChildItem -LiteralPath $root -Recurse -Filter *.xml |
@@ -138,7 +135,7 @@ if ($scopeCs -match '(?s)public enum KissScope\s*\r?\n\{(.*?)\r?\n\}') {
     # Defs 内容提前算好：天意表的旁白/短讯键写在 XML 里，正反两个方向都要把它们算进"被使用"。
     $defXml = @(Get-ChildItem (Join-Path $root '1.6\Defs') -Recurse -Filter *.xml | Get-Content -Raw) -join "`n"
     $literalKeys = @([regex]::Matches($code, '"(MWAH\.[A-Za-z0-9_.]+)"') | ForEach-Object { $_.Groups[1].Value })
-    $fateKeys = @([regex]::Matches($defXml, '<(?:narrationKey|messageKey)>(MWAH\.[A-Za-z0-9_.]+)</') | ForEach-Object { $_.Groups[1].Value })
+    $fateKeys = @([regex]::Matches($defXml, '<(?:narrationKey|messageKey|nameKey|switchLabelKey|switchDescKey|tooltipKey)>(MWAH\.[A-Za-z0-9_.]+)</') | ForEach-Object { $_.Groups[1].Value })
     # 以点结尾的匹配是拼接前缀，不是键名。
     $used = @((($literalKeys + $scopeKeys + $diagKeys + $settingKeys + $fateKeys) | Where-Object { $_ -notmatch '\.$' } | Sort-Object -Unique))
 $missing = @($used | Where-Object { $en -notcontains $_ -or $zh -notcontains $_ })
@@ -154,7 +151,7 @@ $defOfFields = @([regex]::Matches((Get-ChildItem (Join-Path $root "Source\$modNa
 $orphanFields = @($defOfFields | Where-Object { $xmlDefs -notcontains $_ })
 Assert-True ("DefOf fields all resolve to an XML defName ($($defOfFields.Count)/$($xmlDefs.Count))") ($orphanFields.Count -eq 0) ($orphanFields -join ', ')
 $driverRefs = @([regex]::Matches($defXml, '<driverClass>([^<]+)</driverClass>') | ForEach-Object { $_.Groups[1].Value })
-Assert-True 'driverClass uses the real namespace.type' (@($driverRefs | Where-Object { $_ -notin @("$modName.JobDriver_Kiss","$modName.JobDriver_KissThing") }).Count -eq 0 -and $driverRefs.Count -eq 2)
+Assert-True 'driverClass uses the real namespace.type' (@($driverRefs | Where-Object { $_ -notin @("$modName.JobDriver_Kiss","$modName.JobDriver_KissThing") }).Count -eq 0 -and $driverRefs.Count -eq 3)
 
 # 5a. 天意表完整性：每行必须有 scope、正权重、可解析的 thought（可空=不发心情）、
 #     旁白/短讯键必须双语齐备（与 Keyed 门同源）。坏行引擎会跳过，但门要提前喊。
@@ -213,13 +210,17 @@ foreach ($langDir in @('English', 'ChineseSimplified')) {
 Assert-True 'DefInjected uses flat DefName.path keys' ($injBad.Count -eq 0) ($injBad -join ' | ')
 
 # 6. DLL symbol audit + zero Harmony
-$text = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes($assemblyPath))
-$symbols = @('FloatMenuOptionProvider_Kiss','JobDriver_Kiss','KissUtility','KissBoundary','KissScope','KissScopeUtility','KissAmbient',
-    'KissDirector','Dialog_KissDirector','KissTicker','MainButtonWorker_KissDirector','KissMoodReward','KissCooldown','KissReturnQueue','MwahSettings','MwahMod','MWAH_JobDefOf','MWAH_ThoughtDefOf',"$modName.JobDriver_Kiss",'MWAH_Kiss','MWAH_KissedBond',
-    'KissThingAddon','KissThingAddons','KissWallAddon','MWAH_FateDef','KissFate','KissFateScopes','Thought_MemoryFated','Thought_MemorySocialFated',"$modName.JobDriver_KissThing",'FloatMenuOptionProvider_KissThing','MWAH_KissThing','MWAH_KissedWall','KissStage','KissReturn')
-$missingSyms = @($symbols | Where-Object { -not $text.Contains($_) })
-Assert-True ("DLL contains all $($symbols.Count) key symbols") ($missingSyms.Count -eq 0) ($missingSyms -join ', ')
-Assert-True 'zero-Harmony: no Harmony/HarmonyLib reference in DLL' (-not ($text.Contains('HarmonyLib') -or $text.Contains('Harmony')))
+foreach ($game in $gameVersions) {
+    $binary = Join-Path $root "$game/Assemblies/Mwah.dll"
+    $text = [Text.Encoding]::ASCII.GetString([IO.File]::ReadAllBytes($binary))
+    $symbols = @('FloatMenuOptionProvider_Kiss','JobDriver_Kiss','KissUtility','KissBoundary','KissScope','KissScopeUtility','KissAmbient',
+        'KissDirector','Dialog_KissDirector','KissTicker','MainButtonWorker_KissDirector','KissMoodReward','KissCooldown','KissActivity','MwahSettings','MwahMod','MWAH_JobDefOf','MWAH_ThoughtDefOf',"$modName.JobDriver_Kiss",'MWAH_Kiss','MWAH_KissedBond',
+        'KissThingAddon','KissThingAddons','KissWallAddon','MWAH_FateDef','KissFate','KissFateScopes','Thought_MemoryFated','Thought_MemorySocialFated',"$modName.JobDriver_KissThing",'FloatMenuOptionProvider_KissThing','MWAH_KissThing','MWAH_KissedWall','KissStage','KissReturn','MWAH_KissAddonDef','KissAddonJobExtension','KissTreeAddon','MWAH_KissTree','MWAH_KissedTree','MwahSettingsView')
+    $missingSyms = @($symbols | Where-Object { -not $text.Contains($_) })
+    Assert-True ("RimWorld $game DLL contains all $($symbols.Count) key symbols") ($missingSyms.Count -eq 0) ($missingSyms -join ', ')
+    Assert-True "RimWorld $game zero-Harmony" (-not ($text.Contains('HarmonyLib') -or $text.Contains('Harmony')))
+
+}
 
 # 6b. 自定义 Def 类的 XML 可解析性（2026-09-30 实机事故的回归门）：
 # DirectXmlLoader.DefFromNode 按 XML 根元素**短名**查类，只命中

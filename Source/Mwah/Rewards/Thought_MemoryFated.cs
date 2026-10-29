@@ -34,6 +34,16 @@ public class Thought_MemoryFated : Thought_Memory, IFatedNarration
 
     public string? NarrationSubject { get => narrationSubject; set => narrationSubject = value; }
 
+    public override bool TryMergeWithExistingMemory(out bool showBubble)
+    {
+        if (KissMoodReward.PreparePairMemoryReplacement(this))
+        {
+            showBubble = def.showBubble;
+            return false;
+        }
+        return base.TryMergeWithExistingMemory(out showBubble);
+    }
+
     public override string Description
     {
         get
@@ -42,7 +52,7 @@ public class Thought_MemoryFated : Thought_Memory, IFatedNarration
             {
                 return base.Description;
             }
-            return narrationKey.Translate(pawn.Named("PAWN"), narrationSubject.Named("WALL"));
+            return narrationKey.Translate(pawn.Named("PAWN"), narrationSubject.Named("TARGET"), narrationSubject.Named("WALL"));
         }
     }
 
@@ -68,6 +78,16 @@ public class Thought_MemorySocialFated : Thought_MemorySocial, IFatedNarration
 
     public string? NarrationSubject { get => narrationSubject; set => narrationSubject = value; }
 
+    public override bool TryMergeWithExistingMemory(out bool showBubble)
+    {
+        if (KissMoodReward.PreparePairMemoryReplacement(this))
+        {
+            showBubble = def.showBubble;
+            return false;
+        }
+        return base.TryMergeWithExistingMemory(out showBubble);
+    }
+
     public override string Description
     {
         get
@@ -76,7 +96,7 @@ public class Thought_MemorySocialFated : Thought_MemorySocial, IFatedNarration
             {
                 return base.Description;
             }
-            return narrationKey.Translate(pawn.Named("PAWN"), narrationSubject.Named("WALL"));
+            return narrationKey.Translate(pawn.Named("PAWN"), narrationSubject.Named("TARGET"), narrationSubject.Named("WALL"));
         }
     }
 

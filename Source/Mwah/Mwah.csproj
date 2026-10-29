@@ -3,14 +3,17 @@
   <PropertyGroup>
     <RootNamespace>Mwah</RootNamespace>
     <AssemblyName>Mwah</AssemblyName>
-    <TargetFramework>net472</TargetFramework>
+    <MWAHGameVersion Condition="'$(MWAHGameVersion)' == ''">1.6</MWAHGameVersion>
+    <TargetFramework Condition="'$(MWAHGameVersion)' == '1.6'">net472</TargetFramework>
+    <TargetFramework Condition="'$(MWAHGameVersion)' == '1.7'">net10.0</TargetFramework>
     <PlatformTarget>x64</PlatformTarget>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <OutputPath>$(MSBuildThisFileDirectory)../../1.6/Assemblies</OutputPath>
+    <OutputPath>$(MSBuildThisFileDirectory)../../$(MWAHGameVersion)/Assemblies</OutputPath>
     <LangVersion>12</LangVersion>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
   </PropertyGroup>
 
   <!-- 版本单一源头：SemVer，全仓库唯一字面量（2026-10-05 校准：旧形 Version/VersionPrefix
@@ -18,7 +21,7 @@
        SDK 会把 commit sha 追加进 InformationalVersion，发行侧由 MwahMod.VersionString 裁掉。
        tag 使用 v<version>。 -->
   <PropertyGroup>
-    <Version>0.2.2</Version>
+    <Version>0.3.0</Version>
     <AssemblyVersion>$(Version).0</AssemblyVersion>
     <FileVersion>$(Version).0</FileVersion>
     <InformationalVersion>$(Version)</InformationalVersion>
@@ -44,8 +47,16 @@
   </PropertyGroup>
 
   <!-- 零 Harmony：不引用 Lib.Harmony，运行时也不依赖 brrainz.harmony。 -->
-  <ItemGroup>
-    <PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.*" />
+  <ItemGroup Condition="'$(MWAHGameVersion)' == '1.6'">
+    <PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.4871" PrivateAssets="all" />
   </ItemGroup>
+  <ItemGroup Condition="'$(MWAHGameVersion)' == '1.7'">
+    <PackageReference Include="Krafs.Rimworld.Ref" Version="1.7.4990-unstable" PrivateAssets="all" />
+  </ItemGroup>
+
+  <Target Name="ValidateGameVersion" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(MWAHGameVersion)' != '1.6' and '$(MWAHGameVersion)' != '1.7'"
+           Text="MWAHGameVersion must be 1.6 or 1.7." />
+  </Target>
 
 </Project>

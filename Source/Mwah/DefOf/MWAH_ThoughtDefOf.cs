@@ -15,6 +15,8 @@ public static class MWAH_ThoughtDefOf
     // 亲墙天意：单 def 五档（stageIndex 0..4 = 越想越怪/毫无感觉/感觉不错/被回应了/爱上这堵墙）。
     public static ThoughtDef MWAH_KissedWall = null!;
 
+    public static ThoughtDef MWAH_KissedTree = null!;
+
     static MWAH_ThoughtDefOf()
     {
         DefOfHelper.EnsureInitializedInCtor(typeof(MWAH_ThoughtDefOf));

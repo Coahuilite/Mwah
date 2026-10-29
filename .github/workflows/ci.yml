@@ -24,28 +24,31 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history: the privacy audit below runs -FullHistory, so the CI backstop covers
+          # the historical-blob vector even when the local pre-push hook is skipped (--no-verify).
+          fetch-depth: 0
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           # Self-measured: the local evidence baseline for every gate is SDK 10.0.204 (no global.json),
-          # so the runner reproduces that machine. net472 targeting resolves from NuGet
-          # (Krafs.Rimworld.Ref) either way.
+          # so the runner reproduces that machine. Both game targets resolve pinned RimRef packages from NuGet
+          # (net472 for 1.6, net10.0 for 1.7); no installed game is needed.
           dotnet-version: '10.0.x'
 
       # The gates a maintainer runs by hand are the gates CI runs, so a push cannot be green locally
-      # and untested on the runner. Mwah's verify-local owns its builds (Release + Steam + GitHub
+      # and untested on the runner. Mwah's verify-local owns its builds (1.6/1.7 x Dev/Steam/GitHub
       # flavor compiles), so no separate restore/build step is needed before it.
-      - name: Verify (25 gates)
+      - name: Verify (full gate suite)
         shell: pwsh
         run: ./scripts/verify-local.ps1
 
-      # Privacy gate 的默认模式（工作树 + 提交信息 + 身份）跑在每次 CI 上，personal path 或凭据就
-      # 不可能跟着 commit 上 main；-FullHistory 仍是 push 前的人工步骤（runner 的 clone 是浅的，
-      # 扫不到全历史）。
-      - name: Privacy audit (working tree + commit messages + identity)
+      # 与本地 pre-push hook 同一份审计、同一档位（-FullHistory）：push 的把关是机械的、双层的
+      # （hook 拦在推之前，CI 兜在推之后），不再依赖任何人记得跑仪式。
+      - name: Privacy audit (full history)
         shell: pwsh
-        run: ./scripts/privacy-audit.ps1
+        run: ./scripts/privacy-audit.ps1 -FullHistory
 
       # pack-dev 默认只暂存文件夹（dev 的用途是整目录拷进 Mods/）；CI 要归档产物，
       # 所以点名 -Zip——stage-package 的写手保证 zip 根在 Mwah/ 下且盖 commit 日期。
@@ -53,6 +56,11 @@ jobs:
         if: github.event_name == 'push'
         shell: pwsh
         run: ./scripts/pack-dev.ps1 -Zip
+
+      - name: Audit staged artifact
+        if: github.event_name == 'push'
+        shell: pwsh
+        run: ./scripts/privacy-audit.ps1 -PackageDir dist/dev/Mwah
 
       - name: Upload dev artifact
         if: github.event_name == 'push'

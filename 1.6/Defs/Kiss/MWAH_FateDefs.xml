@@ -773,4 +773,88 @@
     <messageKey>MWAH.KissPawn.Beast.Line.7</messageKey>
     <messageType>NeutralEvent</messageType>
   </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_Tree_Basic_0</defName><scope>KissTree</scope>
+    <thought>MWAH_KissedTree</thought><stageIndex>0</stageIndex><weight>10</weight>
+    <narrationKey>MWAH.Fate.Tree.Basic.Awkward</narrationKey>
+    <messageKey>MWAH.KissTree.Result.Awkward</messageKey><messageType>NegativeEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_Tree_Basic_1</defName><scope>KissTree</scope>
+    <thought>MWAH_KissedTree</thought><stageIndex>1</stageIndex><weight>30</weight>
+    <narrationKey>MWAH.Fate.Tree.Basic.Quiet</narrationKey>
+    <messageKey>MWAH.KissTree.Result.Quiet</messageKey><messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_Tree_Basic_2</defName><scope>KissTree</scope>
+    <thought>MWAH_KissedTree</thought><stageIndex>2</stageIndex><weight>35</weight>
+    <narrationKey>MWAH.Fate.Tree.Basic.Calm</narrationKey>
+    <messageKey>MWAH.KissTree.Result.Calm</messageKey><messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_Tree_Basic_3</defName><scope>KissTree</scope>
+    <thought>MWAH_KissedTree</thought><stageIndex>3</stageIndex><weight>20</weight>
+    <narrationKey>MWAH.Fate.Tree.Basic.Rooted</narrationKey>
+    <messageKey>MWAH.KissTree.Result.Rooted</messageKey><messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_Tree_Basic_4</defName><scope>KissTree</scope>
+    <thought>MWAH_KissedTree</thought><stageIndex>4</stageIndex><weight>5</weight>
+    <narrationKey>MWAH.Fate.Tree.Basic.Belonging</narrationKey>
+    <messageKey>MWAH.KissTree.Result.Belonging</messageKey><messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef MayRequire="Ludeon.RimWorld.Ideology">
+    <defName>MWAH_Fate_Tree_Affirming_0</defName><scope>KissTreeAffirming</scope>
+    <thought>MWAH_KissedTree</thought><stageIndex>0</stageIndex><weight>3</weight>
+    <narrationKey>MWAH.Fate.Tree.Affirming.Awkward</narrationKey>
+    <messageKey>MWAH.KissTree.Result.Awkward</messageKey><messageType>NegativeEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef MayRequire="Ludeon.RimWorld.Ideology">
+    <defName>MWAH_Fate_Tree_Affirming_1</defName><scope>KissTreeAffirming</scope>
+    <thought>MWAH_KissedTree</thought><stageIndex>1</stageIndex><weight>17</weight>
+    <narrationKey>MWAH.Fate.Tree.Affirming.Quiet</narrationKey>
+    <messageKey>MWAH.KissTree.Result.Quiet</messageKey><messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef MayRequire="Ludeon.RimWorld.Ideology">
+    <defName>MWAH_Fate_Tree_Affirming_2</defName><scope>KissTreeAffirming</scope>
+    <thought>MWAH_KissedTree</thought><stageIndex>2</stageIndex><weight>35</weight>
+    <narrationKey>MWAH.Fate.Tree.Affirming.Calm</narrationKey>
+    <messageKey>MWAH.KissTree.Result.Calm</messageKey><messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef MayRequire="Ludeon.RimWorld.Ideology">
+    <defName>MWAH_Fate_Tree_Affirming_3</defName><scope>KissTreeAffirming</scope>
+    <thought>MWAH_KissedTree</thought><stageIndex>3</stageIndex><weight>30</weight>
+    <narrationKey>MWAH.Fate.Tree.Affirming.Rooted</narrationKey>
+    <messageKey>MWAH.KissTree.Result.Rooted</messageKey><messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef MayRequire="Ludeon.RimWorld.Ideology">
+    <defName>MWAH_Fate_Tree_Affirming_4</defName><scope>KissTreeAffirming</scope>
+    <thought>MWAH_KissedTree</thought><stageIndex>4</stageIndex><weight>15</weight>
+    <narrationKey>MWAH.Fate.Tree.Affirming.Belonging</narrationKey>
+    <messageKey>MWAH.KissTree.Result.Belonging</messageKey><messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef MayRequire="Ludeon.RimWorld.Ideology">
+    <defName>MWAH_Fate_Tree_Connected_1</defName><scope>KissTreeConnected</scope>
+    <thought>MWAH_KissedTree</thought><stageIndex>1</stageIndex><weight>10</weight>
+    <narrationKey>MWAH.Fate.Tree.Connected.Quiet</narrationKey>
+    <messageKey>MWAH.KissTree.Result.Quiet</messageKey><messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef MayRequire="Ludeon.RimWorld.Ideology">
+    <defName>MWAH_Fate_Tree_Connected_2</defName><scope>KissTreeConnected</scope>
+    <thought>MWAH_KissedTree</thought><stageIndex>2</stageIndex><weight>25</weight>
+    <narrationKey>MWAH.Fate.Tree.Connected.Calm</narrationKey>
+    <messageKey>MWAH.KissTree.Result.Calm</messageKey><messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef MayRequire="Ludeon.RimWorld.Ideology">
+    <defName>MWAH_Fate_Tree_Connected_3</defName><scope>KissTreeConnected</scope>
+    <thought>MWAH_KissedTree</thought><stageIndex>3</stageIndex><weight>40</weight>
+    <narrationKey>MWAH.Fate.Tree.Connected.Rooted</narrationKey>
+    <messageKey>MWAH.KissTree.Result.Rooted</messageKey><messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
+  <MWAH_FateDef MayRequire="Ludeon.RimWorld.Ideology">
+    <defName>MWAH_Fate_Tree_Connected_4</defName><scope>KissTreeConnected</scope>
+    <thought>MWAH_KissedTree</thought><stageIndex>4</stageIndex><weight>25</weight>
+    <narrationKey>MWAH.Fate.Tree.Connected.Belonging</narrationKey>
+    <messageKey>MWAH.KissTree.Result.Belonging</messageKey><messageType>NeutralEvent</messageType>
+  </MWAH_FateDef>
 </Defs>

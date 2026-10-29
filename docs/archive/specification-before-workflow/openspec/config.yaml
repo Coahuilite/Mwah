@@ -1,0 +1,32 @@
+# Historical pre-migration tool metadata; not active project configuration.
+schema: spec-driven
+
+context: |
+  Language: English
+  All artifacts must be written in English.
+  Keep OpenSpec structural headings and SHALL/MUST keywords in English.
+  Mwah! is a zero-Harmony, live-map, single-player RimWorld mod.
+  Read AGENTS.md and openspec/README.md for authority and the spec-first workflow.
+  Specs contain behavior contracts only; implementation state belongs in tasks.md.
+  Preserve existing entry points, settings keys, Def identities, and save meaning.
+  Existing checks may run; do not create unit tests or add unit-test cases.
+  In-game execution and installation are the maintainer's responsibility.
+
+rules:
+  specs:
+    - Write concise observable requirements with concrete WHEN/THEN scenarios.
+    - Do not include progress, implementation status, defect lists, or technical plans.
+  design:
+    - Separate observed source evidence, technical decisions, and unresolved questions.
+  tasks:
+    - Keep completion state and actual verification evidence here, not in specs.
+
+operations:
+  apply:
+    guidance:
+      - Read and update the affected specs before implementation, including follow-ups.
+      - Preserve assertions and contracts; update specs first when an authorized decision changes them.
+  archive:
+    guidance:
+      - Archive only after applicable implementation and verification are complete.
+      - Check the merged baseline for lost requirements and scenarios.

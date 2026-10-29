@@ -18,23 +18,6 @@ namespace Mwah;
 /// </summary>
 public sealed class KissWallAddon : KissThingAddon
 {
-    public static readonly KissWallAddon Instance = new();
-
-    public override string Scope => ScopeConst;
-
-    /// <summary>稳定 Id：设置字典的 key（"wall"）。改名即迁移，定死。</summary>
-    public override string Id => "wall";
-
-    public override string NameKey => "MWAH.Addon.Wall.Name";
-
-    public override string SwitchLabelKey => "MWAH.Settings.WallKissing";
-
-    public override string SwitchDescKey => "MWAH.Settings.WallKissingDesc";
-
-    public override bool DefaultActive => Constants.WallKissing;
-
-    public override int DefaultThoughtDurationTicks => Constants.WallThoughtDurationTicks;
-
     public override bool Accepts(Thing thing)
     {
         if (thing is not { Spawned: true } || thing.Destroyed || thing.def.category != ThingCategory.Building)
@@ -60,7 +43,7 @@ public sealed class KissWallAddon : KissThingAddon
     /// 兜底分布（表被删空时）：与出厂 MWAH_FateDefs.xml 同权重、无旁白 ——
     /// 20/30/25/17/8 掷五档，心情照发、短讯照弹，只是心情条目退回静态描述。
     /// </summary>
-    public override void SettleWithoutTable(Pawn doer, Thing target)
+    public override void SettleWithoutTable(Pawn doer, Thing target, string scope)
     {
         int[] weights = { 20, 30, 25, 17, 8 };
         string[] messageKeys =

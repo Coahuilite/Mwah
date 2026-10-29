@@ -33,6 +33,9 @@ public static class Constants
     public const int WallThoughtDurationTicks = 30000;
 
     public const float MoodMultiplier = 1f;
+    public const bool SocialImpactCompression = true;
+    public const float SocialImpactBaseline = 1.37f;   // 原版 20 级社交技能因子。
+    public const float SocialImpactHeadroom = 0.13f;   // 有效值趋近 1.50；不截断玩家倍率。
     /// <summary>心情倍率粒度 0.05 倍。</summary>
     public const float MoodMultiplierStep = 0.05f;
 
@@ -42,6 +45,7 @@ public static class Constants
     public const bool ChangeOpinion = false;           // 默认不接入原版恋爱/好感链
     public const bool ReturnHomeAfterKiss = true;
     public const bool DirectorButton = true;             // 底栏「亲吻导演台」按钮
+    public const bool TreeCulturalIntegration = true;
     public const bool WallKissing = true;                // 亲墙：默认开（内容开关，刻意不挨着门禁滑条）
     public const bool NoCooldowns = false;                 // 超凡智能的大手：无视冷却
     public const bool AutonomousKissing = false;      // 第三优先级，先不默认开

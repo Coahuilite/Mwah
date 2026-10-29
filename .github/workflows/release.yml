@@ -64,8 +64,8 @@ jobs:
             throw "Release tag commit $tagCommit is not in origin/main history. Merge the release commit into main before tagging."
           }
 
-      # 发布门与维护者本地跑的是同一套（25 门 + 双语键 + 渠道构建 + 天意表完整性）。
-      - name: Verify (25 gates)
+      # 发布门与维护者本地跑的是同一套（双版本 × 三渠道构建、双语键、天意表与类型清单）。
+      - name: Verify (full gate suite)
         shell: pwsh
         run: ./scripts/verify-local.ps1
 
@@ -74,6 +74,10 @@ jobs:
         env:
           RELEASE_TAG: ${{ github.ref_name }}
         run: ./scripts/pack-github.ps1 -Version $env:RELEASE_TAG
+
+      - name: Audit staged release
+        shell: pwsh
+        run: ./scripts/privacy-audit.ps1 -FullHistory -PackageDir dist/github/Mwah
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

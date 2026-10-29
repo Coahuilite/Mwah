@@ -5,102 +5,95 @@ using Verse.AI;
 
 namespace Mwah;
 
-/// <summary>
-/// "亲完走回原位"的 job 内收尾 toil —— 双人镜像 job 与亲物 job 共用。
-///
-/// 为什么它在 job 里：敌对单位的 think tree 只在 job 结束后接管。回程段留在 job 内，
-/// 接近、表演、离开就全程都在 job 所有权之下 ⇒ **停火窗口 = job 生命期**，不需要任何额外机制。
-/// 旧写法是 job 一结束就从队列发 Goto —— Goto 是随时可被 think tree 抢走的普通 job，
-/// 袭击者亲完迈出第二步就重新锁定目标了。
-///
-/// 直接结束 job，兜底交给 kiss 段 finish action 登记的 KissReturnQueue ——
-/// 殖民者"亲完还是走回家"的礼貌不丢，队列自己的准入过滤会消化掉不该发的。
-/// 走位止损与双人版同一套：同一段路连发三次（被人堵、门被关）就地结束；
-/// 另有阶段 tick 硬顶，回程是礼貌不是刑期，窗口可以短、不能长。
-/// </summary>
-public static class KissReturn
+/// <summary>Shared, bounded departure after logical kiss completion, inside the originating job.</summary>
+public sealed class KissReturn
 {
-
-    /// <summary>回程段硬顶：1200 tick = 20 现实秒。到点就地结束，剩下的路交给队列兜底。</summary>
     private const int PhaseTicksCap = 1200;
+    private int elapsedTicks;
+    private readonly WalkTally tally = new();
 
-    /// <summary>
-    /// 造回程 toil。arrive 由调用方传 <c>ReadyForNextToil</c>（这是最后一个 toil，推进即正常结束）。
-    /// 内部状态（重试计数、阶段计时）刻意不进存档：读档后重新起一段路即可，
-    /// 与定台走位的 walkAttempts 同一取舍。
-    /// </summary>
-    public static Toil MakeToil(string traceTag, Pawn pawn, Func<IntVec3> homeCell, Func<bool> passive, Action arrive)
+    public void ExposeData()
+    {
+        Scribe_Values.Look(ref elapsedTicks, "returnTicks", 0);
+    }
+
+    public Toil MakeToil(string traceTag, Pawn pawn, Func<IntVec3> homeCell, Func<bool> passive, Action arrive) =>
+        MakeToil(traceTag, pawn, homeCell, passive, arrive, null);
+
+    public Toil MakeToil(string traceTag, Pawn pawn, Func<IntVec3> homeCell, Func<bool> passive, Action arrive, Job? owner)
     {
         var toil = ToilMaker.MakeToil("ToilReturnHome");
-        var walker = new Walker();
-        IntVec3 home = IntVec3.Invalid;
-        int ticks = 0;
-        bool endImmediately = true;
-
+        bool reservationsReleased = false;
+        void ReleaseOnce()
+        {
+            if (reservationsReleased) return;
+            reservationsReleased = true;
+            if (owner != null) ReleaseReservations(pawn, owner);
+        }
         toil.initAction = delegate
         {
+            ReleaseOnce();
             KissTrace.Set(passive(), traceTag);
-            ticks = 0;
-            home = homeCell();
-            endImmediately = !MwahMod.Settings.ReturnsHome || home == pawn.Position || !walker.Begin(pawn, home);
-            if (!endImmediately)
-            {
-                MwahLog.Dev("kiss return: " + pawn.LabelShort + " -> " + home);
-            }
+            Advance(pawn, homeCell(), arrive);
         };
         toil.tickIntervalAction = delegate (int delta)
         {
-            if (endImmediately)
+            // A loaded departure does not rerun initAction. Release legacy kiss targets on
+            // its first tick too, without touching the destination reservation for walking home.
+            ReleaseOnce();
+            elapsedTicks += delta;
+            if (elapsedTicks >= PhaseTicksCap)
             {
                 arrive();
                 return;
             }
-            ticks += delta;
-            if (ticks >= PhaseTicksCap)
-            {
-                arrive();
-                return;
-            }
-            if (pawn.pather != null && pawn.pather.Moving)
-            {
-                return;
-            }
-            if (pawn.Position == home)
-            {
-                pawn.pather?.StopDead();
-                arrive();
-                return;
-            }
-            // 半路被堵停下来了：重发同一段路，预算用尽就地结束（finish action 登记的队列接着送）。
-            if (!walker.Begin(pawn, home))
-            {
-                arrive();
-            }
+            // Loading a current toil rebuilds delegates without rerunning initAction.
+            // The saved home and elapsed time, not closure-local flags, own the departure.
+            Advance(pawn, homeCell(), arrive);
         };
         toil.socialMode = RandomSocialMode.Off;
         toil.defaultCompleteMode = ToilCompleteMode.Never;
         return toil;
     }
 
-    /// <summary>一段回家路的记账本：止损计数用共享 WalkTally（与两个 job driver 同一把尺），
-    /// 这里只剩发路动作。闭包捕获变量不能作 ref 实参，所以收进小类。</summary>
-    private sealed class Walker
-    {
-        private readonly WalkTally tally = new();
+    /// <summary>Only the named kiss job's ordinary target/stage reservations; never a newer job.</summary>
+    public static void ReleaseReservations(Pawn pawn, Job owner) =>
+        pawn.Map?.reservationManager.ReleaseClaimedBy(pawn, owner);
 
-        /// <summary>起（或重发）一段路。动不了、够不到、同一段路超预算，都算走不动。</summary>
-        public bool Begin(Pawn pawn, IntVec3 dest)
+    private void Advance(Pawn pawn, IntVec3 home, Action arrive)
+    {
+        if (!MwahMod.Settings.ReturnsHome || !home.IsValid || pawn.Position == home
+            || !KissBoundary.CanMoveNow(pawn))
         {
-            if (!dest.IsValid || !KissBoundary.CanMoveNow(pawn))
-            {
-                return false;
-            }
-            if (!tally.KeepTrying(dest) || !pawn.CanReach(dest, PathEndMode.OnCell, Danger.Deadly))
-            {
-                return false;
-            }
-            pawn.pather.StartPath(dest, PathEndMode.OnCell);
-            return true;
+            pawn.pather?.StopDead();
+            arrive();
+            return;
         }
+        if (pawn.pather.Moving)
+        {
+            return;
+        }
+        if (!tally.KeepTrying(home) || !pawn.CanReach(home, PathEndMode.OnCell, Danger.Deadly))
+        {
+            arrive();
+            return;
+        }
+        pawn.pather.StartPath(home, PathEndMode.OnCell);
+    }
+
+    /// <summary>
+    /// Return a Job, never start it in cleanup. Vanilla schedules it after the old job releases
+    /// ownership. Replacements and violence must not acquire a return prefix.
+    /// </summary>
+    public static Job? Finalizer(Pawn pawn, IntVec3 home, JobCondition condition, bool departureFinished)
+    {
+        if (condition != JobCondition.Succeeded || !departureFinished || !MwahMod.Settings.ReturnsHome
+            || pawn.Dead || !pawn.Spawned || !home.IsValid || pawn.Position == home
+            || !home.InBounds(pawn.Map) || !KissBoundary.CanMoveNow(pawn)
+            || !pawn.CanReach(home, PathEndMode.OnCell, Danger.Deadly))
+        {
+            return null;
+        }
+        return JobMaker.MakeJob(JobDefOf.Goto, home);
     }
 }

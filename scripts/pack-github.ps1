@@ -29,11 +29,8 @@ if ($LASTEXITCODE -ne 0 -or $shortCommit.Count -ne 1) {
     throw 'Failed to determine the current Git commit for package labeling.'
 }
 
-$buildLog = & dotnet build $projectFile -c Release -p:MWAHBuildFlavor=GitHub -nologo -v quiet 2>&1
-if ($LASTEXITCODE -ne 0) {
-    $buildLog | Out-Host
-    throw 'GitHub flavor build failed; refusing to package.'
-}
+& (Join-Path $PSScriptRoot 'build-runtime.ps1') -ProjectRoot $root -BuildFlavor GitHub
+if ($LASTEXITCODE -ne 0) { throw 'Dual-version build failed; refusing stale package.' }
 
 & (Join-Path $PSScriptRoot 'stage-package.ps1') -ProjectRoot $root -StageDir $stageDir `
     -VersionLabel $Version.TrimStart('v') -BuildFlavor github -CommitLabel ([string]$shortCommit[0]).Trim()
