@@ -1,6 +1,6 @@
 # 工坊页面文案维护源（Workshop page copy, single source）
 
-> **目标：0.3.0（发布前草案）。** 1.6 常规／倒地配对已验收；1.7 等剩余覆盖及渠道整备见[发布前记录](release_review/release-0.3.0-preparation-zh.md)。本轮不更新线上页面；已发布基线仍为 0.2.2，旧文案保留于 docs/archive/steam-workshop-page-0.2.2.md。
+> **0.3.0 发布文案。** 维护者已接受 1.6／1.7 验收并授权本次更新；渠道实际状态见[发布记录](release_review/release-0.3.0-review-zh.md)。旧版文案保留于 docs/archive/steam-workshop-page-0.2.2.md。
 
 本文是中英工坊描述的唯一维护源，不是 changelog 也不是发布记录。页面编辑、双预览、上传由维护者执行；agent 只做公开页面只读核验。
 
@@ -38,7 +38,7 @@
 [h2]兼容性[/h2]
 [list]
 [*]RimWorld 1.6 / 1.7，仅需 Core；无前置模组、无 Harmony、无框架依赖。
-[*]1.7 目标为 4990 rev1069，当前等待实机验收。DLC 可选：机械族、异象实体、Odyssey 无人机等按各自本性参与，没有 DLC 也完整可用。
+[*]1.7 适配目标为 4990 rev1069。DLC 可选：亲树可按文化选择结果，关闭文化结果或没有文化 DLC 时仍保留基础亲树；机械族、异象实体、Odyssey 无人机等按各自本性参与。
 [/list]
 
 [h2]下载与反馈[/h2]
@@ -74,7 +74,7 @@ Let any Pawn kiss any Pawn — tolerate the audacity of affection.
 [h2]Compatibility[/h2]
 [list]
 [*]RimWorld 1.6 / 1.7, Core only. No Harmony, no framework mods, nothing to load before this mod.
-[*]1.7 targets 4990 rev1069 and is awaiting in-game acceptance. DLC optional: mechanoids, anomalies and Odyssey drones participate per their own nature; everything works without any DLC.
+[*]1.7 targets 4990 rev1069. DLC is optional: tree outcomes can follow the acting pawn's beliefs, while basic tree kissing remains available with culture switched off or without Ideology. Mechanoids, anomalies and Odyssey drones participate per their own nature.
 [/list]
 
 [h2]Download & feedback[/h2]

@@ -31,7 +31,7 @@ Settings open on **Gameplay & addons**: manage wall/tree extensions first, then 
 
 **Compress excessive social impact** sits beside mood strength and is on by default, including when older settings lack the new key. Impact up to 137% stays unchanged; excess gains diminish toward 150%, so one base reward approaches +7.5 at the default 1x multiplier. Off restores the original formula. It also applies to enabled opinion effects, not walls or trees. Existing memories keep their values until the same partner is kissed again; that settlement replaces the old pair slot with current strength, duration and narration.
 
-The 0.3.x line targets **0.3.0**, now in [pre-publication preparation](./docs/release_review/release-0.3.0-preparation-zh.md), not yet released. Local test packages include 1.6 and 1.7 (4990 rev1069); the game selects only its matching directory. Use the whole `dist/dev/Mwah` produced by packaging, not the source checkout or a mixture of DLLs. Installation and in-game acceptance remain the maintainer’s actions; see the [acceptance notes](./docs/development/tree-kissing-and-settings.md#实机验收与反馈).
+**0.3.0** supports RimWorld 1.6 and 1.7; the maintainer has accepted both versions. See the [release record](./docs/release_review/release-0.3.0-review-zh.md) for channel status. Local test packages include 1.6 and 1.7 (4990 rev1069); the game selects only its matching directory. Use the whole `dist/dev/Mwah` produced by packaging, not the source checkout or a mixture of DLLs. Installation and in-game acceptance remain the maintainer’s actions; see the [acceptance notes](./docs/development/tree-kissing-and-settings.md#实机验收与反馈).
 
 ## Development, packaging, and versioning
 

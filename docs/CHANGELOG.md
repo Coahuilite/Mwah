@@ -33,6 +33,7 @@ One-line release summary.
 - ...
 
 ### Changed
+- Refresh the cover art for 1.6 / 1.7, paired kisses, walls and trees.
 - ...
 
 ### Fixed
@@ -66,7 +67,7 @@ One-line release summary.
 - Remove native-target compiler warnings without suppressions; retain the default 1.6 build entry.
 
 ### Notes
-- Prepare 0.3.0 on 0.3.x, not yet released. The maintainer has accepted normal and downed-receiver pairing in 1.6; 1.7, tree culture, settings UI and save/load coverage remain pending.
+- The maintainer accepts 0.3.0 after confirming pairing in 1.6 and 1.7. Native support targets 1.7.4990 rev1069 alongside 1.6.
 
 ## [2026-10-06 00:00 UTC+8] Version 0.2.2
 

@@ -1,6 +1,6 @@
 # 社交收益软上限：实现与验收
 
-本切片纳入 `0.3.x` 的待发布 **0.3.0**。合同已先于代码在 `78b02e6` 采用：现行 [KISS-06／07](../../openspec/specs/kissing/spec.md)、[SET-01／02](../../openspec/specs/settings/spec.md)、[USE-01](../../openspec/specs/settings-use/spec.md)。完整旧要求及采用 delta 位于[变更记录](../../openspec/changes/social-impact-soft-cap/adoption.md)，不以本页替代规格。
+本切片纳入 `0.3.x` 的 **0.3.0**，维护者已接受验收并授权发布，见[发布记录](../release_review/release-0.3.0-review-zh.md)。合同已先于代码在 `78b02e6` 采用：现行 [KISS-06／07](../../openspec/specs/kissing/spec.md)、[SET-01／02](../../openspec/specs/settings/spec.md)、[USE-01](../../openspec/specs/settings-use/spec.md)。完整旧要求及采用 delta 位于[变更记录](../../openspec/changes/social-impact-soft-cap/adoption.md)，不以本页替代规格。
 
 ## 使用与生效
 
@@ -33,6 +33,8 @@
 
 ## 实机验收与反馈
 
+下列保留原覆盖范围；维护者已接受候选发布，未逐项记录的细项不补记为实测通过。
+
 维护者分别使用 1.6 和 **1.7.4990 rev1069** 的完整测试包，记录包身份、游戏 build 及实际输入／结果；保留当前存档用于恢复，不覆盖唯一存档。
 
 1. **开关和收益**：检查基准内 Pawn 不变，超常社交 Pawn 在开启时收益递减，关闭后下一次结算恢复原公式。确认好感开关的两条路径及原版思想抵消／无心情通道仍正常。
@@ -50,8 +52,8 @@
 | 1000% | +50 | 约 +7.4904 |
 | 10000% | +500 | 约 +7.4991 |
 
-反馈记录于[本切片任务 5](../../openspec/changes/social-impact-soft-cap/tasks.md)。提供脱敏步骤及错误摘要，不把私人日志、存档或本地路径提交到仓库；原亲树／设置页变更的待验收项继续由其原任务管理。
+反馈记录于[本切片任务 5](../../openspec/changes/social-impact-soft-cap/tasks.md)。提供脱敏步骤及错误摘要，不把私人日志、存档或本地路径提交到仓库；本轮采用结果及覆盖状态见各变更记录。
 
 ## 测试包
 
-仍使用 `pwsh scripts/pack-dev.ps1 -Zip`。完整目录为 `dist/dev/Mwah/`，ZIP 为 `dist/dev/Mwah-dev-v0.3.0-<commit>.zip`，解压只有一个顶层 `Mwah/`。`version.txt` 和两份 DLL 均应对应同一提交且无 `-dirty`。只更新本地包并推送开发分支，不打 tag、不合 main、不发布 GitHub Release 或工坊。
+仍使用 `pwsh scripts/pack-dev.ps1 -Zip`。完整目录为 `dist/dev/Mwah/`，ZIP 为 `dist/dev/Mwah-dev-v0.3.0-<commit>.zip`，解压只有一个顶层 `Mwah/`。`version.txt` 和两份 DLL 均应对应同一提交且无 `-dirty`。正式渠道按发布记录及既有发布流程交付。

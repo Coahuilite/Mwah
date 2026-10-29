@@ -22,7 +22,7 @@
 
 ## 发布顺序
 
-1. **候选准备**。版本主源 = csproj `<Version>`，`About/About.xml <modVersion>` 跟随（verify-local 门钉死三处一致）；实机矩阵全部验收通过；文案与双语键齐备。试玩用 `build-dev.ps1` 产物；dirty 包只作测试证据。
+1. **候选准备**。版本主源 = csproj `<Version>`，`About/About.xml <modVersion>` 跟随（verify-local 门钉死三处一致）；实际验收结果及维护者采用决定已记录，未逐项覆盖不冒充实测通过；文案与双语键齐备。试玩用 `build-dev.ps1` 产物；dirty 包只作测试证据。
 2. **最小仪式（仅发布）**：`verify-local` 全绿 → `privacy-audit -FullHistory -PrePush` 全绿（`-PrePush` 的干净树 / main 存在 / 待推提交与 tag 集合自检只在发布时有意义）→ 维护者裁决版本、渠道与工坊文案。日常 push 无人工仪式、无逐次授权：隐私拦截已由 hook + CI 机械化（2026-10-06 简化：同日两次人工漏跑证明靠记忆的门禁不是门禁）。
 3. **合入 main**：squash merge（受保护 main 走 PR），合并后 `git diff --stat <当前版本分支> main` 应为空。
 4. **GitHub**：在 main 的发布提交上 `git tag vX.Y.Z && git push origin vX.Y.Z`（需授权）。Release CI 校验 tag/版本/血统 → 全部离线门 → GitHub flavor → `dist/github/Mwah-vX.Y.Z.zip` → 自动建 Release（pre-release 由 `-` 后缀自动判定）。
