@@ -1,6 +1,8 @@
 # 编译输出：仓库只存源码，DLL/PDB 由构建再生
 1.6/Assemblies/*.dll
 1.6/Assemblies/*.xml
+1.7/Assemblies/*
+!1.7/Assemblies/.gitkeep
 *.pdb
 !.gitkeep
 

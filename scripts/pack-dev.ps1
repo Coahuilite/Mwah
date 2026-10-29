@@ -20,11 +20,8 @@ $projectFile = Join-Path $root "Source\$modName\$modName.csproj"
 # 打包必构建（2026-10-04 事故纪律）：本脚本曾只搬 1.6/Assemblies 里的现成 DLL，
 # 把旧产物装进新标签的包（包名 864df31、DLL 里是 ae8d855，两个修复根本没进包）。
 # dotnet 的完整输出只在失败时回显；成功路径依旧一行。
-$buildLog = & dotnet build $projectFile -c Release -nologo -v quiet 2>&1
-if ($LASTEXITCODE -ne 0) {
-    $buildLog | Out-Host
-    throw 'Release build failed; refusing to package a stale DLL.'
-}
+& (Join-Path $PSScriptRoot 'build-runtime.ps1') -ProjectRoot $root -BuildFlavor Dev
+if ($LASTEXITCODE -ne 0) { throw 'Dual-version build failed; refusing stale package.' }
 
 [xml]$projectXml = Get-Content -LiteralPath $projectFile -Raw
 $versionNode = $projectXml.SelectSingleNode('/Project/PropertyGroup/Version')
@@ -45,8 +42,8 @@ if ($LASTEXITCODE -ne 0) {
 }
 $commitLabel = $shortCommit + $(if ($statusOutput.Count -gt 0) { '-dirty' } else { '' })
 
-# 先清历史 zip 再暂存：不点名 -Zip 时不产 zip，也绝不让上一轮的 zip 冒充本轮产物。
-Get-ChildItem -LiteralPath (Split-Path -Parent $stageDir) -File -Filter "$modName-dev-v*.zip" -ErrorAction SilentlyContinue |
+# 只清当前版本的历史 zip 再暂存：不点名 -Zip 时不产 zip，也绝不让上一轮的 zip 冒充本轮产物。
+Get-ChildItem -LiteralPath (Split-Path -Parent $stageDir) -File -Filter "$modName-dev-v$version-*.zip" -ErrorAction SilentlyContinue |
     Remove-Item -Force
 $stageArgs = @{
     ProjectRoot  = $root

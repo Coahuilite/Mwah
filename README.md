@@ -8,7 +8,7 @@ This README describes the current feature set and is not a release announcement;
 
 ## Requirements
 
-- RimWorld **1.6** (Core only — no DLC or mod dependencies; DLC pawns like mechanoids, xenotypes and anomalies participate per their own nature).
+- RimWorld **1.6 / 1.7** (Core only — no DLC or mod dependencies; DLC pawns like mechanoids, xenotypes and anomalies participate per their own nature).
 - No Harmony, no framework mods, nothing to load before this mod.
 
 Install a published package into `RimWorld/Mods/`.
@@ -29,6 +29,8 @@ Settings open on **Gameplay & addons**: manage wall/tree extensions first, then 
 
 **Parameters & misc.** holds timing, cooldowns, paired-mood tuning, ambient parameters, diagnostics and **Restore all defaults**. Identity, master switch and navigation stay pinned; pages scroll independently. Durations show ticks / real seconds / game hours. Numeric edits commit on Enter, focus loss, page changes, collapsing or closing; invalid text retains the previous value. Pairing scope applies only to Pawn pairs, not addons.
 
+The 0.3.x line targets **0.3.0**, not yet released. Local test packages include 1.6 and 1.7 (4990 rev1069); the game selects only its matching directory. Use the whole `dist/dev/Mwah` produced by packaging, not the source checkout or a mixture of DLLs. Installation and in-game acceptance remain the maintainer’s actions; see the [acceptance notes](./docs/development/tree-kissing-and-settings.md#实机验收与反馈).
+
 ## Development, packaging, and versioning
 
 The only manually maintained product version is `<Version>` in `Source/Mwah/Mwah.csproj`. Builds never install into RimWorld.
@@ -37,14 +39,14 @@ Read the [current specifications and change workflow](./docs/specification.md) b
 
 ```powershell
 pwsh scripts/pack-dev.ps1                           # dev: Release build + stage dist/dev/Mwah (folder; -Zip optional)
-pwsh scripts/pack-github.ps1 -Version v0.2.1        # GitHub flavor -> dist/github/Mwah-vX.Y.Z.zip
+pwsh scripts/pack-github.ps1 -Version v0.3.0        # GitHub flavor -> dist/github/Mwah-vX.Y.Z.zip
 pwsh scripts/pack-steam.ps1                         # Steam flavor -> dist/steam/Mwah (clean tree required)
-pwsh scripts/verify-local.ps1                       # all offline gates: 3 flavor builds, keyed parity,
+pwsh scripts/verify-local.ps1                       # all offline gates: 2 game targets × 3 flavors, keyed parity,
                                                     # fate-table completeness, DLL symbol audit, zero-Harmony proof
-pwsh scripts/privacy-audit.ps1 -FullHistory -PrePush # the pre-push ritual
+pwsh scripts/privacy-audit.ps1 -PackageDir dist/dev/Mwah # inspect the actual package; the hook audits history on push
 ```
 
-CI (`.github/workflows/ci.yml`) runs the same gates plus the privacy default scan on every push and PR to any version branch (`[0-9].[0-9].x`) or `main`. Commit discipline: Conventional Commits (see `.gitmessage`), work on the current version branch, squash-merge into `main` which is release-only, history is append-only — no amend, no rebase. The full flow lives in [`docs/release-runbook-zh.md`](./docs/release-runbook-zh.md); the release copy for the Workshop page is maintained in [`docs/steam-workshop-page.md`](./docs/steam-workshop-page.md) and version history in [`docs/CHANGELOG.md`](./docs/CHANGELOG.md) / [`docs/CHANGELOG.zh-CN.md`](./docs/CHANGELOG.zh-CN.md).
+CI (`.github/workflows/ci.yml`) runs the same gates and full-history privacy audit on every push and PR to any version branch (`[0-9].[0-9].x`) or `main`; push artifacts also pass a staged-payload audit before upload. Commit discipline: Conventional Commits (see `.gitmessage`), work on the current version branch, squash-merge into `main` which is release-only, history is append-only — no amend, no rebase. The full flow lives in [`docs/release-runbook-zh.md`](./docs/release-runbook-zh.md); the release copy for the Workshop page is maintained in [`docs/steam-workshop-page.md`](./docs/steam-workshop-page.md) and version history in [`docs/CHANGELOG.md`](./docs/CHANGELOG.md) / [`docs/CHANGELOG.zh-CN.md`](./docs/CHANGELOG.zh-CN.md).
 
 ## Hard boundaries
 

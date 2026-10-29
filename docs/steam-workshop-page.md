@@ -1,6 +1,6 @@
 # 工坊页面文案维护源（Workshop page copy, single source）
 
-> **目标：0.2.2（已发布，2026-10-05）。** 首次上传时整块粘贴对应语言，勾选后按页面预览核对一次。发布状态以本页头部与 `MEMORY.md` 耐久状态为准，不以本文件历史版本为准。
+> **目标：0.3.0（待发布草案，尚待实机验收）。** 本轮只维护仓库草案，不更新线上页面；线上仍为 0.2.2，已发布文案保留于 docs/archive/steam-workshop-page-0.2.2.md。发布状态以本页头部与 `MEMORY.md` 耐久状态为准，不以本文件历史版本为准。
 
 本文是中英工坊描述的唯一维护源，不是 changelog 也不是发布记录。页面编辑、双预览、上传由维护者执行；agent 只做公开页面只读核验。
 
@@ -21,8 +21,8 @@
 本模组由 AI 规划、AI 编程、AI 维护，并由人类维护者审查、测试、打包和发布。
 
 [h1]所有Pawn都给我啵嘴！[/h1]
-[b]模组版本：[/b]0.2.2
-[b]适用版本：[/b]RimWorld 1.6
+[b]模组版本：[/b]0.3.0
+[b]适用版本：[/b]RimWorld 1.6 / 1.7
 
 [b]Mwah! · Every Pawn Kisses Each Other[/b]
 
@@ -31,14 +31,14 @@
 [h2]怎么亲[/h2]
 [list]
 [*][b]右键就亲。[/b]任何你指挥得动的Pawn，右键地图上的任何 Pawn。
-[*][b]亲吻导演台。[/b]底栏按钮打开一个小面板，两个头像框可以点选地图上[b]任意[/b]两个 Pawn，包括你指挥不了的袭击者、商人、野生动物和机械族，还有两段式快速发配模式可用。
+[*][b]亲吻导演台。[/b]底栏按钮打开一个小面板，两个头像框可以点选地图上[b]任意[/b]两个 Pawn，包括你指挥不了的袭击者、商人、野生动物和机械族；右槽也可选墙和树，另有快速发配。扩展可从设置首页管理，亲树可按自己的文化选择结果。
 [*][b]自主撮合（默认关）。[/b]游戏按你设的间隔和半径，替你管不着的 Pawn 自己配对。它一次都不碰你的殖民者。
 [/list]
 
 [h2]兼容性[/h2]
 [list]
-[*]RimWorld 1.6，仅需 Core；无前置模组、无 Harmony、无框架依赖。
-[*]DLC 可选：机械族、异象实体、Odyssey 无人机等按各自本性参与，没有 DLC 也完整可用。
+[*]RimWorld 1.6 / 1.7，仅需 Core；无前置模组、无 Harmony、无框架依赖。
+[*]1.7 目标为 4990 rev1069，当前等待实机验收。DLC 可选：机械族、异象实体、Odyssey 无人机等按各自本性参与，没有 DLC 也完整可用。
 [/list]
 
 [h2]下载与反馈[/h2]
@@ -59,22 +59,22 @@
 This mod is planned, coded and maintained by AI, and reviewed, tested, packaged and published by a human maintainer.
 
 [h1]Mwah! — Every Pawn Kisses Each Other[/h1]
-[b]Mod version:[/b] 0.2.2
-[b]For:[/b] RimWorld 1.6
+[b]Mod version:[/b] 0.3.0
+[b]For:[/b] RimWorld 1.6 / 1.7
 
 Let any Pawn kiss any Pawn — tolerate the audacity of affection.
 
 [h2]How to kiss[/h2]
 [list]
 [*][b]Right-click.[/b] Any pawn you can order, right-clicked onto any pawn on the map.
-[*][b]Kiss Director.[/b] A bottom-bar button opens a small panel; two avatar slots pick [b]any[/b] two pawns on the map — including raiders, traders, wild animals and mechanoids you cannot command — plus a two-click quick-chain mode.
+[*][b]Kiss Director.[/b] A bottom-bar button opens a small panel; two avatar slots pick [b]any[/b] two pawns on the map — including raiders, traders, wild animals and mechanoids you cannot command — or walls and trees in the right slot. Manage extensions from the settings home page; trees offer optional outcomes based on the acting pawn’s beliefs.
 [*][b]Ambient matchmaking (off by default).[/b] The game pairs up pawns you cannot command on an interval and radius you set. It never touches your colonists.
 [/list]
 
 [h2]Compatibility[/h2]
 [list]
-[*]RimWorld 1.6, Core only. No Harmony, no framework mods, nothing to load before this mod.
-[*]DLC optional: mechanoids, anomalies and Odyssey drones participate per their own nature; everything works without any DLC.
+[*]RimWorld 1.6 / 1.7, Core only. No Harmony, no framework mods, nothing to load before this mod.
+[*]1.7 targets 4990 rev1069 and is awaiting in-game acceptance. DLC optional: mechanoids, anomalies and Odyssey drones participate per their own nature; everything works without any DLC.
 [/list]
 
 [h2]Download & feedback[/h2]

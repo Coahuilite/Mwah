@@ -2,7 +2,7 @@
 
 ## Context
 
-合同从[现行入口](../../../docs/specification.md)读取；范围由 [proposal](proposal.md)负责。下述是 `deb427d` 候选的技术映射和取舍，不是另一份产品规格；实际结果及差距只在[实现证据](../../../docs/development/tree-kissing-and-settings.md)和 [tasks](tasks.md)记录。
+合同从[现行入口](../../../docs/specification.md)读取；范围由 [proposal](proposal.md)负责。下述是当前 0.3.x 候选的技术映射和取舍，不是另一份产品规格；实际结果及差距只在[实现证据](../../../docs/development/tree-kissing-and-settings.md)和 [tasks](tasks.md)记录。
 
 原生参考来自本地 RimSage 的 `1.7.4990 rev1069` 完整保留快照，维护者确认使用该 build。配置安装回到 1.6 后自动刷新失败，不使该已确认快照变成 1.6 证据。版本观察同时参见[原版边界](../../../docs/vanilla-capability-boundaries.md)和[树文化研究](../../../docs/research/tree-kissing-ideology.md)。
 
@@ -44,8 +44,20 @@
 
 ### 共享玩法，仅隔离真实版本差异
 
-共享两种 driver 及业务规则，不散布 minor 判断或为迁移重建通用引擎层。编译引用、加载元数据、菜单／输入和真实 UI API 差异才是版本适配面。目标快照的 `GUI.tooltip` 已存在，旧 1.7.4976 缺成员发现不再作为当前迁移依据。程序集能否共用及 1.7 包如何加载仍由版本／原生证据决定，不能从共享源码推导交付完成。
+共享两种 driver 及业务规则，不散布 minor 判断或为迁移重建通用引擎层。编译引用、加载元数据、菜单／输入和真实 UI API 差异才是版本适配面。目标快照的 `GUI.tooltip` 已存在，旧 1.7.4976 缺成员发现不再作为当前迁移依据。两个目标使用同一源码分别编译，按下述原生交付切片装包；游戏加载成功仍需实际会话证据。
 
 ## Verification boundary
 
 这份映射只说明实际责任和来源判断，不声称用户交互或原生存读档已经成功。未完成项及补证责任只在 [tasks](tasks.md) 与[实现证据](../../../docs/development/tree-kissing-and-settings.md)维护。原始设计的前置缺陷调查保存在[历史版本](../../../docs/archive/specification-before-workflow/openspec/changes/tree-kissing-and-settings/design.md)，不作为当前缺陷清单。
+
+## 1.7 原生交付切片
+
+1.6 默认 dotnet build 入口和 net472 保持；只有显式 MWAHGameVersion=1.7 才要求 net10.0。分别固定 Krafs.Rimworld.Ref 1.6.4871 和 1.7.4990-unstable；[发布方包说明](https://packages.nuget.org/packages/Krafs.Rimworld.Ref/1.7.4990-unstable)确认对应框架及引用签名用途，不分发这些游戏／引用程序集。
+
+共享源码不分业务分支。CallerArgumentExpression 的兼容属性仅在旧框架编译；冷却私有泛型键标注 notnull，不屏蔽警告。
+
+1.6/Defs 与 1.6/Languages 继续是唯一内容编辑源，保留旧路径；1.7/Assemblies 只存对应编译输出。正式暂存包从同一内容源生成两个版本目录，并为 1.7 放入原生 DLL，LoadFolders 只启用当前 minor 的目录。1.7 不加载 1.6 程序集，也不通过源码根目录充当安装副本；本地测试和 CI 使用打包入口。
+
+构建脚本和所有渠道打包都显式构建两个目标；既有离线门沿两个目标执行编译和程序集库存，保留已有内容／配置检查，不新增单元用例。暂存检查元数据和有效目录、每版本唯一 Mwah.dll、无引用 DLL／PDB、共享内容完整以及包身份；不把这些检查当作游戏加载成功。
+
+产品使用完整 SemVer 0.3.0；项目从它派生数值 AssemblyVersion/FileVersion。版本跟随面同步 0.3.0；开发包由 flavor 和 commit 区分待验收身份，不把版本号当作发布状态。Workshop 文案只作为未发布草案；线上仍是 0.2.2。本地测试包在提交后重新构建，保证 version.txt 和 DLL 构建身份对应该提交。

@@ -34,11 +34,8 @@ if ($LASTEXITCODE -ne 0 -or $shortCommit.Count -ne 1) {
 [xml]$projectXml = Get-Content -LiteralPath $projectFile -Raw
 $version = $projectXml.SelectSingleNode('/Project/PropertyGroup/Version').InnerText.Trim()
 
-$buildLog = & dotnet build $projectFile -c Release -p:MWAHBuildFlavor=Steam -nologo -v quiet 2>&1
-if ($LASTEXITCODE -ne 0) {
-    $buildLog | Out-Host
-    throw 'Steam flavor build failed; refusing to package.'
-}
+& (Join-Path $PSScriptRoot 'build-runtime.ps1') -ProjectRoot $root -BuildFlavor Steam
+if ($LASTEXITCODE -ne 0) { throw 'Dual-version build failed; refusing stale package.' }
 
 & (Join-Path $PSScriptRoot 'stage-package.ps1') -ProjectRoot $root -StageDir $stageDir `
     -VersionLabel $version -BuildFlavor steam -CommitLabel ([string]$shortCommit[0]).Trim()

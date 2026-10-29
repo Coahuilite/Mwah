@@ -4,7 +4,7 @@
 
 ## Project identity
 
-- Project: RimWorld 1.6 mod, brand short name **`Mwah!`**, full name **`Every Pawn Kisses Each Other`**; neither is ever translated, normalized, or copy-edited. The Simplified-Chinese display name **`所有Pawn都给我啵嘴！`** lives only in the Chinese language pack (`MWAH.SettingsCategory`): 1.6 `About.xml` has no per-language rename, so the mod list always shows the English name.
+- Project: RimWorld 1.6 / 1.7 mod, brand short name **`Mwah!`**, full name **`Every Pawn Kisses Each Other`**; neither is ever translated, normalized, or copy-edited. The Simplified-Chinese display name **`所有Pawn都给我啵嘴！`** lives only in the Chinese language pack (`MWAH.SettingsCategory`): 1.6 `About.xml` has no per-language rename, so the mod list always shows the English name.
 - Permanent `packageId` `coahuilite.mwah` (immutable after release). Engineering identity is `Mwah`: C# namespace, assembly, and source folder share it. No solution file — the IDE opens the csproj, and build/pack scripts only ever point at the csproj.
 - Naming prefixes: Defs `MWAH_`, Keyed keys `MWAH.`, logs `[MWAH] ` (hard-coded English, never localized, no placeholder keys).
 - The noun for any kiss-dispatched actor is **Pawn** on every player-facing surface. Mwah dispatches pawns whether or not they are colony pawns, humanlikes, or alive — so Chinese copy keeps the loanword `Pawn` (never 小人/单位/生物; vanilla kind nouns like 殖民者/机械族/动物 stay when naming a kind) and English copy uses `pawn(s)`. The brand line and the Chinese display name already encode this; `verify-local` gates it in the language files.

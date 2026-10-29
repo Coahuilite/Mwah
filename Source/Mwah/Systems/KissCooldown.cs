@@ -73,7 +73,7 @@ public static class KissCooldown
         PairReadyAtTick.Clear();
     }
 
-    private static int Remaining<T>(int now, Dictionary<T, int> map, T key)
+    private static int Remaining<T>(int now, Dictionary<T, int> map, T key) where T : notnull
     {
         if (!map.TryGetValue(key, out int until))
         {
@@ -106,7 +106,7 @@ public static class KissCooldown
     }
 
     /// <summary>复用同一个 scratch 列表：这里每 Mark 一次就跑一遍，没必要再各分配一个。</summary>
-    private static void Prune<T>(Dictionary<T, int> map, List<T> scratch, int now)
+    private static void Prune<T>(Dictionary<T, int> map, List<T> scratch, int now) where T : notnull
     {
         if (map.Count <= PruneThreshold)
         {

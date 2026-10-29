@@ -8,7 +8,7 @@ Mwah! 让游戏内地图上的任何 Pawn 亲任何 Pawn。选中一个 Pawn，�
 
 ## 依赖
 
-- RimWorld **1.6**（仅 Core——不依赖任何 DLC 或模组；机械族、异型、异象实体等 DLC Pawn 按自身天性参与）。
+- RimWorld **1.6 / 1.7**（仅 Core——不依赖任何 DLC 或模组；机械族、异型、异象实体等 DLC Pawn 按自身天性参与）。
 - 无 Harmony、无前置框架，加载顺序无所谓。
 
 把发布包放进 `RimWorld/Mods/` 即可。
@@ -29,6 +29,8 @@ Mwah! 让游戏内地图上的任何 Pawn 亲任何 Pawn。选中一个 Pawn，�
 
 **参数与杂项**收纳亲吻时长、爱心间隔、冷却、双人吻心情参数、自主撮合参数、诊断和「恢复全部默认值」。标题、构建身份、总开关与导航常驻，两页独立滚动。时长同时显示 tick / 现实秒 / 游戏小时；数值输入在回车、失焦、切页、收起或关闭设置时提交，非法内容不改变原值。配对范围只管 Pawn 之间的吻，不限制扩展。
 
+0.3.x 开发线的首个待发布版本为 **0.3.0**。本地测试包同时包含 1.6 和 1.7（目标 4990 rev1069），由游戏只加载对应目录。请使用下方打包命令生成的整个 `dist/dev/Mwah`，不要把源码根目录或不同版本的 DLL 混作安装包；复制与实机验收由维护者执行，操作要点见[本轮验收说明](./docs/development/tree-kissing-and-settings.md#实机验收与反馈)。
+
 ## 开发、打包与版本
 
 唯一人工维护的产品版本在 `Source/Mwah/Mwah.csproj`。构建从不写入游戏目录。
@@ -37,14 +39,14 @@ Mwah! 让游戏内地图上的任何 Pawn 亲任何 Pawn。选中一个 Pawn，�
 
 ```powershell
 pwsh scripts/pack-dev.ps1                           # dev：Release 构建 + stage dist/dev/Mwah（文件夹；-Zip 可选）
-pwsh scripts/pack-github.ps1 -Version v0.2.1        # GitHub flavor -> dist/github/Mwah-vX.Y.Z.zip
+pwsh scripts/pack-github.ps1 -Version v0.3.0        # GitHub flavor -> dist/github/Mwah-vX.Y.Z.zip
 pwsh scripts/pack-steam.ps1                         # Steam flavor -> dist/steam/Mwah（要求干净树）
-pwsh scripts/verify-local.ps1                       # 全部离线门：三渠道构建、双语键一致、天意表完整、
+pwsh scripts/verify-local.ps1                       # 全部离线门：双版本 × 三渠道构建、双语键一致、天意表完整、
                                                     # DLL 符号审计、零 Harmony 反证
-pwsh scripts/privacy-audit.ps1 -FullHistory -PrePush # push 前仪式
+pwsh scripts/privacy-audit.ps1 -PackageDir dist/dev/Mwah # 检查实际测试包；push 全历史审计由 hook 自动执行
 ```
 
-CI（`.github/workflows/ci.yml`）在任何版本分支（`[0-9].[0-9].x`）与 `main` 的每次 push/PR 跑同一套门加隐私默认扫描。提交纪律：Conventional Commits（见 `.gitmessage`），在当前版本分支上工作，squash merge 进只做发布的 `main`，历史 **append-only**——不 amend、不 rebase。完整流程见 [`docs/release-runbook-zh.md`](./docs/release-runbook-zh.md)；工坊页面文案唯一维护源见 [`docs/steam-workshop-page.md`](./docs/steam-workshop-page.md)；版本历史见 [`docs/CHANGELOG.md`](./docs/CHANGELOG.md) / [`docs/CHANGELOG.zh-CN.md`](./docs/CHANGELOG.zh-CN.md)。
+CI（`.github/workflows/ci.yml`）在任何版本分支（`[0-9].[0-9].x`）与 `main` 的每次 push/PR 跑同一套门加全历史隐私扫描；push 产物上传前还检查实际暂存包。提交纪律：Conventional Commits（见 `.gitmessage`），在当前版本分支上工作，squash merge 进只做发布的 `main`，历史 **append-only**——不 amend、不 rebase。完整流程见 [`docs/release-runbook-zh.md`](./docs/release-runbook-zh.md)；工坊页面文案唯一维护源见 [`docs/steam-workshop-page.md`](./docs/steam-workshop-page.md)；版本历史见 [`docs/CHANGELOG.md`](./docs/CHANGELOG.md) / [`docs/CHANGELOG.zh-CN.md`](./docs/CHANGELOG.zh-CN.md)。
 
 ## 硬边界
 

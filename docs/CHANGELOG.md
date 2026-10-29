@@ -42,6 +42,27 @@ One-line release summary.
 - ...
 ```
 
+## Unreleased — 0.3.0
+
+### Added
+- Kiss trees with basic outcomes even without Ideology, with optional results based on each pawn’s beliefs and own Gauranlen connection.
+- Build a native .NET 10 package for RimWorld 1.7.4990 rev1069 alongside the retained 1.6 package.
+
+### Changed
+- Manage extensions first in the new two-page settings view; pending numeric edits are committed before hiding or closing controls.
+
+### Fixed
+- Wait for both matching participants before advancing paired performance and report actual job admission.
+- Keep normal departure inside the kiss job without stealing a newer order; persist activity identity and settlement state.
+- Apply cooldown exemption consistently while preserving reachability and cross-target occupancy.
+
+### Packaging
+- Isolate the 1.6 and 1.7 assemblies, generate both minors from one content source, and reject incomplete or mixed packages.
+- Remove native-target compiler warnings without suppressions; retain the default 1.6 build entry.
+
+### Notes
+- Development targets 0.3.x; 0.3.0 is not released. Native game, UI and save/load acceptance remain pending.
+
 ## [2026-10-06 00:00 UTC+8] Version 0.2.2
 
 First public release: any pawn kisses any pawn. Mechanics and details live in the README.
