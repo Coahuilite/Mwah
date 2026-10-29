@@ -1,6 +1,6 @@
 # 工坊页面文案维护源（Workshop page copy, single source）
 
-> **0.3.0 发布文案。** 维护者已接受 1.6／1.7 验收并授权本次更新；渠道实际状态见[发布记录](release_review/release-0.3.0-review-zh.md)。旧版文案保留于 docs/archive/steam-workshop-page-0.2.2.md。
+> **目标：0.3.0（发布文案）。** 维护者已接受 1.6／1.7 验收并授权本次更新；渠道实际状态见[发布记录](release_review/release-0.3.0-review-zh.md)。旧版文案保留于 docs/archive/steam-workshop-page-0.2.2.md。
 
 本文是中英工坊描述的唯一维护源，不是 changelog 也不是发布记录。页面编辑、双预览、上传由维护者执行；agent 只做公开页面只读核验。
 
