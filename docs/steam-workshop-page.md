@@ -1,6 +1,6 @@
 # 工坊页面文案维护源（Workshop page copy, single source）
 
-> **目标：0.3.0（待发布草案，尚待实机验收）。** 本轮只维护仓库草案，不更新线上页面；线上仍为 0.2.2，已发布文案保留于 docs/archive/steam-workshop-page-0.2.2.md。发布状态以本页头部与 `MEMORY.md` 耐久状态为准，不以本文件历史版本为准。
+> **目标：0.3.0（发布前草案）。** 1.6 常规／倒地配对已验收；1.7 等剩余覆盖及渠道整备见[发布前记录](release_review/release-0.3.0-preparation-zh.md)。本轮不更新线上页面；已发布基线仍为 0.2.2，旧文案保留于 docs/archive/steam-workshop-page-0.2.2.md。
 
 本文是中英工坊描述的唯一维护源，不是 changelog 也不是发布记录。页面编辑、双预览、上传由维护者执行；agent 只做公开页面只读核验。
 
@@ -30,9 +30,9 @@
 
 [h2]怎么亲[/h2]
 [list]
-[*][b]右键就亲。[/b]任何你指挥得动的Pawn，右键地图上的任何 Pawn。
+[*][b]右键就亲。[/b]任何你指挥得动的 Pawn，右键地图上的任何 Pawn。清醒但倒地的接收方留在原地，能走的一方过去。
 [*][b]亲吻导演台。[/b]底栏按钮打开一个小面板，两个头像框可以点选地图上[b]任意[/b]两个 Pawn，包括你指挥不了的袭击者、商人、野生动物和机械族；右槽也可选墙和树，另有快速发配。扩展可从设置首页管理，亲树可按自己的文化选择结果。
-[*][b]自主撮合（默认关）。[/b]游戏按你设的间隔和半径，替你管不着的 Pawn 自己配对。它一次都不碰你的殖民者。
+[*][b]自主撮合（默认关）。[/b]游戏按你设的间隔和半径，替不由你管理的 Pawn 发起配对；不会让玩家管理的 Pawn 发起，也不选择征召中的玩家 Pawn 接收。
 [/list]
 
 [h2]兼容性[/h2]
@@ -66,9 +66,9 @@ Let any Pawn kiss any Pawn — tolerate the audacity of affection.
 
 [h2]How to kiss[/h2]
 [list]
-[*][b]Right-click.[/b] Any pawn you can order, right-clicked onto any pawn on the map.
+[*][b]Right-click.[/b] Any pawn you can order, right-clicked onto any pawn on the map. A conscious downed receiver stays put while the mobile pawn comes over.
 [*][b]Kiss Director.[/b] A bottom-bar button opens a small panel; two avatar slots pick [b]any[/b] two pawns on the map — including raiders, traders, wild animals and mechanoids you cannot command — or walls and trees in the right slot. Manage extensions from the settings home page; trees offer optional outcomes based on the acting pawn’s beliefs.
-[*][b]Ambient matchmaking (off by default).[/b] The game pairs up pawns you cannot command on an interval and radius you set. It never touches your colonists.
+[*][b]Ambient matchmaking (off by default).[/b] The game pairs up pawns you do not manage on an interval and radius you set. Player-managed pawns never initiate; drafted player-controlled pawns are not selected as receivers.
 [/list]
 
 [h2]Compatibility[/h2]

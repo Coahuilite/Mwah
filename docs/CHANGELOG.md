@@ -66,7 +66,7 @@ One-line release summary.
 - Remove native-target compiler warnings without suppressions; retain the default 1.6 build entry.
 
 ### Notes
-- Development targets 0.3.x; 0.3.0 is not released. Native game, UI and save/load acceptance remain pending.
+- Prepare 0.3.0 on 0.3.x, not yet released. The maintainer has accepted normal and downed-receiver pairing in 1.6; 1.7, tree culture, settings UI and save/load coverage remain pending.
 
 ## [2026-10-06 00:00 UTC+8] Version 0.2.2
 
