@@ -6,7 +6,7 @@ Treat trees as a second non-Pawn target family alongside walls. Reuse the single
 
 The useful first cultural rules are `Trees_Desired` and a more specific own-Gauranlen rule requiring `GauranlenConnection_Strong` plus the target's actual connection to the acting Pawn. Tree-cutting disapproval, a ritual named after a tree, and another DLC's special tree are not interchangeable cultural signals.
 
-Product contracts remain in [the addon baseline](../../openspec/specs/addons/spec.md) and [the approved addon delta](../../openspec/changes/tree-kissing-and-settings/specs/addons/spec.md). This document records research and implementation recommendations, not a second specification or an implementation checklist.
+Product contracts are defined only by [the current addon specification](../../openspec/specs/addons/spec.md), linked from [the specification entry](../specification.md). This document records research and implementation recommendations, not a second specification or an implementation checklist.
 
 ## Evidence and build boundary
 
@@ -102,7 +102,7 @@ Primary locators for optional loading: `Source/Assembly-CSharp/RimWorld/PreceptD
 
 ## Content decision handoff
 
-These were the content decisions identified by the research. Their selected values now belong to the [approved addon delta](../../openspec/changes/tree-kissing-and-settings/specs/addons/spec.md); this list records the research handoff, not another current decision queue:
+These were the content decisions identified by the research. Their selected values now belong to the [current addon specification](../../openspec/specs/addons/spec.md); this list records the research handoff, not another current decision queue:
 
 - Tree addon default enable state, default thought-duration ticks, and cultural-integration default preference.
 - The new tree memory's stage meanings and mood values, including whether all policies share the wall's stage count or choose a different tree-specific ladder.

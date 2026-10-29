@@ -1,76 +1,125 @@
-# Core kissing
+# Pawn 配对亲吻
+
+状态：现行开发合同。维护责任：配对亲吻维护者。
+适用条件：已加载的游戏地图、单机；原生支持边界见 [compatibility](../compatibility/spec.md)。
 
 ## Purpose
 
-Define Pawn-to-Pawn kissing, its entry points, participation rules, and outcomes.
+约定配对请求、资格、工作所有权、完成及记忆结果。非 Pawn 目标由 [addons](../addons/spec.md) 负责；设置提交到消费者的连接由 [settings-use](../settings-use/spec.md) 负责。
 
 ## Requirements
 
-### Requirement: Independent initiation paths
-The mod SHALL offer right-click orders, a non-modal Kiss Director with avatar-slot and quick-chain picking, and optional ambient matchmaking. Right-click SHALL respect vanilla order/menu gates and allow role swapping when necessary. Director and ambient requests SHALL keep the selected initiator.
+### Requirement: KISS-01 相互独立的发起入口
+模组 SHALL 提供右键命令、带头像槽及快速连续点选的非模态亲吻导演台，以及可选自主撮合。右键 SHALL 保留原版命令／菜单前提，必要时允许交换发起角色；导演台和自主撮合 SHALL 保持指定发起方。
 
-#### Scenario: A directed non-orderable initiator
-- **WHEN** a player names a physically capable, non-orderable Pawn in the director
-- **THEN** the request is evaluated without requiring vanilla player order ownership and without swapping roles.
+#### Scenario: 指定不可由玩家下令的发起方
+- **WHEN** 玩家在导演台指定具备行动能力、但不受玩家命令的 Pawn
+- **THEN** 请求不以原版命令所有权拒绝，也不交换双方角色。
 
-#### Scenario: Ambient matchmaking is independent
-- **WHEN** a player orders a kiss while ambient matchmaking is disabled
-- **THEN** only that request is dispatched and no automatic follow-up is created.
+#### Scenario: 自主撮合与手动命令独立
+- **WHEN** 自主撮合关闭时玩家下令亲吻
+- **THEN** 仅派发该请求，不创建自动后续撮合。
 
-### Requirement: Ambient selection boundaries
-Ambient matchmaking SHALL default off, consider only initiators outside player management (excluding colony animals), avoid drafted player-controlled receivers and fighting participants, and remain Pawn-to-Pawn only. Its configured interval and radius SHALL bound opportunities and target distance rather than guarantee a kiss.
+### Requirement: KISS-02 自主撮合边界
+自主撮合 SHALL 默认关闭，只从玩家管理范围以外选发起方，排除殖民地动物、正在战斗的参与者及征召中的玩家控制接收方；只撮合 Pawn 与 Pawn。间隔和半径 SHALL 限定机会及距离，不保证促成一次亲吻。
 
-#### Scenario: A nearby colony animal
-- **WHEN** ambient matchmaking considers initiators near a colony-owned animal
-- **THEN** it does not issue that animal an initiating order, while the director can still explicitly evaluate it under the normal action gates.
+#### Scenario: 殖民地动物在附近
+- **WHEN** 自主撮合在殖民地动物附近选择发起方
+- **THEN** 不给该动物发起命令；导演台仍可按正常资格显式评估它。
 
-### Requirement: Participation and scope
-The mod SHALL require distinct, alive, spawned participants that are awake, not burning, and not interaction-blocked by ritual state. Initiators SHALL also be mobile, meet the flesh-race Talking-capacity check, and have an eligible life stage. Mood SHALL affect reward eligibility, not admission. Both Pawns SHALL pass the cumulative seven-tier pairing scope, whose default is unrestricted; no additional faction or species whitelist SHALL be imposed.
+### Requirement: KISS-03 参与资格与配对范围
+双方 SHALL 是不同、存活、已生成在地图、清醒、未燃烧且不受仪式交互阻断的 Pawn。发起方 SHALL 能移动，满足肉身种族的 Talking 能力检查及发起生命阶段。缺少心情 SHALL NOT 阻止行动。双方 SHALL 通过默认不限制的累积七档配对范围，不另加阵营或物种白名单。
 
-#### Scenario: An awake downed receiver
-- **WHEN** a mobile initiator targets an awake downed Pawn and all other gates pass
-- **THEN** the receiver can participate without becoming an initiator.
+#### Scenario: 清醒但倒地的接收方
+- **WHEN** 可移动发起方指定清醒倒地的 Pawn，其他资格均通过
+- **THEN** 该 Pawn 可以作为接收方，而不成为发起方。
 
-#### Scenario: A moodless participant
-- **WHEN** a moodless Pawn meets the applicable action gates
-- **THEN** its lack of mood does not prevent participation.
+#### Scenario: 无心情的参与者
+- **WHEN** 无心情 Pawn 通过适用资格
+- **THEN** 不因缺少心情被排除。
 
-### Requirement: Cooldown and command policy
-Requests SHALL honor per-Pawn and per-pair cooldowns unless `noCooldowns` is enabled. Player-issued orders SHALL bypass the ambient combat gate, not cooldowns by virtue of being player-issued. Cooldown exemption SHALL never permit an already occupied participant. Cooldowns SHALL be recorded only after job admission and remain session state that resets on game load.
+### Requirement: KISS-04 冷却与命令策略
+请求 SHALL 检查每 Pawn 及每对目标冷却，除非开启 `noCooldowns`。玩家命令 SHALL 绕过自主撮合的战斗门，不因玩家发起而豁免冷却。冷却豁免 SHALL NOT 绕过占用、参与资格或可达走位。冷却 SHALL 只在工作入场成功后登记，属于读档时重置的会话状态；自主预筛 SHALL 遵守同一豁免。
 
-#### Scenario: A repeated manual request
-- **WHEN** a player requests the same pair during cooldown with `noCooldowns` disabled
-- **THEN** the request is rejected with the real cooldown reason.
+#### Scenario: 冷却中的重复手动请求
+- **WHEN** `noCooldowns` 关闭，玩家在冷却内再次请求同一对目标
+- **THEN** 拒绝并反馈真实冷却原因。
 
-#### Scenario: A busy participant with exemption enabled
-- **WHEN** `noCooldowns` is enabled and a requested participant is already kissing
-- **THEN** the new request is rejected rather than introducing a third participant.
+#### Scenario: 冷却豁免不解除占用
+- **WHEN** `noCooldowns` 开启，但请求参与者已经在亲吻
+- **THEN** 拒绝新请求，不引入第三方。
 
-### Requirement: Paired performance and departure
-A paired kiss SHALL use mirrored participant jobs with a single initiator-owned clock and settlement. Participants SHALL remain under kiss-job ownership through approach, performance, and enabled departure; interrupting external violence SHALL break that ownership. Interrupted performance SHALL not grant completion rewards.
+#### Scenario: 自主预筛采用冷却豁免
+- **WHEN** 其他条件合格的自主发起方仍有冷却，且 `noCooldowns` 开启
+- **THEN** 不只因该冷却在预筛中丢弃它。
 
-#### Scenario: Violence during the kiss job
-- **WHEN** interrupting external violence reaches either participant during approach, performance, or departure
-- **THEN** that participant's kiss job ends without a global faction or hostility rewrite.
+#### Scenario: 冷却豁免下仍不可达
+- **WHEN** `noCooldowns` 开启，但没有可达走位
+- **THEN** 请求不入场，也不报告已开始。
 
-#### Scenario: Stage selection and fallback
-- **WHEN** a pair is assigned positions
-- **THEN** stage selection prefers separate horizontal cells, keeps an immobile receiver in place, rejects exchanging occupied cells, and permits a touch fallback.
+### Requirement: KISS-05 配对表演与离开所有权
+双人吻 SHALL 具有相互匹配的双方工作，由发起方拥有唯一计时和结算；双方匹配且到位后才开始计时。接近、表演及启用的正常回程 SHALL 保留亲吻工作所有权；可中断工作的外部暴力 SHALL 打断它。未完成表演 SHALL NOT 发完成奖励。回程兜底 SHALL 尊重正常回程及较新的玩家命令。
 
-#### Scenario: Save and load during a valid kiss
-- **WHEN** a valid ongoing kiss is saved and loaded
-- **THEN** participant roles, remaining performance time, and home positions retain their meanings, and completion is not settled twice.
+#### Scenario: 亲吻工作中受暴力伤害
+- **WHEN** 任一方在接近、表演或离开阶段受到可中断工作的外部暴力
+- **THEN** 该方亲吻工作结束，不全局改写阵营或敌对关系。
 
-### Requirement: Relationship-based settlement
-Only Pawns with a runtime mood-memory handler SHALL receive thoughts. The paired base mood value SHALL be 5, scaled by that Pawn's own SocialImpact and the configured multiplier, with vanilla thought nullification respected. Opinion changes SHALL default off. The mod SHALL NOT introduce bespoke trait or xenotype kiss-value tables.
+#### Scenario: 离开被中断后释放所有权
+- **WHEN** 远离原位的回程被暴力或替换命令打断
+- **THEN** 不在 Pawn 的反应或替换命令前插入自动回程。
 
-#### Scenario: Default mood-only settlement
-- **WHEN** a completed pair is settled with opinion changes disabled
-- **THEN** eligible participants receive mood memories, no opinion offset is written, and moodless participants use their applicable message channel instead.
+#### Scenario: 台位与贴近回退
+- **WHEN** 分配双方位置
+- **THEN** 优先独立水平相邻格，不能移动的接收方留在原位；拒绝交换正在占据的格子，并允许贴近回退。
 
-### Requirement: Relationship slots and narration
-Memories SHALL group by partner without an additional mod-wide cross-partner cap; same-partner renewal SHALL not create duplicate relationship slots. Shared fate-table draws SHALL avoid the same row within the event when alternatives exist. Narration SHALL persist with the memory instance.
+#### Scenario: 有效亲吻中的存读档
+- **WHEN** 有效进行中的亲吻被保存并重新载入
+- **THEN** 角色、剩余表演时间和原位含义不变，完成不重复结算。
 
-#### Scenario: A one-row narration table
-- **WHEN** both participants use a fate table with only one valid row
-- **THEN** both can receive that row rather than suppressing the second outcome.
+#### Scenario: 一方提前到达
+- **WHEN** 发起方已到位，匹配接收方仍在接近
+- **THEN** 发起方等待，不推进表演计时或发奖。
+
+#### Scenario: 完成前搭档被替换
+- **WHEN** 表演完成前失去匹配工作，即使对方开始另一场吻
+- **THEN** 不把替换工作当作原搭档，也不发完成奖励。
+
+#### Scenario: 正常回程仍在移动
+- **WHEN** 表演在原位以外结束，正常回程仍有效
+- **THEN** 兜底不以 Goto 替换该亲吻工作内的回程。
+
+#### Scenario: 玩家已给出新命令
+- **WHEN** 原吻被新玩家命令替换后仍有待处理回程
+- **THEN** 回程不从新命令手中取回所有权。
+
+### Requirement: KISS-06 配对奖励
+只有具备运行时心情记忆处理器的 Pawn SHALL 获得思想。配对基础心情 SHALL 为 5，按各自 SocialImpact 及设置倍率缩放，并尊重原版思想抵消。好感变化 SHALL 默认关闭；SHALL NOT 新建特质或异型专属吻值表。
+
+#### Scenario: 默认只结算心情
+- **WHEN** 关闭好感变化时完成配对
+- **THEN** 合格参与者获得心情记忆，不写好感偏移；无心情者使用适用短讯通道。
+
+### Requirement: KISS-07 关系槽与实例旁白
+记忆 SHALL 按搭档分组，不另加跨搭档总上限；同搭档续期不增加重复关系槽。同场共享天意表在有替代行时 SHALL 避免双方抽到同一行；旁白 SHALL 随记忆实例保存。
+
+#### Scenario: 旁白表仅有一行
+- **WHEN** 双方使用的表只有一条有效行
+- **THEN** 两方都可获得该行，不压掉第二份结果。
+
+### Requirement: KISS-08 派发结果真实
+派发 SHALL 仅在所需工作实际入场后报告成功；不能把提案合格当作已经派发。第二个配对工作入场失败 SHALL 不遗留本次新建的孤立搭档工作。
+
+#### Scenario: 预订阻止入场
+- **WHEN** 资格通过，但预订或工作入场失败
+- **THEN** 导演台不宣称已经开始，也不遗留本次未匹配的工作。
+
+### Requirement: KISS-09 跨目标占用一致
+所有入口 SHALL 把配对吻及物体吻，包括正常回程，视为占用。其他扩展开启或冷却豁免 SHALL NOT 绕过排他性。
+
+#### Scenario: 配对目标正在亲墙
+- **WHEN** 新配对请求包含正在亲墙或正常回程的 Pawn
+- **THEN** 以占用拒绝，不打断该物体吻。
+
+#### Scenario: 配对目标正在亲树
+- **WHEN** 新配对请求包含正在亲树的 Pawn
+- **THEN** 以占用拒绝，不打断该物体吻。

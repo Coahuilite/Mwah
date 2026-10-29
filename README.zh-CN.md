@@ -33,7 +33,7 @@ Mwah! 让游戏内地图上的任何 Pawn 亲任何 Pawn。选中一个 Pawn，�
 
 唯一人工维护的产品版本在 `Source/Mwah/Mwah.csproj`。构建从不写入游戏目录。
 
-开发遵循[规格优先流程](./openspec/README.md)：先更新受影响的契约，再修改实现。实施进度由变更任务记录，不写入规格文件。
+开发前先读[现行规格与变更流程](./docs/specification.md)。真实规则变化先改合同再实现；纯恢复可以零 delta。实施进度与证据不写入规格正文。
 
 ```powershell
 pwsh scripts/pack-dev.ps1                           # dev：Release 构建 + stage dist/dev/Mwah（文件夹；-Zip 可选）

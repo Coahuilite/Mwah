@@ -11,18 +11,20 @@
 - Product version source: `Source/Mwah/Mwah.csproj <Version>` is primary; `About/About.xml <modVersion>` follows it; product version is SemVer. License is **MPL-2.0** for the whole Coahuilite mod series.
 - Repo, remote, and publication state are not pinned here — read `MEMORY.md`.
 
-## Spec-first development
+## Specification and change workflow
 
-- Before every development change, read `openspec/README.md`, the affected baseline specs, and the relevant approved change deltas. Update the affected requirements or concrete acceptance scenarios **before** editing implementation, Defs, localization, settings, or packaging. Follow-up changes follow the same rule.
-- Specs contain behavior contracts only. Scope/approval belongs in `proposal.md`, technical reasoning in `design.md`, and implementation state, blockers, and verification evidence in `tasks.md`. `TODO.md` points to active work rather than duplicating its checklist.
-- OpenSpec plus approved deltas is the product-behavior authority. `MEMORY.md` is a navigation/state record; historical design notes do not override the specs. A passing spec validator does not establish runtime acceptance.
-- Use existing builds/checks and permitted real-path verification. Do not write new unit tests or add cases to existing unit tests. In-game execution remains the maintainer's responsibility.
+- Read `docs/specification.md` and the relevant current contracts before development. Only `openspec/specs/` defines current behavior; a candidate delta does not supersede it until explicit adoption.
+- Classify the intent before editing requirements: restore an existing guarantee, document a traceable omitted contract, or change the guarantee. Pure restoration needs no delta. Record its intended restoration, implementation and evidence; do not invent ADDED/MODIFIED requirements for every fix or rewrite the contract to fit a defect.
+- Real rule changes require the appropriate delta before implementation. MODIFIED carries the complete requirement and all retained scenarios. Resolve genuine contract conflicts with the maintainer rather than inferring permission from code. Adoption updates the single current text, direct readers and historical archive; it is separate from implementation acceptance and publication.
+- Specs contain behavior and applicability only. Proposal owns scope; design owns technical decisions and actual connections; tasks and implementation records own completion, gaps and evidence. Small edits do not require a full artifact set.
+- Specification and active-change prose is Chinese with English structural markers and exact identifiers. AGENTS.md, MEMORY.md and TODO.md remain English. Plain Markdown is sufficient; CLI installation/validation is not an adoption prerequisite and existing runtime/build/privacy/CI gates remain in force.
+- Use applicable existing evidence and allowed checks; no new unit tests or equivalent renamed cases. A scenario is not an executed test. In-game execution remains the maintainer's responsibility.
 
 ## Project philosophy
 
 - Zero Harmony is a hard boundary: no reference, no declared dependency, no runtime patch. Any capability that would need a patch to unlock is judged "not done".
 - Live map only, single-player only: the world map, caravan tiles, and multiplayer sync are out of scope.
-- Participation, permissive defaults, command/cooldown policy, and silent addon invalidation are defined in `openspec/specs/kissing/spec.md` and `openspec/specs/addons/spec.md`, plus approved deltas. In particular, player-issued status is not a cooldown exemption; do not infer one from `playerForced`.
+- Participation, permissive defaults, command/cooldown policy, and silent addon invalidation are defined in the current contracts linked from `docs/specification.md`. In particular, player-issued status is not a cooldown exemption; do not infer one from `playerForced`.
 - Player-facing text must ship with identical key sets in every language; durations are stored in ticks only and the UI must show tick / real seconds / game hours together.
 - Never create, verify, or assume a junction/symlink into a game install; copying the mod and live testing are the maintainer's own actions.
 

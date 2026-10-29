@@ -33,7 +33,7 @@ Settings open on **Gameplay & addons**: manage wall/tree extensions first, then 
 
 The only manually maintained product version is `<Version>` in `Source/Mwah/Mwah.csproj`. Builds never install into RimWorld.
 
-Development follows the [spec-first workflow](./openspec/README.md): update the affected contract before code. Active change tasks, not specification files, track implementation progress.
+Read the [current specifications and change workflow](./docs/specification.md) before development. Specify real rule changes before code; a pure restoration can have zero delta. Implementation progress and evidence stay outside specification files.
 
 ```powershell
 pwsh scripts/pack-dev.ps1                           # dev: Release build + stage dist/dev/Mwah (folder; -Zip optional)

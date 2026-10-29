@@ -1,3 +1,5 @@
+> 历史快照：迁移前的英文规格／变更资料，来源为 deb427d。已由[现行规格入口](../../../../../../../specification.md)替代；不再定义现行合同，也不表示关联实施变更已经完成。
+
 ## MODIFIED Requirements
 
 ### Requirement: Settings organization

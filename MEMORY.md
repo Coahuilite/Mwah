@@ -4,7 +4,7 @@
 
 - RimWorld 1.6 mod, `packageId` `coahuilite.mwah`, product version **0.2.2** (the csproj `<Version>` is the repository's only version literal — the old `<VersionPrefix>` duplicate was removed 2026-10-05; every product-visible follower — About `<modVersion>`, the workshop page's target/version lines, both changelog top entries — is machine-locked to it by gate 7b). **0.1.x archived without release** (2026-10-05 maintainer ruling), development runs on `0.2.x`; the repository is on the cloud: `github.com/Coahuilite/Mwah` (public, MPL 2.0, default branch `main` = release-only; process: `docs/release-runbook-zh.md`). **Released (2026-10-05/06)**: 0.2.2 shipped to both channels — initial Steam Workshop upload by the maintainer (steam flavor, 2026-10-05, in-game verified by the maintainer with that same steam package before upload) and GitHub Release `v0.2.2` (main squash commit, Release CI green, asset `Mwah-v0.2.2.zip`, published_at 2026-10-06 00:00:22 UTC+8); neither 0.2.0 nor 0.2.1 was ever tagged. The live matrix was accepted on the pre-release draft (record in OBLIVIONIS; ongoing regression work is linked from TODO). Released baseline retained; current work is linked from TODO. The workshop page passed agent read-only verification 2026-10-06 (zh+en verbatim vs maintenance source; its change note carries a 3-min planned-time estimate for the GitHub release — public-page edits are the maintainer's alone).
 - Feature surface: see `README.md` / `README.zh-CN.md` "What you can do" — three initiation paths (right-click, Kiss Director panel, ambient matchmaking off by default), a descriptor-backed addon layer for non-pawn targets (walls and trees, with optional per-Pawn Ideology outcomes), fate tables driving all settlement copy, mood only for pawns with `needs.mood`.
-- Product behavior and permissive defaults are specified in OpenSpec rather than repeated here. The workspace folder name `every_pawn_kiss_each_other/` is historical and carries no engineering identity.
+- Product behavior and permissive defaults are specified in the current Markdown contracts rather than repeated here. The workspace folder name `every_pawn_kiss_each_other/` is historical and carries no engineering identity.
 - Explicitly never (not a to-do): world map / caravan tiles, RimWorld Multiplayer sync, true body-contact kiss animation, downed pawns as initiators (would need Harmony to open vanilla gates).
 - **Never junction**: nothing is created, verified, or assumed under `Mods/`; copying the mod and live testing are the maintainer's own actions (2026-09-02 maintainer order).
 
@@ -16,14 +16,14 @@
 
 ## Vanilla capability boundaries
 
-- Version-anchored engine observations live in `docs/vanilla-capability-boundaries.md`; its section names remain stable for older references. Read observations relevant to the affected integration, and recheck changed APIs against the target build. Product requirements live in OpenSpec.
+- Version-anchored engine observations live in `docs/vanilla-capability-boundaries.md`; its section names remain stable for older references. Read observations relevant to the affected integration, and recheck changed APIs against the target build. Product requirements are linked from `docs/specification.md`.
 
 ## Specification and design authority
 
-- Product behavior is governed by `openspec/specs/` plus approved change deltas; read `openspec/README.md` before development and update the affected requirements/scenarios before implementation.
-- Specs contain contracts only. Technical choices belong in the change design; implementation state and evidence belong in its task list. `TODO.md` is the active-work entry point, not a second checklist.
-- Current approved work is `openspec/changes/tree-kissing-and-settings/`. The proposal records maintainer decisions, including manual cooldown checks unless `noCooldowns` is enabled; the design records source-derived runtime gaps and the target-build evidence.
-- `docs/design-decisions.md` preserves historical reasoning; `docs/vanilla-capability-boundaries.md` preserves version-anchored engine observations. Neither is a parallel product specification. Release operations remain governed by `docs/release-runbook-zh.md` and `AGENTS.md`.
+- `docs/specification.md` is the single human entry; `openspec/specs/` contains the current Chinese contracts, including already accepted rules formerly split across baseline and delta. Candidates do not define another current contract.
+- Pure restoration does not require a delta. Real rule changes are specified before implementation; adoption, implementation acceptance and release are distinct. Workflow and ownership are defined by the entry and AGENTS.md.
+- Current implementation/acceptance work remains `openspec/changes/tree-kissing-and-settings/`; its task list is the action owner, while `docs/development/tree-kissing-and-settings.md` owns implementation evidence and actual gaps. Historical spec/tool documents are under `docs/archive/specification-before-workflow/`.
+- `docs/design-decisions.md` and `docs/vanilla-capability-boundaries.md` preserve dated reasoning and engine observations, not parallel specifications. Release operations remain governed by `docs/release-runbook-zh.md` and AGENTS.md.
 - Attribution discipline: trust authoritative engine output; never default-explain a failure with an assumed old installation. Preserve useful actor/context identifiers in diagnostics.
 
 ## Repository structure and navigation
@@ -45,7 +45,7 @@ Runtime content lives entirely under the version folder `1.6/` (`Defs/Kiss/`, `L
 | Logging/instrumentation design and engine ceilings | `docs/kiss-trace-logging-design-zh.md` — landed: unconditional banner, diagnostic surface behind the `diagnosticLevel` four-rung slider (Off/Auto/Simple/Verbose) |
 | Where else the player HUD can be hung (full 1.6 list) | `docs/hud-ui-surfaces-1.6.md` — zero-Harmony surface / Harmony-only surface / conclusion: bottom bar stays the main entry |
 | Packaging and gates | `scripts/`; the single release-process entry `docs/release-runbook-zh.md`; cross-project skeleton `../modding_documents/RimWorld_Mod_RepoInit_AgentMemory_And_Packaging_Guide_zh.md`; native heap-crash triage `../modding_documents/RimWorld_NativeHeapCrash_Triage_Guide_zh.md`; this project's silent-failure corpus (engine contracts / input layer / job clock, incl. the DefInjected flat-key relapse) `../modding_documents/RimWorld_Mod_Silent_Failures_Engine_Contracts_zh.md` |
-| Product specs and active design | `openspec/README.md`; historical reasoning in `docs/design-decisions.md` |
+| Product specs, workflow and evidence | `docs/specification.md`; implementation design/tasks under `openspec/changes/tree-kissing-and-settings/`; historical reasoning in `docs/design-decisions.md` |
 | Release evidence reviews | `docs/release_review/` |
 
 ## Commit and command practices

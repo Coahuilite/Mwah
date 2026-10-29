@@ -1,38 +1,30 @@
+# Proposal
+
 ## Why
 
-The maintainer approved optional Ideology-aware tree kissing and an extension-first settings surface. Shared runtime boundaries also need tightening so adding trees does not spread addon or game-version branches through paired kissing.
+维护者批准亲树、可选文化结果、扩展优先的设置页及保持共享玩法的 1.7 适配。它们的行为已采用到[唯一现行合同](../../../docs/specification.md)；本记录继续管理该既定范围的实现和验收，不再叠加一套现行 delta。
 
 ## What Changes
 
-- Keep basic tree kissing usable without Ideology or with cultural integration disabled.
-- Add per-Pawn cultural outcome selection without replacing tree connection, pruning, ritual, or environmental-thought mechanics.
-- Generalize addon discovery, stable activity identity, shared occupancy, and target selection.
-- Establish paired readiness, truthful dispatch results, and safe normal/fallback departure.
-- Replace the long settings page with two navigation tabs, keeping addon management prominent.
-- Support RimWorld 1.7 while preserving the 1.6 contract and existing persistent identities.
+原授权涵盖共享运行恢复、物体扩展与亲树内容、文化结算、双页设置以及版本适配；未授权新增 Harmony、框架依赖、发布或代跑游戏。实现、剩余动作和验收见 [tasks](tasks.md)，技术责任及接缝见 [design](design.md)。
 
 ## Capabilities
 
 ### New Capabilities
 
-None; tree kissing extends the existing addon capability.
+相对现行合同无新增产品能力。
 
 ### Modified Capabilities
 
-- `kissing`: paired synchronization, cross-target occupancy, dispatch results, and departure safety.
-- `addons`: stable resolution, basic trees, and optional cultural settlement.
-- `settings`: two-page navigation, nested extension controls, and edit handling across views.
-- `compatibility`: 1.7 support and optional-content isolation.
+相对现行合同无新规则变化，因此当前不保留活动 delta。原先批准的 `kissing / addons / settings / compatibility` 规则及设置连接已并入现行页；1.7 支持目标没有因尚未交付而撤销。
 
 ## Impact
 
-Affected areas are the request entry points, paired and Thing job drivers, addon registration, fate/Thought Defs, localization, settings rendering, and version/build packaging. No new runtime mod dependency or Harmony patch is authorized. Publication, installation, and game execution remain the maintainer's operations.
+既定实施涉及请求、配对／单 Pawn driver、扩展 Def、天意／思想、本地化、设置和版本打包。此次文档迁移只调整合同归属与入口，不追加运行改动权限。今后若在收尾时真正改变保证，先提出明确 delta；纯恢复只记录问题、恢复路径和证据。
 
 ## Decisions
 
-- Scope and the two-page direction were approved by the maintainer on 2026-10-29.
-- The target 1.7 reference build is `1.7.4990 rev1069`.
-- The maintainer explicitly retained the released manual-command policy: manual requests check cooldowns unless `noCooldowns` is enabled. Player-issued status alone is not an exemption.
-- Specifications contain contracts only. Implementation state and evidence are owned by [tasks.md](tasks.md); technical choices are owned by [design.md](design.md).
-- The initial execution slice repaired existing paired/wall runtime behavior while researching Ideology-aware tree kissing in parallel. Subsequent tree/settings implementation and version-specific packaging are separate slices.
-- The maintainer subsequently authorized tree content and the two-page settings implementation, with defaults, weights, and cultural rules specified first. Version-specific packaging and publication remain separate operations.
+- 目标 1.7 参考 build 由维护者确认为 `1.7.4990 rev1069`。
+- 维护者保留手动命令也检查冷却、仅 `noCooldowns` 豁免的既有政策，现归 KISS-04。
+- 亲树默认／权重及文化规则先于实现确定，现归 ADD-07 至 ADD-12；两页方向归 SET-02、07。
+- 文档迁移采用不代表游戏验收、1.7 打包或发布完成。原始授权和旧 delta 已保存在[历史快照](../../../docs/archive/specification-before-workflow/openspec/changes/tree-kissing-and-settings/proposal.md)。

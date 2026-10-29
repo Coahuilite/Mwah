@@ -6,9 +6,9 @@ PRs welcome. Read the "Hard boundaries" section of [`README.md`](./README.md) fi
 
 ## 规则 / Rules
 
-开发前先读 [`openspec/README.md`](./openspec/README.md)、相关规格和已批准变更。每次新增、修复或调整都先更新受影响的要求或验收场景，再改代码、Defs、设置、文案或打包。规格只写行为契约；技术设计、任务进度和验证结果分别放到变更目录的 `design.md`、`tasks.md`。
+开发前先读[现行规格与变更流程](./docs/specification.md)。先区分恢复、既有合同补录和规则变化；纯恢复无需制造 delta，真实规则变化先写完整差量再实现。候选明确采用前不替代现行正文。scope、技术取舍和完成依据分别放在 proposal、design、tasks／实现证据，不把它们混入规格。
 
-Before development, read [`openspec/README.md`](./openspec/README.md), the relevant specs, and approved change deltas. Update affected requirements or acceptance scenarios before implementation, including follow-ups. Specs contain contracts only; technical design belongs in `design.md`, and progress/evidence in `tasks.md`.
+Read the [current specifications and workflow](./docs/specification.md) first. Distinguish restoration, traceable baseline documentation and rule changes. Pure restoration needs no delta; specify real rule changes before implementation. Candidates do not replace current contracts until adopted. Scope, design and evidence belong outside the specs.
 
 1. Fork 后从当前开发分支拉自己的分支，PR 对着它提即可；分支与合并模型由维护者在合并时决定，贡献者无需迁就。
    Fork, branch off the current development branch, and open your PR against it. The branching and merge model is the maintainer's call at merge time — contributors don't need to accommodate it.
@@ -28,17 +28,16 @@ Before development, read [`openspec/README.md`](./openspec/README.md), the relev
 ## 验证 / Verification
 
 ```powershell
-openspec validate --all --strict --no-interactive
 pwsh scripts/verify-local.ps1
 ```
 
-全套离线门（三渠道构建、双语键一致、DefOf 解析、天意表完整性、版本跟随面一致、DLL 符号审计、零 Harmony 反证等；确切条目与数量以脚本自身输出为准）必须全绿。实机测试由维护者本人执行（不建 junction、不代跑游戏），贡献者只需保证离线门与代码可读性。
+涉及实现、运行内容或打包时，既有离线门必须通过（三渠道构建、双语键、DefOf、天意、版本、DLL 与零 Harmony 等）；复用对同一候选仍有效的证据。纯文档改动检查合同语义、链接、读取方及隐私，不机械重跑构建。实机测试仍由维护者执行，不建 junction、不代跑游戏。
 
-The full offline gate suite (three-channel builds, bilingual key parity, DefOf resolution, fate-table integrity, version-follower parity, DLL symbol audit, zero-Harmony proof, …; the script's own output is the authority on count) must pass. In-game testing is the maintainer's own workflow; contributors only owe green gates and readable code.
+Implementation, runtime-content and packaging changes retain the existing offline gates. Reuse valid evidence for the same candidate. Documentation-only work checks semantics, links, readers and privacy rather than rerunning unaffected builds. In-game execution remains the maintainer’s responsibility; do not create game-install links.
 
-不新增单元测试，也不向现有单元测试添加用例；使用现有检查及维护者实机路径。OpenSpec 校验检查规格结构，不能代替功能验证。
+不新增单元测试，也不向现有单元测试添加用例；使用现有检查及维护者实机路径。普通 Markdown 不依赖 OpenSpec CLI；可选结构校验不能代替语义对账或运行验证。
 
-Do not write new unit tests or extend unit-test cases. Use existing checks and maintainer-run game paths. OpenSpec validation checks structure, not runtime behavior.
+Do not write new unit tests or extend unit-test cases. Use existing checks and maintainer-run game paths. Plain Markdown needs no OpenSpec CLI; optional structural validation does not establish semantics or runtime behavior.
 
 ## 代码口味 / Taste
 

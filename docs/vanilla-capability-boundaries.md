@@ -1,6 +1,6 @@
 # Vanilla capability boundaries (project reference)
 
-Moved out of `MEMORY.md` on 2026-10-06 during memory compression. Entry names remain stable. This is version-anchored engine reference material, not the product specification; [OpenSpec](../openspec/README.md) owns the behavior contract. Use only observations applicable to the target build and recheck changed APIs through the local reference service before relying on them.
+Moved out of `MEMORY.md` on 2026-10-06 during memory compression. Entry names remain stable. This is version-anchored engine reference material, not the product specification; the [current specification entry](specification.md) links the behavior contracts. Use only observations applicable to the target build and recheck changed APIs through the local reference service before relying on them.
 
 ## Vanilla capability boundaries (verified against RimSage 1.6 + Odyssey source, 2026-09-02)
 

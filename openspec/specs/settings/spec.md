@@ -1,49 +1,92 @@
-# Settings
+# 设置界面与编辑
+
+状态：现行开发合同。维护责任：设置界面维护者。
+适用条件：原版模组选项入口；规范值的运行采用及持久化见 [settings-use](../settings-use/spec.md)。
 
 ## Purpose
 
-Define the settings surface, configuration identity, and value lifecycle.
+约定可管理的设置、页面组织、数值编辑和诊断呈现。界面编辑态与玩法配置分离；不以界面已显示推定运行消费者已经采用。
 
 ## Requirements
 
-### Requirement: Settings coverage
-The settings UI SHALL expose the master enable preference; Pawn-pair scope; kiss duration; heart interval; per-Pawn and per-pair cooldowns; paired-thought duration and mood multiplier; opinion effects; return-home behavior; cooldown exemption; director visibility; ambient enable, interval, and radius; each registered addon's enable preference and thought duration; diagnostic level; and restore-defaults action.
+### Requirement: SET-01 设置覆盖与独立调节
+界面 SHALL 提供总开关、配对范围、亲吻时长、爱心间隔、每 Pawn／每对目标冷却、配对思想时长和心情倍率、好感效果、回程、冷却豁免、导演台入口、自主撮合开关／间隔／半径、各扩展启用及思想时长、诊断和恢复默认。扩展特定选项见 SET-07。
 
-#### Scenario: Adjusting an addon independently
-- **WHEN** a player changes an addon's thought duration
-- **THEN** that preference does not overwrite the paired-thought duration or another addon's preference.
+#### Scenario: 独立修改扩展时长
+- **WHEN** 修改某扩展思想时长
+- **THEN** 不覆盖配对思想时长或其他扩展偏好。
 
-### Requirement: Settings organization
-The UI SHALL present a pinned identity header and a scrollable, single-column body organized into core, ambient matchmaking, addons, and system sections. The master switch SHALL precede the sections; addon controls SHALL be generated from registered addons. The identity header SHALL remain readable while scrolling.
+### Requirement: SET-02 扩展优先的双页导航
+界面 SHALL 固定显示身份标题、可直接访问的总开关和“玩法与扩展／参数与杂项”导航；默认页先放注册扩展，再放常用控制。控件 SHALL 由注册描述生成，不在首页硬列目标类型。每页 SHALL 保持可滚动单列内容，两页独立维护滚动位置及内容高度。
 
-#### Scenario: Scrolling to addon controls
-- **WHEN** a player scrolls to the addon section
-- **THEN** the build identity remains visible and every registered addon retains an accessible enable control.
+#### Scenario: 滚到扩展控制
+- **WHEN** 玩家滚动到扩展区域
+- **THEN** 构建身份仍可见、可读，每个注册扩展都保留可访问的启用控制。
 
-### Requirement: Value editing and persistence
-Settings SHALL become authoritative in memory immediately, use coalesced disk persistence, flush pending writes on close, and retain dirty state for retry after save failure. Numeric inputs SHALL commit on Enter or focus loss, quantize and clamp valid values, and discard invalid edits without replacing the stored value.
+#### Scenario: 打开设置管理扩展
+- **WHEN** 玩家打开设置
+- **THEN** 默认页优先显示扩展开关，而非详细全局数值；身份、总开关和导航留在滚动体外。
 
-#### Scenario: Invalid numeric text
-- **WHEN** a player leaves a numeric field containing invalid text
-- **THEN** the previous value is displayed and remains the stored value.
+#### Scenario: 页面间独立滚动
+- **WHEN** 滚动后切换页面
+- **THEN** 目标页恢复自己的位置，不继承另一页内容高度或滚动偏移。
 
-### Requirement: Units and configuration identity
-All durations SHALL be stored and edited in ticks and displayed with ticks, real seconds, and game hours. Tier controls SHALL not expose quantity inputs. Existing settings keys and stable addon keys SHALL retain their meanings. Restore defaults SHALL reset fields and addon overrides.
+#### Scenario: 寻找常用控制与详细参数
+- **WHEN** 选择设置页
+- **THEN** 玩法与扩展页提供配对范围、导演台显示、自主撮合开关、好感、回程及冷却豁免。
+- **AND** 参数与杂项页提供亲吻／爱心时序、冷却时长、配对思想时长／倍率、自主间隔／半径、诊断、单位指导及明确全局生效的恢复默认。
 
-#### Scenario: Restoring addon defaults
-- **WHEN** the player restores defaults after changing addon preferences
-- **THEN** addon overrides and ordinary fields return to defaults without changing their persisted identities.
+### Requirement: SET-03 数值编辑与隐藏前提交
+数值编辑 SHALL 在 Enter、失焦或控件因切页／收起／关闭而隐藏前解析；有效值按既有步长量化并限制范围，无效值保留旧值。导航及编辑缓冲 SHALL NOT 成为玩法配置。有效提交后的采用与保存 SHALL 遵循 [USE-01、02](../settings-use/spec.md)。
 
-### Requirement: Diagnostics and localization
-Diagnostics SHALL offer Off, Auto, Simple, and Verbose, defaulting to Auto. Auto SHALL resolve to Verbose for dev builds and Simple for distribution builds. Startup identity and errors SHALL remain visible regardless of that preference. Player-facing settings text SHALL ship with matching English and ChineseSimplified key sets, preserve the Mwah! brands, and use Pawn as the dispatched actor noun.
+#### Scenario: 无效数值文本
+- **WHEN** 玩家离开含无效文本的数值框
+- **THEN** 显示并保留原规范值。
 
-#### Scenario: Diagnostics are disabled
-- **WHEN** the diagnostic setting is Off
-- **THEN** ordinary diagnostic output is suppressed while startup identity and error reporting remain available.
+#### Scenario: 输入后立即切页
+- **WHEN** 输入有效数值后不按 Enter 直接切页
+- **THEN** 按既有量化／限幅规则提交，并纳入持久化。
 
-### Requirement: Diagnostic channels
-Ordinary diagnostic output SHALL use Player.log. The existing crash-phase sampler SHALL remain a distinct Verbose-only crash-diagnosis exception, not a second general logging system. The mod SHALL NOT introduce another ordinary log sink or export workflow.
+#### Scenario: 收起扩展或关闭设置
+- **WHEN** 活跃数值编辑器因收起或关闭而隐藏
+- **THEN** 先按相同有效／无效规则处理编辑，再进入持久化。
 
-#### Scenario: Verbose diagnostics are enabled
-- **WHEN** a player selects Verbose diagnostics
-- **THEN** ordinary logs remain in Player.log and the crash sampler can record its dedicated phase samples without changing the ordinary logging channel.
+#### Scenario: 非有限数值
+- **WHEN** 文本可解析为 NaN 或无穷大
+- **THEN** 按无效输入处理，不替换规范值。
+
+#### Scenario: Enter 提交活跃字段
+- **WHEN** 在活跃数值框输入有效值并按 Enter
+- **THEN** 更新规范值，无需另点一次或先离开该字段。
+
+### Requirement: SET-04 单位及恢复默认
+时长 SHALL 以 ticks 存储和编辑，同时显示 ticks、现实秒及游戏小时；档位控制 SHALL NOT 提供数量输入框。既有设置键与扩展键 SHALL 保留含义。恢复默认 SHALL 重置普通字段及扩展覆盖。
+
+#### Scenario: 恢复扩展默认
+- **WHEN** 修改扩展偏好后恢复默认
+- **THEN** 扩展覆盖及普通字段恢复默认，不改变持久身份。
+
+### Requirement: SET-05 诊断档位与本地化
+诊断 SHALL 提供 Off、Auto、Simple、Verbose，默认 Auto；Auto 在 dev 构建解析为 Verbose、分发构建为 Simple。启动身份和错误 SHALL 不受该偏好抑制。界面 SHALL 提供相同的 English／ChineseSimplified 键集合，保留 Mwah! 品牌及 Pawn 称谓。
+
+#### Scenario: 关闭诊断
+- **WHEN** 诊断为 Off
+- **THEN** 抑制普通诊断，保留启动身份和错误报告。
+
+### Requirement: SET-06 诊断通道
+普通诊断 SHALL 使用 Player.log；现有崩溃阶段采样 SHALL 只作为 Verbose 崩溃诊断例外，不成为第二套通用日志。SHALL NOT 增加普通日志输出端或导出工作流。
+
+#### Scenario: 开启 Verbose
+- **WHEN** 玩家选择 Verbose
+- **THEN** 普通日志仍进 Player.log，专用采样器可记录崩溃阶段而不改变普通日志通道。
+
+### Requirement: SET-07 可展开的扩展管理
+每个扩展行 SHALL 在关闭时仍保留启用控制，并可展开思想时长及扩展特定选项。亲树 SHALL 将文化控制置于下级并显示 DLC 可用性。关闭总开关或扩展 SHALL 保留从属偏好。
+
+#### Scenario: 未启用 Ideology
+- **WHEN** 无 Ideology 时打开设置
+- **THEN** 仍能配置基础亲树；文化选项说明可用条件，不产生地图拒绝通知。
+
+#### Scenario: 暂时关闭亲树
+- **WHEN** 关闭后重新开启亲树
+- **THEN** 保留思想时长和文化偏好。

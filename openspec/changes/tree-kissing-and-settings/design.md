@@ -1,67 +1,51 @@
+# Design
+
 ## Context
 
-The source baseline is the released 0.2.2 implementation: `KissUtility` dispatches mirrored jobs; `KissThingAddon` hosts object admission and fixed-scope settlement; `KissThingAddons.All` registers only walls; `MwahSettingsUI` renders one long page. Sources and public copy are stronger evidence of implementation than historical comments.
+合同从[现行入口](../../../docs/specification.md)读取；范围由 [proposal](proposal.md)负责。下述是 `deb427d` 候选的技术映射和取舍，不是另一份产品规格；实际结果及差距只在[实现证据](../../../docs/development/tree-kissing-and-settings.md)和 [tasks](tasks.md)记录。
 
-The local RimSage reference inspected on 2026-10-29 is `1.7.4990 rev1069`, explicitly confirmed by the maintainer. The service retained a validated full snapshot after its configured installation reverted to 1.6; that snapshot matches this change's target. It is not evidence of game execution.
+原生参考来自本地 RimSage 的 `1.7.4990 rev1069` 完整保留快照，维护者确认使用该 build。配置安装回到 1.6 后自动刷新失败，不使该已确认快照变成 1.6 证据。版本观察同时参见[原版边界](../../../docs/vanilla-capability-boundaries.md)和[树文化研究](../../../docs/research/tree-kissing-ideology.md)。
 
 ## Decisions
 
-### Share gameplay, isolate real version differences
+### 直接组合，不新增总管或引擎接口
 
-Keep common gameplay sources and the two cohesive drivers. Do not introduce a general engine abstraction or scatter minor-version branches through admission and outcome rules. Compile references, loading metadata, native-menu/input integration, and any actual UI API differences are version-facing boundaries. Whether assemblies can be shared is a build and game-runtime finding, not a prerequisite to using the same gameplay sources.
+| 合同责任 | 实际入口与消费者 | 事实权威／寿命 |
+| --- | --- | --- |
+| 配对请求、入场与表演 | `KissUtility` → `JobDriver_Kiss` → `KissMoodReward` | 单场活动的匹配工作、角色和发起方时钟；driver 保存必要状态 |
+| 非 Pawn 扩展 | `KissThingAddons`／各 worker → `JobDriver_KissThing` → `KissFate`／记忆实例 | 已解析 Def 元数据；目标类别／优先级属于描述，活动身份由保存的 JobDef 固定 |
+| 设置编辑到运行采用 | `MwahSettingsView` 提交 → `MwahSettings` → 请求入口及适用结算消费者 | 规范值属于设置；缓冲、导航、滚动和展开属于视图，不写玩法配置 |
+| 设置到磁盘 | `RequestSettingsSave` → 防抖写入；原版 `Dialog_ModSettings.PreClose` → `MwahMod.WriteSettings` | 内存代次／待保存状态由 mod 入口负责；关闭先提交，防抖写入不抢先提交活跃文本 |
+| 会话派生状态 | `KissTicker` 的 GameComponent 生命周期重置冷却及点选／面板状态 | 游戏会话；不沿用上一游戏的静态 Pawn 身份 |
 
-`GUI.tooltip` is present in the target snapshot, so the earlier 1.7.4976 missing-member finding is not a current migration blocker. Tooltip rendering still needs actual UI acceptance. New settings presentation can use vanilla `TabDrawer`, `TabRecord`, and `TooltipHandler` rather than a UI framework dependency.
+[请求与扩展源码](../../../Source/Mwah/Actions/Kiss/KissThingAddons.cs)、[配对 driver](../../../Source/Mwah/Jobs/JobDriver_Kiss.cs)、[物体 driver](../../../Source/Mwah/Jobs/JobDriver_KissThing.cs)、[设置视图](../../../Source/Mwah/MwahSettingsView.cs)、[规范设置](../../../Source/Mwah/MwahSettings.cs)与[mod 入口](../../../Source/Mwah/Mod.cs)是实际映射。连接页不要求对应的新连接类。
 
-### Make activity ownership explicit
+### 工作所有权与原版安全退出
 
-Share occupancy detection between paired and Thing requests without making core code depend on wall/tree implementations. Pair jobs need matching partner identity and a ready barrier before the initiator clock starts. Dispatch returns actual admission, not only proposal eligibility. Keep normal departure inside the job; register fallback only for an appropriate final exit, preserving idempotency and newer player orders. Vanilla whole-job finish actions are available; starting a job synchronously inside cleanup remains prohibited.
+`KissActivity` 统一识别配对和物体 driver，不依赖具体墙／树 worker。派发检查实际当前工作及 `loadID`，双方存活入场后绑定身份并登记冷却。旧存档只从相互指向且 `startTick` 相同的镜像工作重建对应 ID。
 
-Prefer the vanilla finalizer-job handoff over a static next-tick queue when its invocation conditions distinguish successful natural exit from interruption on both supported APIs. A return fallback is only for normal completion still away from home; violence and replacement orders must not acquire a return prefix. The existing queue is an implementation detail, not a required product capability.
+正常离开留在亲吻工作内；原静态回位队列已经移除。finalizer 同时检查 `JobCondition.Succeeded` 和越过最后回程 toil，不只检查表演完成。1.7.4990 的 `ReadyForNextToil` 先递增索引，`EndCurrentJob` 先求 finalizer、cleanup 后才安全启动；不在 cleanup 同步开始新工作。兜底仍受原版 opportunistic-job gate 限制；它不替代所有参与者的正常工作内回程。
 
-The selected handoff checks both `JobCondition.Succeeded` and advancement beyond the last departure toil; performance completion alone cannot authorize it. In the 1.7.4990 implementation, `ReadyForNextToil` advances the index before natural end, and `EndCurrentJob` obtains the finalizer before cleanup and starts it afterward. The 1.6 reference confirms the same API signatures, not its method bodies; actual 1.6 ordering remains a native-runtime acceptance point. Normal departure remains inside the kiss job for every admitted Pawn. Only the best-effort Goto fallback after the bounded departure uses vanilla's opportunistic-job gate, which excludes drafted, downed, and certain exceptional states.
+`partnerJobId`、`finished`、`returnTicks` 保存匹配、结算幂等及有界回程。现行 toil 读档可能不重跑 initAction，因此每 tick 读取保存的 home，而非依赖初始化闭包。A/B/C 目标、角色、剩余时间、home 和旧旁白字段不重新解释。
 
-Partner identity uses saved `Job.loadID` values. Legacy valid mirrored jobs can reconstruct identity only through reciprocal participant/initiator targets and the same dispatch tick. New `finished` and `returnTicks` fields preserve settlement idempotency and bounded departure across load; existing target, role, remaining-time, home, and narration fields keep their meanings. Departure reads the saved home each tick because rebuilding current toils on load need not rerun their initialization closures.
+### 扩展身份由内容描述，文化只影响结算
 
-### Resolve addons once, use data for content
+`MWAH_KissAddonDef` 描述身份、类别、默认、JobDef、范围及呈现键；worker 处理目标特殊性。初始化检查重复身份和文化规则优先级；实际目标的同优先级歧义在派发前诊断。共享 targeter 从描述获取 building／plant／item 标志，并关闭 `mapObjectTargetsMustBeAutoAttackable`，避免非攻击交互继承攻击专属限制。
 
-Use small Def-backed addon descriptions for stable identity, targeting category, outcome scope, settings metadata, and explicit match precedence; keep special behavior in workers. Reuse the Thing driver. Preserve `MWAH_KissThing` as the wall job identity; a tree JobDef can point through a ModExtension to its addon definition, making the selected identity durable without repurposing unrelated Job fields. Validate descriptor identity and rule priorities at Def initialization. Diagnose ambiguous equal-priority target matches before dispatch, where the target predicates can actually be evaluated.
+墙继续使用 `MWAH_KissThing`，树使用 `MWAH_KissTree`；两者通过 ModExtension 绑定描述，复用单 Pawn driver，不在结算时按目标重新分类。共享文案增加 `TARGET`，保留 `WALL` 别名及 `MWAH_narrationKey / MWAH_narrationSubject`。
 
-The shared targeter takes building/plant/item category flags from registered descriptors, with the active addon predicate still filtering actual targets and fog. It clears `mapObjectTargetsMustBeAutoAttackable`: the native default otherwise applies attack-only building/item gates to a non-attack interaction. Replace wall-specific shared tooltip wording through addon-owned metadata. Do not add ThingComps to every tree or wall just to make it kissable.
+文化是树 worker 的 `ResolveFateScope` 策略，不是另一个抢目标的扩展。它在结算检查偏好、DLC、该 Pawn 的 Ideo 及可选 XML 规则；原生 precept 引用仅在 `MayRequire` 条件条目里。读取 `CompTreeConnection.ConnectedPawn` 识别连接，不调用 Prune、仪式或目击变更。结果范围及数值引用 ADD-07 至 ADD-12，不在 design 再维护一份分布。
 
-### Cultural settlement is a tree policy, not another target addon
+### 设置的提交与保存分开
 
-Add a contextual outcome resolver (for example, `ResolveFateScope(Pawn, Thing)`), defaulting to the addon's basic scope. The tree policy checks the integration preference, `ModsConfig.IdeologyActive`, the acting Pawn's `Ideo`, and declared matching rules at settlement. Keep cultural Def references optional; neither About metadata nor basic tree content requires Ideology.
+活动编辑保留提交回调和范围，切页／收起无需重画旧字段也能解析。Enter 在原生 TextField 消费事件之前捕获；无效和非有限文本不写规范值。视图对象由 mod 入口持有；关闭提交并重置首页，不对其他瞬态状态承诺持久化。
 
-Use `Trees_Desired` for tree-affirming outcomes. A specialized Gauranlen rule also checks `GauranlenConnection_Strong` and `CompTreeConnection.ConnectedPawn`. Resolve overlapping rules once rather than stacking a meme bonus on its own precept bonus. Do not call `Prune`, link/ritual events, or mutate native sightings. `ThoughtWorker_TreesDesired` reads surroundings and is not a completed-kiss memory.
+使用原版 `TabDrawer / TabRecord / TooltipHandler`；按字体和宽度测量标签、水印及行高，不引入 UI 框架。防抖写入与外部关闭写入分路；保存失败不清 dirty，沿用既有重试路径。
 
-Basic and cultural outcomes use the same new tree ThoughtDef and refresh the same slot. Preserve `wall`, existing Def names, narration fields, setting names, and their meanings. Use distinct new identities for tree and cultural preferences. Numerical tree defaults and outcome weights must be specified before editing the corresponding runtime content; they are not inferred from the wall distribution.
+### 共享玩法，仅隔离真实版本差异
 
-Tree content uses the same five mood anchors as walls and the same 30000-tick default duration, with its own slot. The specified basic/affirming/own-connected weights increase the likelihood of a positive result rather than its reward ceiling. Addon descriptors own default enable/duration and job bindings; optional XML culture-rule entries reference native precepts only under `MayRequire` for Ideology. No optional native DefOf field is necessary.
+共享两种 driver 及业务规则，不散布 minor 判断或为迁移重建通用引擎层。编译引用、加载元数据、菜单／输入和真实 UI API 差异才是版本适配面。目标快照的 `GUI.tooltip` 已存在，旧 1.7.4976 缺成员发现不再作为当前迁移依据。程序集能否共用及 1.7 包如何加载仍由版本／原生证据决定，不能从共享源码推导交付完成。
 
-The focused [tree/Ideology research](../../../docs/research/tree-kissing-ideology.md) records the native Def/API evidence and wall-pipeline comparison. Use own connected Gauranlen plus the strong-connection precept before the general tree-affirming precept, otherwise basic settlement. Shared presentation needs a neutral target argument for new content while retaining the existing `WALL` alias and saved narration meanings. Other DLC trees remain ordinary eligible tree targets, not evidence for a Gauranlen cultural rule.
+## Verification boundary
 
-### Separate settings data from presentation
-
-Keep `MwahSettings` and its serialized keys. Move page, scrolling, expansion, and pending-field editing into a presentation owner invoked from the existing mod settings entry point. Preserve the existing measured header, numeric parsing/quantization, tick display, and coalesced save path. Resolve edits before hiding a control. Each page has its own measured height and scroll position. Render addon controls from their descriptors; keep cultural controls nested under tree kissing.
-
-The view retains an active numeric edit's commit callback and range, so hiding or closing it can resolve the value without drawing the old control. Debounced writes persist canonical values only; the external settings-close write resolves the active edit before serialization. A descriptor flag exposes cultural options without branching on target identities in the shared settings view.
-
-## Pre-change source findings and verification implications
-
-| Finding | Consequence / relevant check |
-| --- | --- |
-| Pair drivers advance on their own arrival, not joint readiness | Observe staggered arrival and require the shared clock to remain stopped |
-| Performance finish actions enqueue returns; the GameComponent drains after Pawn ticks, with no origin-job guard | Observe a long normal departure and a newer player order; neither may be stolen by fallback |
-| Pair occupancy checks only `MWAH_Kiss`; Thing admission checks both families | Exercise a paired request against an ongoing wall/tree kiss |
-| `BeginDirected` returns eligibility even when `Start` admission fails | Exercise reservation failure through the director, checking its success message and partner cleanup |
-| Ambient preprocessing unconditionally checks the Pawn cooldown before `Propose` | Reconcile it with the cooldown-exemption contract without changing the maintainer's manual-command decision |
-| Thing settlement re-runs first-match target recognition | Check saved activity identity with overlapping registered target rules |
-| Pending numeric edits are processed only when that field draws | Inspect a valid edit followed immediately by tab change or addon collapse |
-
-These are source-derived gaps, not reproduced game failures. Verification work and its state are recorded only in [tasks.md](tasks.md).
-
-## Migration and delivery
-
-Retain existing entry points, 1.6 support, save identities, and settings keys. Add target-specific loading/build inputs only where needed. Existing wall jobs continue resolving as walls. No schema change may silently reinterpret their fields. Do not change product version, declare 1.7 runtime acceptance, install into a game, publish, or archive this change merely because specification validation succeeds.
-
-Historical engineering reasoning remains in `docs/design-decisions.md`; behavior authority is the baseline plus these approved deltas. Tree balance and stable identities are specified in the addon delta; implementation evidence remains in the task list.
+这份映射只说明实际责任和来源判断，不声称用户交互或原生存读档已经成功。未完成项及补证责任只在 [tasks](tasks.md) 与[实现证据](../../../docs/development/tree-kissing-and-settings.md)维护。原始设计的前置缺陷调查保存在[历史版本](../../../docs/archive/specification-before-workflow/openspec/changes/tree-kissing-and-settings/design.md)，不作为当前缺陷清单。
