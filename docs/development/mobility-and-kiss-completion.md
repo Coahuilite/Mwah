@@ -1,6 +1,6 @@
 # 移动失能与亲吻结束点：实现与验收
 
-当前仍是 `0.3.x` 的待发布 0.3.0；规格先于实现提交为 `719511f`。现行规则见 [KISS-01／05／09](../../openspec/specs/kissing/spec.md) 及 [ADD-02](../../openspec/specs/addons/spec.md)，[采用记录](../../openspec/changes/mobility-and-kiss-completion/adoption.md)保存完整 delta 和历史。
+当前仍是 `0.3.x` 的待发布 0.3.0；规格先于实现提交为 `719511f`。现行规则见 [KISS-01／03／05／09](../../openspec/specs/kissing/spec.md) 及 [ADD-02](../../openspec/specs/addons/spec.md)，[采用记录](../../openspec/changes/mobility-and-kiss-completion/adoption.md)保存完整 delta 和历史。
 
 ## 实机反馈与当前定位
 
@@ -18,7 +18,9 @@
 
 规格修订先提交为 `a6a9b28`。`MWAH_Kiss` 现已显式声明非爬行工作；该 JobDef 由两个原生包共用，不修改 Pawn 的健康、全局爬行能力或原版工作。接近／表演的失败条件复用 `KissBoundary.CanParticipate` 检查双方，任一方死亡、离场、失去清醒、燃烧或社交被阻断即取消未完成亲吻；不会因为取消爬行语义而让昏迷者继续表演。表演完成后的返程不再执行这个搭档条件。原有伤害中断、匹配工作、具体 owner 的预订释放和奖励幂等保持。
 
-本轮 `verify-local.ps1` 已在这份实现上通过：1.6／1.7 的三个渠道均零警告、零错误，现有内容、身份及零 Harmony 门通过。没有新增存档字段或修改 toil 序号。测试包身份及实际包审计在完成打包后记录；这次倒地接收修复仍待维护者实机确认。
+本轮 `verify-local.ps1` 已在这份实现上通过：1.6／1.7 的三个渠道均零警告、零错误，现有内容、身份及零 Harmony 门通过。没有新增存档字段或修改 toil 序号。这次倒地接收修复仍待维护者实机确认。
+
+本地测试包为 `dist/dev/Mwah-dev-v0.3.0-4c1ca99.zip`，由清洁的实现提交 `4c1ca99` 打包。实际 ZIP 已检查：唯一 `Mwah/` 根目录；只含两份本模组 DLL，分别为 net472／net10.0；两份 JobDef 均带非爬行标记；`version.txt` 与两份 DLL 的产品版本均对应 `4c1ca99`，没有 dirty 标记。53 个暂存文件的隐私审计通过，没有源码、游戏／引用 DLL、PDB 或工坊 ID 文件。此后仅记录证据的文档提交不改变该包的代码身份。
 
 ## 前包已实施的改动
 
