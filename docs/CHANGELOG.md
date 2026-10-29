@@ -54,6 +54,7 @@ One-line release summary.
 - Manage extensions first in the new two-page settings view; pending numeric edits are committed before hiding or closing controls.
 
 ### Fixed
+- Keep crawl-capable downed receivers in passive kissing instead of interrupting them because of the kiss reservation; cancel unfinished pairs when either pawn loses participation eligibility.
 - Keep an immobile receiver at its own cell even when paired-stage selection falls back to Touch; allow manual director mobility fallback and report the actual walking pawn.
 - End kiss occupancy and reports at performance completion, release both jobs’ kiss reservations, and let eligible new orders replace departure without duplicate rewards or return hijacks.
 - Wait for both matching participants before advancing paired performance and report actual job admission.

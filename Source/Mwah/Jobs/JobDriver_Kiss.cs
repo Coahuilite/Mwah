@@ -148,7 +148,10 @@ public class JobDriver_Kiss : JobDriver
 
     protected override IEnumerable<Toil> MakeNewToils()
     {
-        this.FailOn(() => IsKissing && (Partner == null || !Partner.Spawned || Partner.Dead));
+        // Waiting without crawling must not exempt either actor from live participation rules.
+        // Once performance ends, departure no longer depends on the former partner's state.
+        this.FailOn(() => IsKissing &&
+            (!KissBoundary.CanParticipate(pawn).Accepted || !KissBoundary.CanParticipate(Partner).Accepted));
         SetFinalizerJob(condition => KissReturn.Finalizer(pawn, HomeCell, condition,
             CurToilIndex > ReturnToilIndex)!);
         AddFinishAction(_ => KissTrace.Set(isPassivePartner, "end"));

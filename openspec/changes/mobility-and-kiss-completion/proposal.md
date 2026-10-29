@@ -19,6 +19,8 @@
 
 进一步核对原版发现：JobDef.isCrawlingIfDowned 默认 true；Pawn.Crawling 联合 Downed、CanCrawl、JobDef 标记和不在床上判定；HealthTickInterval 对 pawn.Crawling 且 IsReservedAndRespected 的 Pawn 直接 EndCurrentJob(InterruptForced)。亲吻工作没有声明该标记，且发起方依法预订接收方，形成这条冲突。选择在 MWAH_Kiss 明确设置 isCrawlingIfDowned=false，语义与接收方原地等待一致；不撤掉合法预订、不修改爬行／健康系统，不改已确认的返程逻辑。Wait_Downed 本身也是原生非爬行 JobDef 的参照。按照新采用的合同，能否爬行不改变接收资格，亲吻中的接收状态必须是原地、非爬行；同时保留接近／表演期间失去清醒、燃烧和社交阻断的退出条件。具体 XML 标记及运行检查由设计承担。日志具体 Pawn、坐标、私人路径和原始片段不入仓库。
 
+配对 driver 在接近／表演中直接复用 `KissBoundary.CanParticipate` 检查双方，不为非爬行状态引入健康覆盖或另一个资格口径。检查受 `IsKissing` 阶段约束，不把原搭档的后续健康变化重新接到返程上；伤害中断仍使用既有原生通知钩子。墙／树没有被动倒地接收方，不扩大本次爬行标记改动。
+
 ## 原版依据及验证边界
 
 本地 RimSage 的完整 1.7.4990 rev1069 快照已核对 StartJob 同步 ReadyForNextToil、公共 GetReport、按 job 释放预订及 Awake 的原生语义。失能不等于昏迷；CanParticipate 的清醒／燃烧／仪式规则保持。既有字段和 toil 序号保留，1.6／1.7 都走相同源码。使用已有构建／库存／隐私／打包门；不增加单元测试或等价脚本。实际失能派发、返程新请求、报告和存读档仍由维护者实机观察。
