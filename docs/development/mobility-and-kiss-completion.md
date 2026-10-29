@@ -8,7 +8,11 @@
 
 去身份化的事件顺序为：接收方工作入场并进入原地表演等待 → 移动方工作入场 → 移动方因 `MatchingPartner == null` 中止接近。正常可移动配对及物体吻在同一会话中也有完成结算记录。这个结果否定“上一包已经解决倒地派发”的交付判断；它没有证明是其他模组、原版接管或配对 ID 中哪一个原因。
 
-当前日志缺少接收方工作退出原因及实际接替工作。维护者将用原版 `Toggle job logging` 对双方开启工作日志并重试，实施者随后直接读取同一个日志继续定位。保持现行清醒接收资格，不通过放宽规格接受失败，不把 1.7 快照当作这个 1.6 会话的原生实现证据。
+后续原版工作日志补充了对照：一组倒地配对完成两次；另一组的接收方在入场后下一 tick，从表演 toil 以 `InterruptForced` 退出，随即开始 `Wait_Downed`；移动方随后因配对丢失以 `Incompletable` 结束。未记录预订失败或亲吻脚本异常。
+
+查明的原版接缝为：`JobDef.isCrawlingIfDowned` 默认 true，亲吻 Job 未覆盖；原版 `Pawn.Crawling` 会把仍能爬行、未在床上的倒地接收方视为爬行中。`Pawn_HealthTracker.HealthTickInterval` 在其被其他 Pawn 预订且尊重该预订时，直接以 `InterruptForced` 结束当前工作。发起方对接收方的合法预订与这个默认值发生冲突。成功／失败不是“所有倒地一概相同”，而受爬行状态及预订关系共同影响。
+
+维护者据此明确要求修订 KISS-03／05；[原地接收状态修订](../../openspec/changes/mobility-and-kiss-completion/stationary-reception-adoption.md)已采用。当前实现选择为：仅将 `MWAH_Kiss` 标为 `isCrawlingIfDowned=false`，符合接收方留在原地的工作语义，并沿用原版 `Wait_Downed` 的非爬行标记口径。不删除预订、不绕过健康／伤害检查、不改已生效的返程结束点。原生源码链由本地 1.7.4990 rev1069 快照核对；1.6 的实际退出条件与接替工作由维护者日志提供，两类证据分开记录。
 
 ## 前包已实施的改动
 

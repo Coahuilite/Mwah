@@ -35,6 +35,8 @@ settings → settings-use → 请求准入／适用结算 + 磁盘持久化
 
 社交收益压缩的追加采用记录见[本次 delta](../openspec/changes/social-impact-soft-cap/adoption.md)，实施与验收由其 [tasks](../openspec/changes/social-impact-soft-cap/tasks.md)管理；它不关闭原变更的实机缺口。
 
+原地、非爬行被动接收及持续参与条件见[已采用修订](../openspec/changes/mobility-and-kiss-completion/stationary-reception-adoption.md)，与原移动回退变更共用任务与证据记录。
+
 移动回退及表演／返程边界的追加修订见 [delta](../openspec/changes/mobility-and-kiss-completion/adoption.md)，修复与验收见其 [tasks](../openspec/changes/mobility-and-kiss-completion/tasks.md)。
 
 当前只有 `openspec/specs/` 下的正文定义现行规则；change 可以包含候选 delta，不能自称第二套 current。既有实现收尾任务继续由[原变更任务](../openspec/changes/tree-kissing-and-settings/tasks.md)管理。

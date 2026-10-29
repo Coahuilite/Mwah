@@ -15,7 +15,9 @@
 
 维护者回测前包 803c6ea：表演结束点生效，但清醒倒地接收方仍无法完成亲吻，右键／导演台／快速发配均复现。授权只读 Player.log 的启动身份为 1.6.4871 rev591；日志显示双方工作已入场、被动方先进入原地表演等待，随后移动方因配对匹配丢失中止。因此不能再把本次失败归为未启动／未定台，也不能仅凭当前日志认定一定是原版倒地 AI 接管。
 
-继续恢复 KISS-03／05 的既有保证，零 delta；不撤回已确认的返程结束点。下一决定性证据是双方原版 job logging 的退出条件、toil 索引与接替工作。尚未获取该证据前不再改换一个未经证实的运行结构。日志具体 Pawn、坐标、私人路径和原始片段不入仓库。
+维护者要求把这条接收边界上升为明确规格，KISS-03／05 的完整修订见[采用记录](stationary-reception-adoption.md)；不撤回已确认的返程结束点。后续双方原版 job logging 已提供成功／失败对照：倒地配对可以完成两次；失败接收方则在入场后下一 tick，以 InterruptForced 从表演 toil 退出并回到 Wait_Downed，移动方随后因配对丢失失败。
+
+进一步核对原版发现：JobDef.isCrawlingIfDowned 默认 true；Pawn.Crawling 联合 Downed、CanCrawl、JobDef 标记和不在床上判定；HealthTickInterval 对 pawn.Crawling 且 IsReservedAndRespected 的 Pawn 直接 EndCurrentJob(InterruptForced)。亲吻工作没有声明该标记，且发起方依法预订接收方，形成这条冲突。选择在 MWAH_Kiss 明确设置 isCrawlingIfDowned=false，语义与接收方原地等待一致；不撤掉合法预订、不修改爬行／健康系统，不改已确认的返程逻辑。Wait_Downed 本身也是原生非爬行 JobDef 的参照。按照新采用的合同，能否爬行不改变接收资格，亲吻中的接收状态必须是原地、非爬行；同时保留接近／表演期间失去清醒、燃烧和社交阻断的退出条件。具体 XML 标记及运行检查由设计承担。日志具体 Pawn、坐标、私人路径和原始片段不入仓库。
 
 ## 原版依据及验证边界
 
