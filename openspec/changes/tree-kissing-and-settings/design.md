@@ -24,7 +24,7 @@
 
 `KissActivity` 统一识别配对和物体 driver，不依赖具体墙／树 worker。派发检查实际当前工作及 `loadID`，双方存活入场后绑定身份并登记冷却。旧存档只从相互指向且 `startTick` 相同的镜像工作重建对应 ID。
 
-正常离开留在亲吻工作内；原静态回位队列已经移除。finalizer 同时检查 `JobCondition.Succeeded` 和越过最后回程 toil，不只检查表演完成。1.7.4990 的 `ReadyForNextToil` 先递增索引，`EndCurrentJob` 先求 finalizer、cleanup 后才安全启动；不在 cleanup 同步开始新工作。兜底仍受原版 opportunistic-job gate 限制；它不替代所有参与者的正常工作内回程。
+最新表演结束点及移动回退见[追加修订](../mobility-and-kiss-completion/proposal.md)：原工作内的返程不再计作亲吻占用，目标预订在表演结束释放。正常离开仍留在工作内；原静态回位队列已经移除。finalizer 同时检查 `JobCondition.Succeeded` 和越过最后回程 toil，不只检查表演完成。1.7.4990 的 `ReadyForNextToil` 先递增索引，`EndCurrentJob` 先求 finalizer、cleanup 后才安全启动；不在 cleanup 同步开始新工作。兜底仍受原版 opportunistic-job gate 限制；它不替代所有参与者的正常工作内回程。
 
 `partnerJobId`、`finished`、`returnTicks` 保存匹配、结算幂等及有界回程。现行 toil 读档可能不重跑 initAction，因此每 tick 读取保存的 home，而非依赖初始化闭包。A/B/C 目标、角色、剩余时间、home 和旧旁白字段不重新解释。
 

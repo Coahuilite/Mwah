@@ -191,7 +191,7 @@ public abstract class KissThingAddon
     }
 
     /// <summary>busy 一条管住全族：亲着墙的人没空亲树，反之亦然。</summary>
-    public static bool IsKissingThing(Pawn pawn) => pawn.jobs?.curDriver is JobDriver_KissThing;
+    public static bool IsKissingThing(Pawn pawn) => pawn.jobs?.curDriver is JobDriver_KissThing driver && driver.IsKissing;
 
     /// <summary>
     /// 挑一格"站得下、看得见目标、够得着"的落脚点：目标占格 8 周一圈里，离人最近者优先。

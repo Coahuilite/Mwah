@@ -4,6 +4,8 @@ These notes preserve the reasoning and implementation history moved out of `MEMO
 
 The maintainer's 2026-10-29 cooldown clarification is reflected in the core specification: manual orders still check cooldowns unless `noCooldowns` is enabled. This corrects the former contradictory AGENTS wording without changing the released behavior.
 
+The 2026-10-29 [mobility/completion change](../openspec/changes/mobility-and-kiss-completion/proposal.md) supersedes the historical director-only fixed-role rule for an immobile first pick, and distinguishes logical kiss completion from the continuing return job. Ambient role protection remains unchanged.
+
 ## Initiation & ambient
 
 - Ambient kissing (2026-09-02 maintainer demand "所有 pawn 都啵嘴") runs as `KissAmbient : GameComponent` timed matchmaking, **only for pawns the player cannot command** (test `KissBoundary.UnderPlayerManagement = IsPlayerControlled ∨ IsColonyAnimal`, i.e. own animals count as player-side); commandable pawns remain right-click only.

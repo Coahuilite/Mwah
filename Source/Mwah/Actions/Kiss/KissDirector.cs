@@ -152,9 +152,9 @@ public static class KissDirector
             // 一次判定拿到结果与原因（早先失败时要再跑一遍 Propose，连 A* 寻路都白烧）。
             // 导演台是玩家亲手点的名：战斗闸放行（超凡智能想让谁亲嘴，谁就得亲嘴）。
             KissProposal proposal = KissUtility.BeginDirected(a, partner, playerIssued: true);
-            if (proposal.Allowed)
+            if (proposal.TryGetPair(out Pawn doer, out Pawn receiver))
             {
-                Messages.Message("MWAH.Director.Started".Translate(a.Named("PAWN"), partner.Named("OTHER")),
+                Messages.Message("MWAH.Director.Started".Translate(doer.Named("PAWN"), receiver.Named("OTHER")),
                     new LookTargets(a, partner), MessageTypeDefOf.PositiveEvent, historical: false);
                 return;
             }

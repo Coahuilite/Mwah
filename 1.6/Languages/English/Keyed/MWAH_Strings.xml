@@ -33,13 +33,13 @@
   <MWAH.Director.PickSecond>Who does {PAWN} want to kiss?</MWAH.Director.PickSecond>
 
   <MWAH.Director.Title>kiss director</MWAH.Director.Title>
-  <MWAH.Director.LeftPicked>{PAWN} is going to start the kiss.</MWAH.Director.LeftPicked>
+  <MWAH.Director.LeftPicked>{PAWN} wants a kiss.</MWAH.Director.LeftPicked>
   <MWAH.Director.RightWait>(pick who starts first)</MWAH.Director.RightWait>
   <MWAH.Director.PairDone>{PAWN} wants to kiss {OTHER}.</MWAH.Director.PairDone>
   <MWAH.Director.HeartReady>{PAWN} wants to kiss {OTHER} - click to send them.</MWAH.Director.HeartReady>
   <MWAH.Director.HeartWaiting>Fill both slots and the heart turns red.</MWAH.Director.HeartWaiting>
   <MWAH.Director.QuickSend>quick send</MWAH.Director.QuickSend>
-  <MWAH.Director.QuickSendDesc>Skip the slots: click the kisser on the map, then the target - dispatched the moment the second pick lands.</MWAH.Director.QuickSendDesc>
+  <MWAH.Director.QuickSendDesc>Skip the slots: pick the first pawn, then the target. If the first pawn cannot move, the other comes over.</MWAH.Director.QuickSendDesc>
 
   <MWAH.Director.Started>{PAWN} goes to kiss {OTHER}.</MWAH.Director.Started>
 
@@ -105,7 +105,7 @@
   <MWAH.Settings.ChangeOpinionDesc>Also shift how the two pawns feel about each other. This feeds the vanilla romance chain - keep it off if you just want silly kissing.</MWAH.Settings.ChangeOpinionDesc>
 
   <MWAH.Settings.ReturnHomeAfterKiss>Return to original spot</MWAH.Settings.ReturnHomeAfterKiss>
-  <MWAH.Settings.ReturnHomeAfterKissDesc>Afterwards both pawns go back to where the kiss was ordered. A polite request - urgent needs and work still win.</MWAH.Settings.ReturnHomeAfterKissDesc>
+  <MWAH.Settings.ReturnHomeAfterKissDesc>After the performance, return to the original spot. Returning does not count as an ongoing kiss; new orders can replace it.</MWAH.Settings.ReturnHomeAfterKissDesc>
   <MWAH.Settings.DiagnosticLevel>Diagnostic level</MWAH.Settings.DiagnosticLevel>
   <MWAH.Settings.DiagnosticLevelDesc>Off: only the startup banner and error lines. Simple: one fate line per settled kiss, plus every abnormal exit. Verbose: full phase narration and diagnostic logs. Auto follows the build channel: dev builds run Verbose, Steam/GitHub builds run Simple.</MWAH.Settings.DiagnosticLevelDesc>
   <MWAH.Settings.Diag.Off>Off</MWAH.Settings.Diag.Off>
@@ -117,4 +117,5 @@
   <MWAH.Settings.WallKissing>Allow kissing walls</MWAH.Settings.WallKissing>
   <MWAH.Settings.WallKissingDesc>Right-click to kiss a wall — built walls, natural rock, even buried ore veins. The wall never answers, so the mood is pure fate: it may haunt you, or you may fall in love on the spot. Independent of the "who kisses whom" scope slider.</MWAH.Settings.WallKissingDesc>
 
+  <MWAH.Job.Returning>returning to the original spot.</MWAH.Job.Returning>
 </LanguageData>

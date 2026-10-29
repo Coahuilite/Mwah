@@ -12,7 +12,7 @@ namespace Mwah;
 /// **双方 job 在发起的那一帧同时起来**（定台与建 job 都在 <see cref="KissUtility.Start"/>）。
 /// 这不只是省一个 lock toil：敌对单位的 think tree 只在 job 结束后接管，所以
 /// "接近 + 表演 + 离开"全程都在 job 所有权之内 ⇒ 谁都不攻击谁 —— **停火窗口就是 job 生命期本身**，
-/// 不需要任何额外的停火机制。旧写法被动方要等发起方走到台位才被拉进 job，
+/// 不需要任何额外的停火机制。亲吻的逻辑占用只到表演结束，返程保留 job 并不继续占用。旧写法被动方要等发起方走到台位才被拉进 job，
 /// 接近段里被亲的那位是自由的，可以边射边把这场亲打断。
 /// 角色不再靠"目标 B 是否已被填好"猜：C 端永远是发起方，我不是他就是被动方。
 ///
@@ -58,6 +58,14 @@ public class JobDriver_Kiss : JobDriver
 
     /// <summary>本方台位；无效表示"没找到台"，走贴脸兜底。</summary>
     private IntVec3 StageCell => job.GetTarget(TargetIndex.B).Cell;
+
+    public bool IsKissing => !ended && !completed && CurToilIndex <= PerformanceToilIndex;
+
+    public override string GetReport()
+    {
+        if (!IsKissing) return "MWAH.Job.Returning".Translate();
+        return base.GetReport();
+    }
 
     /// <summary>Both admitted jobs bind before the next simulation tick.</summary>
     internal void BindPartner(int loadId) => partnerJobId = loadId;
@@ -132,15 +140,15 @@ public class JobDriver_Kiss : JobDriver
         base.Notify_DamageTaken(dinfo);
         if (dinfo.Def.ExternalViolenceFor(base.pawn) && dinfo.Def.canInterruptJobs)
         {
-            MwahLog.Note("kiss broken by damage: " + base.pawn.LabelShort + " (dmg=" + dinfo.Def.defName + ")");
+            MwahLog.Note((IsKissing ? "kiss broken by damage: " : "kiss return interrupted by damage: ")
+                + base.pawn.LabelShort + " (dmg=" + dinfo.Def.defName + ")");
             EndJobWith(JobCondition.Incompletable);
         }
     }
 
     protected override IEnumerable<Toil> MakeNewToils()
     {
-        this.FailOnDespawnedOrNull(partnerInd);
-        this.FailOn(() => Partner.Dead);
+        this.FailOn(() => IsKissing && (Partner == null || !Partner.Spawned || Partner.Dead));
         SetFinalizerJob(condition => KissReturn.Finalizer(pawn, HomeCell, condition,
             CurToilIndex > ReturnToilIndex)!);
         AddFinishAction(_ => KissTrace.Set(isPassivePartner, "end"));
@@ -148,7 +156,7 @@ public class JobDriver_Kiss : JobDriver
         yield return ToilBegin();
         yield return ToilGotoStage();
         yield return ToilKiss();
-        yield return departure.MakeToil("return", base.pawn, () => HomeCell, () => isPassivePartner, ReadyForNextToil);
+        yield return departure.MakeToil("return", base.pawn, () => HomeCell, () => isPassivePartner, ReadyForNextToil, job);
     }
 
     /// <summary>
@@ -293,6 +301,10 @@ public class JobDriver_Kiss : JobDriver
                     // Completion belongs to the initiator, but both jobs retain the result even
                     // if the initiator finishes a zero-length departure before the next Pawn tick.
                     other.completed = true;
+                    // Release both owners now: the passive Pawn may not tick before a new
+                    // request arrives. Releasing just this Pawn would leave its partner locked.
+                    KissReturn.ReleaseReservations(pawn, job);
+                    KissReturn.ReleaseReservations(other.pawn, other.job);
                     ReadyForNextToil();
                     return;
                 }
@@ -317,6 +329,7 @@ public class JobDriver_Kiss : JobDriver
                 return;
             }
             finished = true;
+            KissReturn.ReleaseReservations(pawn, job);
             if (completed && !isPassivePartner)
             {
                 KissMoodReward.Settle(base.pawn, Partner);

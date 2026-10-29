@@ -59,9 +59,8 @@ public static class KissUtility
     /// <summary>
     /// 谁当发起方：被选中的那位优先主动；它主动不了（动不了 / 没嘴 / 生命阶段不允许）
     /// 而对方能，就让对方过来亲它。总开关与"已经不在了" → 连灰项都不给；门禁越界与即时状态 → 灰项带原因。
-    /// <paramref name="allowRoleSwap"/> 只对右键路径为真：那是 About.xml 明文承诺的"选中方走不动
-    /// 就换对方走过来"。代发路径（导演台点名、自主派发）必须传 false —— 导演台的消息要按点选
-    /// 顺序说话；自主派发更不能借 swap 把玩家侧的小人拉起来当发起方。
+    /// <paramref name="allowRoleSwap"/> 用于右键及手动导演台的移动失能回退：不能移动的一方留在
+    /// 原位，另一方具备完整发起资格才走过去。自主派发必须为 false，不借交换拉起玩家侧 Pawn。
     /// <paramref name="allowCombatInterrupt"/> 为假表示这一路不许打断交战中的单位（自主派发）；
     /// 玩家亲自下令的两条路（右键、导演台）恒为真 —— 超凡智能想让谁亲嘴，谁就得亲嘴。
     /// </summary>
@@ -157,7 +156,7 @@ public static class KissUtility
             }
         }
 
-        if (!doer.CanReach(receiver.Position, PathEndMode.Touch, Danger.Deadly))
+        if (!doer.CanReach(receiver, PathEndMode.Touch, Danger.Deadly))
         {
             return new AcceptanceReport("MWAH.Fail.CannotReach".Translate(receiver.Named("TARGET")));
         }
@@ -186,8 +185,8 @@ public static class KissUtility
     /// 与右键那条的差别只有两点：不弹拒绝提示（没人点东西），以及 job 打 playerForced ——
     /// 否则 pawn 自己的 think tree 会在下一个 override 检查点把它拽回去，变成"起步即取消"。
     /// 走这条路的前提正是"原版不给玩家下令权"，所以它天然绕开 CanTakeOrder，判定仍全复用 Propose，
-    /// 但**不做角色互换**：点谁就是谁去亲（<see cref="KissDirector"/> 的消息按点选顺序说话），
-    /// 自主派发也绝不把玩家侧小人拉起来当发起方。<paramref name="playerIssued"/> 区分两种代发：
+    /// 手动导演台只在第一位不能移动时允许另一位过去，消息按实际角色报告；
+    /// 自主派发不交换角色，绝不把玩家侧 Pawn 拉起来当发起方。<paramref name="playerIssued"/> 区分两种代发：
     /// 导演台是超凡智能亲手点的名，战斗闸放行；自主派发是系统在撮合，交战中的单位不许被它拽走。
     /// </summary>
     /// <returns>这次判定的完整结果：Allowed 为真时 job 已经起来，为假时 BlockedReason 就是给玩家的理由。
@@ -195,7 +194,10 @@ public static class KissUtility
     /// 寻路再跑一遍（<c>CanReach</c> 是 A*，白烧一次），还可能两次结论不一致。</returns>
     public static KissProposal BeginDirected(Pawn first, Pawn second, bool playerIssued)
     {
-        KissProposal proposal = Propose(first, second, allowRoleSwap: false, allowCombatInterrupt: playerIssued);
+        // Only manual dispatch may move the second Pawn instead of an immobile first pick.
+        // Autonomous dispatch must not turn a player-managed receiver into its initiator.
+        KissProposal proposal = Propose(first, second,
+            allowRoleSwap: playerIssued && !KissBoundary.CanMoveNow(first), allowCombatInterrupt: playerIssued);
         if (proposal.TryGetPair(out Pawn doer, out Pawn receiver))
         {
             if (!Start(doer, receiver, forced: true))
@@ -232,6 +234,12 @@ public static class KissUtility
     private static bool Start(Pawn doer, Pawn receiver, bool forced)
     {
         KissStage.TryFind(doer, receiver, out IntVec3 mine, out IntVec3 theirs);
+        if (!KissBoundary.CanMoveNow(receiver))
+        {
+            // A missing paired stage means Touch fallback for the walker, not for the
+            // stationary receiver. Its job starts synchronously, before the walker arrives.
+            theirs = receiver.Position;
+        }
         MwahLog.Dev("stage: " + doer.LabelShort + "=" + (mine.IsValid ? mine.ToString() : "touch")
             + " " + receiver.LabelShort + "=" + (theirs.IsValid ? theirs.ToString() : "touch")
             + (forced ? " forced" : ""));
@@ -288,6 +296,6 @@ public static class KissUtility
         return true;
     }
 
-    public static bool IsKissing(Pawn pawn) => pawn.CurJobDef == MWAH_JobDefOf.MWAH_Kiss;
+    public static bool IsKissing(Pawn pawn) => pawn.jobs?.curDriver is JobDriver_Kiss driver && driver.IsKissing;
 
 }

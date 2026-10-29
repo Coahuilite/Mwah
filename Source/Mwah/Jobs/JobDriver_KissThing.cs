@@ -42,6 +42,14 @@ public class JobDriver_KissThing : JobDriver
 
     private IntVec3 HomeCell => homeX == InvalidCell ? IntVec3.Invalid : new IntVec3(homeX, 0, homeZ);
 
+    public bool IsKissing => !ended && !completed && CurToilIndex <= PerformanceToilIndex;
+
+    public override string GetReport()
+    {
+        if (!IsKissing) return "MWAH.Job.Returning".Translate();
+        return base.GetReport();
+    }
+
     public override void ExposeData()
     {
         base.ExposeData();
@@ -66,7 +74,8 @@ public class JobDriver_KissThing : JobDriver
         base.Notify_DamageTaken(dinfo);
         if (dinfo.Def.ExternalViolenceFor(base.pawn) && dinfo.Def.canInterruptJobs)
         {
-            MwahLog.Note("thing kiss broken by damage: " + base.pawn.LabelShort + " (dmg=" + dinfo.Def.defName + ")");
+            MwahLog.Note((IsKissing ? "thing kiss broken by damage: " : "thing kiss return interrupted by damage: ")
+                + base.pawn.LabelShort + " (dmg=" + dinfo.Def.defName + ")");
             EndJobWith(JobCondition.Incompletable);
         }
     }
@@ -75,8 +84,7 @@ public class JobDriver_KissThing : JobDriver
 
     protected override IEnumerable<Toil> MakeNewToils()
     {
-        this.FailOnDespawnedOrNull(TargetIndex.A);
-        this.FailOn(() => Target.Destroyed);
+        this.FailOn(() => IsKissing && (Target == null || !Target.Spawned || Target.Destroyed));
         SetFinalizerJob(condition => KissReturn.Finalizer(pawn, HomeCell, condition,
             CurToilIndex > ReturnToilIndex)!);
         AddFinishAction(_ => KissTrace.Set(false, "thing-end"));
@@ -84,7 +92,7 @@ public class JobDriver_KissThing : JobDriver
         yield return ToilBegin();
         yield return ToilWalkToTarget();
         yield return ToilKiss();
-        yield return departure.MakeToil("thing-return", base.pawn, () => HomeCell, () => false, ReadyForNextToil);
+        yield return departure.MakeToil("thing-return", base.pawn, () => HomeCell, () => false, ReadyForNextToil, job);
     }
 
     /// <summary>
@@ -184,6 +192,7 @@ public class JobDriver_KissThing : JobDriver
                 return;
             }
             finished = true;
+            KissReturn.ReleaseReservations(pawn, job);
             // 只有倒计时真的走完才结算：中途散场（墙被拆、被征召）不该有天意。
             if (completed)
             {
