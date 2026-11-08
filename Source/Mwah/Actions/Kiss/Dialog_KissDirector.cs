@@ -22,7 +22,7 @@ namespace Mwah;
 /// Esc 刻意不关面板（closeOnCancel=false）：点选中 Esc 的含义是取消选人，归 Targeter。
 ///
 /// 面板里的 pawn 引用是实例字段、随窗口死；静态只剩一个 Current 打开标记，
-/// 由 KissTicker 的 (Game) 构造器按局清零（static 寿命是进程，不是局 —— 见 MEMORY）。
+/// 由 KissTicker 的 (Game) 构造器按局清零（static 寿命是进程，不是局）。
 /// </summary>
 [StaticConstructorOnStartup] // 静态 Texture2D 字段会被原版启动扫描器点名（ReportProbablyMissingAttributes 只认 attribute，不认惰性加载）
 public class Dialog_KissDirector : Window

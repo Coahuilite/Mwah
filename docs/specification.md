@@ -11,10 +11,10 @@
 | 正文 | 负责的事实与结果 | 维护责任 |
 | --- | --- | --- |
 | [kissing](../openspec/specs/kissing/spec.md) | Pawn 配对入口、资格、冷却、占用、配对状态及奖励 | 配对亲吻维护者 |
-| [addons](../openspec/specs/addons/spec.md) | 非 Pawn 目标、扩展身份、共享单 Pawn 执行、墙／树及可选文化 | 扩展维护者 |
+| [addons](../openspec/specs/addons/spec.md) | 非 Pawn 目标、扩展身份、共享单 Pawn 执行、墙／树／机器及可选文化 | 扩展维护者 |
 | [settings](../openspec/specs/settings/spec.md) | 页面、编辑、单位、控件及诊断呈现 | 设置界面维护者 |
 | [settings-use](../openspec/specs/settings-use/spec.md) | 提交到规范值、运行消费和持久化的既有连接 | 设置连接维护者 |
-| [compatibility](../openspec/specs/compatibility/spec.md) | 原生支持条件、可选内容隔离、持久身份及交付边界 | 原生适配与交付维护者 |
+| [compatibility](../openspec/specs/compatibility/spec.md) | 原生支持条件、可选内容隔离、持久身份、交付及跨版本维护源边界 | 原生适配与交付维护者 |
 
 这些是维护责任，不要求新建团队、总管、事件总线、加载器或 DLL。实际类、方法、状态寿命及原版 API 映射见[设计](../openspec/changes/tree-kissing-and-settings/design.md)。
 
@@ -34,6 +34,14 @@ settings → settings-use → 请求准入／适用结算 + 磁盘持久化
 5. **明确采用和结束。** 候选注明状态及所属变更，在明确采用前不替代现行正文；`MODIFIED` 保留完整要求块和全部旧场景。采用时更新现行正文、入口和直接读取方，并保存旧文档。归档对应工作不代表发布，未完成验收不能靠归档关闭。
 
 社交收益压缩的追加采用记录见[本次 delta](../openspec/changes/social-impact-soft-cap/adoption.md)，实施与验收采用由其 [tasks](../openspec/changes/social-impact-soft-cap/tasks.md)记录。
+
+机器吻的新增合同与具体数值／文案设计于 2026-11-05 采用，见[采用记录](../openspec/changes/machine-kissing/adoption.md)、[技术设计](../openspec/changes/machine-kissing/design.md)及[实施／验收任务](../openspec/changes/machine-kissing/tasks.md)。
+
+2026-11-07 采用 VNPE 三种营养膏出口的独立可选兼容，见[采用记录](../openspec/changes/vnpe-paste-kissing/adoption.md)、[隔离设计](../openspec/changes/vnpe-paste-kissing/design.md)及[实施／联调任务](../openspec/changes/vnpe-paste-kissing/tasks.md)。
+
+2026-11-09 按项目整理授权建立跨版本单源维护约束 NATIVE-04；[采用差量](../openspec/changes/project-organization/specs/compatibility/spec.md)只增加工程维护保证，不改变玩法、运行目录或 DLL。整个模组的状态所有权、真实版本接缝和反例判断见[架构评估](../openspec/changes/project-organization/design.md)，整理证据见其 [tasks](../openspec/changes/project-organization/tasks.md)。
+
+维护者已接受共享源码＋分开原生构建。VNPE 的 LoadFolders 条件内容隔离及建议 0.4.0 的[下一阶段计划](../openspec/changes/vnpe-loadfolders/proposal.md)尚未实施，保留现行玩法保证，不构成第二套 current 或升版／发布记录。
 
 原地、非爬行被动接收及持续参与条件见[已采用修订](../openspec/changes/mobility-and-kiss-completion/stationary-reception-adoption.md)，与原移动回退变更共用任务与证据记录。
 

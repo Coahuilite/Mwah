@@ -14,9 +14,9 @@
 
 ## 分支模型（2026-10-04 裁定，对齐兄弟仓；2026-10-05 起对版本分支无关）
 
-- 维护者于 2026-10-29 选择 **`0.3.x` 为远端默认分支**，本轮开发纳入该分支，首个待发布版本为 **0.3.0**。默认分支选择不改变发布边界，也不授权发布。
+- 维护者于 2026-10-29 选择 **`0.3.x` 为远端默认分支**。当前工作路由见 `TODO.md`，已发布版本及渠道见[发布记录](release_review/release-0.3.0-review-zh.md)。默认分支选择不改变发布边界，也不授权发布。
 - **`main` 只做 release**：只在发布时前进；tag 必须落在 `origin/main` 的历史上（release CI 强制校验血统）。
-- **开发在当前版本分支 `<minor>.x` 上**（取代 `dev`；每个 minor 开自己的版本分支，`dev` 不再复活；已归档的版本分支冻结、不再收新提交，当前是哪条看 `git branch --show-current` 与 `MEMORY.md` 耐久状态）。日常提交落当前版本分支，授权后 push → CI（CI 触发用 `[0-9].[0-9].x` 通配，切分支不改工作流）。
+- **开发在当前版本分支 `<minor>.x` 上**（取代 `dev`；每个 minor 开自己的版本分支，`dev` 不再复活；已归档的版本分支冻结、不再收新提交，当前是哪条看 `git branch --show-current`，项目工作看 `TODO.md`）。日常提交落当前版本分支，授权后 push → CI（CI 触发用 `[0-9].[0-9].x` 通配，切分支不改工作流）。
 - 发布时：当前版本分支上的批准提交 → PR/squash merge 进 `main` → 在 main 的合并提交上打 tag → tag push 触发 Release CI。
 - 历史 **append-only**：不 amend、不 rebase、不回写。
 
@@ -27,7 +27,7 @@
 3. **合入 main**：squash merge（受保护 main 走 PR），合并后 `git diff --stat <当前版本分支> main` 应为空。
 4. **GitHub**：在 main 的发布提交上 `git tag vX.Y.Z && git push origin vX.Y.Z`（需授权）。Release CI 校验 tag/版本/血统 → 全部离线门 → GitHub flavor → `dist/github/Mwah-vX.Y.Z.zip` → 自动建 Release（pre-release 由 `-` 后缀自动判定）。
 5. **Steam（若获准）**：`pack-steam.ps1`（要求干净树）产出 `dist/steam/Mwah/`；维护者复制到本地上传副本，item ID 只写该副本的 `About/PublishedFileId.txt`（永不入库）。上传与页面维护由维护者本人执行。
-6. **收尾**：更新 `MEMORY.md` 的耐久状态（版本号、已发布渠道）与 `TODO.md`；渠道观察只支持页面级结论，一个渠道不证明另一个渠道。
+6. **收尾**：更新对应发布记录（版本号、已发布渠道及证据）与 `TODO.md` 的项目路由；只有符合 MEMORY / Knowledge 准入条件的跨任务知识才入记忆。渠道观察只支持页面级结论，一个渠道不证明另一个渠道。
 
 ## 证据边界
 
