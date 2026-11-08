@@ -40,6 +40,21 @@ public class JobDriver_KissThing : JobDriver
 
     private Thing Target => job.GetTarget(TargetIndex.A).Thing;
 
+    private IntVec3 StandCell => job.GetTarget(TargetIndex.B).Cell;
+
+    private bool TargetStateValid
+    {
+        get
+        {
+            KissThingAddon? addon = Addon;
+            Thing target = Target;
+            return target != null && target.Spawned && !target.Destroyed && addon != null
+                && addon.CheckTarget(pawn, target).Accepted
+                && (!addon.UsesFixedStandCell || (addon.ValidStandCell(pawn, target, StandCell)
+                    && (CurToilIndex != PerformanceToilIndex || pawn.Position == StandCell)));
+        }
+    }
+
     private IntVec3 HomeCell => homeX == InvalidCell ? IntVec3.Invalid : new IntVec3(homeX, 0, homeZ);
 
     public bool IsKissing => !ended && !completed && CurToilIndex <= PerformanceToilIndex;
@@ -47,7 +62,7 @@ public class JobDriver_KissThing : JobDriver
     public override string GetReport()
     {
         if (!IsKissing) return "MWAH.Job.Returning".Translate();
-        return base.GetReport();
+        return Addon?.JobReport(Target) ?? base.GetReport();
     }
 
     public override void ExposeData()
@@ -63,8 +78,16 @@ public class JobDriver_KissThing : JobDriver
 
     public override bool TryMakePreToilReservations(bool errorOnFailed)
     {
-        // 独占这堵墙：同一时间两个人排着队亲同一面墙，画面过于凄凉。
-        return pawn.Reserve(Target, job, 1, -1, null, errorOnFailed);
+        KissThingAddon? addon = Addon;
+        if (addon == null || !addon.CheckTarget(pawn, Target).Accepted
+            || !pawn.Reserve(Target, job, 1, -1, null, errorOnFailed)) return false;
+        if (!addon.UsesFixedStandCell) return true;
+        if (addon.ValidStandCell(pawn, Target, StandCell)
+            && pawn.CanReach(StandCell, PathEndMode.OnCell, Danger.Deadly)
+            && pawn.ReserveSittableOrSpot(StandCell, job, errorOnFailed)
+            && pawn.Reserve(StandCell, job, 1, -1, null, errorOnFailed)) return true;
+        KissReturn.ReleaseReservations(pawn, job);
+        return false;
     }
 
     /// <summary>伤害自毁闸：与双人版同判据、同时机（伤害事件本身，同步，零延迟）——
@@ -85,6 +108,7 @@ public class JobDriver_KissThing : JobDriver
     protected override IEnumerable<Toil> MakeNewToils()
     {
         this.FailOn(() => IsKissing && (Target == null || !Target.Spawned || Target.Destroyed));
+        this.FailOn(() => IsKissing && !TargetStateValid);
         SetFinalizerJob(condition => KissReturn.Finalizer(pawn, HomeCell, condition,
             CurToilIndex > ReturnToilIndex)!);
         AddFinishAction(_ => KissTrace.Set(false, "thing-end"));
@@ -136,7 +160,8 @@ public class JobDriver_KissThing : JobDriver
     /// <summary>到位即推进；迈不开步（被封死、被人堵）就止损结束，不在原地反复起步。</summary>
     private void TryWalk()
     {
-        IntVec3 stand = KissThingAddon.FindStandCell(pawn, Target);
+        IntVec3 stand = Addon?.UsesFixedStandCell == true
+            ? StandCell : KissThingAddon.FindStandCell(pawn, Target);
         if (stand == pawn.Position)
         {
             pawn.pather?.StopDead();
@@ -169,6 +194,11 @@ public class JobDriver_KissThing : JobDriver
         };
         toil.AddPreTickIntervalAction(delegate (int delta)
         {
+            if (!TargetStateValid)
+            {
+                EndJobWith(JobCondition.Incompletable);
+                return;
+            }
             pawn.pather?.StopDead();
             FaceTarget();
             ticksLeft -= delta;

@@ -151,7 +151,7 @@ $defOfFields = @([regex]::Matches((Get-ChildItem (Join-Path $root "Source\$modNa
 $orphanFields = @($defOfFields | Where-Object { $xmlDefs -notcontains $_ })
 Assert-True ("DefOf fields all resolve to an XML defName ($($defOfFields.Count)/$($xmlDefs.Count))") ($orphanFields.Count -eq 0) ($orphanFields -join ', ')
 $driverRefs = @([regex]::Matches($defXml, '<driverClass>([^<]+)</driverClass>') | ForEach-Object { $_.Groups[1].Value })
-Assert-True 'driverClass uses the real namespace.type' (@($driverRefs | Where-Object { $_ -notin @("$modName.JobDriver_Kiss","$modName.JobDriver_KissThing") }).Count -eq 0 -and $driverRefs.Count -eq 3)
+Assert-True 'driverClass uses the real namespace.type' (@($driverRefs | Where-Object { $_ -notin @("$modName.JobDriver_Kiss","$modName.JobDriver_KissThing") }).Count -eq 0 -and $driverRefs.Count -eq 4)
 
 # 5a. 天意表完整性：每行必须有 scope、正权重、可解析的 thought（可空=不发心情）、
 #     旁白/短讯键必须双语齐备（与 Keyed 门同源）。坏行引擎会跳过，但门要提前喊。
@@ -215,7 +215,8 @@ foreach ($game in $gameVersions) {
     $text = [Text.Encoding]::ASCII.GetString([IO.File]::ReadAllBytes($binary))
     $symbols = @('FloatMenuOptionProvider_Kiss','JobDriver_Kiss','KissUtility','KissBoundary','KissScope','KissScopeUtility','KissAmbient',
         'KissDirector','Dialog_KissDirector','KissTicker','MainButtonWorker_KissDirector','KissMoodReward','KissCooldown','KissActivity','MwahSettings','MwahMod','MWAH_JobDefOf','MWAH_ThoughtDefOf',"$modName.JobDriver_Kiss",'MWAH_Kiss','MWAH_KissedBond',
-        'KissThingAddon','KissThingAddons','KissWallAddon','MWAH_FateDef','KissFate','KissFateScopes','Thought_MemoryFated','Thought_MemorySocialFated',"$modName.JobDriver_KissThing",'FloatMenuOptionProvider_KissThing','MWAH_KissThing','MWAH_KissedWall','KissStage','KissReturn','MWAH_KissAddonDef','KissAddonJobExtension','KissTreeAddon','MWAH_KissTree','MWAH_KissedTree','MwahSettingsView')
+        'KissThingAddon','KissThingAddons','KissWallAddon','MWAH_FateDef','KissFate','KissFateScopes','Thought_MemoryFated','Thought_MemorySocialFated',"$modName.JobDriver_KissThing",'FloatMenuOptionProvider_KissThing','MWAH_KissThing','MWAH_KissedWall','KissStage','KissReturn','MWAH_KissAddonDef','KissAddonJobExtension','KissTreeAddon','MWAH_KissTree','MWAH_KissedTree','MwahSettingsView',
+        'KissMachineAddon','KissMachineOutcomeExtension','MWAH_MachineTargetDefOf','MWAH_KissedMachine','VanillaNutrientPasteExpandedCompatibility')
     $missingSyms = @($symbols | Where-Object { -not $text.Contains($_) })
     Assert-True ("RimWorld $game DLL contains all $($symbols.Count) key symbols") ($missingSyms.Count -eq 0) ($missingSyms -join ', ')
     Assert-True "RimWorld $game zero-Harmony" (-not ($text.Contains('HarmonyLib') -or $text.Contains('Harmony')))

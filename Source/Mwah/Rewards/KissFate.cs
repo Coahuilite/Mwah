@@ -92,10 +92,17 @@ public static class KissFate
 
     /// <summary>把一行结果发出去 —— 兜底路径也复用这一步，保证两条路落地形状一致。</summary>
     public static void GrantRow(Pawn doer, Thing target, MWAH_FateDef row, int thoughtDurationTicks = 0)
+        => GrantRowCore(doer, target, row, thoughtDurationTicks, null);
+
+    /// <summary>Explicit per-instance strength, including replacement of an existing slot.</summary>
+    public static void GrantRow(Pawn doer, Thing target, MWAH_FateDef row, int thoughtDurationTicks, float moodPowerFactor)
+        => GrantRowCore(doer, target, row, thoughtDurationTicks, moodPowerFactor);
+
+    private static void GrantRowCore(Pawn doer, Thing target, MWAH_FateDef row, int thoughtDurationTicks, float? moodPowerFactor)
     {
         if (row.thought != null && doer.needs?.mood?.thoughts?.memories != null)
         {
-            GrantFatedMemory(doer, target, row, thoughtDurationTicks);
+            GrantFatedMemory(doer, target, row, thoughtDurationTicks, moodPowerFactor);
         }
         if (!row.messageKey.NullOrEmpty())
         {
@@ -106,12 +113,12 @@ public static class KissFate
     }
 
     /// <summary>
-    /// 关系槽语义（2026-10-05 裁定，见 MEMORY "0.2.x mood architecture rulings"）：
+    /// 关系槽语义（2026-10-05 裁定，见 docs/design-decisions.md 的 mood architecture rulings）：
     /// 这类"单主体、无对象"的心情记忆按 (pawn, def) 各占一个槽，新抽签**就地顶替**——
     /// 换档、换旁白、重计时、重取时长。vanilla 的组满行为是"刷新最旧、丢弃新条"，
     /// 旧档会骑在新抽签头上常驻，所以顶替由结算侧显式做；找不到槽才新建。
     /// </summary>
-    private static void GrantFatedMemory(Pawn doer, Thing target, MWAH_FateDef row, int thoughtDurationTicks)
+    private static void GrantFatedMemory(Pawn doer, Thing target, MWAH_FateDef row, int thoughtDurationTicks, float? moodPowerFactor)
     {
         MemoryThoughtHandler memories = doer.needs.mood.thoughts.memories;
         List<Thought_Memory> list = memories.Memories;
@@ -126,6 +133,7 @@ public static class KissFate
         }
         if (slot != null)
         {
+            if (moodPowerFactor.HasValue) slot.moodPowerFactor = moodPowerFactor.Value;
             slot.SetForcedStage(row.stageIndex);
             if (slot is IFatedNarration fatedSlot)
             {
@@ -138,6 +146,7 @@ public static class KissFate
         }
         if (ThoughtMaker.MakeThought(row.thought, row.stageIndex) is Thought_Memory memory)
         {
+            if (moodPowerFactor.HasValue) memory.moodPowerFactor = moodPowerFactor.Value;
             if (memory is IFatedNarration fated)
             {
                 fated.NarrationKey = row.narrationKey;

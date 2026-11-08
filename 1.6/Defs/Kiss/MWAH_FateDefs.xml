@@ -857,4 +857,169 @@
     <narrationKey>MWAH.Fate.Tree.Connected.Belonging</narrationKey>
     <messageKey>MWAH.KissTree.Result.Belonging</messageKey><messageType>NeutralEvent</messageType>
   </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_Machine_Basic_Awkward</defName>
+    <scope>KissMachine</scope>
+    <thought>MWAH_KissedMachine</thought>
+    <stageIndex>0</stageIndex>
+    <weight>20</weight>
+    <narrationKey>MWAH.Fate.Machine.Basic.Awkward</narrationKey>
+    <messageKey>MWAH.KissMachine.Result.Awkward</messageKey>
+    <messageType>NegativeEvent</messageType>
+    <modExtensions><li Class="Mwah.KissMachineOutcomeExtension"><goodOutcome>false</goodOutcome></li></modExtensions>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_Machine_Basic_Quiet</defName>
+    <scope>KissMachine</scope>
+    <thought>MWAH_KissedMachine</thought>
+    <stageIndex>1</stageIndex>
+    <weight>30</weight>
+    <narrationKey>MWAH.Fate.Machine.Basic.Quiet</narrationKey>
+    <messageKey>MWAH.KissMachine.Result.Quiet</messageKey>
+    <messageType>NeutralEvent</messageType>
+    <modExtensions><li Class="Mwah.KissMachineOutcomeExtension"><goodOutcome>false</goodOutcome></li></modExtensions>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_Machine_Basic_Warm</defName>
+    <scope>KissMachine</scope>
+    <thought>MWAH_KissedMachine</thought>
+    <stageIndex>2</stageIndex>
+    <weight>25</weight>
+    <narrationKey>MWAH.Fate.Machine.Basic.Warm</narrationKey>
+    <messageKey>MWAH.KissMachine.Result.Warm</messageKey>
+    <messageType>NeutralEvent</messageType>
+    <modExtensions><li Class="Mwah.KissMachineOutcomeExtension"><goodOutcome>false</goodOutcome></li></modExtensions>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_Machine_Basic_Answered</defName>
+    <scope>KissMachine</scope>
+    <thought>MWAH_KissedMachine</thought>
+    <stageIndex>3</stageIndex>
+    <weight>17</weight>
+    <narrationKey>MWAH.Fate.Machine.Basic.Answered</narrationKey>
+    <messageKey>MWAH.KissMachine.Result.Answered</messageKey>
+    <messageType>NeutralEvent</messageType>
+    <modExtensions><li Class="Mwah.KissMachineOutcomeExtension"><goodOutcome>true</goodOutcome></li></modExtensions>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_Machine_Basic_Devoted</defName>
+    <scope>KissMachine</scope>
+    <thought>MWAH_KissedMachine</thought>
+    <stageIndex>4</stageIndex>
+    <weight>8</weight>
+    <narrationKey>MWAH.Fate.Machine.Basic.Devoted</narrationKey>
+    <messageKey>MWAH.KissMachine.Result.Devoted</messageKey>
+    <messageType>NeutralEvent</messageType>
+    <modExtensions><li Class="Mwah.KissMachineOutcomeExtension"><goodOutcome>true</goodOutcome></li></modExtensions>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_Machine_Research_Awkward</defName>
+    <scope>KissMachineResearch</scope>
+    <thought>MWAH_KissedMachine</thought>
+    <stageIndex>0</stageIndex>
+    <weight>20</weight>
+    <narrationKey>MWAH.Fate.Machine.Research.Awkward</narrationKey>
+    <messageKey>MWAH.KissMachine.Result.Awkward</messageKey>
+    <messageType>NegativeEvent</messageType>
+    <modExtensions><li Class="Mwah.KissMachineOutcomeExtension"><goodOutcome>false</goodOutcome></li></modExtensions>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_Machine_Research_Quiet</defName>
+    <scope>KissMachineResearch</scope>
+    <thought>MWAH_KissedMachine</thought>
+    <stageIndex>1</stageIndex>
+    <weight>30</weight>
+    <narrationKey>MWAH.Fate.Machine.Research.Quiet</narrationKey>
+    <messageKey>MWAH.KissMachine.Result.Quiet</messageKey>
+    <messageType>NeutralEvent</messageType>
+    <modExtensions><li Class="Mwah.KissMachineOutcomeExtension"><goodOutcome>false</goodOutcome></li></modExtensions>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_Machine_Research_Warm</defName>
+    <scope>KissMachineResearch</scope>
+    <thought>MWAH_KissedMachine</thought>
+    <stageIndex>2</stageIndex>
+    <weight>25</weight>
+    <narrationKey>MWAH.Fate.Machine.Research.Warm</narrationKey>
+    <messageKey>MWAH.KissMachine.Result.Warm</messageKey>
+    <messageType>NeutralEvent</messageType>
+    <modExtensions><li Class="Mwah.KissMachineOutcomeExtension"><goodOutcome>false</goodOutcome></li></modExtensions>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_Machine_Research_Answered</defName>
+    <scope>KissMachineResearch</scope>
+    <thought>MWAH_KissedMachine</thought>
+    <stageIndex>3</stageIndex>
+    <weight>17</weight>
+    <narrationKey>MWAH.Fate.Machine.Research.Answered</narrationKey>
+    <messageKey>MWAH.KissMachine.Result.Answered</messageKey>
+    <messageType>NeutralEvent</messageType>
+    <modExtensions><li Class="Mwah.KissMachineOutcomeExtension"><goodOutcome>true</goodOutcome></li></modExtensions>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_Machine_Research_Devoted</defName>
+    <scope>KissMachineResearch</scope>
+    <thought>MWAH_KissedMachine</thought>
+    <stageIndex>4</stageIndex>
+    <weight>8</weight>
+    <narrationKey>MWAH.Fate.Machine.Research.Devoted</narrationKey>
+    <messageKey>MWAH.KissMachine.Result.Devoted</messageKey>
+    <messageType>NeutralEvent</messageType>
+    <modExtensions><li Class="Mwah.KissMachineOutcomeExtension"><goodOutcome>true</goodOutcome></li></modExtensions>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_Machine_Paste_Awkward</defName>
+    <scope>KissMachinePaste</scope>
+    <thought>MWAH_KissedMachine</thought>
+    <stageIndex>0</stageIndex>
+    <weight>20</weight>
+    <narrationKey>MWAH.Fate.Machine.Paste.Awkward</narrationKey>
+    <messageKey>MWAH.KissMachine.Result.Awkward</messageKey>
+    <messageType>NegativeEvent</messageType>
+    <modExtensions><li Class="Mwah.KissMachineOutcomeExtension"><goodOutcome>false</goodOutcome></li></modExtensions>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_Machine_Paste_Quiet</defName>
+    <scope>KissMachinePaste</scope>
+    <thought>MWAH_KissedMachine</thought>
+    <stageIndex>1</stageIndex>
+    <weight>30</weight>
+    <narrationKey>MWAH.Fate.Machine.Paste.Quiet</narrationKey>
+    <messageKey>MWAH.KissMachine.Result.Quiet</messageKey>
+    <messageType>NeutralEvent</messageType>
+    <modExtensions><li Class="Mwah.KissMachineOutcomeExtension"><goodOutcome>false</goodOutcome></li></modExtensions>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_Machine_Paste_Warm</defName>
+    <scope>KissMachinePaste</scope>
+    <thought>MWAH_KissedMachine</thought>
+    <stageIndex>2</stageIndex>
+    <weight>25</weight>
+    <narrationKey>MWAH.Fate.Machine.Paste.Warm</narrationKey>
+    <messageKey>MWAH.KissMachine.Result.Warm</messageKey>
+    <messageType>NeutralEvent</messageType>
+    <modExtensions><li Class="Mwah.KissMachineOutcomeExtension"><goodOutcome>false</goodOutcome></li></modExtensions>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_Machine_Paste_Answered</defName>
+    <scope>KissMachinePaste</scope>
+    <thought>MWAH_KissedMachine</thought>
+    <stageIndex>3</stageIndex>
+    <weight>17</weight>
+    <narrationKey>MWAH.Fate.Machine.Paste.Answered</narrationKey>
+    <messageKey>MWAH.KissMachine.Result.Answered</messageKey>
+    <messageType>NeutralEvent</messageType>
+    <modExtensions><li Class="Mwah.KissMachineOutcomeExtension"><goodOutcome>true</goodOutcome></li></modExtensions>
+  </MWAH_FateDef>
+  <MWAH_FateDef>
+    <defName>MWAH_Fate_Machine_Paste_Devoted</defName>
+    <scope>KissMachinePaste</scope>
+    <thought>MWAH_KissedMachine</thought>
+    <stageIndex>4</stageIndex>
+    <weight>8</weight>
+    <narrationKey>MWAH.Fate.Machine.Paste.Devoted</narrationKey>
+    <messageKey>MWAH.KissMachine.Result.Devoted</messageKey>
+    <messageType>NeutralEvent</messageType>
+    <modExtensions><li Class="Mwah.KissMachineOutcomeExtension"><goodOutcome>true</goodOutcome></li></modExtensions>
+  </MWAH_FateDef>
 </Defs>

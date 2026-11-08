@@ -63,8 +63,7 @@ public class FloatMenuOptionProvider_KissThing : FloatMenuOptionProvider
         string label = addon.OptionLabel(selected, target);
         if (selected.needs?.mood == null)
         {
-            // 目标本来就不会给"对方"心情，这里的无心情标记只提醒发起方：这一亲不会有你的份。
-            label += " " + "MWAH.FloatMenu.KissNoMood".Translate();
+            label += " " + addon.MoodlessLabel(selected, target);
         }
         if (context.IsMultiselect)
         {

@@ -25,4 +25,14 @@
   <MWAH_KissedTree.stages.3.description>树没有走。我的烦恼也暂时停下了脚步。</MWAH_KissedTree.stages.3.description>
   <MWAH_KissedTree.stages.4.label>枝叶间的归属感</MWAH_KissedTree.stages.4.label>
   <MWAH_KissedTree.stages.4.description>根在地下，叶在头顶。此刻，我恰好属于这里。</MWAH_KissedTree.stages.4.description>
+  <MWAH_KissedMachine.stages.0.label>亲机器后有些尴尬</MWAH_KissedMachine.stages.0.label>
+  <MWAH_KissedMachine.stages.0.description>我吻了{TARGET}。它没有回应，倒是我的嘴唇替它完成了一次质检。</MWAH_KissedMachine.stages.0.description>
+  <MWAH_KissedMachine.stages.1.label>亲了一台安静的机器</MWAH_KissedMachine.stages.1.label>
+  <MWAH_KissedMachine.stages.1.description>这一吻没有产出。至少也没有生成待办。</MWAH_KissedMachine.stages.1.description>
+  <MWAH_KissedMachine.stages.2.label>一点机械的温柔</MWAH_KissedMachine.stages.2.label>
+  <MWAH_KissedMachine.stages.2.description>我在{TARGET}冷硬的边角上，找到一点不合规的温柔。</MWAH_KissedMachine.stages.2.description>
+  <MWAH_KissedMachine.stages.3.label>机器回应了我的吻</MWAH_KissedMachine.stages.3.label>
+  <MWAH_KissedMachine.stages.3.description>吻过{TARGET}以后，它看起来仍是一台机器。只有我开始把它往后余生里摆。</MWAH_KissedMachine.stages.3.description>
+  <MWAH_KissedMachine.stages.4.label>我爱上了一台机器</MWAH_KissedMachine.stages.4.label>
+  <MWAH_KissedMachine.stages.4.description>我已经想好了婚礼。{TARGET}负责站着，我负责向所有人解释。</MWAH_KissedMachine.stages.4.description>
 </LanguageData>

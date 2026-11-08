@@ -17,6 +17,8 @@ public static class MWAH_ThoughtDefOf
 
     public static ThoughtDef MWAH_KissedTree = null!;
 
+    public static ThoughtDef MWAH_KissedMachine = null!;
+
     static MWAH_ThoughtDefOf()
     {
         DefOfHelper.EnsureInitializedInCtor(typeof(MWAH_ThoughtDefOf));

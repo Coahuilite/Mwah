@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <MWAH.Addon.Machine.Name>a machine</MWAH.Addon.Machine.Name>
+  <MWAH.Settings.MachineKissing>Machine kissing</MWAH.Settings.MachineKissing>
+  <MWAH.Settings.MachineKissingDesc>Kiss worktables, both vanilla research benches, the multi-analyzer and the vanilla nutrient paste dispenser. Targets with a power component must be powered on. Positive research-device mood scales with Intellectual up to level 20. Good French-kiss outcomes at the dispenser fill Food without using feedstock. With Vanilla Nutrient Paste Expanded enabled, its tap, feeder and dripper are also supported. All machines share one memory.</MWAH.Settings.MachineKissingDesc>
+  <MWAH.KissMachine.Option>Kiss {0}</MWAH.KissMachine.Option>
+  <MWAH.KissMachine.OptionPaste>French kiss {0}</MWAH.KissMachine.OptionPaste>
+  <MWAH.KissMachine.OptionTooltip>Kiss {TARGET} at its work interaction cell; the multi-analyzer can be approached from any touching cell. Powered devices must be on. Research devices improve positive mood, not research progress.</MWAH.KissMachine.OptionTooltip>
+  <MWAH.KissMachine.PasteTooltip>Prefer the dispensing interaction cell of {TARGET}, with one cell to either side allowed. Power is required; feedstock is not. Good fate outcomes fill an existing Food need.</MWAH.KissMachine.PasteTooltip>
+  <MWAH.KissMachine.ReportPaste>French kissing {TARGET}.</MWAH.KissMachine.ReportPaste>
+  <MWAH.KissMachine.PasteTouchTooltip>French kiss {TARGET} from a valid touching cell. Power is required, but network stock and a linked bed are not. Good fate outcomes fill an existing Food need without using feedstock.</MWAH.KissMachine.PasteTouchTooltip>
+  <MWAH.KissMachine.Fail.NoPower>{TARGET} is not powered on</MWAH.KissMachine.Fail.NoPower>
+  <MWAH.KissMachine.NoMoodFood>(no mood reward; good outcomes can still fill Food)</MWAH.KissMachine.NoMoodFood>
+  <MWAH.KissMachine.Result.Awkward>{PAWN} is having second thoughts about kissing {TARGET}.</MWAH.KissMachine.Result.Awkward>
+  <MWAH.KissMachine.Result.Quiet>{PAWN} kissed {TARGET}. The machine has no comment.</MWAH.KissMachine.Result.Quiet>
+  <MWAH.KissMachine.Result.Warm>{PAWN} found a little mechanical tenderness in {TARGET}.</MWAH.KissMachine.Result.Warm>
+  <MWAH.KissMachine.Result.Answered>{PAWN} felt that {TARGET} answered the kiss.</MWAH.KissMachine.Result.Answered>
+  <MWAH.KissMachine.Result.Devoted>{PAWN} is seriously considering a future with {TARGET}.</MWAH.KissMachine.Result.Devoted>
+  <MWAH.KissMachine.Result.Fed>{PAWN} came away from a French kiss with {TARGET} completely fed.</MWAH.KissMachine.Result.Fed>
+  <MWAH.Fate.Machine.Basic.Awkward>I kissed {TARGET}. It did not respond, but my lips seem to have completed its quality inspection.</MWAH.Fate.Machine.Basic.Awkward>
+  <MWAH.Fate.Machine.Basic.Quiet>The kiss produced nothing. At least it did not create another bill.</MWAH.Fate.Machine.Basic.Quiet>
+  <MWAH.Fate.Machine.Basic.Warm>Along the cold edges of {TARGET}, I found a little unauthorized tenderness.</MWAH.Fate.Machine.Basic.Warm>
+  <MWAH.Fate.Machine.Basic.Answered>After our kiss, {TARGET} still looked like a machine. I had merely started making room for it in the rest of my life.</MWAH.Fate.Machine.Basic.Answered>
+  <MWAH.Fate.Machine.Basic.Devoted>I have already planned the wedding. {TARGET} will stand there. I will explain it to everyone.</MWAH.Fate.Machine.Basic.Devoted>
+  <MWAH.Fate.Machine.Research.Awkward>I tried to extract love from the response of {TARGET}. The only reproducible finding was my embarrassment.</MWAH.Fate.Machine.Research.Awkward>
+  <MWAH.Fate.Machine.Research.Quiet>Hypothesis: kissing advances research. Result: no change in research progress. None in my lips, either.</MWAH.Fate.Machine.Research.Quiet>
+  <MWAH.Fate.Machine.Research.Warm>After kissing {TARGET}, I understood something at last. Not the research project. Why I had kissed it.</MWAH.Fate.Machine.Research.Warm>
+  <MWAH.Fate.Machine.Research.Answered>It gave me no answers. Somehow I read an entire paper on mutual affection into that kiss.</MWAH.Fate.Machine.Research.Answered>
+  <MWAH.Fate.Machine.Research.Devoted>I kissed {TARGET} and proved that we were in love. The derivation skips a few steps, but the conclusion is too beautiful to dispute.</MWAH.Fate.Machine.Research.Devoted>
+  <MWAH.Fate.Machine.Paste.Awkward>I offered my tongue to {TARGET}. It returned an unforgettable metallic aftertaste.</MWAH.Fate.Machine.Paste.Awkward>
+  <MWAH.Fate.Machine.Paste.Quiet>We kissed deeply. No nutrient paste. No further developments.</MWAH.Fate.Machine.Paste.Quiet>
+  <MWAH.Fate.Machine.Paste.Warm>That French kiss had a hint of nutrient paste. My definition of romance has become remarkably specific.</MWAH.Fate.Machine.Paste.Warm>
+  <MWAH.Fate.Machine.Paste.Answered>It kissed me back. Not a grain of feedstock was lost, yet I suddenly felt that no machine could care for me better.</MWAH.Fate.Machine.Paste.Answered>
+  <MWAH.Fate.Machine.Paste.Devoted>Something happened between us that no hopper can explain. I choose to call it love. Conservation of matter can wait.</MWAH.Fate.Machine.Paste.Devoted>
+</LanguageData>

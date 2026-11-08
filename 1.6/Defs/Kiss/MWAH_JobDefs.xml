@@ -47,4 +47,17 @@
     <allowOpportunisticPrefix>false</allowOpportunisticPrefix>
     <alwaysShowReport>true</alwaysShowReport>
   </JobDef>
+  <JobDef>
+    <defName>MWAH_KissMachine</defName>
+    <driverClass>Mwah.JobDriver_KissThing</driverClass>
+    <modExtensions>
+      <li Class="RimWorld.KissAddonJobExtension"><addon>MWAH_MachineAddon</addon></li>
+    </modExtensions>
+    <reportString>kissing TargetA.</reportString>
+    <casualInterruptible>false</casualInterruptible>
+    <playerInterruptible>true</playerInterruptible>
+    <checkOverrideOnDamage>Always</checkOverrideOnDamage>
+    <allowOpportunisticPrefix>false</allowOpportunisticPrefix>
+    <alwaysShowReport>true</alwaysShowReport>
+  </JobDef>
 </Defs>

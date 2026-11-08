@@ -7,6 +7,8 @@
 
 约定物体目标资格、独立开关、共享单 Pawn 执行及内容结果。扩展通过窄合同组合到亲吻功能，不使配对吻依赖具体墙／树实现。
 
+2026-11-05 采用机器吻 ADD-13～18，依据见 [采用记录](../../changes/machine-kissing/adoption.md)；实施与验收状态由该变更的 tasks 管理。
+
 ## Requirements
 
 ### Requirement: ADD-01 独立目标控制
@@ -146,3 +148,98 @@
 #### Scenario: 亲吻自己的已连接 Gauranlen
 - **WHEN** 文化匹配的 Pawn 完成该亲树
 - **THEN** 可获得树吻结果，但不改变连接强度、树精产出或仪式进度。
+
+### Requirement: ADD-13 机器目标与单一身份
+机器吻 SHALL 按 `Building_WorkTable` 类型族接受目标，并精确接受原版 `SimpleResearchBench`、`HiTechResearchBench`、`MultiAnalyzer`、`NutrientPasteDispenser` 四个 ThingDef，并按 ADD-19 接受明确声明的可选兼容目标。特例 SHALL 先于一般类型族选择策略，不按名称、生产分类或其他模组的相似功能兜底匹配。稳定身份 SHALL 为设置 `machine`、工作 `MWAH_KissMachine`、记忆 `MWAH_KissedMachine`；默认开启、思想时长 30000 ticks。普通、研究、营养膏策略 SHALL 共用一个机器记忆槽，与墙／树独立，替换时同步档位、旁白、时长和倍率。
+
+#### Scenario: 模组工作台与非工作台机器
+- **WHEN** 模组目标继承 `Building_WorkTable`，或只是名称相似但不属于该族
+- **THEN** 前者进入普通机器吻，后者不被认领，除非是上述精确特例或 ADD-19 明确声明的可选目标。
+
+#### Scenario: 从研究设备转吻普通工作台
+- **WHEN** Pawn 已有识智加成的机器记忆，再完成普通工作台吻
+- **THEN** 更新同一个槽，并将倍率恢复为普通机器的值，不保留研究增益。
+
+### Requirement: ADD-14 机器供电
+具有 `CompPowerTrader` 的机器 SHALL 仅以其 `PowerOn` 判断供电资格，不追查电源、接线、开关、故障或获得开启状态的方式，不附加完整生产可用条件。没有该组件的手动工作台及简易研究台 SHALL 不要求电力。接近／表演中失去 PowerOn SHALL 取消未完成动作，不发完成奖励；完成后的返程 SHALL 不撤销结果。供电不足 SHALL 给出直接拒绝原因，不隐藏仍启用的目标；关闭扩展的静默规则不变。
+
+#### Scenario: 特殊方式保持通电
+- **WHEN** 设备 PowerOn 为真，即使其他生产条件不满足或由其他模组／开发工具改变该状态
+- **THEN** 不因电源来源、故障、开关、燃料、原料或账单条件另行拒绝。
+
+#### Scenario: 中途断电
+- **WHEN** 已入场的电动机器吻在表演完成前 PowerOn 变为假
+- **THEN** 取消，不发机器思想或饱腹奖励，释放本工作预订。
+
+### Requirement: ADD-15 机器站位
+营养膏机 SHALL 优先使用原版领取交互格，其次尝试相对机器朝向的左／右各一格；两侧同等可用时按 Pawn 距离选择，等距保持确定顺序。三格都不可达／不可预订 SHALL 取消，不扩大到其他侧面。工作台及研究台 SHALL 使用其原版 InteractionCell，与该格的椅子重合，不要求必须摆椅子；无声明交互格的工作台采用原版计算的交互格。多元分析仪 SHALL 使用附近可达、满足原版 Touch 条件的格子。机器工作 SHALL 固定保存选定台位，并使预订、行走和表演使用同一格；台位失效 SHALL 取消。此规则 SHALL NOT 改写墙／树原有站位条件。
+
+#### Scenario: 营养膏机正面不可达
+- **WHEN** 中央领取格不可用，但旋转后的某个左右候选可达且可预订
+- **THEN** 使用该侧格；三格均不可用时不派工作。
+
+#### Scenario: 研究台前摆有椅子
+- **WHEN** 交互格上有可用椅子
+- **THEN** Pawn 在同格完成表演，不改到旁边；正在被占用或预订则拒绝。
+
+### Requirement: ADD-16 机器天意与识智
+机器吻 SHALL 使用基础心情 -2、0、1、3、6，默认权重 20、30、25、17、8；基础、研究、营养膏各用自己的旁白表，但共用机器记忆。研究特例 SHALL 仅将正面心情乘以 `1 + clamp(L, 0, 20) / 20`；L 为结算时原版 Intellectual 有效等级（含资质），技能缺失或不可用按 0。负面及零档 SHALL 不缩放，普通机器与营养膏 SHALL 不采用识智增益。不乘 SocialImpact 或配对心情倍率，不授予研究进度或识智经验。档位权重 SHALL 不受识智影响；空表 SHALL 按同分布及相同效果规则回退。
+
+#### Scenario: 识智满级
+- **WHEN** 有心情的 Pawn 在识智有效等级 20 或以上完成研究设备吻
+- **THEN** 五档实际心情为 -2、0、2、6、12；0 级为 -2、0、1、3、6。
+
+#### Scenario: 高低识智切换
+- **WHEN** 再次亲吻时识智改变
+- **THEN** 新结算按当前值覆盖同槽倍率；旧记忆不随之后技能变化自行改变。
+
+### Requirement: ADD-17 显式好结果与营养膏饱腹
+机器天意行 SHALL 用显式 `goodOutcome` 标记好结果，不从 stageIndex、心情值、思想是否存在或 Pawn 是否有心情推断。出厂各表仅最后两档标记好结果。原版营养膏机 SHALL 显示法式深吻动作；完成并抽到标记行时 SHALL 将存在的 Food 需求填至当前上限，不要求或消耗原料、不生成食物、不走进食链，不替代其他需求或直接移除营养不良。无心情 SHALL 不阻止饱腹；无 Food SHALL 不补充电量等资源，且不显示已饱腹提示。思想／短讯／饱腹 SHALL 消费同一次抽签；未完成不发奖，完成最多一次，返程／存读档不重放。缺心情提示 SHALL 不将仍可饱腹的动作称为只有姿态。
+
+#### Scenario: 无心情但有 Food
+- **WHEN** Pawn 深吻营养膏机并抽到标记行
+- **THEN** 不发思想，但补满 Food 并显示适用饱腹提示。
+
+#### Scenario: 心情被调成零
+- **WHEN** 标记行的心情因内容修改或原版机制归零
+- **THEN** 仍按显式标记处理饱腹，不重新掷骰。
+
+#### Scenario: 已完成后保存再加载
+- **WHEN** 深吻已结算、Pawn 在返程中存读档
+- **THEN** 不再次抽签、刷新思想或补充 Food。
+
+### Requirement: ADD-18 双版本与既有行为
+机器吻 SHALL 在 RimWorld 1.6／1.7 Core-only 环境使用同一规则，复用现有右键、导演台、冷却、受伤中断、扩展开关及返程边界，不加入自主撮合。新增设置／Job／记忆 SHALL 不重用墙／树身份，不改变旧存档中既有工作的含义。SHALL 不引入 Harmony、运行库依赖或对原版生产／研究／进食流程的补丁。
+
+#### Scenario: 旧存档缺少机器设置
+- **WHEN** 旧配置及存档升级
+- **THEN** 机器采用默认值，墙／树及配对偏好与有效记忆保留含义，旧物体吻不要求新增台位字段。
+
+### Requirement: ADD-19 可选 VNPE 营养膏出口兼容
+当 `VanillaExpanded.VNutrientE` 启用时，机器吻 SHALL 额外精确接受 `VNPE_NutrientPasteTap`、`VNPE_NutrientPasteFeeder`、`VNPE_NutrientPasteDripper`。兼容 SHALL 按 packageId 与 Def 身份隔离，不按名称、类型子类或管网标签扩大到研磨机、储罐、管道或其他模组目标。未启用时 SHALL 不解析这些 Def；启用但某个 Def 缺失时 SHALL 诊断该项并只跳过该项，不影响其余目标及基础功能。
+
+三者 SHALL 共用 ADD-17 的法式深吻文案、同一次天意抽签、显式 goodOutcome 饱腹、无心情／无 Food 语义，以及 ADD-13 的机器设置、Job 和单一记忆槽。兼容 SHALL 仅采用 ADD-14 的 PowerOn 判据，不检查管网连接、储量、床位连接、开关或原料，不调用出餐／喂食 API，不抽取管网资源，不增加识智收益。
+
+Tap SHALL 使用自身 InteractionCell 及相对朝向的左右一格，遵守 ADD-15 的中央优先与限定候选。Feeder／Dripper SHALL 在自身占格及邻格内寻找可站立、可预订、可到达且满足原版 Touch 的位置，按距离优先，等距用稳定坐标顺序；没有合法位置就拒绝／取消，不强行挤占床位、移动建筑或使用隔墙目标。选定台位 SHALL 继续由 TargetB 保存，沿用持续有效性、中断及完成／返程预订边界。
+
+兼容 SHALL 在 1.6／1.7 共用规则，不引入对方 DLL、框架或 Harmony 的 Mwah 强制依赖，不修改对方 Def、运行组件或原生生产行为。
+
+#### Scenario: VNPE 未加载
+- **WHEN** 仅加载 Mwah 的 Core-only 组合
+- **THEN** 不解析 VNPE Def、不发缺失告警，基础机器、墙、树和配对仍可用。
+
+#### Scenario: 三种出口的站位
+- **WHEN** Tap 中央不可用但其左右候选合法，或 Feeder／Dripper 附近有合法 Touch 位置
+- **THEN** 分别使用限定侧格或合法接触格；所有合法候选都不可达时不开始表演。
+
+#### Scenario: 已站在小型出口占格
+- **WHEN** Pawn 所在格与可穿过的 Feeder／Dripper 占格重合，且原版站立和预订条件通过
+- **THEN** 允许原地表演，不强制先移动到邻格。
+
+#### Scenario: 有电但无管网
+- **WHEN** 任一受支持出口 PowerOn 为真，但没有管网／存量或床位连接
+- **THEN** 不因这些生产条件拒绝，完成后仍消费同一次天意并发放适用饱腹；不调用真实出餐或自动喂食。
+
+#### Scenario: 已入场出口失效
+- **WHEN** 完成前断电、目标消失或固定台位失效
+- **THEN** 取消并释放本工作预订，不发完成结果；完成后返程／存读档不重新结算。

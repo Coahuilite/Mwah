@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <MWAH.Addon.Machine.Name>机器</MWAH.Addon.Machine.Name>
+  <MWAH.Settings.MachineKissing>亲吻机器</MWAH.Settings.MachineKissing>
+  <MWAH.Settings.MachineKissingDesc>亲吻工作台、两种原版研究台、多元分析仪及原版营养膏机。有电力组件的目标必须通电。研究设备的正面心情随识智提高，最高按 20 级计算；营养膏机深吻的好结果可以补满饥饿，不消耗原料。启用 Vanilla Nutrient Paste Expanded 时，另支持其三种营养膏出口。所有机器共用一条记忆。</MWAH.Settings.MachineKissingDesc>
+  <MWAH.KissMachine.Option>亲吻{0}</MWAH.KissMachine.Option>
+  <MWAH.KissMachine.OptionPaste>与{0}法式深吻</MWAH.KissMachine.OptionPaste>
+  <MWAH.KissMachine.OptionTooltip>走到 {TARGET} 的工作交互格亲吻；多元分析仪可从附近接触。电动设备必须通电。研究设备只提高正面心情，不增加研究进度。</MWAH.KissMachine.OptionTooltip>
+  <MWAH.KissMachine.PasteTooltip>优先站在 {TARGET} 的领取格，也可偏移左右一格。必须通电，不需要原料；天意的好结果会补满存在的饥饿需求。</MWAH.KissMachine.PasteTooltip>
+  <MWAH.KissMachine.ReportPaste>与{TARGET}法式深吻。</MWAH.KissMachine.ReportPaste>
+  <MWAH.KissMachine.PasteTouchTooltip>在能触及 {TARGET} 的合法位置法式深吻。必须通电，不要求管网存量或床位连接；天意的好结果会补满存在的饥饿需求，不消耗原料。</MWAH.KissMachine.PasteTouchTooltip>
+  <MWAH.KissMachine.Fail.NoPower>{TARGET} 未通电</MWAH.KissMachine.Fail.NoPower>
+  <MWAH.KissMachine.NoMoodFood>（没有心情奖励；好结果仍可补满饥饿）</MWAH.KissMachine.NoMoodFood>
+  <MWAH.KissMachine.Result.Awkward>{PAWN} 与 {TARGET} 的吻，越想越有些尴尬。</MWAH.KissMachine.Result.Awkward>
+  <MWAH.KissMachine.Result.Quiet>{PAWN} 亲吻了 {TARGET}。机器暂时没有意见。</MWAH.KissMachine.Result.Quiet>
+  <MWAH.KissMachine.Result.Warm>{PAWN} 在 {TARGET} 身上找到了一点机械的温柔。</MWAH.KissMachine.Result.Warm>
+  <MWAH.KissMachine.Result.Answered>{PAWN} 觉得 {TARGET} 回应了这一吻。</MWAH.KissMachine.Result.Answered>
+  <MWAH.KissMachine.Result.Devoted>{PAWN} 开始认真考虑与 {TARGET} 的未来。</MWAH.KissMachine.Result.Devoted>
+  <MWAH.KissMachine.Result.Fed>{PAWN} 在与 {TARGET} 的深吻中饱餐了一顿。</MWAH.KissMachine.Result.Fed>
+  <MWAH.Fate.Machine.Basic.Awkward>我吻了{TARGET}。它没有回应，倒是我的嘴唇替它完成了一次质检。</MWAH.Fate.Machine.Basic.Awkward>
+  <MWAH.Fate.Machine.Basic.Quiet>这一吻没有产出。至少也没有生成待办。</MWAH.Fate.Machine.Basic.Quiet>
+  <MWAH.Fate.Machine.Basic.Warm>我在{TARGET}冷硬的边角上，找到一点不合规的温柔。</MWAH.Fate.Machine.Basic.Warm>
+  <MWAH.Fate.Machine.Basic.Answered>吻过{TARGET}以后，它看起来仍是一台机器。只有我开始把它往后余生里摆。</MWAH.Fate.Machine.Basic.Answered>
+  <MWAH.Fate.Machine.Basic.Devoted>我已经想好了婚礼。{TARGET}负责站着，我负责向所有人解释。</MWAH.Fate.Machine.Basic.Devoted>
+  <MWAH.Fate.Machine.Research.Awkward>我试图从{TARGET}的回应里提炼爱情。唯一经得起复现的结论，是我有些尴尬。</MWAH.Fate.Machine.Research.Awkward>
+  <MWAH.Fate.Machine.Research.Quiet>假设：亲吻能推进研究。实验结果：研究进度没有变化。嘴唇也没有。</MWAH.Fate.Machine.Research.Quiet>
+  <MWAH.Fate.Machine.Research.Warm>亲吻{TARGET}之后，我突然理解了一个问题。不是研究项目，是我为什么会亲它。</MWAH.Fate.Machine.Research.Warm>
+  <MWAH.Fate.Machine.Research.Answered>它没有给我答案。我却从这一吻里，读出了一整篇关于相爱的论文。</MWAH.Fate.Machine.Research.Answered>
+  <MWAH.Fate.Machine.Research.Devoted>我吻了{TARGET}，并证明我们相爱。推导过程有些跳步，但结论美得无法反驳。</MWAH.Fate.Machine.Research.Devoted>
+  <MWAH.Fate.Machine.Paste.Awkward>我把舌头交给{TARGET}。它回敬了一次难以忘怀的金属口感。</MWAH.Fate.Machine.Paste.Awkward>
+  <MWAH.Fate.Machine.Paste.Quiet>我们深吻了。没有营养膏，也没有下文。</MWAH.Fate.Machine.Paste.Quiet>
+  <MWAH.Fate.Machine.Paste.Warm>这个法式深吻略带营养膏风味。我现在对浪漫的定义变得十分具体。</MWAH.Fate.Machine.Paste.Warm>
+  <MWAH.Fate.Machine.Paste.Answered>它吻了回来。原料一粒没少，我却忽然觉得，这世上没有比它更会照顾我的机器。</MWAH.Fate.Machine.Paste.Answered>
+  <MWAH.Fate.Machine.Paste.Devoted>我们之间发生了料斗无法解释的事。我愿意称之为爱情，物质守恒可以晚点再谈。</MWAH.Fate.Machine.Paste.Devoted>
+</LanguageData>

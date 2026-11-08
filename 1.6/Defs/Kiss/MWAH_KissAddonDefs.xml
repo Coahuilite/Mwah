@@ -44,4 +44,19 @@
       </li>
     </cultureRules>
   </MWAH_KissAddonDef>
+  <MWAH_KissAddonDef>
+    <defName>MWAH_MachineAddon</defName>
+    <id>machine</id>
+    <workerClass>Mwah.KissMachineAddon</workerClass>
+    <job>MWAH_KissMachine</job>
+    <targetCategory>Building</targetCategory>
+    <fateScope>KissMachine</fateScope>
+    <priority>100</priority>
+    <nameKey>MWAH.Addon.Machine.Name</nameKey>
+    <switchLabelKey>MWAH.Settings.MachineKissing</switchLabelKey>
+    <switchDescKey>MWAH.Settings.MachineKissingDesc</switchDescKey>
+    <tooltipKey>MWAH.KissMachine.OptionTooltip</tooltipKey>
+    <defaultActive>true</defaultActive>
+    <defaultThoughtDurationTicks>30000</defaultThoughtDurationTicks>
+  </MWAH_KissAddonDef>
 </Defs>
