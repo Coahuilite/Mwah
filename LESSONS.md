@@ -22,3 +22,12 @@
 - **reviewed_at:** 2026-11-09T10:19:25+08:00 (Asia/Hong_Kong).
 - **Evidence / limit:** Static sources, artifact links/headings, whitespace/diff and targeted new-document privacy checks; retained the old NATIVE-02 scenario in the candidate and left the current contract unchanged. No runtime changes, builds, native game execution, branch creation, commits or pushes in this planning phase. User alignment is the next activation condition; later native verification remains maintainer-owned.
 - **Lessons:** No new active lesson or Seen increment. Existing scope, evidence and untracked-artifact requirements apply immediately; a transport failure stays with its task/recovery record.
+
+## Review checkpoint — 0.4 implementation and delivery
+
+- **Owner:** Main coordinator for the maintainer-approved goal.
+- **Reviewed through:** The adopted Common/conditional load roots, actual content move and direct readers, generic target registration/consumer, retained native targets, lifecycle/legacy-binding and director/settings changes, unreleased version axis, and the current uncommitted native handoff/routing closeout. Reconciled Herdr delivery before continuing; returned the narrowed language scan, count-only outlet assertion, UTF-16 alignment and mixed README state to their owner for correction. Stopped out-of-scope staging/repeated mirror checks and replaced that partial generated output through the real package entry point.
+- **Evidence:** Actual two-target/three-flavor verify-local, source/contract and content-move review, cached whitespace/new-file checks, full-history push gate, the real dev package/ZIP and package audit, visual inspection of both tracked images, and passing code-candidate CI. Exact identities, limitations and delivery records remain in [the owning tasks](openspec/changes/shared-content-and-lifecycle/tasks.md); final documentation-push status belongs to Git/Actions rather than a duplicated HEAD field.
+- **reviewed_at:** 2026-11-09T12:09:04+08:00 (Asia/Hong_Kong).
+- **Coverage limit / next owner:** No game run or new native-save/UI acceptance. The maintainer owns the candidate consumption paths in native-acceptance; older kissing-point and Intellectual acceptance remains valid within its original scope. No release-channel operation is implied.
+- **Lessons:** Existing verification-scope, owner-boundary and privacy rules were applied; no duplicate lesson or promotion is needed. L-001 remains Seen 1 on this same local calendar date.

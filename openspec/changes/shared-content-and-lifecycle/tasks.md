@@ -1,6 +1,6 @@
 # 0.4.x 任务编排
 
-当前阶段：**维护者已核对，goal 执行中**。可写任务按 implementation-brief 限定范围，由主协调者集成；历史规划证据保留原义。目标与授权边界见 [proposal](proposal.md)。
+当前阶段：**开发候选与版本分支已交付，原生确认待维护者反馈**。可写切片已停止，主协调者完成集成；历史规划证据保留原义。目标与授权边界见 [proposal](proposal.md)。
 
 ## 前期只读规划团队（已结束）
 
@@ -44,9 +44,9 @@ P2 和 P3 的源码区域可独立推进；同一状态机只有一个写 owner�
 - [ ] 维护者后续确认两版实际加载、受影响 Job 存读档／取消／返程及导演台关键交互，按 [native-acceptance](native-acceptance.md)反馈；本轮开发分支交付保留该缺口，不冒充原生通过，复用已接受的识智观察。
 
 ### P5：隐私审查、提交与推送
-- [ ] 按完整切片提交；暂存本任务文件后检查 cached diff，排除无关资产和临时文件。
-- [ ] 完成上云前全历史、身份、新文件、实际包及必要图像隐私检查；既有豁免照原决定，不绕过失败。
-- [ ] 在开发交付条件满足后推送 `origin/0.4.x` 并确认对应提交／CI 结果；不更改默认分支，不操作 main／tag／Release／Workshop。
+- [x] 按完整切片提交；本任务暂存文件通过 cached diff，未提交无关资产和临时文件。
+- [x] 完成上云前全历史、身份、新文件、实际包及图像隐私检查；既有豁免照原决定，没有新增豁免或改写历史。
+- [x] 创建并推送 `origin/0.4.x`，代码候选对应 CI 成功；未操作 main／tag／Release／Workshop／默认分支。最终文档收尾提交的动态状态以该远端分支和 Actions 为准，不复制一份持续漂移的 HEAD。
 
 ## 当前证据
 
@@ -60,12 +60,21 @@ P2 和 P3 的源码区域可独立推进；同一状态机只有一个写 owner�
 
 ## goal 执行状态
 
-- 主协调者：本地 `0.4.x` 从 `bedea41` 建立，采用边界已就绪，0.4.0 未发布版本轴已同步；最终构建／包／隐私／Git 和 CI 由主协调者拥有。
+- 主协调者：`0.4.x` 从 `bedea41` 建立，采用边界和 0.4.0 未发布版本轴已同步；已集成、审计并推送。两切片及最终证据见下节，原生消费仍由维护者负责。
 - 内容／兼容任务：Herdr `t_59f8e1080835`，最后回修 `content-review-fixes-04`／`content-fixes-watch-04` 已按实际离线证据接受，停止写入；范围见 [implementation-brief A](implementation-brief.md#a共享内容可选兼容与交付-owner)。
 - 生命周期可写任务：Herdr `t_85dd1ad392c8`，请求 `lifecycle-impl-01`，watch `lifecycle-impl-watch`；范围见 [implementation-brief B](implementation-brief.md#bjob-与界面生命周期-owner)。
-- 两任务均使用原指定模型／effort，进入独立开发 tab，现已停止写入；主协调者拥有集成构建和 Git。四项回修后的完整 verify-local 再次通过，双版本 × 三渠道零警告／错误；原生未执行，包及远端交付尚待完成。
+- 两任务均使用原指定模型／effort，进入独立开发 tab，现已停止写入；主协调者完成集成构建和 Git。四项回修后的完整 verify-local 再次通过，双版本 × 三渠道零警告／错误；原生未执行。
 - 生命周期切片已停止写入。初次报告及纯注释澄清请求 `lifecycle-comments-02` 的回报在工具中为 uncorrelated_output；主协调者读取确切终端，观察两个对应 DISPATCH_RESULT 标记并人工校正交付状态，没有重放任务。两个 needs_review 通知已按精确事件 ID 消费。澄清区分了逻辑占用／预订、原生 ended／保存事实及 generation 的实际重置含义，未改变行为。
 - 主协调者静态核对：Phase 占用判据与旧 `!ended && !completed && CurToilIndex <= PerformanceToilIndex` 等价；接近和表演查询均先显式恢复旧绑定；保存键／默认值、完成标志同步／预订释放、finish-action 闸位置和返回边界保留。生命周期切片已按离线范围接受，提交 `0431a20`；实际存读档／交互仍由维护者确认。
 - 内容 owner 在旧档案权限及零实例 DefDatabase 初始化上准备时，主协调者接管历史读者并核对真实源码：本地 1.7.5000 与远端 DefDatabase 均静态建立空 List，空登记合法。暂停并观察无内容写入后，以同会话 `content-implement-02` 完成搬迁，未重放原请求。
 - 交付前观察到内容 owner 超出集中验证边界执行 stage-package 并反复使用临时镜像；主协调者暂停该 turn，确认停止写入，以 `content-handoff-03` 接收已有状态。其误暂存影响已生成的 `dist/dev/Mwah`，该半包已移除，不能用于安装；既存 machine／VNPE 候选目录仍在。没有观察到构建、Git 写入或游戏操作；镜像结果不作为本轮验收证据，后续只运行仓库已有入口。
 - 首轮构建虽绿，源码复核发现中文措辞门从完整 Languages 缩窄成 Keyed、三出口断言仅数数量、UTF-16 身份扫描只有一种字节对齐，以及 README 将旧验收和新布局混写；四项均由原 owner 的 `content-review-fixes-04` 修复，主协调者读取对应原生 DISPATCH_RESULT 并重跑完整入口通过。新类型真实替换旧 adapter，不保留空类迎合旧符号清单。内容搬迁对账仅有两处旧路径注释及专用 tooltip 迁出，其余共同内容不变。该轮 needs_review 已按精确事件 ID 处理，不因回报匹配失败重放任务。
+
+## 开发交付证据（2026-11-09）
+
+- **切片与身份：** `0431a20` 为生命周期整理；`860bf8d` 为共享内容／条件兼容、采用边界和 0.4.0 未发布版本轴。迁移、加载声明及消费者／打包脚本在同一完整提交落地。最终收尾只改任务路由、采用状态及交付说明，不改变运行候选。
+- **本地离线：** 四项回修后的 `pwsh scripts/verify-local.ps1` 全部通过，1.6 net472／1.7 net10.0 × Dev／Steam／GitHub 均零警告／错误。XML／DefOf、双语引用与重复、天意表、三出口及站位、条件加载根、真实 DLL 身份、版本轴和设置锁均通过。没有新增单元测试或向仓库交付镜像测试；没有执行游戏。
+- **实际开发包：** `pwsh scripts/pack-dev.ps1 -Zip` 必构建后成功产出 `dist/dev/Mwah` 和 `dist/dev/Mwah-dev-v0.4.0-860bf8d-dirty.zip`，35 个文件。包内 `version.txt` 为 `Mwah 0.4.0 / build=dev / commit=860bf8d-dirty`；出包时跟踪内容已提交，dirty 来自原有无关未跟踪 `art/`，该目录不在包内。实际 ZIP 只有顶层 Mwah，包含两套原生 DLL、Common、条件兼容和加载声明；源清单／框架／选择互斥由暂存门检查。完整候选已就绪，尚未收到维护者消费反馈。
+- **隐私：** 暂存的新文件与 cached diff 检查通过；全历史审计及首次 push 的机械 hook 通过，既有历史豁免沿用。实际开发包 `privacy-audit.ps1 -PackageDir dist/dev/Mwah` 扫描 35 文件通过；两张跟踪图像已目检为模组美术，未见个人像素内容，元数据门通过。没有改写历史或放宽隐私规则。
+- **远端／CI：** 已创建 `origin/0.4.x`，首次远端 HEAD 与代码候选 `860bf8d77ab910cf9ec279b49a8c9e9a9b9ae99f` 一致；[该候选 CI](https://github.com/Coahuilite/Mwah/actions/runs/42559735770) 成功，含完整离线门、全历史审计、实际打包、产物审计及 artifact 上传。该干净 CI 包不带本地 dirty 标记；没有操作正式发布渠道。文档收尾再经原机械 push／CI，不循环改写记录来追逐自身提交号。
+- **未覆盖／下一责任方：** 维护者按 [native-acceptance](native-acceptance.md)确认两 minor 的真实加载、活动 Job 存读档／取消／返程和导演台关闭；本轮这些原生路径未执行。已有亲吻点与识智观察继续按原范围接受。缺陷回本 change 修复；正式发布仍另需维护者决定。

@@ -1,8 +1,8 @@
 # 共享内容、原生构建与交付设计
 
-状态：2026-11-09 维护者核对采用，实施中；实际完成及证据见 tasks。完整范围见 [proposal](proposal.md)，生命周期取舍另见 [state-machines](state-machines.md)。
+状态：2026-11-09 已按维护者采用方案实施，原生消费待维护者确认；交付及证据见 tasks。完整范围见 [proposal](proposal.md)，生命周期取舍另见 [state-machines](state-machines.md)。
 
-## 推荐结构：一套实际内容，两套原生输出
+## 实施结构：一套实际内容，两套原生输出
 
 ```text
 Source/Mwah/                         唯一 C# 源码及 csproj
@@ -18,7 +18,7 @@ About/
 LoadFolders.xml
 ```
 
-这是同一仓库的拟定布局，不是为 `0.4.x` 再复制一个项目目录。分发包复制 Common／Compatibility 各一份、两版原生输出各一份。旧 `1.6/Defs` 和 `1.6/Languages` 在迁移完成后不再充当编辑或分发来源，不能残留成隐式覆盖层。
+这是同一仓库的实际布局，不是为 `0.4.x` 再复制一个项目目录。分发包复制 Common／Compatibility 各一份、两版原生输出各一份。旧 `1.6/Defs` 和 `1.6/Languages` 已移除，不再充当编辑或分发来源，不能残留成隐式覆盖层。
 
 选择 Common 而非仅改名为 Content 后照旧复制两份，是为了同时明确编辑源和实际运行根。两版共同内容的一次修改只需维护一处，Loader 组合版本差异；不再依赖某个旧 minor 代表整个模组。
 
