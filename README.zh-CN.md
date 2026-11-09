@@ -11,7 +11,7 @@ Mwah! 让游戏内地图上的任何 Pawn 亲任何 Pawn。选中一个 Pawn，�
 - RimWorld **1.6 / 1.7**（仅 Core——不依赖任何 DLC 或模组；机械族、异型、异象实体等 DLC Pawn 按自身天性参与）。
 - 无 Harmony、无前置框架，加载顺序无所谓。
 
-把发布包放进 `RimWorld/Mods/` 即可。
+把打包命令生成的整个 `Mwah` 文件夹放进 `RimWorld/Mods/`。更新时整目录替换旧副本，不要在旧目录上叠加覆盖；存档与设置不受影响。
 
 ## 能做什么
 
@@ -21,7 +21,7 @@ Mwah! 让游戏内地图上的任何 Pawn 亲任何 Pawn。选中一个 Pawn，�
 - **亲墙。** 右键任意墙、天然岩壁或被埋藏的矿脉，凑上去亲。结果按**天意表**（`MWAH_FateDef`，出厂亲墙五档 50 行旁白）掷出，落成**唯一一条**"与墙的关系"记忆——下一次亲吻就地顶替。
 - **亲树。** 右键一棵树，或从导演台指定目标；其他模组中标记为树木的植物也可参与。默认开启，记忆持续 30000 ticks。文化 DLC 可按发起 Pawn 自己的文化选择更贴切、更偏正面的结果，优先识别自己的已连接 Gauranlen 树；没有 DLC、文化不匹配或主动关闭文化结果时，仍可基础亲树。所有亲树结果共用一个记忆槽，与亲墙独立，不改动原版修剪、连接或仪式。
 - **亲机器（开发候选）。** 工作台类型族，以及两种原版研究台、多元分析仪、营养膏机可从右键或导演台指定。电动目标仅检查 `PowerOn`；手动工作台不要求接电。工作台吻使用椅子所在交互格；营养膏机优先领取格，允许左右一格；多元分析仪可从附近接触。所有机器共用一个记忆槽。研究设备的正面心情乘以 `1 + 识智/20`，识智封顶 20，最高档 +12；不增加研究进度。营养膏机法式深吻默认有 25% 机会补满已有饥饿需求，不耗原料、不触发进食副作用。中途断电或未完成取消不发奖。规则与文案见[机器吻设计](./openspec/changes/machine-kissing/design.md)，实际证据及验收见[任务记录](./openspec/changes/machine-kissing/tasks.md)。
-- **可选 VNPE 兼容（开发候选）。** 启用 Vanilla Nutrient Paste Expanded 后，营养膏 Tap、Feeder 和 Dripper 均可法式深吻。Tap 使用领取格及左右一格；后二者只需合法可达、可预订且满足原版 Touch，可在可站立的自身占格或邻格进行。三者沿用营养膏天意及同一机器记忆槽，仅检查 `PowerOn`，不检查管网存量或床位连接，也不消耗资源。缺少该模组不影响基础功能；详见[独立兼容设计](./openspec/changes/vnpe-paste-kissing/design.md)。
+- **可选 VNPE 兼容（开发候选）。** 启用 Vanilla Nutrient Paste Expanded 后，营养膏 Tap、Feeder 和 Dripper 均可法式深吻；三个目标登记与接触位提示只随可选内容根发行，未启用时不解析。Tap 使用领取格及左右一格；后二者只需合法可达、可预订且满足原版 Touch，可在可站立的自身占格或邻格进行。三者沿用营养膏天意及同一机器记忆槽，仅检查 `PowerOn`，不检查管网存量或床位连接，也不消耗资源。缺少该模组不影响基础功能；详见[独立兼容设计](./openspec/changes/vnpe-paste-kissing/design.md)与[共享布局设计](./openspec/changes/shared-content-and-lifecycle/design.md)。
 - **谁都能被亲，有心情没有都一样。** 有心情的 Pawn 按**自己**的社交影响吃加成（+5 × 有效社交影响 × 倍率；社交达人更赚，哑巴缩水，精神变态毫无感觉）。动物、机械族、无人机和异象实体（蹒跚怪/食尸鬼/苏醒的死尸）没有心情系统：动画、爱心照给，外加各自通道的天意短讯，心情零入账；它们也能经导演台当发起方。
 - **停火窗口。** 被发配的吻在 job 生命期内让双方"相安无事"——接近、表演、走回原位全程，因为原版 job 所有权天然挂起 think tree。有效伤害一击即碎，成对/单人冷却限速。系统永远不会把交火中的 Pawn 拽去亲嘴；你可以。亲吻在表演结束时完成：返程显示「返回原位」，不再占用亲吻资格或锁定原目标；新请求仍检查冷却，合法新命令可接替返程。
 
@@ -35,13 +35,15 @@ Mwah! 让游戏内地图上的任何 Pawn 亲任何 Pawn。选中一个 Pawn，�
 
 「**压缩超常社交收益**」位于心情强度旁，默认开启（旧配置缺少新键时也开启）。137% 以内保持原值，超出部分收益递减并趋近 150%，默认 1x 倍率下单条基础心情趋近 +7.5；关闭恢复原公式。它也作用于已开启的好感变化，不影响亲墙、亲树或机器。既有记忆不立即重算；与同搭档再次亲吻时，用当前强度、时长及旁白替换旧配对槽。
 
-**0.3.0** 支持 RimWorld 1.6／1.7，维护者已接受双版本验收；渠道状态见[发布记录](./docs/release_review/release-0.3.0-review-zh.md)。本地测试包同时包含 1.6 和 1.7（目标 4990 rev1069），由游戏只加载对应目录。请使用下方打包命令生成的整个 `dist/dev/Mwah`，不要把源码根目录或不同版本的 DLL 混作安装包；复制与实机验收由维护者执行，操作要点见[本轮验收说明](./docs/development/tree-kissing-and-settings.md#实机验收与反馈)。
+**0.3.0** 支持 RimWorld 1.6／1.7，维护者已接受双版本验收；渠道状态见[发布记录](./docs/release_review/release-0.3.0-review-zh.md)。
+
+**0.4.0 是未发布的开发候选。** 其本地测试包只带一份共同内容（`Common/`）、每版各一份原生 DLL（`1.6/Assemblies` 与 `1.7/Assemblies`，分别按 1.6.4871 与 1.7.4990 rev1069 引用构建）以及一份条件兼容根（`Compatibility/VanillaNutrientPasteExpanded`，只在启用 Vanilla Nutrient Paste Expanded 时被采用），所以游戏加载自己的程序集加同一份共同内容。请使用下方打包命令生成的整个 `dist/dev/Mwah`，不要把源码根目录或不同版本的 DLL 混作安装包。更新已安装的副本时**必须整目录替换 `Mods/Mwah`，不要在旧目录上叠加覆盖**，否则旧布局残留的 Def 或语言文件仍会被加载；存档与设置留在原位，删除游戏目录内的任何东西都由维护者本人执行。复制与原生确认由维护者执行，见本 change 的[原生验收记录](./openspec/changes/shared-content-and-lifecycle/native-acceptance.md)。
 
 ## 开发、打包与版本
 
 唯一人工维护的产品版本在 `Source/Mwah/Mwah.csproj`。构建从不写入游戏目录。
 
-开发前先读[现行规格与变更流程](./docs/specification.md)。真实规则变化先改合同再实现；纯恢复可以零 delta。实施进度与证据不写入规格正文。[跨版本架构评估](./openspec/changes/project-organization/design.md)解释一份 C#／内容源、两份原生构建的边界，以及当前不另拆核心 DLL 或迁移 Common 运行目录的理由。
+开发前先读[现行规格与变更流程](./docs/specification.md)。真实规则变化先改合同再实现；纯恢复可以零 delta。实施进度与证据不写入规格正文。[跨版本架构评估](./openspec/changes/project-organization/design.md)解释单份 C# 源码与两份原生构建的边界；[0.4.x 布局设计](./openspec/changes/shared-content-and-lifecycle/design.md)说明共享 `Common/` 内容根、条件兼容根，以及为何不另拆核心 DLL。
 
 ```powershell
 pwsh scripts/pack-dev.ps1                           # dev：Release 构建 + stage dist/dev/Mwah（文件夹；-Zip 可选）

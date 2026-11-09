@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
-  <!-- 亲墙天意文案：五档短讯（Result，每档一条）+ 五档×10 旁白（Line，进心情条目描述）。结构在 1.6/Defs/Kiss/MWAH_FateDefs.xml，这里只管句子。{PAWN}=亲吻者 {WALL}=墙名 -->
+  <!-- 亲墙天意文案：五档短讯（Result，每档一条）+ 五档×10 旁白（Line，进心情条目描述）。结构在 Common/Defs/Kiss/MWAH_FateDefs.xml，这里只管句子。{PAWN}=亲吻者 {WALL}=墙名 -->
   <MWAH.KissWall.Result.Weird>{PAWN} leaned in and kissed {WALL}. The instant lips met stone, {PAWN} froze.</MWAH.KissWall.Result.Weird>
   <MWAH.KissWall.Result.Nothing>{PAWN} kissed {WALL}. Nothing happened — exactly as {PAWN} hoped.</MWAH.KissWall.Result.Nothing>
   <MWAH.KissWall.Result.Slight>{PAWN} kissed {WALL}. The stone was just the right temperature.</MWAH.KissWall.Result.Slight>

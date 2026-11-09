@@ -4,7 +4,7 @@
 
 这里指向唯一现行正文，不复制行为规则。现行合同已合并维护者此前批准的配对修复、亲树、文化策略、双页设置及 1.7 支持目标；不再要求把英文基线和旧 delta 拼成另一套正文。
 
-**合同采用与交付分开。** 规格约定行为；实现证据由[开发记录](development/tree-kissing-and-settings.md)负责，维护者的 0.3.0 验收采用与渠道状态见[发布记录](release_review/release-0.3.0-review-zh.md)。
+**合同采用与交付分开。** 规格约定行为；实现证据由各 change 的 tasks 负责，当前整理见 [0.4.x 任务](../openspec/changes/shared-content-and-lifecycle/tasks.md)，0.3 历史见[开发记录](development/tree-kissing-and-settings.md)。维护者的 0.3.0 验收采用与渠道状态见[发布记录](release_review/release-0.3.0-review-zh.md)。
 
 ## 从责任找到正文
 
@@ -16,7 +16,7 @@
 | [settings-use](../openspec/specs/settings-use/spec.md) | 提交到规范值、运行消费和持久化的既有连接 | 设置连接维护者 |
 | [compatibility](../openspec/specs/compatibility/spec.md) | 原生支持条件、可选内容隔离、持久身份、交付及跨版本维护源边界 | 原生适配与交付维护者 |
 
-这些是维护责任，不要求新建团队、总管、事件总线、加载器或 DLL。实际类、方法、状态寿命及原版 API 映射见[设计](../openspec/changes/tree-kissing-and-settings/design.md)。
+这些是维护责任，不要求新建团队、总管、事件总线、加载器或 DLL。实际类、方法及原版 API 基线见[原设计](../openspec/changes/tree-kissing-and-settings/design.md)，当前共享根和生命周期映射见 [0.4.x 设计](../openspec/changes/shared-content-and-lifecycle/design.md)及[状态所有权](../openspec/changes/shared-content-and-lifecycle/state-machines.md)。
 
 ```text
 右键／导演台／自主撮合 → kissing
@@ -41,7 +41,7 @@ settings → settings-use → 请求准入／适用结算 + 磁盘持久化
 
 2026-11-09 按项目整理授权建立跨版本单源维护约束 NATIVE-04；[采用差量](../openspec/changes/project-organization/specs/compatibility/spec.md)只增加工程维护保证，不改变玩法、运行目录或 DLL。整个模组的状态所有权、真实版本接缝和反例判断见[架构评估](../openspec/changes/project-organization/design.md)，整理证据见其 [tasks](../openspec/changes/project-organization/tasks.md)。
 
-维护者已接受共享源码＋分开原生构建。VNPE 的 LoadFolders 条件内容隔离及建议 0.4.0 的[下一阶段计划](../openspec/changes/vnpe-loadfolders/proposal.md)尚未实施，保留现行玩法保证，不构成第二套 current 或升版／发布记录。
+维护者已接受共享源码＋分开原生构建，并将下一阶段扩大到实际共享内容根与隐式状态机整理。2026-11-09 维护者核对后采用[0.4.x 总计划](../openspec/changes/shared-content-and-lifecycle/proposal.md)的 NATIVE-02 修订，见[采用记录](../openspec/changes/shared-content-and-lifecycle/adoption.md)。现行正文已更新，运行验收及发布仍独立。[早期 VNPE 研究](../openspec/changes/vnpe-loadfolders/design.md)仅提供依据，不再是另一份实施计划。
 
 原地、非爬行被动接收及持续参与条件见[已采用修订](../openspec/changes/mobility-and-kiss-completion/stationary-reception-adoption.md)，与原移动回退变更共用任务与证据记录。
 

@@ -6,8 +6,9 @@
 
 | 用途 | 命令 | 覆盖 |
 | --- | --- | --- |
-| 日常开发 | `pwsh scripts/verify-local.ps1` | 既有离线门：双版本 × 三渠道构建、XML 良构、双语键一致、DefOf 解析、天意表完整性、DLL 符号与零 Harmony 反证、版本轴、设置项三处锁死 |
-| 出包 | `pwsh scripts/build-dev.ps1` / `pack-github.ps1 -Version v…` / `pack-steam.ps1` | 三个渠道各建各的 flavor，均生成 1.6／1.7 对应原生 DLL 与完整内容目录，**打包必构建**（2026-10-04 事故纪律：只 stage 旧 DLL 会把上一渠道产物装进新标签的包） |
+| 日常开发 | `pwsh scripts/verify-local.ps1` | 既有离线门：双版本 × 三渠道构建、XML 良构、双语键一致（含有效组合与兼容根）、DefOf 解析、天意表完整性、VNPE 登记闭环、加载声明与实际内容根、DLL 符号与零 Harmony／零第三方身份反证、版本轴、设置项三处锁死 |
+| 出包 | `pwsh scripts/build-dev.ps1` / `pack-github.ps1 -Version v…` / `pack-steam.ps1` | 三个渠道各建各的 flavor：共同 Def／语言各拷一份（`Common/`）、可选兼容内容各拷一份（条件根）、两版各放自己的原生 DLL，**打包必构建**（2026-10-04 事故纪律：只 stage 旧 DLL 会把上一渠道产物装进新标签的包） |
+| 安装／升级（维护者） | 整目录替换 `Mods/Mwah` | **不要在旧目录上叠加覆盖**：旧布局残留的 Def／语言仍会被 Loader 加载；存档与配置留在原位，实施者不代为删除游戏目录内任何内容 |
 | push 时（自动） | pre-push hook 跑 `privacy-audit.ps1 -FullHistory`（装法：`pwsh scripts/install-hooks.ps1`，每 clone 一次） | 全向量 + 身份面机械拦截，失败即拒推；CI 在全量 clone 上复跑同一 `-FullHistory` 审计兜底（`--no-verify` 无处藏） |
 
 构建使用固定引用包 1.6.4871 与 1.7.4990-unstable；完整双版本出包需要 .NET 10 SDK 和可用的 NuGet 还原／缓存。旧 `dotnet build Source/Mwah/Mwah.csproj` 默认仍是 1.6 net472；`-p:MWAHGameVersion=1.7` 才选择 net10.0，`pwsh scripts/build-runtime.ps1` 一次构建两者。脚本自带 restore，不接收 `-NoRestore`。出包后用 `pwsh scripts/privacy-audit.ps1 -PackageDir dist/dev/Mwah` 扫描实际测试包；CI 在 artifact 上传前也执行它。不要在发布检查里手工重复脚本已覆盖的逐项复核——**新增检查先做成脚本，再进本文**。

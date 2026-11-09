@@ -1,5 +1,7 @@
 # VNPE 的 LoadFolders 隔离设计
 
+后续路由：[全模组新设计](../shared-content-and-lifecycle/design.md)已提出 Common／顶层 Compatibility 的统一候选布局。本页继续保存 Wiki／源码观察和登记消费研究；下文 minor 内目录树是此前草案，不与新计划并行实施。
+
 状态：候选技术设计，2026-11-09。范围和实施顺序见 [proposal](proposal.md)；现行玩家保证仍在 [addons](../../specs/addons/spec.md)。
 
 ## Wiki 使用方式与源码核对

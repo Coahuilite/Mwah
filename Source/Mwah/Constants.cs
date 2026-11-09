@@ -21,7 +21,7 @@ public static class Constants
     /// <summary>
     /// 心情记忆存活出厂默认 = 1 游戏日，与 MWAH_Kissed 的 durationDays 1 对齐。
     /// 整条数值阶梯（为什么是 +5 而不是 +8、为什么是一日而不是六小时）的依据写在
-    /// 1.6/Defs/Kiss/MWAH_ThoughtDefs.xml 的注释里。
+    /// Common/Defs/Kiss/MWAH_ThoughtDefs.xml 的注释里。
     /// </summary>
     public const int ThoughtDurationTicks = 60000;
 

@@ -150,6 +150,6 @@
 | `RoomStatDef` row ("room kissiness") | Fun flavor, low reachability (gated by room-stats window). Skip. |
 
 ## 4. Key file references (this repo)
-- `1.6/Defs/Kiss/MWAH_MainButtonDefs.xml` — current entry (order=200, workerClass).
+- `Common/Defs/Kiss/MWAH_MainButtonDefs.xml` — current entry (order=200, workerClass; content root migrated in 0.4.x).
 - `Source/Mwah/Actions/Kiss/MainButtonWorker_KissDirector.cs` — `Visible` override pattern, correct per `MainButtonWorker.Visible` virtual.
 - `Source/Mwah/Actions/Kiss/FloatMenuOptionProvider_Kiss.cs` — auto-registered per `FloatMenuMakerMap.cs:20` AllSubclassesNonAbstract.

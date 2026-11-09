@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <!--
+    可选 VNPE 专用文案（简体）。与英文可选根同键同数量；键由登记消费，
+    基础 Common 语言文件不保留同名键，避免兼容根漏载时的静默覆盖。
+  -->
+  <MWAH.KissMachine.PasteTouchTooltip>在能触及 {TARGET} 的合法位置法式深吻。必须通电，不要求管网存量或床位连接；天意的好结果会补满存在的饥饿需求，不消耗原料。</MWAH.KissMachine.PasteTouchTooltip>
+</LanguageData>

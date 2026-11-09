@@ -10,8 +10,9 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-# 只暂存运行时/玩家可见内容：About/、LoadFolders.xml、1.6/、1.7/。
+# 只暂存运行时/玩家可见内容：About/、LoadFolders.xml、Common/、Compatibility/ 与两版原生 DLL。
 # Source/、docs/、scripts/、构建缓存、pdb、PublishedFileId.txt 一律不进包。
+# 共同内容各拷一份，两 minor 只带自己的 Mwah.dll；条件兼容根随包发行，是否生效由 Loader 判断。
 
 function Resolve-NormalizedPath([string]$Path) { [System.IO.Path]::GetFullPath($Path) }
 
@@ -19,12 +20,18 @@ $root = Resolve-NormalizedPath $ProjectRoot
 $stageDir = Resolve-NormalizedPath $StageDir
 $aboutSource = Join-Path $root 'About'
 $loadFoldersSource = Join-Path $root 'LoadFolders.xml'
-$versionedSource = Join-Path $root '1.6'
 $modName = 'Mwah'
 $gameVersions = @('1.6', '1.7')
+# 唯一共同内容源；顺序与 LoadFolders 声明一致（Common 先于条件兼容根）。
+$contentRoots = @('Common', 'Compatibility/VanillaNutrientPasteExpanded')
 $distRoot = (Join-Path $root 'dist') + [IO.Path]::DirectorySeparatorChar
 if (-not $stageDir.StartsWith($distRoot, [StringComparison]::OrdinalIgnoreCase)) {
     throw 'StageDir must be a generated package directory beneath the repository dist directory.'
+}
+foreach ($relative in $contentRoots) {
+    if (-not (Test-Path -LiteralPath (Join-Path $root $relative) -PathType Container)) {
+        throw "Missing shared content root $relative."
+    }
 }
 
 foreach ($game in $gameVersions) {
@@ -52,13 +59,15 @@ $null = New-Item -ItemType Directory -Path $stageDir -Force
 
 Copy-Item -LiteralPath $aboutSource -Destination (Join-Path $stageDir 'About') -Recurse -Force
 Copy-Item -LiteralPath $loadFoldersSource -Destination (Join-Path $stageDir 'LoadFolders.xml') -Force
-# Keep one editable content source. Each selected minor loads only its own staged copy/DLL.
+# 唯一共同内容源＝唯一分发副本：Common 与条件兼容根各拷一次，两 minor 只放各自的原生 DLL。
+foreach ($relative in $contentRoots) {
+    $destination = Join-Path $stageDir $relative
+    $null = New-Item -ItemType Directory -Path (Split-Path -Parent $destination) -Force
+    Copy-Item -LiteralPath (Join-Path $root $relative) -Destination $destination -Recurse -Force
+}
 foreach ($game in $gameVersions) {
     $destination = Join-Path $stageDir $game
     $null = New-Item -ItemType Directory -Path (Join-Path $destination 'Assemblies') -Force
-    foreach ($item in Get-ChildItem -LiteralPath $versionedSource -Force | Where-Object Name -ne 'Assemblies') {
-        Copy-Item -LiteralPath $item.FullName -Destination $destination -Recurse -Force
-    }
     Copy-Item -LiteralPath (Join-Path $root "$game/Assemblies/$modName.dll") `
         -Destination (Join-Path $destination "Assemblies/$modName.dll") -Force
 }
@@ -71,33 +80,154 @@ Get-ChildItem -LiteralPath $stageDir -Recurse -File -Filter *.gitkeep | Remove-I
 Get-ChildItem -LiteralPath $stageDir -Recurse -File -Filter 'codemap.md' | Remove-Item -Force
 
 # Check the effective load inputs, not just whether the producer returned successfully.
+# “包里存在”≠“本组合生效”：条件 li 只在模拟启用 VNPE 的组合里进入有效输入。
 [xml]$folders = Get-Content -Raw -LiteralPath (Join-Path $stageDir 'LoadFolders.xml')
 [xml]$metadata = Get-Content -Raw -LiteralPath (Join-Path $stageDir 'About/About.xml')
-$sourceContent = @(Get-ChildItem -LiteralPath $versionedSource -Recurse -File | Where-Object {
-    $_.FullName -notlike (Join-Path $versionedSource 'Assemblies/*') -and
-    $_.Extension -ne '.pdb' -and $_.Name -notin @('.gitkeep', 'codemap.md')
-})
+$vnpePackageId = 'VanillaExpanded.VNutrientE'
+$contentExclusions = @('.gitkeep', 'codemap.md')
+
+function Get-EffectiveRoot([string]$Relative) {
+    if ($Relative -eq '/') { return $stageDir }
+    return (Join-Path $stageDir ($Relative.Replace('/', [IO.Path]::DirectorySeparatorChar)))
+}
+
+# Loader 在一个声明根里只读 Defs／Languages／Assemblies，其余目录不进入有效内容。
+function Get-EffectiveFiles([string]$Relative) {
+    $rootPath = Get-EffectiveRoot $Relative
+    $files = @()
+    foreach ($kind in @('Defs', 'Languages', 'Assemblies')) {
+        $directory = Join-Path $rootPath $kind
+        if (Test-Path -LiteralPath $directory -PathType Container) {
+            $files += @(Get-ChildItem -LiteralPath $directory -Recurse -File | ForEach-Object {
+                [IO.Path]::GetRelativePath($rootPath, $_.FullName).Replace('\', '/')
+            })
+        }
+    }
+    @($files | Sort-Object)
+}
+
+# 条件只认本项目采用的 IfModActive 写法；其他条件属性一律拒绝，避免被当无条件加载。
+function Split-LoadFolders($Nodes) {
+    $unconditional = @()
+    $conditional = @()
+    foreach ($node in $Nodes) {
+        $attributes = @($node.Attributes | Where-Object { $_.Name -ne '#text' })
+        foreach ($attribute in $attributes) {
+            if ($attribute.Name -ne 'IfModActive') {
+                throw "Unsupported load-folder condition '$($attribute.Name)' on $($node.InnerText)."
+            }
+            if ($attribute.Value -ne $vnpePackageId) {
+                throw "Unexpected IfModActive value '$($attribute.Value)' on $($node.InnerText)."
+            }
+        }
+        if (@($attributes).Count -gt 0) { $conditional += $node.InnerText.Trim() } else { $unconditional += $node.InnerText.Trim() }
+    }
+    [pscustomobject]@{ Unconditional = $unconditional; Conditional = $conditional }
+}
+
+foreach ($relative in $contentRoots) {
+    if (@(Get-ChildItem -LiteralPath (Join-Path $stageDir $relative) -Recurse -Directory -Filter Assemblies).Count -gt 0) {
+        throw "Shared content root $relative must never carry assemblies."
+    }
+    # 每个发行根都要自带 Defs 与两语言 Keyed：漏一种语言就是玩家可见文字缺半边（AGENTS 硬边界）。
+    $stagedRoot = Join-Path $stageDir $relative
+    if (@(Get-ChildItem -LiteralPath (Join-Path $stagedRoot 'Defs') -Recurse -File -Filter *.xml -ErrorAction SilentlyContinue).Count -eq 0) {
+        throw "Content root $relative ships no Defs."
+    }
+    foreach ($language in @('English', 'ChineseSimplified')) {
+        $keyed = Join-Path $stagedRoot "Languages/$language/Keyed"
+        if (@(Get-ChildItem -LiteralPath $keyed -File -Filter *.xml -ErrorAction SilentlyContinue).Count -eq 0) {
+            throw "Content root $relative ships no $language Keyed copy."
+        }
+    }
+}
 foreach ($game in $gameVersions) {
     if (@($metadata.ModMetaData.supportedVersions.li) -notcontains $game) { throw "Missing supported minor $game." }
     $selection = $folders.loadFolders.SelectSingleNode("v$game")
     if ($null -eq $selection) { throw "Missing load-folder selection for $game." }
-    $activeDlls = @()
-    foreach ($folder in $selection.SelectNodes('li')) {
-        $activeRoot = if ($folder.InnerText -eq '/') { $stageDir } else { Join-Path $stageDir $folder.InnerText }
-        $dllDirectory = Join-Path $activeRoot 'Assemblies'
-        if (Test-Path -LiteralPath $dllDirectory) { $activeDlls += @(Get-ChildItem -LiteralPath $dllDirectory -Filter *.dll -File -Recurse) }
+    $folderChoices = Split-LoadFolders $selection.SelectNodes('li')
+    $base = @($folderChoices.Unconditional)
+    $optional = @($folderChoices.Conditional)
+
+    # 声明根存在：基础组合与 VNPE 组合用到的每个根都必须在包里，条件只决定是否生效。
+    foreach ($declared in @($base + $optional)) {
+        if (-not (Test-Path -LiteralPath (Get-EffectiveRoot $declared) -PathType Container)) {
+            throw "Declared load root $declared is missing from the package for $game."
+        }
     }
+    # 显式布局：根→Common→当前 minor，兼容根只能是条件项。
+    if ($base.Count -ne 3 -or $base[0] -ne '/' -or $base[1] -ne 'Common' -or $base[2] -ne $game) {
+        throw "Load folders for $game must be root, Common, then $game; actual: $($base -join ', ')."
+    }
+    foreach ($declared in $optional) {
+        if ($declared -notin $contentRoots) { throw "Conditional load root $declared is not a staged content root." }
+    }
+
+    # 每个组合都只能选到当前 minor 的一份 Mwah.dll；VNPE 组合不得再多出任何程序集。
     $expected = Join-Path $stageDir "$game/Assemblies/$modName.dll"
-    if ($activeDlls.Count -ne 1 -or $activeDlls[0].FullName -ne $expected) { throw "Invalid assembly selection for $game." }
+    $combinations = [ordered]@{
+        base = $base
+        vnpe = @($base + $optional)
+    }
+    foreach ($name in $combinations.Keys) {
+        $activeDlls = @()
+        foreach ($declared in $combinations[$name]) {
+            $dllDirectory = Join-Path (Get-EffectiveRoot $declared) 'Assemblies'
+            if (Test-Path -LiteralPath $dllDirectory -PathType Container) {
+                $activeDlls += @(Get-ChildItem -LiteralPath $dllDirectory -Filter *.dll -File -Recurse)
+            }
+        }
+        if ($activeDlls.Count -ne 1 -or $activeDlls[0].FullName -ne $expected) {
+            throw "Invalid assembly selection for $game in the $name combination ($($activeDlls.Count) dll(s))."
+        }
+    }
     $framework = if ($game -eq '1.6') { '.NETFramework,Version=v4.7.2' } else { '.NETCoreApp,Version=v10.0' }
     $assemblyText = [Text.Encoding]::ASCII.GetString([IO.File]::ReadAllBytes($expected))
     if (-not $assemblyText.Contains($framework)) { throw "Wrong target framework in the RimWorld $game assembly." }
-    foreach ($file in $sourceContent) {
-        $relative = [IO.Path]::GetRelativePath($versionedSource, $file.FullName)
-        $copy = Join-Path (Join-Path $stageDir $game) $relative
-        if (-not (Test-Path -LiteralPath $copy -PathType Leaf) -or (Get-Item -LiteralPath $copy).Length -ne $file.Length) {
-            throw "Incomplete content for $game/$relative."
+
+    # minor 只允许原生程序集：旧 Def／语言副本必须不存在（源树与包同为条件，漏一份就是隐式覆盖层）。
+    foreach ($minorCopy in @(Get-ChildItem -LiteralPath (Join-Path $stageDir $game) -Directory | Where-Object Name -ne 'Assemblies')) {
+        throw "Minor $game must ship only assemblies; found staged $($minorCopy.Name)."
+    }
+    foreach ($stale in @("$game/Defs", "$game/Languages")) {
+        if (Test-Path -LiteralPath (Join-Path $root $stale) -PathType Container) {
+            throw "Obsolete content source $stale still exists; Common is the only shared content root."
         }
+    }
+}
+
+# 源文件清单：共同与兼容内容各一份，逐文件长度一致；两组合之间不得出现同相对路径遮盖。
+foreach ($relative in $contentRoots) {
+    $source = Join-Path $root $relative
+    $sourceFiles = @(Get-ChildItem -LiteralPath $source -Recurse -File | Where-Object {
+        $_.Extension -ne '.pdb' -and $_.Name -notin $contentExclusions
+    })
+    if ($sourceFiles.Count -eq 0) { throw "Content root $relative ships no content." }
+    foreach ($file in $sourceFiles) {
+        $copyRelative = [IO.Path]::GetRelativePath($source, $file.FullName)
+        $copy = Join-Path (Join-Path $stageDir $relative) $copyRelative
+        if (-not (Test-Path -LiteralPath $copy -PathType Leaf) -or (Get-Item -LiteralPath $copy).Length -ne $file.Length) {
+            throw "Incomplete content for $relative/$($copyRelative.Replace('\', '/'))."
+        }
+    }
+}
+foreach ($game in $gameVersions) {
+    $selection = $folders.loadFolders.SelectSingleNode("v$game")
+    $parsed = Split-LoadFolders $selection.SelectNodes('li')
+    $declaredRoots = @(@($parsed.Unconditional) + @($parsed.Conditional))
+    $seen = @{}
+    foreach ($declared in $declaredRoots) {
+        foreach ($file in Get-EffectiveFiles $declared) {
+            if ($file -like 'Assemblies/*') { continue }
+            if ($seen.ContainsKey($file)) {
+                throw "Effective content path $file is declared by both $($seen[$file]) and $declared for $game."
+            }
+            $seen[$file] = $declared
+        }
+    }
+    foreach ($required in @(Get-EffectiveFiles 'Common')) {
+        if ($required -like 'Assemblies/*') { continue }
+        if (-not $seen.ContainsKey($required)) { throw "Common content $required is not in the $game load selection." }
     }
 }
 $dlls = @(Get-ChildItem -LiteralPath $stageDir -Recurse -File -Filter *.dll)

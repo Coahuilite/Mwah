@@ -43,6 +43,19 @@ One-line release summary.
 - ...
 ```
 
+## Unreleased — 0.4.0
+
+### Added
+- Kiss worktables and vanilla research devices, the multi-analyzer and nutrient paste dispenser, sharing one machine memory.
+- Gain stronger positive research-device moods with Intellectual, without advancing research.
+- French kiss the dispenser or supported Vanilla Nutrient Paste Expanded outlets for good fate outcomes that fill Food without using feedstock.
+
+### Fixed
+- Stop the current director pick when closing the panel, including quick dispatch.
+
+### Packaging
+- Share one Common content root across both native builds and load VNPE registrations and dedicated text only when VNPE is active; replace old installations as a whole folder.
+
 ## [2026-10-30 02:16 UTC+8] Version 0.3.0
 
 ### Added

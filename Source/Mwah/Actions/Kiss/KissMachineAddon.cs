@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Mwah.Compatibility;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -27,9 +26,9 @@ public sealed class KissMachineAddon : KissThingAddon
     };
 
     private static bool IsPaste(Thing target) => target.def == MWAH_MachineTargetDefOf.NutrientPasteDispenser
-        || VanillaNutrientPasteExpandedCompatibility.IsOutlet(target.def);
+        || KissTargets.IsRegistered(target.def);
     private static bool IsTouchPaste(Thing target) =>
-        VanillaNutrientPasteExpandedCompatibility.IsTouchOutlet(target.def);
+        KissTargets.For(target.def)?.standPolicy == KissTargetStandPolicy.Touch;
     private static bool IsAnalyzer(Thing target) => target.def == MWAH_MachineTargetDefOf.MultiAnalyzer;
     private static bool IsResearch(Thing target) => IsAnalyzer(target)
         || target.def == MWAH_MachineTargetDefOf.SimpleResearchBench
@@ -49,10 +48,15 @@ public sealed class KissMachineAddon : KissThingAddon
     public override string OptionLabel(Pawn doer, Thing target) =>
         (IsPaste(target) ? "MWAH.KissMachine.OptionPaste" : "MWAH.KissMachine.Option").Translate(target.LabelCap);
 
-    public override string OptionTooltip(Thing target) => IsTouchPaste(target)
-        ? (string)"MWAH.KissMachine.PasteTouchTooltip".Translate(target.Named("TARGET"))
-        : IsPaste(target) ? (string)"MWAH.KissMachine.PasteTooltip".Translate(target.Named("TARGET"))
-        : base.OptionTooltip(target);
+    public override string OptionTooltip(Thing target)
+    {
+        // The dedicated key travels with the registration; a registered target without one shares the Common copy.
+        MWAH_KissTargetDef? registration = KissTargets.For(target.def);
+        if (registration != null && !string.IsNullOrEmpty(registration.tooltipKey))
+            return (string)registration.tooltipKey.Translate(target.Named("TARGET"));
+        return IsPaste(target) ? (string)"MWAH.KissMachine.PasteTooltip".Translate(target.Named("TARGET"))
+            : base.OptionTooltip(target);
+    }
 
     public override string? JobReport(Thing target) => IsPaste(target)
         ? (string)"MWAH.KissMachine.ReportPaste".Translate(target.Named("TARGET")) : null;

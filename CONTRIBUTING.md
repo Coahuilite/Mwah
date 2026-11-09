@@ -18,11 +18,13 @@ Read the [current specifications and workflow](./docs/specification.md) first. D
    No `Lib.Harmony`, no runtime patches. If a feature needs a patch to exist, it is out of scope by definition.
 4. **仅游戏内地图、仅单机 / Live maps, single-player only**：不碰世界地图、商队、多人同步。
    Don't touch the world map, caravans, or multiplayer sync.
-5. **双语 / Bilingual**：玩家可见文字必须同时提供 English 与 ChineseSimplified 键（`1.6/Languages/`）；键集合一致是构建门，漏一个键 CI 就红。
-   Player-visible text needs both English and ChineseSimplified keys (`1.6/Languages/`); matching key sets are a build gate — one missing key turns CI red.
-6. **tick 单位 / Ticks only**：时长一律以 tick 存储，界面同时呈现 tick / 现实秒 / 游戏小时。
+5. **双语 / Bilingual**：玩家可见文字必须同时提供 English 与 ChineseSimplified 键（共同内容在 `Common/Languages/`，可选兼容专用键在 `Compatibility/<Mod>/Languages/`）；每一组有效内容的键集合一致都是构建门，漏一个键 CI 就红。
+   Player-visible text needs both English and ChineseSimplified keys — shared copy in `Common/Languages/`, optional-content-only copy in `Compatibility/<Mod>/Languages/`; matching key sets per effective composition are build gates, and one missing key turns CI red.
+6. **内容只放声明的加载根 / Content ships only from declared roots**：共同 Def／语言只写 `Common/`，可选兼容内容只写条件根，`1.6/`、`1.7/` 仅各自 `Assemblies/Mwah.dll`；`LoadFolders.xml` 声明的每一项都必须真实存在。
+   Shared Defs and languages live only in `Common/`, optional content only in its conditional root, and `1.6/`/`1.7/` hold nothing but their own `Assemblies/Mwah.dll`; every folder `LoadFolders.xml` declares must exist.
+7. **tick 单位 / Ticks only**：时长一律以 tick 存储，界面同时呈现 tick / 现实秒 / 游戏小时。
    Durations are stored in ticks and displayed as ticks / real seconds / game hours.
-7. **隐私 / Privacy**：仓库里不写绝对本地路径、凭据、工坊 ID——`scripts/privacy-audit.ps1` 会替你记住这件事。
+8. **隐私 / Privacy**：仓库里不写绝对本地路径、凭据、工坊 ID——`scripts/privacy-audit.ps1` 会替你记住这件事。
    No absolute local paths, credentials, or workshop IDs anywhere in the repo — `scripts/privacy-audit.ps1` remembers this for you.
 
 ## 验证 / Verification

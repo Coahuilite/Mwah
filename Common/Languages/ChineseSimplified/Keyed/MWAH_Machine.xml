@@ -8,7 +8,6 @@
   <MWAH.KissMachine.OptionTooltip>走到 {TARGET} 的工作交互格亲吻；多元分析仪可从附近接触。电动设备必须通电。研究设备只提高正面心情，不增加研究进度。</MWAH.KissMachine.OptionTooltip>
   <MWAH.KissMachine.PasteTooltip>优先站在 {TARGET} 的领取格，也可偏移左右一格。必须通电，不需要原料；天意的好结果会补满存在的饥饿需求。</MWAH.KissMachine.PasteTooltip>
   <MWAH.KissMachine.ReportPaste>与{TARGET}法式深吻。</MWAH.KissMachine.ReportPaste>
-  <MWAH.KissMachine.PasteTouchTooltip>在能触及 {TARGET} 的合法位置法式深吻。必须通电，不要求管网存量或床位连接；天意的好结果会补满存在的饥饿需求，不消耗原料。</MWAH.KissMachine.PasteTouchTooltip>
   <MWAH.KissMachine.Fail.NoPower>{TARGET} 未通电</MWAH.KissMachine.Fail.NoPower>
   <MWAH.KissMachine.NoMoodFood>（没有心情奖励；好结果仍可补满饥饿）</MWAH.KissMachine.NoMoodFood>
   <MWAH.KissMachine.Result.Awkward>{PAWN} 与 {TARGET} 的吻，越想越有些尴尬。</MWAH.KissMachine.Result.Awkward>

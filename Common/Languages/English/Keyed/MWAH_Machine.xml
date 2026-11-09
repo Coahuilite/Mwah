@@ -8,7 +8,6 @@
   <MWAH.KissMachine.OptionTooltip>Kiss {TARGET} at its work interaction cell; the multi-analyzer can be approached from any touching cell. Powered devices must be on. Research devices improve positive mood, not research progress.</MWAH.KissMachine.OptionTooltip>
   <MWAH.KissMachine.PasteTooltip>Prefer the dispensing interaction cell of {TARGET}, with one cell to either side allowed. Power is required; feedstock is not. Good fate outcomes fill an existing Food need.</MWAH.KissMachine.PasteTooltip>
   <MWAH.KissMachine.ReportPaste>French kissing {TARGET}.</MWAH.KissMachine.ReportPaste>
-  <MWAH.KissMachine.PasteTouchTooltip>French kiss {TARGET} from a valid touching cell. Power is required, but network stock and a linked bed are not. Good fate outcomes fill an existing Food need without using feedstock.</MWAH.KissMachine.PasteTouchTooltip>
   <MWAH.KissMachine.Fail.NoPower>{TARGET} is not powered on</MWAH.KissMachine.Fail.NoPower>
   <MWAH.KissMachine.NoMoodFood>(no mood reward; good outcomes can still fill Food)</MWAH.KissMachine.NoMoodFood>
   <MWAH.KissMachine.Result.Awkward>{PAWN} is having second thoughts about kissing {TARGET}.</MWAH.KissMachine.Result.Awkward>

@@ -11,7 +11,7 @@ namespace Mwah;
 /// 强度 = ThoughtStage.baseMoodEffect × (自身有效 SocialImpact) × 设置倍率，
 /// 启用压缩时以 137% 为基准，超出部分有界趋近额外 13 个百分点。
 /// 心情由 Thought_Memory.moodPowerFactor 承载、意见由 opinionOffset 承载（原版 AddInteractionThought
-/// 对同一个倍率两边都乘，这里照做）。数值阶梯的取值依据见 1.6/Defs/Kiss/MWAH_ThoughtDefs.xml 的注释。
+/// 对同一个倍率两边都乘，这里照做）。数值阶梯的取值依据见 Common/Defs/Kiss/MWAH_ThoughtDefs.xml 的注释。
 /// </summary>
 public static class KissMoodReward
 {

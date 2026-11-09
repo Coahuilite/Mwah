@@ -8,7 +8,7 @@ using Verse;
 namespace RimWorld;
 
 /// <summary>
-/// 天意表的一行（纯数据，XML 驱动，见 1.6/Defs/Kiss/MWAH_FateDefs.xml）。
+/// 天意表的一行（纯数据，XML 驱动，见 Common/Defs/Kiss/MWAH_FateDefs.xml）。
 /// 分工是刻意的：**结构在 Defs，文字在翻译文件** —— 本行只说"发哪条心情、概率多重、
 /// 用哪个键当旁白/短讯"，句子本身永远是 Keyed 键（双语齐备由 verify-local 把关）。
 /// 概率 = weight ÷ 同 scope 全部有效行之和；weight 是相对值，不必凑 100。

@@ -1,12 +1,14 @@
 # 整理设计与跨版本架构评估
 
-评估日期：2026-11-09。适用范围：当前 `Mwah` 开发树、固定引用 `1.6.4871`／`1.7.4990-unstable`。这里解释实现和取舍，现行保证仍由[规格入口](../../../docs/specification.md)指向。
+评估日期：2026-11-09。适用范围：整理阶段 `bedea41` 基线、固定引用 `1.6.4871`／`1.7.4990-unstable`。这里解释当时的实现和取舍，现行保证仍由[规格入口](../../../docs/specification.md)指向。
+
+本页保留迁移前的观察与取舍；维护者随后明确要求实际共享内容根，已采用的 0.4.x 方案见[新变更](../shared-content-and-lifecycle/adoption.md)。下述旧 `1.6/` 编辑源及当时不搬 Common 的判断不再定义当前布局；共享 C#／分开原生构建的决定继续保留。
 
 ## 结论：共享维护源，分开原生编译，按真实差异适配
 
 **当前已经是一份 C# 源码、一份 Def／语言编辑源、两个原生构建产物，而非两套模组。** 推荐保留这个方向，不为目录对称性重写玩法，不把“源码共用”误写成“二进制必能共用”。需要进一步明确的是边界，而不是再抽一套空的通用框架。
 
-维护者于 2026-11-09 明确接受共享源码＋分开原生构建，并要求进一步利用 LoadFolders 隔离 VNPE 内容。对应的[下一阶段方案](../vnpe-loadfolders/proposal.md)只改变可选内容的加载接缝，与本页否决的全模组 Common 搬迁或另拆核心 DLL 不同。
+维护者先接受共享源码＋分开原生构建，并要求利用 LoadFolders 隔离 VNPE 内容；当时的[窄范围方案](../vnpe-loadfolders/proposal.md)只改变可选接缝。随后维护者将范围扩大为实际 Common 运行根，采用与实施由[0.4.x 总计划](../shared-content-and-lifecycle/proposal.md)负责，本页保留原判断依据。
 
 - 玩法、状态机、设置、奖励和扩展登记继续单源维护。
 - 目标框架、游戏引用和必要 API／BCL 差异在构建及窄适配处处理；两版各产出 `Mwah.dll`，由加载目录互斥选择。
@@ -52,7 +54,7 @@ Def → 扩展 registry／天意内容 → 上述消费者
 | 冷却／导演台残留 | 内存态；[KissTicker](../../../Source/Mwah/Systems/KissTicker.cs) 在建局／读档重建组件时清理 | 不在版本适配层复制字典或清理时机；不借整理改变冷却不落盘的合同 |
 | 设置与视图 | `MwahMod.Settings` 为规范值；`MwahSettings.ExposeData` 持久化；视图编辑状态短寿命 | 保留提交→消费→保存连接，版本包装不另持配置副本 |
 | 天意和记忆 | `KissFate`／Thought 内容与每个 Pawn 的原生记忆；机器策略只决定适用倍率和额外奖励 | 已保存的旁白、倍率、槽及一次结算仍按原含义；适配不另抽结果 |
-| VNPE 目标缓存 | [独立 adapter](../../../Source/Mwah/Compatibility/VanillaNutrientPasteExpandedCompatibility.cs) 在 Def 加载期检查包并缓存三个精确 Def；只依赖 Verse | 缺少可选包不阻断基础能力；不复制为 VNPE16／VNPE17，不引入第三方类型泄漏 |
+| VNPE 目标缓存 | 基线的 `Source/Mwah/Compatibility/VanillaNutrientPasteExpandedCompatibility.cs` 在 Def 加载期检查包并缓存三个精确 Def；0.4.x 已由[通用登记消费](../../../Source/Mwah/Actions/Kiss/KissTargets.cs)替换，专有身份转入条件内容 | 缺少可选包不阻断基础能力；不复制为 VNPE16／VNPE17，不引入第三方类型泄漏 |
 
 因此，共用层应是已有的规则和执行责任，不是一个拥有第二套 Pawn／冷却／记忆状态的“核心管理器”。
 

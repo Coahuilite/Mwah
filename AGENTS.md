@@ -42,7 +42,7 @@ Only the authorized project owner changes the protocol or its map. Ordinary memo
 ## Privacy and security
 
 - Default scope is this repository root. Reading outside it requires path-specific authorization and remains read-only; the named RimWorld `Player.log` troubleshooting directory is the standing read-only exception.
-- Never place personal local paths, diagnostic-log excerpts, credentials, API keys, tokens, private keys, or `PublishedFileId.txt` values in Git, documentation, generated artifacts, staging, or reachable history. Runtime content ships only inside the version folder.
+- Never place personal local paths, diagnostic-log excerpts, credentials, API keys, tokens, private keys, or `PublishedFileId.txt` values in Git, documentation, generated artifacts, staging, or reachable history. Runtime content ships only in explicitly declared load roots: common content in Common, optional content in conditional compatibility roots, and native assemblies selected exclusively by game minor. Source, tools and build caches never ship.
 - Keep throwaway scripts, decompilation, debug output and other scratch outside this repository; use an appropriate temporary directory, even if the scratch would be untracked or ignored. Check new untracked deliverables explicitly; the tracked-text audit alone does not cover them. Before committing, stage the intended scope and run `git diff --cached --check` so added files receive whitespace checks too.
 - Pushes are privacy-audited mechanically, twice: the pre-push hook (`scripts/githooks/pre-push`, installed once per clone via `scripts/install-hooks.ps1`) runs `privacy-audit.ps1 -FullHistory` and blocks on failure; CI re-runs the same full-history audit on a full clone, so `--no-verify` hides nothing.
 

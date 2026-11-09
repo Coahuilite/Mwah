@@ -2,7 +2,7 @@
 
 ## Context
 
-合同从[现行入口](../../../docs/specification.md)读取；范围由 [proposal](proposal.md)负责。下述是当前 0.3.x 候选的技术映射和取舍，不是另一份产品规格；实际结果及差距只在[实现证据](../../../docs/development/tree-kissing-and-settings.md)和 [tasks](tasks.md)记录。
+合同从[现行入口](../../../docs/specification.md)读取；范围由 [proposal](proposal.md)负责。下述保留 0.3.x 的技术映射和取舍，不是另一份产品规格；实际结果及差距只在[实现证据](../../../docs/development/tree-kissing-and-settings.md)和 [tasks](tasks.md)记录。0.4.x 的实际共享内容根与生命周期整理由[已采用的新变更](../shared-content-and-lifecycle/adoption.md)负责，旧布局不再作为当前编辑／交付入口。
 
 原生参考来自本地 RimSage 的 `1.7.4990 rev1069` 完整保留快照，维护者确认使用该 build。配置安装回到 1.6 后自动刷新失败，不使该已确认快照变成 1.6 证据。版本观察同时参见[原版边界](../../../docs/vanilla-capability-boundaries.md)和[树文化研究](../../../docs/research/tree-kissing-ideology.md)。
 

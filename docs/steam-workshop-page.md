@@ -1,6 +1,6 @@
 # 工坊页面文案维护源（Workshop page copy, single source）
 
-> **目标：0.3.0（已发布文案）。** 维护者于 2026-10-30 确认工坊上传及页面更新完成；渠道依据见[发布记录](release_review/release-0.3.0-review-zh.md)。旧版文案保留于 docs/archive/steam-workshop-page-0.2.2.md。
+> **目标：0.4.0（未发布草案）。** 公开渠道仍为 0.3.0，维护者于 2026-10-30 确认其工坊上传及页面更新完成；渠道依据见[发布记录](release_review/release-0.3.0-review-zh.md)。本页不代表 0.4.0 已上传或发布；更早文案保留于 docs/archive/steam-workshop-page-0.2.2.md。
 
 本文是中英工坊描述的唯一维护源，不是 changelog 也不是发布记录。页面编辑、双预览、上传由维护者执行；agent 只做公开页面只读核验。
 
@@ -21,7 +21,7 @@
 本模组由 AI 规划、AI 编程、AI 维护，并由人类维护者审查、测试、打包和发布。
 
 [h1]所有Pawn都给我啵嘴！[/h1]
-[b]模组版本：[/b]0.3.0
+[b]模组版本：[/b]0.4.0
 [b]适用版本：[/b]RimWorld 1.6 / 1.7
 
 [b]Mwah! · Every Pawn Kisses Each Other[/b]
@@ -31,7 +31,7 @@
 [h2]怎么亲[/h2]
 [list]
 [*][b]右键就亲。[/b]任何你指挥得动的 Pawn，右键地图上的任何 Pawn。清醒但倒地的接收方留在原地，能走的一方过去。
-[*][b]亲吻导演台。[/b]底栏按钮打开一个小面板，两个头像框可以点选地图上[b]任意[/b]两个 Pawn，包括你指挥不了的袭击者、商人、野生动物和机械族；右槽也可选墙和树，另有快速发配。扩展可从设置首页管理，亲树可按自己的文化选择结果。
+[*][b]亲吻导演台。[/b]底栏按钮打开一个小面板，两个头像框可以点选地图上[b]任意[/b]两个 Pawn，包括你指挥不了的袭击者、商人、野生动物和机械族；右槽也可选墙、树和机器，另有快速发配。扩展从设置首页管理；亲树可按文化选择结果，亲研究设备的正面收益随识智提升，营养膏机的法式深吻好结果可填满饥饿。
 [*][b]自主撮合（默认关）。[/b]游戏按你设的间隔和半径，替不由你管理的 Pawn 发起配对；不会让玩家管理的 Pawn 发起，也不选择征召中的玩家 Pawn 接收。
 [/list]
 
@@ -39,6 +39,7 @@
 [list]
 [*]RimWorld 1.6 / 1.7，仅需 Core；无前置模组、无 Harmony、无框架依赖。
 [*]1.7 适配目标为 4990 rev1069。DLC 可选：亲树可按文化选择结果，关闭文化结果或没有文化 DLC 时仍保留基础亲树；机械族、异象实体、Odyssey 无人机等按各自本性参与。
+[*]可选兼容 Vanilla Nutrient Paste Expanded 的 Tap、Feeder、Dripper。电动目标只要求通电，营养膏吻不消耗原料；不启用该模组也不影响基础玩法。
 [/list]
 
 [h2]下载与反馈[/h2]
@@ -59,7 +60,7 @@
 This mod is planned, coded and maintained by AI, and reviewed, tested, packaged and published by a human maintainer.
 
 [h1]Mwah! — Every Pawn Kisses Each Other[/h1]
-[b]Mod version:[/b] 0.3.0
+[b]Mod version:[/b] 0.4.0
 [b]For:[/b] RimWorld 1.6 / 1.7
 
 Let any Pawn kiss any Pawn — tolerate the audacity of affection.
@@ -67,7 +68,7 @@ Let any Pawn kiss any Pawn — tolerate the audacity of affection.
 [h2]How to kiss[/h2]
 [list]
 [*][b]Right-click.[/b] Any pawn you can order, right-clicked onto any pawn on the map. A conscious downed receiver stays put while the mobile pawn comes over.
-[*][b]Kiss Director.[/b] A bottom-bar button opens a small panel; two avatar slots pick [b]any[/b] two pawns on the map — including raiders, traders, wild animals and mechanoids you cannot command — or walls and trees in the right slot. Manage extensions from the settings home page; trees offer optional outcomes based on the acting pawn’s beliefs.
+[*][b]Kiss Director.[/b] A bottom-bar button opens a small panel; two avatar slots pick [b]any[/b] two pawns on the map — including raiders, traders, wild animals and mechanoids you cannot command — or walls, trees and machines in the right slot. Manage extensions from the settings home page. Trees offer outcomes based on beliefs, positive research-device rewards scale with Intellectual, and good French-kiss outcomes at nutrient paste dispensers can fill Food.
 [*][b]Ambient matchmaking (off by default).[/b] The game pairs up pawns you do not manage on an interval and radius you set. Player-managed pawns never initiate; drafted player-controlled pawns are not selected as receivers.
 [/list]
 
@@ -75,6 +76,7 @@ Let any Pawn kiss any Pawn — tolerate the audacity of affection.
 [list]
 [*]RimWorld 1.6 / 1.7, Core only. No Harmony, no framework mods, nothing to load before this mod.
 [*]1.7 targets 4990 rev1069. DLC is optional: tree outcomes can follow the acting pawn's beliefs, while basic tree kissing remains available with culture switched off or without Ideology. Mechanoids, anomalies and Odyssey drones participate per their own nature.
+[*]Optional support for Vanilla Nutrient Paste Expanded's tap, feeder and dripper. Powered targets only need to be on; paste kisses use no feedstock. Base features work without the optional mod.
 [/list]
 
 [h2]Download & feedback[/h2]

@@ -1,6 +1,6 @@
 # 亲树、设置页与共享运行链路：实现和证据
 
-当前开发线：`0.3.x`，产品版本 **0.3.0**。维护者已接受验收并授权发布，渠道状态及采用依据见[发布记录](../release_review/release-0.3.0-review-zh.md)。现行合同从[项目入口](../specification.md)读取；本页记录实现与证据，不定义另一套行为。
+本页记录 `0.3.x`／**0.3.0** 的实现与历史证据。维护者已接受验收并授权发布，渠道状态及采用依据见[发布记录](../release_review/release-0.3.0-review-zh.md)。现行合同从[项目入口](../specification.md)读取；当前 0.4.x 的共享内容和生命周期工作见[新变更任务](../../openspec/changes/shared-content-and-lifecycle/tasks.md)，本页不定义另一套行为。
 
 社交收益压缩与旧配对槽刷新是其后的独立切片，见[当前实现及实机验收说明](social-impact-soft-cap.md)。
 
@@ -25,7 +25,7 @@
 - 生成命令：`pwsh scripts/pack-dev.ps1 -Zip`。
 - 完整目录：`dist/dev/Mwah/`；ZIP：同目录旁的 `Mwah-dev-v0.3.0-<commit>.zip`，顶层为 `Mwah/`。
 - `version.txt` 记录产品版本、`build=dev` 和 commit；交付应使用提交后生成、不带 `-dirty` 的包。两份 DLL 的产品版本也携带源提交身份。
-- `1.6/Defs`、`1.6/Languages` 是唯一编辑源，打包为 1.6／1.7 各生成完整副本。**不要把源码 checkout 或仅 1.7 DLL 当作安装包。**
+- 0.3.0 当时以 `1.6/Defs`、`1.6/Languages` 为唯一编辑源，打包为 1.6／1.7 各生成完整副本；0.4.x 已改为 [Common 共享根设计](../../openspec/changes/shared-content-and-lifecycle/design.md)。**不要把源码 checkout 或仅 1.7 DLL 当作安装包。**
 - 整个包内只包含运行内容、两份 Mwah.dll 和包身份；不含 Source、脚本、PDB、引用程序集或工坊 ID 文件。复制到游戏、游戏运行与存档由维护者操作。
 
 ## 实机验收与反馈
