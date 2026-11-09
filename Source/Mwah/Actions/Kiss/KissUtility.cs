@@ -289,6 +289,8 @@ public static class KissUtility
             }
             return false;
         }
+        // 配对身份在这里显式写下（双方各一次，入口幂等）：MatchingPartner 的读操作不再有补绑副作用，
+        // 旧档的补绑只在 driver 的两个阶段入口（接近期 fail condition、表演期 tick）里显式恢复。
         ((JobDriver_Kiss)doer.jobs.curDriver).BindPartner(passiveJobId);
         ((JobDriver_Kiss)receiver.jobs.curDriver).BindPartner(doerJobId);
         MwahSettings settings = MwahMod.Settings;

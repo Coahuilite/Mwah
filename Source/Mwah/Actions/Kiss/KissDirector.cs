@@ -31,13 +31,32 @@ public static class KissDirector
     /// <summary>当前链式选点的代号；每跳自增，cleanup 凭代号识别"这次收尾属于自己的那一跳"。</summary>
     private static int targetingGeneration;
 
-    /// <summary>结束选点（面板关窗时还挂在拾取里、或设置里关掉导演台时调用）。</summary>
+    /// <summary>
+    /// 结束选点的唯一入口：面板关窗（<see cref="Dialog_KissDirector.PostClose"/>）、设置里关掉导演台
+    /// （<see cref="KissTicker.GameComponentTick"/>）都走这里，调用方不必自己判断"是不是我发起的那一段"。
+    /// <see cref="Active"/> 就是短路闸：没有我们发起的点选时，本方法连原版 Targeter 都不碰，
+    /// 因此不会替别的模组收掉它们自己的选点会话。链式在跑的每一跳同样归本类拥有，
+    /// 代号机制照旧：真正的清理由各跳的 cleanup 凭代号完成，旧跳不清新一跳。
+    /// </summary>
     public static void Stop()
     {
         if (Active)
         {
             Find.Targeter.StopTargeting();
         }
+    }
+
+    /// <summary>
+    /// 每局清零（<see cref="KissTicker"/> 构造器调）：<see cref="Active"/> 是 static，寿命是整个进程，
+    /// 而原版 Targeter 随局重建 —— 不清零就会让新局继承上一局"还在点选"的假标记。
+    /// 本方法只清这一个标记：**不递增也不重置代号**（代号单调、永不复用）。对旧局遗留 cleanup 的
+    /// 隔离不来自这里，而来自后续每一跳的起跑 —— 下一次 <see cref="BeginPickThing"/> 先把代号加一，
+    /// 旧闭包携带的代号因此对不上仍在进行的那一跳，只能静默让位；在新一跳开始之前
+    /// <see cref="Active"/> 已经是 false，旧闭包至多是一次空转，清不掉任何新标记。
+    /// </summary>
+    public static void ResetForNewGame()
+    {
+        Active = false;
     }
 
     /// <summary>
@@ -111,6 +130,9 @@ public static class KissDirector
     /// <summary>
     /// 快速发配：老版导演台的两段链 —— 第一点发起方、第二点对象（pawn 或墙），选完立即派发。
     /// <paramref name="onBoth"/> 只是给面板回显槽位用的钩子，派发不经过它。
+    /// 两段都从 <see cref="BeginPick"/>/<see cref="BeginPickThing"/> 起跳，所以它们和头像框点选一样
+    /// 记在 <see cref="Active"/> 上：整条链仍归发起它的那块面板拥有，关窗即收（KISS-01）。
+    /// 链式不写面板的局部槽位标记 <c>picking</c> —— 关窗判据因此不能拿那个字段当"有没有点选"的代理。
     /// </summary>
     public static void QuickChain(Action<Pawn, Thing>? onBoth)
     {

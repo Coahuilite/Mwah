@@ -80,11 +80,12 @@ public class Dialog_KissDirector : Window
 
     public override void PostClose()
     {
-        // 关窗时还挂在点选里就把 Targeter 收掉，别留下看不见入口的拾取模式。
-        if (picking != PickSlot.None)
-        {
-            KissDirector.Stop();
-        }
+        // 关窗时本面板发起的点选一律收掉，别留下没有面板入口的拾取模式（KISS-01）。
+        // 判据不可能是局部 picking：快速发配链式只登记在 KissDirector.Active 上，从不写这个字段，
+        // 于是"链式还在跑、关窗条件却认为没有选点"就是原遗漏。Stop() 自己按 Active 短路，
+        // 没有本模组的点选时它连原版 Targeter 都不碰；代号机制照旧，上一跳的 cleanup
+        // 不会清掉新一跳（这里也不新增 token／会话框架）。
+        KissDirector.Stop();
         Current = null;
         base.PostClose();
     }
