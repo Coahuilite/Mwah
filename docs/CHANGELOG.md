@@ -2,7 +2,7 @@
 
 Notable changes to Mwah! (Every Pawn Kisses Each Other), newest first. Dates on unreleased entries are update dates, not publication dates. Released entries retain their actual UTC+8 release time.
 
-## Unreleased — 0.4.0 — 2026-11-16
+## [2026-11-17 00:57 UTC+8] Version 0.4.0
 
 ### Added
 - Kiss worktables and vanilla research devices, the multi-analyzer and nutrient paste dispenser, sharing one machine memory.

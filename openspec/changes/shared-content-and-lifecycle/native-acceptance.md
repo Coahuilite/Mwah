@@ -22,4 +22,4 @@ Common 候选的本轮玩法确认已收口。旧归档保留在 `dist/accepted/
 
 ## 交付与发布分别记录
 
-新包的构建／迁移／文档检查归 [tasks](tasks.md)，渠道及授权归 [release-status](../../../docs/release-status.md)。本轮候选的玩法与根布局确认已完成；干净 main 上的 GitHub／Steam flavor 另行构建，以各自 version.txt 和 PR 交付证据辨认，不宣称它们分别完成了新的原生实测。正式发布仍需相应授权。
+新包的构建／迁移／文档检查归 [tasks](tasks.md)，渠道及授权归 [release-status](../../../docs/release-status.md)。本轮候选的玩法与根布局确认已完成；干净 main 上的 GitHub／Steam flavor 已分别构建，以各自 version.txt 和交付证据辨认，不宣称它们分别完成了新的原生实测。渠道当前结果及 Steam 下一责任方以发布记录为准。
