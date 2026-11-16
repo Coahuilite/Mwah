@@ -1,6 +1,6 @@
 # 工坊页面文案维护源（Workshop page copy, single source）
 
-> **目标：0.4.0（待维护者手动上传 Steam 并更新页面）。** 已确认的渠道状态见 [release-status.md](release-status.md)。本文是中英工坊描述的唯一维护源。
+> **目标：0.4.0（维护者已确认 Steam 上传、页面及标签更新完成）。** 已确认的渠道状态见 [release-status.md](release-status.md)。本文是中英工坊描述的唯一维护源。
 >
 > 上传与线上页面编辑由维护者执行；本页更新不构成发布授权。候选确认见[原生记录](../openspec/changes/shared-content-and-lifecycle/native-acceptance.md)，操作流程见[发布流程](release-runbook-zh.md)。
 

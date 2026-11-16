@@ -2,11 +2,11 @@
 
 ## Scope and authority
 
-The maintainer accepted the 0.4.0 gameplay/root-layout candidate and authorized the cloud integration, then the formal GitHub release and changelog update on 2026-11-17. GitHub publication is complete. Steam upload and Workshop page/tag editing remain explicitly maintainer-owned. [Release status](docs/release-status.md) owns the channel facts, fixed package identity and delivery locations; the [owning tasks](openspec/changes/shared-content-and-lifecycle/tasks.md) retain the scoped implementation evidence.
+The maintainer accepted the 0.4.0 gameplay/root-layout candidate and authorized cloud integration and formal GitHub publication. On 2026-11-17 the maintainer confirmed the manual Steam upload, Workshop page and tag updates are complete, and authorized release-record closeout and retirement of this project's Herdr sessions. [Release status](docs/release-status.md) owns channel facts, package identity and delivery locations; the [owning tasks](openspec/changes/shared-content-and-lifecycle/tasks.md) retain scoped implementation evidence.
 
 ## Current state and next action
 
-Maintainer: manually upload the versioned 0.4.0 Steam handoff, apply the supplied bilingual Workshop copy/change notes and review the Workshop tags, then confirm completion. Until that report, Steam remains delivered but not confirmed published. Do not upload the whole handoff parent: only its `Mwah/` folder is runtime content.
+The 0.4.0 release is complete on both channels. No release action or active implementation remains assigned. This project's managed Herdr workspace has been closed after confirming all six executors were idle; their existing reports remain task evidence.
 
 Implementation, documentation calibration, independent review and root-layout confirmation are complete. The [native record](openspec/changes/shared-content-and-lifecycle/native-acceptance.md) owns the accepted gameplay evidence; the Intellectual observation/reminder obligation is satisfied. Publication added no gameplay or runtime-source changes, so that evidence remains applicable. Concrete defects return to their responsible work.
 
