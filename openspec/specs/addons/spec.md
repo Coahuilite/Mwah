@@ -7,8 +7,6 @@
 
 约定物体目标资格、独立开关、共享单 Pawn 执行及内容结果。扩展通过窄合同组合到亲吻功能，不使配对吻依赖具体墙／树实现。
 
-2026-11-05 采用机器吻 ADD-13～18，依据见 [采用记录](../../changes/machine-kissing/adoption.md)；实施与验收状态由该变更的 tasks 管理。
-
 ## Requirements
 
 ### Requirement: ADD-01 独立目标控制

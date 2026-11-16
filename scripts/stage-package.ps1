@@ -10,7 +10,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-# 只暂存运行时/玩家可见内容：About/、LoadFolders.xml、Common/、Compatibility/ 与两版原生 DLL。
+# 只暂存运行时/玩家可见内容：About/、LoadFolders.xml、根 Defs/、Languages/、条件兼容与两版原生 DLL。
 # Source/、docs/、scripts/、构建缓存、pdb、PublishedFileId.txt 一律不进包。
 # 共同内容各拷一份，两 minor 只带自己的 Mwah.dll；条件兼容根随包发行，是否生效由 Loader 判断。
 
@@ -22,13 +22,15 @@ $aboutSource = Join-Path $root 'About'
 $loadFoldersSource = Join-Path $root 'LoadFolders.xml'
 $modName = 'Mwah'
 $gameVersions = @('1.6', '1.7')
-# 唯一共同内容源；顺序与 LoadFolders 声明一致（Common 先于条件兼容根）。
-$contentRoots = @('Common', 'Compatibility/VanillaNutrientPasteExpanded')
+# 根目录只按内容白名单取文件，绝不能递归复制整个仓库。
+$compatRoot = 'Compatibility/VanillaNutrientPasteExpanded'
+$contentDirectories = @('Defs', 'Languages', $compatRoot)
+$contentRoots = @('.', $compatRoot)
 $distRoot = (Join-Path $root 'dist') + [IO.Path]::DirectorySeparatorChar
 if (-not $stageDir.StartsWith($distRoot, [StringComparison]::OrdinalIgnoreCase)) {
     throw 'StageDir must be a generated package directory beneath the repository dist directory.'
 }
-foreach ($relative in $contentRoots) {
+foreach ($relative in $contentDirectories) {
     if (-not (Test-Path -LiteralPath (Join-Path $root $relative) -PathType Container)) {
         throw "Missing shared content root $relative."
     }
@@ -59,8 +61,8 @@ $null = New-Item -ItemType Directory -Path $stageDir -Force
 
 Copy-Item -LiteralPath $aboutSource -Destination (Join-Path $stageDir 'About') -Recurse -Force
 Copy-Item -LiteralPath $loadFoldersSource -Destination (Join-Path $stageDir 'LoadFolders.xml') -Force
-# 唯一共同内容源＝唯一分发副本：Common 与条件兼容根各拷一次，两 minor 只放各自的原生 DLL。
-foreach ($relative in $contentRoots) {
+# 根共同内容与条件兼容内容各拷一次；art、docs、Source 不在白名单内。
+foreach ($relative in $contentDirectories) {
     $destination = Join-Path $stageDir $relative
     $null = New-Item -ItemType Directory -Path (Split-Path -Parent $destination) -Force
     Copy-Item -LiteralPath (Join-Path $root $relative) -Destination $destination -Recurse -Force
@@ -126,7 +128,12 @@ function Split-LoadFolders($Nodes) {
 }
 
 foreach ($relative in $contentRoots) {
-    if (@(Get-ChildItem -LiteralPath (Join-Path $stageDir $relative) -Recurse -Directory -Filter Assemblies).Count -gt 0) {
+    $hasAssemblies = if ($relative -eq '.') {
+        Test-Path -LiteralPath (Join-Path $stageDir 'Assemblies') -PathType Container
+    } else {
+        @(Get-ChildItem -LiteralPath (Join-Path $stageDir $relative) -Recurse -Directory -Filter Assemblies).Count -gt 0
+    }
+    if ($hasAssemblies) {
         throw "Shared content root $relative must never carry assemblies."
     }
     # 每个发行根都要自带 Defs 与两语言 Keyed：漏一种语言就是玩家可见文字缺半边（AGENTS 硬边界）。
@@ -155,9 +162,9 @@ foreach ($game in $gameVersions) {
             throw "Declared load root $declared is missing from the package for $game."
         }
     }
-    # 显式布局：根→Common→当前 minor，兼容根只能是条件项。
-    if ($base.Count -ne 3 -or $base[0] -ne '/' -or $base[1] -ne 'Common' -or $base[2] -ne $game) {
-        throw "Load folders for $game must be root, Common, then $game; actual: $($base -join ', ')."
+    # 自定义选择不会自动补根：根→当前 minor，兼容根只能是条件项。
+    if ($base.Count -ne 2 -or $base[0] -ne '/' -or $base[1] -ne $game) {
+        throw "Load folders for $game must be root, then $game; actual: $($base -join ', ')."
     }
     foreach ($declared in $optional) {
         if ($declared -notin $contentRoots) { throw "Conditional load root $declared is not a staged content root." }
@@ -189,15 +196,15 @@ foreach ($game in $gameVersions) {
     foreach ($minorCopy in @(Get-ChildItem -LiteralPath (Join-Path $stageDir $game) -Directory | Where-Object Name -ne 'Assemblies')) {
         throw "Minor $game must ship only assemblies; found staged $($minorCopy.Name)."
     }
-    foreach ($stale in @("$game/Defs", "$game/Languages")) {
+    foreach ($stale in @('Common', "$game/Defs", "$game/Languages")) {
         if (Test-Path -LiteralPath (Join-Path $root $stale) -PathType Container) {
-            throw "Obsolete content source $stale still exists; Common is the only shared content root."
+            throw "Obsolete content source $stale still exists; shared content belongs at the mod root."
         }
     }
 }
 
 # 源文件清单：共同与兼容内容各一份，逐文件长度一致；两组合之间不得出现同相对路径遮盖。
-foreach ($relative in $contentRoots) {
+foreach ($relative in $contentDirectories) {
     $source = Join-Path $root $relative
     $sourceFiles = @(Get-ChildItem -LiteralPath $source -Recurse -File | Where-Object {
         $_.Extension -ne '.pdb' -and $_.Name -notin $contentExclusions
@@ -225,9 +232,9 @@ foreach ($game in $gameVersions) {
             $seen[$file] = $declared
         }
     }
-    foreach ($required in @(Get-EffectiveFiles 'Common')) {
+    foreach ($required in @(Get-EffectiveFiles '/')) {
         if ($required -like 'Assemblies/*') { continue }
-        if (-not $seen.ContainsKey($required)) { throw "Common content $required is not in the $game load selection." }
+        if (-not $seen.ContainsKey($required)) { throw "Shared root content $required is not in the $game load selection." }
     }
 }
 $dlls = @(Get-ChildItem -LiteralPath $stageDir -Recurse -File -Filter *.dll)

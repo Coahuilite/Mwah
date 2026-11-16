@@ -15,14 +15,14 @@ $absDrivePathPattern = '[A-Za-z]:' + ($bs * 2)
 #   1   Release 构建（零警告零错误由 dotnet 自身把关）
 #   1b  三个构建渠道都要能编译（Dev / Steam / GitHub）
 #   2   全部 XML 良构
-#   3   Keyed 中英键集合一致（Common 与可选兼容根各自成对）+ 跨根不重复 + 中文名词纪律（Pawn 借词，禁 单位/小人）
-#   4   C# 与 Common Def 引用的 MWAH.* 键在 Common 双语都存在；可选登记引用的键在 VNPE 有效组合双语都存在
+#   3   Keyed 中英键集合一致（根共同内容与可选兼容根各自成对）+ 跨根不重复 + 中文名词纪律（Pawn 借词，禁 单位/小人）
+#   4   C# 与共同 Def 引用的 MWAH.* 键在根目录双语都存在；可选登记引用的键在 VNPE 有效组合双语都存在
 #   5   defName(XML) ↔ DefOf 字段(C#) ↔ driverClass 字符串
 #   5a  天意表行完整性（scope/权重/thought/旁白与短讯键双语）
-#   5b  DefInjected 扁平键结构（Common 与可选兼容根）
+#   5b  DefInjected 扁平键结构（根共同内容与可选兼容根）
 #   5c  VNPE 登记闭环（目标名唯一、站位策略、专用 tooltip 双语、身份不出可选根）
 #   6   DLL 符号与零 Harmony／零 VNPE 身份；6b 自定义 Def 类的 XML 可解析命名空间
-#   6c  加载声明与实际内容根：根→Common→minor→条件兼容；声明根存在；minor 无旧内容副本
+#   6c  加载声明与实际内容根：根→minor→条件兼容；声明根存在；minor 无旧内容副本
 #   7   版本纪律：csproj <Version> 唯一字面量；About/工坊页/双语 changelog 跟随面全一致
 #   8   分发卫生与隐私红线：无 PublishedFileId、无绝对本地路径
 #   9   设置项三处锁死：字段名 ↔ Scribe key ↔ Constants 默认值
@@ -35,7 +35,7 @@ $root = [System.IO.Path]::GetFullPath($ProjectRoot)
 # 唯一共同内容源／运行根，以及按声明条件采用的可选兼容根。
 $vnpeCondition = 'VanillaExpanded.VNutrientE'
 $compatRoot = 'Compatibility/VanillaNutrientPasteExpanded'
-$sharedRoots = @('Common', $compatRoot)
+$sharedRoots = @('.', $compatRoot)
 function Get-RootPath([string]$Relative) { Join-Path $root ($Relative.Replace('/', [IO.Path]::DirectorySeparatorChar)) }
 # 参数名不得用 $root：PowerShell 变量名不分大小写，$Root 会遮蔽脚本级 $root 并被下游函数读到。
 function Get-KeyDirectory([string]$ContentRoot, [string]$Language) {
@@ -103,17 +103,17 @@ foreach ($f in $xmlFiles) {
 }
 Assert-True ("all XML well-formed (" + @($xmlFiles).Count + " files)") ($bad.Count -eq 0) ($bad -join ' | ')
 
-# 3/4. Localization：Common 是基础组合的唯一语言源；兼容根自成一对，靠 LoadFolders 才进入有效内容。
+# 3/4. Localization：根目录是基础组合的唯一语言源；兼容根自成一对，靠 LoadFolders 才进入有效内容。
 #      赋值处一律 @() 包裹：脚本块输出会把单元素数组解卷成标量，StrictMode 下就没了 .Count。
-$en = @(Get-KeySet (Get-KeyDirectory 'Common' 'English'))
-$zh = @(Get-KeySet (Get-KeyDirectory 'Common' 'ChineseSimplified'))
+$en = @(Get-KeySet (Get-KeyDirectory '.' 'English'))
+$zh = @(Get-KeySet (Get-KeyDirectory '.' 'ChineseSimplified'))
 Assert-True "Keyed parity English/ChineseSimplified ($($en.Count)/$($zh.Count))" ((@(Compare-Object $en $zh)).Count -eq 0)
 # 跨文件重键：vanilla 后加载者赢、无警告——拆文件后最容易自伤的一处，门直接点名。
 $dupEn = @($en | Group-Object | Where-Object Count -gt 1 | ForEach-Object Name)
 $dupZh = @($zh | Group-Object | Where-Object Count -gt 1 | ForEach-Object Name)
 Assert-True 'no duplicate keys across Keyed files' ($dupEn.Count -eq 0 -and $dupZh.Count -eq 0) (($dupEn + $dupZh) -join ', ')
 
-# 3a. 可选兼容根：VNPE 启用时的有效键集合＝Common＋兼容根，两个方向都要成对且互不重复。
+# 3a. 可选兼容根：VNPE 启用时的有效键集合＝共同内容＋兼容根，两个方向都要成对且互不重复。
 #     不把所有可选语言永久并入基础集合——那样漏载兼容根会静默通过。
 $compatEnDirectory = Get-KeyDirectory $compatRoot 'English'
 $compatZhDirectory = Get-KeyDirectory $compatRoot 'ChineseSimplified'
@@ -127,7 +127,7 @@ $compatDupZh = @($compatZh | Group-Object | Where-Object Count -gt 1 | ForEach-O
 Assert-True 'no duplicate keys across optional Keyed files' ($compatDupEn.Count -eq 0 -and $compatDupZh.Count -eq 0) (($compatDupEn + $compatDupZh) -join ', ')
 # 同键跨根重复＝后加载根静默遮盖共同文案；专用键只允许存在于兼容根。
 $shadowedKeys = @($compatEn + $compatZh | Where-Object { $en -contains $_ -or $zh -contains $_ } | Sort-Object -Unique)
-Assert-True 'optional content redefines no Common key' ($shadowedKeys.Count -eq 0) ($shadowedKeys -join ', ')
+Assert-True 'optional content redefines no shared key' ($shadowedKeys.Count -eq 0) ($shadowedKeys -join ', ')
 
 # 3b. 中文名词纪律（2026-10-05 维护者裁定，AGENTS"项目身份"）：被发配者的名词一律是
 #     借词 Pawn——中文语言文件里出现 单位/小人 即红；殖民者/机械族/动物等原版族名照常。
@@ -172,8 +172,8 @@ if ($scopeCs -match '(?s)public enum KissScope\s*\r?\n\{(.*?)\r?\n\}') {
         $stem + 'Desc'
     })
     # Defs 内容提前算好：天意表的旁白/短讯键写在 XML 里，正反两个方向都要把它们算进"被使用"。
-    # Common 是基础组合的唯一内容源；可选登记只算进 VNPE 组合的有效键，不算进基础键集合。
-    $defXml = @(Get-ChildItem (Get-RootPath 'Common/Defs') -Recurse -Filter *.xml | Get-Content -Raw) -join "`n"
+    # 根目录是基础组合的唯一内容源；可选登记只算进 VNPE 组合的有效键，不算进基础键集合。
+    $defXml = @(Get-ChildItem (Get-RootPath 'Defs') -Recurse -Filter *.xml | Get-Content -Raw) -join "`n"
     $compatDefPath = Get-RootPath "$compatRoot/Defs"
     $compatDefXml = if (Test-Path -LiteralPath $compatDefPath -PathType Container) {
         @(Get-ChildItem -LiteralPath $compatDefPath -Recurse -Filter *.xml | Get-Content -Raw) -join "`n"
@@ -185,8 +185,8 @@ if ($scopeCs -match '(?s)public enum KissScope\s*\r?\n\{(.*?)\r?\n\}') {
     # 以点结尾的匹配是拼接前缀，不是键名。
     $used = @((($literalKeys + $scopeKeys + $diagKeys + $settingKeys + $fateKeys) | Where-Object { $_ -notmatch '\.$' } | Sort-Object -Unique))
 $missing = @($used | Where-Object { $en -notcontains $_ -or $zh -notcontains $_ })
-Assert-True ("all $($used.Count) base-composition keys exist in both Common languages") ($missing.Count -eq 0) ($missing -join ', ')
-# 可选登记的键：VNPE 组合的有效内容＝Common＋兼容根，两语言都要有；专用键只写在兼容根。
+Assert-True ("all $($used.Count) base-composition keys exist in both root languages") ($missing.Count -eq 0) ($missing -join ', ')
+# 可选登记的键：VNPE 组合的有效内容＝共同内容＋兼容根，两语言都要有；专用键只写在兼容根。
 $optionalUsed = @($optionalKeys | Where-Object { $_ -notmatch '\.$' } | Sort-Object -Unique)
 $optionalMissing = @($optionalUsed | Where-Object {
     ($en + $compatEn) -notcontains $_ -or ($zh + $compatZh) -notcontains $_ })
@@ -205,7 +205,7 @@ $compatXmlDefs = @([regex]::Matches($compatDefXml, '<defName>(MWAH_\w+)</defName
 $knownDefs = @($xmlDefs + $compatXmlDefs | Sort-Object -Unique)
 # 跨根重复的 defName 会让后加载者覆盖，兼容身份必须用唯一路径与唯一名。
 $shadowedDefs = @($compatXmlDefs | Where-Object { $xmlDefs -contains $_ })
-Assert-True 'optional content redefines no Common defName' ($shadowedDefs.Count -eq 0) ($shadowedDefs -join ', ')
+Assert-True 'optional content redefines no shared defName' ($shadowedDefs.Count -eq 0) ($shadowedDefs -join ', ')
 $defOfFields = @([regex]::Matches((Get-ChildItem (Join-Path $root "Source\$modName\DefOf") -Recurse -Filter *.cs | Get-Content -Raw),
     'public static (?!class\b)\w+ (MWAH_\w+)') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique)
 $orphanFields = @($defOfFields | Where-Object { $xmlDefs -notcontains $_ })
@@ -215,7 +215,7 @@ Assert-True 'driverClass uses the real namespace.type' (@($driverRefs | Where-Ob
 
 # 5a. 天意表完整性：每行必须有 scope、正权重、可解析的 thought（可空=不发心情）、
 #     旁白/短讯键必须双语齐备（与 Keyed 门同源）。坏行引擎会跳过，但门要提前喊。
-[xml]$fateDoc = Get-Content -Raw -LiteralPath (Get-RootPath 'Common/Defs/Kiss/MWAH_FateDefs.xml')
+[xml]$fateDoc = Get-Content -Raw -LiteralPath (Get-RootPath 'Defs/Kiss/MWAH_FateDefs.xml')
 $fateBad = @()
 foreach ($row in $fateDoc.Defs.MWAH_FateDef) {
     # StrictMode 下 XmlElement 缺子元素时直接点属性会抛错，一律 SelectSingleNode。
@@ -249,7 +249,7 @@ Assert-True "fate table rows are complete ($(@($fateDoc.Defs.MWAH_FateDef).Count
 #     写成 <MWAH_KissDirector><label>…</label></MWAH_KissDirector> 会让顶层名变成裸 defName、
 #     找不到字段路径，静默丢进翻译报告的 "missing" 节——本项目踩过，Keyed 检查看不见。
 $injBad = @()
-foreach ($contentRootName in (@('Common', $compatRoot))) {
+foreach ($contentRootName in $sharedRoots) {
     foreach ($langDir in @('English', 'ChineseSimplified')) {
         $injRoot = Get-RootPath "$contentRootName/Languages/$langDir/DefInjected"
         if (-not (Test-Path $injRoot)) { continue }
@@ -274,7 +274,7 @@ Assert-True 'DefInjected uses flat DefName.path keys' ($injBad.Count -eq 0) ($in
 # 5c. VNPE 登记闭环：三个出口名只允许出现在兼容根，且每条登记都能被通用消费者解析。
 #     目标名不得重复（运行时同样会诊断并排除歧义，门提前喊）；站位策略只能前向或接触；
 #     专用 tooltip 键必须在 VNPE 有效组合的双语都存在；兼容根不得改第三方 Def，也不得
-#     重复登记 Common 已经精确保留的原版目标（原版四个身份的权威仍是 DefOf）。
+#     重复登记 共同内容已经精确保留的原版目标（原版四个身份的权威仍是 DefOf）。
 $machineDefOfCs = Get-Content -Raw -LiteralPath (Get-RootPath "Source/$modName/DefOf/MWAH_MachineTargetDefOf.cs")
 $commonExactTargets = @([regex]::Matches($machineDefOfCs, 'public static ThingDef (\w+)') | ForEach-Object { $_.Groups[1].Value })
 $registrationNodes = @()
@@ -331,9 +331,9 @@ foreach ($actual in $registeredPolicyByTarget.Keys) {
 Assert-True 'the conditional root registers exactly the three ADD-19 outlets with their stand policies' (
     (Test-Path -LiteralPath $compatDefPath -PathType Container) -and $outletMismatch.Count -eq 0 -and
     $registrationNodes.Count -eq $expectedOutlets.Count) "entries: $($registrationNodes.Count); $($outletMismatch -join ' | ')"
-# 运行时面上的 VNPE 目标名只能出现在兼容根；Common／minor／About／源码／加载声明出现即红。
+# 运行时面上的 VNPE 目标名只能出现在兼容根；根共同内容／minor／About／源码／加载声明出现即红。
 $vnpeNameHits = @()
-foreach ($surface in @("Source/$modName", 'Common', '1.6', '1.7', 'About', 'LoadFolders.xml')) {
+foreach ($surface in @("Source/$modName", 'Defs', 'Languages', '1.6', '1.7', 'About', 'LoadFolders.xml')) {
     $surfacePath = Get-RootPath $surface
     if (-not (Test-Path -LiteralPath $surfacePath)) { continue }
     $files = if (Test-Path -LiteralPath $surfacePath -PathType Container) {
@@ -398,7 +398,7 @@ foreach ($defFile in @(Get-ChildItem -LiteralPath (Get-RootPath "Source/$modName
 }
 Assert-True 'every XML Def class sits in an XML-resolvable namespace' ($defClassBad.Count -eq 0) ($defClassBad -join ' | ')
 
-# 6c. 布局与加载声明：两版都必须是 根→Common→当前 minor→条件 VNPE 根，且声明的根真实存在。
+# 6c. 布局与加载声明：两版都必须是 根→当前 minor→条件 VNPE 根，且声明的根真实存在。
 #     “包里存在”与“本组合生效”是两件事：条件根存在但不进基础组合；
 #     共同／兼容根不得带程序集，minor 不得再留旧 Def／语言副本。
 [xml]$loadFoldersDoc = Get-Content -Raw -LiteralPath (Join-Path $root 'LoadFolders.xml')
@@ -414,20 +414,25 @@ foreach ($game in $gameVersions) {
         elseif ($condition -eq $vnpeCondition) { $conditional += $path }
         else { Assert-True "$game unsupported IfModActive '$condition' on $path" $false }
     }
-    Assert-True "$game load order is root, Common, then $game" (
-        $unconditional.Count -eq 3 -and $unconditional[0] -eq '/' -and $unconditional[1] -eq 'Common' -and $unconditional[2] -eq $game) ($unconditional -join ', ')
+    Assert-True "$game load order is root, then $game" (
+        $unconditional.Count -eq 2 -and $unconditional[0] -eq '/' -and $unconditional[1] -eq $game) ($unconditional -join ', ')
     Assert-True "$game adopts the VNPE root only by condition" ($conditional.Count -eq 1 -and $conditional[0] -eq $compatRoot) ($conditional -join ', ')
     foreach ($declared in @($unconditional + $conditional)) {
         $declaredPath = if ($declared -eq '/') { $root } else { Get-RootPath $declared }
         Assert-True "$game declared load root $declared exists" (Test-Path -LiteralPath $declaredPath -PathType Container)
     }
-    Assert-True "$game minor ships assemblies only (no old Def/Language copy)" (
+    Assert-True "$game has no old Common or minor Def/Language copy" (
+        -not (Test-Path -LiteralPath (Get-RootPath 'Common') -PathType Container) -and
         -not (Test-Path -LiteralPath (Get-RootPath "$game/Defs") -PathType Container) -and
         -not (Test-Path -LiteralPath (Get-RootPath "$game/Languages") -PathType Container))
 }
 foreach ($relative in $sharedRoots) {
-    Assert-True "content root $relative carries no assemblies" (
-        @(Get-ChildItem -LiteralPath (Get-RootPath $relative) -Recurse -Directory -Filter Assemblies).Count -eq 0)
+    $hasAssemblies = if ($relative -eq '.') {
+        Test-Path -LiteralPath (Get-RootPath 'Assemblies') -PathType Container
+    } else {
+        @(Get-ChildItem -LiteralPath (Get-RootPath $relative) -Recurse -Directory -Filter Assemblies).Count -gt 0
+    }
+    Assert-True "content root $relative carries no assemblies" (-not $hasAssemblies)
 }
 
 # 7. Version discipline

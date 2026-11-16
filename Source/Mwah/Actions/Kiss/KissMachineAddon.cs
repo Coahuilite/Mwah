@@ -50,7 +50,7 @@ public sealed class KissMachineAddon : KissThingAddon
 
     public override string OptionTooltip(Thing target)
     {
-        // The dedicated key travels with the registration; a registered target without one shares the Common copy.
+        // The dedicated key travels with the registration; a registered target without one shares the base copy.
         MWAH_KissTargetDef? registration = KissTargets.For(target.def);
         if (registration != null && !string.IsNullOrEmpty(registration.tooltipKey))
             return (string)registration.tooltipKey.Translate(target.Named("TARGET"));
