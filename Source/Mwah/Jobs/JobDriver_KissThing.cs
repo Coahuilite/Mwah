@@ -28,8 +28,16 @@ public class JobDriver_KissThing : JobDriver
 
     private int ticksLeft;
 
+    /// <summary>
+    /// **完成事实**：倒计时真的走到过 0。只有它为真才结算（墙被拆、中途被征召一律无奖）。
+    /// 与双人版同一口径：它不表示收尾入口跑过，两者不可合并成一个 Success。
+    /// </summary>
     private bool completed;
 
+    /// <summary>
+    /// **收尾幂等闸**：表演 toil 的 finish action 入口已经运行过。取消的吻同样走到这里，
+    /// 所以它**不是**"结果已发出"。旧档缺省值仍由完成事实与原生表演索引推导（见 <see cref="ExposeData"/>）。
+    /// </summary>
     private bool finished;
 
     private readonly WalkTally walkTally = new();
@@ -40,16 +48,40 @@ public class JobDriver_KissThing : JobDriver
 
     private Thing Target => job.GetTarget(TargetIndex.A).Thing;
 
+    private IntVec3 StandCell => job.GetTarget(TargetIndex.B).Cell;
+
+    private bool TargetStateValid
+    {
+        get
+        {
+            KissThingAddon? addon = Addon;
+            Thing target = Target;
+            return target != null && target.Spawned && !target.Destroyed && addon != null
+                && addon.CheckTarget(pawn, target).Accepted
+                && (!addon.UsesFixedStandCell || (addon.ValidStandCell(pawn, target, StandCell)
+                    && (CurToilIndex != PerformanceToilIndex || pawn.Position == StandCell)));
+        }
+    }
+
     private IntVec3 HomeCell => homeX == InvalidCell ? IntVec3.Invalid : new IntVec3(homeX, 0, homeZ);
 
-    public bool IsKissing => !ended && !completed && CurToilIndex <= PerformanceToilIndex;
+    /// <summary>只读逻辑阶段（与双人版共用 <see cref="KissActivity"/> 的推导，本 driver 不存它）。</summary>
+    internal KissPhase Phase => KissActivity.Phase(CurToilIndex, ended, completed, PerformanceToilIndex);
+
+    /// <summary>亲吻占用：接近与表演算"正在亲"，完成后的返程不算（KISS-09 的同一口径）。</summary>
+    public bool IsKissing => Phase is KissPhase.Approaching or KissPhase.Performing;
 
     public override string GetReport()
     {
         if (!IsKissing) return "MWAH.Job.Returning".Translate();
-        return base.GetReport();
+        return Addon?.JobReport(Target) ?? base.GetReport();
     }
 
+    /// <summary>
+    /// 保存合同原样：键名、默认值与顺序都不动。<c>finished</c> 的旧档缺省值仍由
+    /// "完成事实 + 已经越过表演 toil"推出 —— 旧包没写这个字段时，已过场的吻不能
+    /// 被当成"还能再收尾一次"。
+    /// </summary>
     public override void ExposeData()
     {
         base.ExposeData();
@@ -63,8 +95,16 @@ public class JobDriver_KissThing : JobDriver
 
     public override bool TryMakePreToilReservations(bool errorOnFailed)
     {
-        // 独占这堵墙：同一时间两个人排着队亲同一面墙，画面过于凄凉。
-        return pawn.Reserve(Target, job, 1, -1, null, errorOnFailed);
+        KissThingAddon? addon = Addon;
+        if (addon == null || !addon.CheckTarget(pawn, Target).Accepted
+            || !pawn.Reserve(Target, job, 1, -1, null, errorOnFailed)) return false;
+        if (!addon.UsesFixedStandCell) return true;
+        if (addon.ValidStandCell(pawn, Target, StandCell)
+            && pawn.CanReach(StandCell, PathEndMode.OnCell, Danger.Deadly)
+            && pawn.ReserveSittableOrSpot(StandCell, job, errorOnFailed)
+            && pawn.Reserve(StandCell, job, 1, -1, null, errorOnFailed)) return true;
+        KissReturn.ReleaseReservations(pawn, job);
+        return false;
     }
 
     /// <summary>伤害自毁闸：与双人版同判据、同时机（伤害事件本身，同步，零延迟）——
@@ -85,6 +125,7 @@ public class JobDriver_KissThing : JobDriver
     protected override IEnumerable<Toil> MakeNewToils()
     {
         this.FailOn(() => IsKissing && (Target == null || !Target.Spawned || Target.Destroyed));
+        this.FailOn(() => IsKissing && !TargetStateValid);
         SetFinalizerJob(condition => KissReturn.Finalizer(pawn, HomeCell, condition,
             CurToilIndex > ReturnToilIndex)!);
         AddFinishAction(_ => KissTrace.Set(false, "thing-end"));
@@ -136,7 +177,8 @@ public class JobDriver_KissThing : JobDriver
     /// <summary>到位即推进；迈不开步（被封死、被人堵）就止损结束，不在原地反复起步。</summary>
     private void TryWalk()
     {
-        IntVec3 stand = KissThingAddon.FindStandCell(pawn, Target);
+        IntVec3 stand = Addon?.UsesFixedStandCell == true
+            ? StandCell : KissThingAddon.FindStandCell(pawn, Target);
         if (stand == pawn.Position)
         {
             pawn.pather?.StopDead();
@@ -169,13 +211,18 @@ public class JobDriver_KissThing : JobDriver
         };
         toil.AddPreTickIntervalAction(delegate (int delta)
         {
+            if (!TargetStateValid)
+            {
+                EndJobWith(JobCondition.Incompletable);
+                return;
+            }
             pawn.pather?.StopDead();
             FaceTarget();
             ticksLeft -= delta;
             KissTrace.Ticks(false, ticksLeft);
             if (ticksLeft <= 0)
             {
-                completed = true;
+                MarkPerformanceCompleted();
                 ReadyForNextToil();
                 return;
             }
@@ -187,11 +234,10 @@ public class JobDriver_KissThing : JobDriver
         });
         toil.AddFinishAction(delegate
         {
-            if (finished)
+            if (!KissActivity.TryEnterFinishAction(ref finished))
             {
-                return;
+                return; // 收尾入口已经跑过：暴力打断、返程重入或读档重建都不许再结一次
             }
-            finished = true;
             KissReturn.ReleaseReservations(pawn, job);
             // 只有倒计时真的走完才结算：中途散场（墙被拆、被征召）不该有天意。
             if (completed)
@@ -203,6 +249,13 @@ public class JobDriver_KissThing : JobDriver
         toil.defaultCompleteMode = ToilCompleteMode.Never;
         return toil;
     }
+
+    /// <summary>
+    /// 完成转移的唯一入口：只记"倒计时走完"这一事实。逻辑占用随这个事实当场结束，
+    /// 但本入口**不直接释放预订** —— 预订释放与结算都留在表演 toil 的 finish action 里
+    /// （幂等闸 <see cref="KissActivity.TryEnterFinishAction"/>），与双人版同一口径。
+    /// </summary>
+    private void MarkPerformanceCompleted() => completed = true;
 
     private void FaceTarget()
     {

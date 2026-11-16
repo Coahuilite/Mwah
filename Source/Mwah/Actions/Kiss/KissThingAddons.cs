@@ -47,7 +47,8 @@ public abstract class KissThingAddon
     public virtual bool DefaultActive => Definition.defaultActive;
     public virtual int DefaultThoughtDurationTicks => Definition.defaultThoughtDurationTicks;
     public virtual string ResolveFateScope(Pawn doer, Thing target) => Scope;
-    public string OptionTooltip(Thing target) => Definition.tooltipKey.Translate(target.Named("TARGET"), target.Named("WALL"));
+    public virtual string OptionTooltip(Thing target) => Definition.tooltipKey.Translate(target.Named("TARGET"), target.Named("WALL"));
+    public virtual string? JobReport(Thing target) => null;
 
     /// <summary>当前生效时长：字典按 Id 查，缺槽落出厂值（读侧已 clamp）。</summary>
     public int ThoughtDurationTicks => MwahMod.Settings.AddonThoughtDuration(Id, DefaultThoughtDurationTicks);
@@ -60,6 +61,13 @@ public abstract class KissThingAddon
 
     /// <summary>右键菜单文案（墙在这里做人形迟疑版）。</summary>
     public abstract string OptionLabel(Pawn doer, Thing target);
+
+    // New target policies default to the released wall/tree behavior.
+    public virtual AcceptanceReport CheckTarget(Pawn doer, Thing target) => AcceptanceReport.WasAccepted;
+    public virtual bool UsesFixedStandCell => false;
+    public virtual IntVec3 SelectStandCell(Pawn doer, Thing target) => FindStandCell(doer, target);
+    public virtual bool ValidStandCell(Pawn doer, Thing target, IntVec3 cell) => true;
+    public virtual string MoodlessLabel(Pawn doer, Thing target) => "MWAH.FloatMenu.KissNoMood".Translate();
 
     /// <summary>表为空（用户删干净了）时的兜底分布；默认什么都不发。</summary>
     public virtual void SettleWithoutTable(Pawn doer, Thing target, string scope)
@@ -116,7 +124,12 @@ public abstract class KissThingAddon
             }
         }
 
-        if (FindStandCell(doer, target) == IntVec3.Invalid)
+        AcceptanceReport targetState = CheckTarget(doer, target);
+        if (!targetState.Accepted)
+        {
+            return ThingKissProposal.Blocked(targetState.Reason);
+        }
+        if (SelectStandCell(doer, target) == IntVec3.Invalid)
         {
             return ThingKissProposal.Blocked("MWAH.KissThing.Fail.NoStandCell".Translate(
                 doer.Named("PAWN"), target.Named("TARGET"), target.Named("WALL")));
@@ -160,7 +173,7 @@ public abstract class KissThingAddon
     }
 
     /// <summary>结算：先查天意表；表空落回 addon 自带的兜底分布。心情记忆吃本 addon 的时长设置。</summary>
-    public void Settle(Pawn doer, Thing target)
+    public virtual void Settle(Pawn doer, Thing target)
     {
         string scope = ResolveFateScope(doer, target);
         if (!KissFate.Grant(doer, target, scope, ThoughtDurationTicks))
@@ -175,6 +188,12 @@ public abstract class KissThingAddon
     private bool StartJob(Pawn doer, Thing target, bool forced)
     {
         var job = JobMaker.MakeJob(Definition.job, target);
+        if (UsesFixedStandCell)
+        {
+            IntVec3 stand = SelectStandCell(doer, target);
+            if (!stand.IsValid) return false;
+            job.SetTarget(TargetIndex.B, stand);
+        }
         int jobId = job.loadID;
         if (forced)
         {

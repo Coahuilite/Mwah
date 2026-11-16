@@ -7,15 +7,17 @@ namespace Mwah;
 /// Per-game state reset and director lifecycle. Vanilla finalizers schedule return jobs,
 /// avoiding a process-wide queue racing an ongoing departure or a newer player order.
 /// 每局生命周期：Game.FillComponents 在建局与读档时都会重新实例化组件，构造器因此是
-/// "每局必跑"的钩子。冷却表、导演台代号/开关、面板静态引用都是 static，而 TicksGame 与
-/// thingIDNumber 每局重新从 0 分配，不在这里清零就会让新局继承上一局的残留。
+/// "每局必跑"的钩子。冷却表、导演台开关、面板静态引用都是 static，而 TicksGame 与
+/// thingIDNumber 每局重新从 0 分配，不在这里清零就会让新局继承上一局的残留
+/// （导演台的点选代号刻意**不**清零，见 <see cref="KissDirector.ResetForNewGame"/>）。
 /// </summary>
 public class KissTicker : GameComponent
 {
     public KissTicker(Game game) : base()
     {
         KissCooldown.Reset();
-        KissDirector.Active = false;
+        // 导演台的静态标记归它自己清（KissDirector.ResetForNewGame）：这里只负责按局呼叫一次。
+        KissDirector.ResetForNewGame();
         Dialog_KissDirector.ResetForNewGame();
     }
 

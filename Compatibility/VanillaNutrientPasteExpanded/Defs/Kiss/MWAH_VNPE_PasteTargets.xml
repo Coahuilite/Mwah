@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <!--
+    VNPE 营养膏出口的可选亲吻目标登记（MWAH_KissTargetDef）。本文件只在
+    `Compatibility/VanillaNutrientPasteExpanded` 条件根被采用时进入有效内容：
+    LoadFolders 用 IfModActive="VanillaExpanded.VNutrientE" 决定这里是否存在，
+    因此主 DLL 既没有这三个目标名，也没有对方的 packageId 常量。
+
+    分工照旧：**结构在这里，句子在可选语言根**。targetDefName 是 Def 加载后解析的字符串
+    （见 Source/Mwah/Actions/Kiss/KissTargets.cs），不是对第三方 Def 的 XML 强引用：
+    某个目标缺失时只诊断并跳过这一条，其余目标与基础机器照常；同一目标被重复登记时
+    诊断并整体排除，不靠 XML 枚举顺序选胜者。站位策略与原版营养膏机同源：
+    Tap 用领取格±左右一格（Forward），Feeder／Dripper 用满足原版 Touch 的合法格（Touch）。
+    奖励、记忆槽、天意、PowerOn、TargetB 与返程全部复用 Common 的既有合同；
+    这里不改对方 ThingDef，也不引入另一套结算。tooltipKey 只给接触式出口用，
+    其文案在可选语言根；Tap 留空，继续走 Common 的共同营养膏提示。
+  -->
+  <MWAH_KissTargetDef>
+    <defName>MWAH_KissTarget_VNPE_Tap</defName>
+    <targetDefName>VNPE_NutrientPasteTap</targetDefName>
+    <standPolicy>Forward</standPolicy>
+  </MWAH_KissTargetDef>
+  <MWAH_KissTargetDef>
+    <defName>MWAH_KissTarget_VNPE_Feeder</defName>
+    <targetDefName>VNPE_NutrientPasteFeeder</targetDefName>
+    <standPolicy>Touch</standPolicy>
+    <tooltipKey>MWAH.KissMachine.PasteTouchTooltip</tooltipKey>
+  </MWAH_KissTargetDef>
+  <MWAH_KissTargetDef>
+    <defName>MWAH_KissTarget_VNPE_Dripper</defName>
+    <targetDefName>VNPE_NutrientPasteDripper</targetDefName>
+    <standPolicy>Touch</standPolicy>
+    <tooltipKey>MWAH.KissMachine.PasteTouchTooltip</tooltipKey>
+  </MWAH_KissTargetDef>
+</Defs>

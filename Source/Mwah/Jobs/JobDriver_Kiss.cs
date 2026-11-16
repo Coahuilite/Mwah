@@ -34,10 +34,18 @@ public class JobDriver_Kiss : JobDriver
     /// <summary>发起方的亲吻倒计时（被动方不倒数，见 ToilKiss）。</summary>
     private int ticksLeft;
 
-    /// <summary>倒计时真的走完过。只有走完才发心情：中途散场不该有奖励。</summary>
+    /// <summary>
+    /// **完成事实**：发起方的倒计时真的走到过 0。只有它为真才发心情 —— 中途散场（搭档离场、
+    /// 受击、走位失败）一律无奖。它不表示收尾入口跑过（那是 <see cref="finished"/>），
+    /// 两者不可合并成一个 Success。保存键与默认值保持原名原义。
+    /// </summary>
     private bool completed;
 
-    /// <summary>finish action 幂等闸：收尾栈被重入时只结算一次。</summary>
+    /// <summary>
+    /// **收尾幂等闸**：表演 toil 的 finish action 入口已经运行过，重入只放行第一次。
+    /// 被取消的吻同样会走到这里，所以它**不是**"奖励已发出"：结算另需完成事实
+    /// <see cref="completed"/>。旧档缺省值仍由完成事实与原生索引推导（见 <see cref="ExposeData"/>）。
+    /// </summary>
     private bool finished;
 
     // Native Job.loadID survives save/load and distinguishes replacement jobs, including pooled Jobs.
@@ -59,7 +67,14 @@ public class JobDriver_Kiss : JobDriver
     /// <summary>本方台位；无效表示"没找到台"，走贴脸兜底。</summary>
     private IntVec3 StageCell => job.GetTarget(TargetIndex.B).Cell;
 
-    public bool IsKissing => !ended && !completed && CurToilIndex <= PerformanceToilIndex;
+    /// <summary>
+    /// 只读逻辑阶段（<see cref="KissActivity"/> 统一推导，本 driver 不存它）：
+    /// 原生 Toil 进度仍是执行权威，这里只是一个能读出来的名字。
+    /// </summary>
+    internal KissPhase Phase => KissActivity.Phase(CurToilIndex, ended, completed, PerformanceToilIndex);
+
+    /// <summary>亲吻占用：接近与表演算"正在亲"，完成后的返程不算（KISS-09 的同一口径）。</summary>
+    public bool IsKissing => Phase is KissPhase.Approaching or KissPhase.Performing;
 
     public override string GetReport()
     {
@@ -67,35 +82,89 @@ public class JobDriver_Kiss : JobDriver
         return base.GetReport();
     }
 
-    /// <summary>Both admitted jobs bind before the next simulation tick.</summary>
-    internal void BindPartner(int loadId) => partnerJobId = loadId;
+    // ---- 配对身份：写只有下面两个显式入口，读（MatchingPartner）不再有副作用 ----
 
+    /// <summary>
+    /// 显式绑定：双方 job 都确认入场之后，由 <see cref="KissUtility.Start"/> 一边一次调用，
+    /// 因此绑定在下一个模拟 tick 之前就已落地。幂等 —— 同一个 ID 重复调用无事；
+    /// 已经指向另一场吻的 driver **不接受改写**（那是配对身份出错，静默改绑只会把两桩吻焊死）。
+    /// </summary>
+    internal void BindPartner(int loadId)
+    {
+        if (partnerJobId == loadId)
+        {
+            return;
+        }
+        if (partnerJobId >= 0)
+        {
+            MwahLog.Note("kiss rebind refused: " + base.pawn.LabelShort + " bound to " + partnerJobId
+                + ", asked for " + loadId);
+            return;
+        }
+        partnerJobId = loadId;
+    }
+
+    /// <summary>
+    /// 旧档补绑的**显式**入口（原先藏在 <see cref="MatchingPartner"/> 的读操作里，
+    /// 于是每次查询都可能暗改对方的 job）。只在两个真实阶段各试一次 —— 接近期 fail condition
+    /// 与表演期 tick，两处的启动帧宽限照旧由各自的 <c>startTick</c> 闸提供；绝不放进
+    /// <see cref="ExposeData"/>，那时对方的引用还没就绪。
+    /// 判据与旧写法逐条相同：互指、同一发起方（C 端）、同一发起帧 <c>startTick</c>、
+    /// 且对方没有指向别的 job；补上的是具体 loadID，不把配对降级成模糊的"对方正忙"。
+    /// 已绑定（新派发或先前某次恢复）即直接返回，所以每个调用点反复调都安全。
+    /// </summary>
+    private void RestoreLegacyBinding()
+    {
+        if (partnerJobId >= 0)
+        {
+            return;
+        }
+        JobDriver_Kiss? other = Partner?.jobs?.curDriver as JobDriver_Kiss;
+        if (other == null || other.ended || other.Partner != pawn
+            || other.job.GetTarget(TargetIndex.C).Pawn != job.GetTarget(TargetIndex.C).Pawn)
+        {
+            return;
+        }
+        // Older saves have no explicit pair IDs. Reconstruct only a reciprocal pair from
+        // the same dispatch tick, then retain the concrete IDs rather than reclassifying it.
+        if (other.job.startTick != job.startTick
+            || (other.partnerJobId >= 0 && other.partnerJobId != job.loadID))
+        {
+            return;
+        }
+        BindPartner(other.job.loadID);
+        other.BindPartner(job.loadID);
+    }
+
+    /// <summary>
+    /// 纯查询：配对身份必须**已经**由 <see cref="BindPartner"/> 或 <see cref="RestoreLegacyBinding"/>
+    /// 写入。返回 null 现在也可能只是"还没绑"，所以读它的两个阶段各自先显式过一次恢复入口。
+    /// </summary>
     private JobDriver_Kiss? MatchingPartner
     {
         get
         {
+            if (partnerJobId < 0)
+            {
+                return null;
+            }
             JobDriver_Kiss? other = Partner?.jobs?.curDriver as JobDriver_Kiss;
             if (other == null || other.ended || other.Partner != pawn
                 || other.job.GetTarget(TargetIndex.C).Pawn != job.GetTarget(TargetIndex.C).Pawn)
             {
                 return null;
             }
-            // Older saves have no explicit pair IDs. Reconstruct only a reciprocal pair from
-            // the same dispatch tick, then retain the concrete IDs rather than reclassifying it.
-            if (partnerJobId < 0)
-            {
-                if (other.job.startTick != job.startTick
-                    || (other.partnerJobId >= 0 && other.partnerJobId != job.loadID))
-                {
-                    return null;
-                }
-                partnerJobId = other.job.loadID;
-                other.partnerJobId = job.loadID;
-            }
             return other.job.loadID == partnerJobId && other.partnerJobId == job.loadID ? other : null;
         }
     }
 
+    /// <summary>
+    /// 保存合同原样：键名、默认值与顺序都不动。两条旧档兼容推导也保持原位 ——
+    /// <c>finished</c> 缺省仍由"完成事实 + 原生表演索引"推出（旧包没写这个字段时，
+    /// 已经过了表演 toil 的吻不能被当成"还能再收尾一次"），<c>partnerJobId</c> 缺省 -1
+    /// 表示"没有显式配对身份"，只有 <see cref="RestoreLegacyBinding"/> 的两个阶段入口可以补它，
+    /// 这里绝不强行补绑（此时对方的 job 引用还没解析）。
+    /// </summary>
     public override void ExposeData()
     {
         base.ExposeData();
@@ -217,7 +286,9 @@ public class JobDriver_Kiss : JobDriver
             {
                 return false;
             }
+            // 查询前先过一次显式恢复入口（旧档没有配对身份，新派发在 Start 里就已绑定）。
             // 对方已经不在亲吻 job 里（走位失败、受击散场）就别继续走向空台。
+            RestoreLegacyBinding();
             if (MatchingPartner == null)
             {
                 MwahLog.Note("kiss abort in walk: " + base.pawn.LabelShort + " partner " + Partner.LabelShort + " left the kiss");
@@ -266,6 +337,8 @@ public class JobDriver_Kiss : JobDriver
                 ReadyForNextToil();
                 return;
             }
+            // 表演期同样先过一次显式恢复入口，再做纯查询（旧档补绑不再藏在 getter 里）。
+            RestoreLegacyBinding();
             JobDriver_Kiss? other = MatchingPartner;
             if (other == null)
             {
@@ -300,14 +373,7 @@ public class JobDriver_Kiss : JobDriver
                 KissTrace.Ticks(false, ticksLeft);
                 if (ticksLeft <= 0)
                 {
-                    completed = true;
-                    // Completion belongs to the initiator, but both jobs retain the result even
-                    // if the initiator finishes a zero-length departure before the next Pawn tick.
-                    other.completed = true;
-                    // Release both owners now: the passive Pawn may not tick before a new
-                    // request arrives. Releasing just this Pawn would leave its partner locked.
-                    KissReturn.ReleaseReservations(pawn, job);
-                    KissReturn.ReleaseReservations(other.pawn, other.job);
+                    MarkPerformanceCompleted(other);
                     ReadyForNextToil();
                     return;
                 }
@@ -327,11 +393,10 @@ public class JobDriver_Kiss : JobDriver
         });
         toil.AddFinishAction(delegate
         {
-            if (finished)
+            if (!KissActivity.TryEnterFinishAction(ref finished))
             {
-                return;
+                return; // 收尾入口已经跑过：暴力打断、返程重入或读档重建都不许再结一次
             }
-            finished = true;
             KissReturn.ReleaseReservations(pawn, job);
             if (completed && !isPassivePartner)
             {
@@ -341,6 +406,25 @@ public class JobDriver_Kiss : JobDriver
         toil.socialMode = RandomSocialMode.Off;
         toil.defaultCompleteMode = ToilCompleteMode.Never;
         return toil;
+    }
+
+    /// <summary>
+    /// 完成转移的唯一入口（只有发起方会走到这里）：把"倒计时走完"这一事实同步给双方 job，
+    /// 并当场释放双方的亲吻预订。
+    /// <list type="bullet">
+    ///   <item><description>双方都要留这个事实：发起方那场零长返程可能先跑完，被动方随后
+    ///   仍要按"已完成"进入收尾，而不是被判成散场。</description></item>
+    ///   <item><description>预订现在就放、不等对方下一次 tick：只放自己会把搭档锁在已经结束的吻上
+    ///   （KISS-05 / KISS-09 的"完成即不占用"）。</description></item>
+    /// </list>
+    /// 结算不在这里发生 —— 那是表演 toil 的 finish action（幂等闸 <see cref="KissActivity.TryEnterFinishAction"/>）。
+    /// </summary>
+    private void MarkPerformanceCompleted(JobDriver_Kiss other)
+    {
+        completed = true;
+        other.completed = true;
+        KissReturn.ReleaseReservations(pawn, job);
+        KissReturn.ReleaseReservations(other.pawn, other.job);
     }
 
     /// <summary>位置是否已经到位：有台位就要求踩中它；没台位时贴到对方身上即算到位。</summary>

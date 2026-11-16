@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <!--
+    可选 VNPE 专用文案。本文件只在条件兼容根被采用时进入有效内容，
+    键名与 Common 的共同营养膏文案互不重叠；消费者是 KissTargets 解析出的登记，
+    基础 C# 不无条件引用这里的任何键（见 AGENTS／本 change 的 design）。
+  -->
+  <MWAH.KissMachine.PasteTouchTooltip>French kiss {TARGET} from a valid touching cell. Power is required, but network stock and a linked bed are not. Good fate outcomes fill an existing Food need without using feedstock.</MWAH.KissMachine.PasteTouchTooltip>
+</LanguageData>

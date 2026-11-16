@@ -1,36 +1,54 @@
-# 发布流程
+# 构建、出包与发布
 
-> 唯一流程入口（2026-10-04 建立，学自 SqueakyRatkin 并按本项目规模瘦身）。本地 commit 与版本分支 push 按 AGENTS.md 执行；PR／merge／tag／GitHub Release／Workshop 上传须对应的维护者授权。本文不是授权。
+本页提供操作顺序；当前授权看 TODO.md，已发布渠道事实看 [release-status.md](release-status.md)。本地提交及版本分支 push 沿用既有授权和机械隐私门；main 合入、tag、GitHub Release、Workshop 上传、远端／默认分支变更分别需要维护者授权。
 
-## 三命令契约
+## 日常候选
 
-| 用途 | 命令 | 覆盖 |
-| --- | --- | --- |
-| 日常开发 | `pwsh scripts/verify-local.ps1` | 既有离线门：双版本 × 三渠道构建、XML 良构、双语键一致、DefOf 解析、天意表完整性、DLL 符号与零 Harmony 反证、版本轴、设置项三处锁死 |
-| 出包 | `pwsh scripts/build-dev.ps1` / `pack-github.ps1 -Version v…` / `pack-steam.ps1` | 三个渠道各建各的 flavor，均生成 1.6／1.7 对应原生 DLL 与完整内容目录，**打包必构建**（2026-10-04 事故纪律：只 stage 旧 DLL 会把上一渠道产物装进新标签的包） |
-| push 时（自动） | pre-push hook 跑 `privacy-audit.ps1 -FullHistory`（装法：`pwsh scripts/install-hooks.ps1`，每 clone 一次） | 全向量 + 身份面机械拦截，失败即拒推；CI 在全量 clone 上复跑同一 `-FullHistory` 审计兜底（`--no-verify` 无处藏） |
+```powershell
+pwsh scripts/verify-local.ps1
+pwsh scripts/pack-dev.ps1 -Zip
+pwsh scripts/privacy-audit.ps1 -PackageDir dist/dev/Mwah
+```
 
-构建使用固定引用包 1.6.4871 与 1.7.4990-unstable；完整双版本出包需要 .NET 10 SDK 和可用的 NuGet 还原／缓存。旧 `dotnet build Source/Mwah/Mwah.csproj` 默认仍是 1.6 net472；`-p:MWAHGameVersion=1.7` 才选择 net10.0，`pwsh scripts/build-runtime.ps1` 一次构建两者。脚本自带 restore，不接收 `-NoRestore`。出包后用 `pwsh scripts/privacy-audit.ps1 -PackageDir dist/dev/Mwah` 扫描实际测试包；CI 在 artifact 上传前也执行它。不要在发布检查里手工重复脚本已覆盖的逐项复核——**新增检查先做成脚本，再进本文**。
+- `verify-local` 检查双游戏目标 × Dev／Steam／GitHub 构建、XML、双语及跨根重复、Def／天意／精确三出口、加载声明与 DLL 框架／身份、版本跟随面、设置和分发隐私。保留原断言，复用仍适用于同一候选和输入的证据。
+- `pack-dev` 必先构建，再暂存 `dist/dev/Mwah`；不带 `-Zip` 只生成文件夹，带它另产单一 Mwah 顶层归档。`version.txt` 记录产品版本、渠道和 commit，脏树标 dirty，只用作开发候选。
+- `-PackageDir` 检查实际包，包括文本、DLL 可打印字符串及 PNG 元数据。工具不判断图像像素隐私；图像变更须目检。
 
-## 分支模型（2026-10-04 裁定，对齐兄弟仓；2026-10-05 起对版本分支无关）
+完整双版本构建需要 .NET 10 SDK 和可用的 NuGet 还原／缓存。1.6 为 net472／引用 1.6.4871，1.7 为 net10.0／引用 1.7.4990-unstable；实测游戏 build 不自动更新编译引用。只构建可用 `pwsh scripts/build-runtime.ps1`，按需传 `-BuildFlavor` 或 `-GameVersions`。直接构建 csproj 默认仍是 1.6；脚本自带 restore，不接受 NoRestore 开关。
 
-- 维护者于 2026-10-29 选择 **`0.3.x` 为远端默认分支**，本轮开发纳入该分支，首个待发布版本为 **0.3.0**。默认分支选择不改变发布边界，也不授权发布。
-- **`main` 只做 release**：只在发布时前进；tag 必须落在 `origin/main` 的历史上（release CI 强制校验血统）。
-- **开发在当前版本分支 `<minor>.x` 上**（取代 `dev`；每个 minor 开自己的版本分支，`dev` 不再复活；已归档的版本分支冻结、不再收新提交，当前是哪条看 `git branch --show-current` 与 `MEMORY.md` 耐久状态）。日常提交落当前版本分支，授权后 push → CI（CI 触发用 `[0-9].[0-9].x` 通配，切分支不改工作流）。
-- 发布时：当前版本分支上的批准提交 → PR/squash merge 进 `main` → 在 main 的合并提交上打 tag → tag push 触发 Release CI。
-- 历史 **append-only**：不 amend、不 rebase、不回写。
+纯文档只检查语义、实际读取方、链接及隐私，不机械重跑未受影响构建。禁止新增单元测试、追加用例或等价换名脚本；选择能回答真实验收问题的现有检查和维护者实机路径。
 
-## 发布顺序
+## 包内只放运行内容
 
-1. **候选准备**。版本主源 = csproj `<Version>`，`About/About.xml <modVersion>` 跟随（verify-local 门钉死三处一致）；实际验收结果及维护者采用决定已记录，未逐项覆盖不冒充实测通过；文案与双语键齐备。试玩用 `build-dev.ps1` 产物；dirty 包只作测试证据。
-2. **最小仪式（仅发布）**：`verify-local` 全绿 → `privacy-audit -FullHistory -PrePush` 全绿（`-PrePush` 的干净树 / main 存在 / 待推提交与 tag 集合自检只在发布时有意义）→ 维护者裁决版本、渠道与工坊文案。日常 push 无人工仪式、无逐次授权：隐私拦截已由 hook + CI 机械化（2026-10-06 简化：同日两次人工漏跑证明靠记忆的门禁不是门禁）。
-3. **合入 main**：squash merge（受保护 main 走 PR），合并后 `git diff --stat <当前版本分支> main` 应为空。
-4. **GitHub**：在 main 的发布提交上 `git tag vX.Y.Z && git push origin vX.Y.Z`（需授权）。Release CI 校验 tag/版本/血统 → 全部离线门 → GitHub flavor → `dist/github/Mwah-vX.Y.Z.zip` → 自动建 Release（pre-release 由 `-` 后缀自动判定）。
-5. **Steam（若获准）**：`pack-steam.ps1`（要求干净树）产出 `dist/steam/Mwah/`；维护者复制到本地上传副本，item ID 只写该副本的 `About/PublishedFileId.txt`（永不入库）。上传与页面维护由维护者本人执行。
-6. **收尾**：更新 `MEMORY.md` 的耐久状态（版本号、已发布渠道）与 `TODO.md`；渠道观察只支持页面级结论，一个渠道不证明另一个渠道。
+根 Defs／Languages 各一份；1.6、1.7 各一原生 DLL；About、LoadFolders、version 标签；VNPE 登记／专用语言位于独立条件根。Source、docs、archive、art、工具、缓存、游戏引用 DLL、PDB 和工坊发布标识不进包。
 
-## 证据边界
+每个 LoadFolders 选择显式包含 `/`、当前 minor 和条件兼容项。选择根不等于复制整个仓库；暂存按白名单取内容，检查基础／VNPE 有效组合、重复内容及唯一 DLL。
 
-- 工作树/提交信息/历史 blob/身份四面的结论互不推定；CI 默认模式 ≠ push 前 FullHistory。
-- 仓库证据、CI 输出、一个渠道的产物不能证明其他渠道的外部状态；未知的外部状态记 unverified。
-- 真实凭据若进入可达历史：先撤销/轮换，再谈清理；历史重写需单独授权。
+## 安装与加载由维护者确认
+
+完整替换 `Mods/Mwah`，不叠加覆盖、不混用 DLL，只启用一个 coahuilite.mwah；保留原存档与设置。未被自定义列表选中的旧 Common 不会自行加载，但有效根中的旧文件仍可能被读取，故不保留旧安装残片。
+
+实施者不复制安装、不运行游戏、不删除游戏目录内容、不建立 junction／symlink。布局改变只重开受影响的新包加载确认，未改变的玩法报告继续有效；场景清单、构建成功或文件选择均不能单独证明实机通过。具体候选、覆盖和下一责任方在[候选确认](../openspec/changes/shared-content-and-lifecycle/native-acceptance.md)中。
+
+## 提交与版本分支 push
+
+1. 使用 Conventional Commits，在当前 `<minor>.x` 分支工作；历史只追加，不 amend／rebase。main 仅供正式发布，已归档分支不继续开发。
+2. 提交前核对目标范围，包含本次新增文件，不夹带本地原稿或临时产物；暂存后运行 `git diff --cached --check`。
+3. 每个 clone 用 `pwsh scripts/install-hooks.ps1` 安装既有 pre-push hook。push 自动执行 `privacy-audit.ps1 -FullHistory`，失败拒推；CI 在全量 clone 上重跑。归档只要还在仓库，同样受文本、历史、身份和媒体隐私规则约束。
+
+普通版本分支 push 无需手工重复发布仪式。一次性脚本、反编译与调试输出放系统临时目录，不进入版本控制。
+
+## 正式发布顺序
+
+1. **确定干净候选及渠道。** csproj `<Version>` 是主源，About modVersion、工坊目标／中英版本行和双语 changelog 置顶条目同步；玩法／文案采用和真实缺口已记录，维护者决定版本、渠道及公开文案。
+2. **执行发布门。** 使用该候选有效的 verify-local 结果，执行 `pwsh scripts/privacy-audit.ps1 -FullHistory -PrePush`。PrePush 的干净树、main 和待推 tag 集合自检只适用于发布，不套给日常开发。
+3. **获准后合入 main。** 通过 PR squash merge；确认合并树与获准版本分支一致。发布 tag 必须在 main 历史上，Release CI 会校验血统。
+4. **获准后发布 GitHub。** 在发布提交打 `vX.Y.Z` tag 并推送。CI 核对版本和血统，跑既有门，使用 GitHub flavor 构建 `dist/github/Mwah-vX.Y.Z.zip`，审计实际包后创建 Release。手工出包入口为 `pwsh scripts/pack-github.ps1 -Version vX.Y.Z`，打包不等于发布。
+5. **获准后交付 Steam。** 在干净树运行 `pwsh scripts/pack-steam.ps1`，得到 `dist/steam/Mwah`。维护者自行复制到上传副本，只在该副本保管 PublishedFileId，完成工坊上传及页面更新；不入仓库或分发包。中英页面稿维护在 steam-workshop-page.md。
+6. **记录实际结果。** 更新 release-status.md 的渠道、候选身份与完成依据，更新双语 changelog 的实际发布时间和 TODO 下一动作。一个渠道的完成不证明另一个渠道完成，未确认就保留未确认。
+
+GitHub／Steam 各自构建自己的 flavor，不把上一渠道 DLL 贴上新标签再发行。工作树审计、全历史审计、实际包和外部渠道状态各证明自己的层，不互相推定。
+
+## 旧文档如何退役
+
+先把当前仍需的规则、渠道证据、恢复入口和未尽责任迁入其现行来源，更新直接读者，再将被替代文件放入 docs/archive。归档不是运行／构建输入，也不是必读冷记忆；本项目由维护者手动删除退役资料，执行者不代删。删除归档不应使现行入口、协议或自动消费者失效。

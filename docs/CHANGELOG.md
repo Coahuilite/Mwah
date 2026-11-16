@@ -1,47 +1,23 @@
 # Changelog
 
-All notable changes to Mwah! (Every Pawn Kisses Each Other) are documented in this file. The format follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), and the project adheres to [Semantic Versioning](https://semver.org/).
+Notable changes to Mwah! (Every Pawn Kisses Each Other), newest first. Dates on unreleased entries are update dates, not publication dates. Released entries retain their actual UTC+8 release time.
 
-## Changelog rules
-
-Structure and categories:
-- Released entries in reverse chronological order, newest first; the Unreleased entry, when present, sits on top.
-- Heading uses local release time: `[YYYY-MM-DD HH:MM UTC+8] Version X.Y.Z`; an unreleased entry uses `Unreleased — X.Y.Z` and gets the actual time at publish.
-- Sections use the Keep a Changelog types: **Added**, **Changed**, **Fixed**, **Deprecated**, **Removed**, **Security**; this project additionally allows **Packaging** and **Notes**. Never keep empty sections.
-- Breaking changes (save compatibility, settings migration, incompatible behavior shifts) always come first, with the impact and the action the player must take spelled out.
-- `Initial Workshop Upload` is reserved for the first Steam Workshop upload; when it ships the same build as the first version on the same day, record it inside that version's Notes instead of adding a separate entry; later updates use ordinary version entries.
-
-Writing entries:
-- One entry = one notable change, phrased as what the user can now do or what problem is gone — never as a mechanism walkthrough. Operational detail belongs to the README; an entry may carry at most a one-line pointer.
-- Start with a strong verb, present tense, roughly one line. Two short sentences beat one long manual.
-- Be specific; "various fixes and improvements" is banned. Every version gets entries, but only for changes that actually happened.
-- Write precisely and describe behavior; jokes belong to the in-game copy, not to the changelog.
-- Do not record unaccepted plans; accepted, unreleased work lives in the top Unreleased entry.
-- Mention GitHub and Steam together only when an entry affects both release surfaces.
-
-Maintenance:
-- Keep the Simplified Chinese version synchronized in `docs/CHANGELOG.zh-CN.md`, entry by entry.
-
-Recommended entry shape:
-
-```text
-## [YYYY-MM-DD HH:MM UTC+8] Version X.Y.Z
-
-One-line release summary.
+## Unreleased — 0.4.0 — 2026-11-16
 
 ### Added
-- ...
+- Kiss worktables and vanilla research devices, the multi-analyzer and nutrient paste dispenser, sharing one machine memory.
+- Gain stronger positive research-device moods with Intellectual, without advancing research.
+- French kiss the dispenser or supported Vanilla Nutrient Paste Expanded outlets for good fate outcomes that fill Food without using feedstock.
 
 ### Changed
-- Refresh the cover art for 1.6 / 1.7, paired kisses, walls and trees.
-- ...
+- Consolidate installation, architecture, diagnostics and release guidance into self-contained documents; retire cold-memory and completed change records without leaving archive dependencies.
 
 ### Fixed
-- ...
+- Stop the current director pick when closing the panel, including quick dispatch.
 
 ### Packaging
-- ...
-```
+- Load shared Defs and languages once from the mod root while retaining separate native builds for 1.6 and 1.7; replace old installations as a whole folder.
+- Load VNPE registrations and dedicated text only when VNPE is active, and keep local art originals and documentation archives out of runtime packages.
 
 ## [2026-10-30 02:16 UTC+8] Version 0.3.0
 

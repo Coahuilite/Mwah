@@ -42,6 +42,7 @@ project.fragment.lock.json
 .idea/
 
 # RimWorld local/generated content
+/art/
 dist/
 About/PublishedFileId.txt
 1.6/Assemblies/*.pdb

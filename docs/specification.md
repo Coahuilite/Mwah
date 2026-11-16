@@ -1,58 +1,49 @@
-# Mwah! 规格与变更入口
+# 规格与变更工作流
 
-状态：**现行开发合同入口**，2026-10-29 采用。维护责任：项目维护者。
+本项目以 `openspec/specs/` 为唯一现行行为合同。本文说明如何找到、修改和验收合同；普通 Markdown 即可维护，无需安装规格 CLI 或查阅外部流程文件。
 
-这里指向唯一现行正文，不复制行为规则。现行合同已合并维护者此前批准的配对修复、亲树、文化策略、双页设置及 1.7 支持目标；不再要求把英文基线和旧 delta 拼成另一套正文。
+## 按行为找到合同
 
-**合同采用与交付分开。** 规格约定行为；实现证据由[开发记录](development/tree-kissing-and-settings.md)负责，维护者的 0.3.0 验收采用与渠道状态见[发布记录](release_review/release-0.3.0-review-zh.md)。
+| 合同 | 负责范围 |
+| --- | --- |
+| [kissing](../openspec/specs/kissing/spec.md) | Pawn 配对入口、参与资格、请求准入、冷却、表演与奖励 |
+| [addons](../openspec/specs/addons/spec.md) | 墙、树、机器、研究设备、营养膏和可选兼容目标 |
+| [settings](../openspec/specs/settings/spec.md) | 设置页面、编辑、单位、控件与诊断呈现 |
+| [settings-use](../openspec/specs/settings-use/spec.md) | 规范设置值的提交、运行消费和持久化 |
+| [compatibility](../openspec/specs/compatibility/spec.md) | 两个游戏 minor、条件内容、持久身份、单源维护与安全交付 |
 
-## 从责任找到正文
+合同以状态所有权和行为边界划分，不按目录数量拆分系统。共同规则在一套源码和内容源中维护；根 `Defs/`、`Languages/` 是共同内容，版本目录只放原生程序集，可选登记和专用语言留在条件兼容根。自定义 `LoadFolders.xml` 显式选择 `/`、当前 minor 和适用的兼容目录。
 
-| 正文 | 负责的事实与结果 | 维护责任 |
-| --- | --- | --- |
-| [kissing](../openspec/specs/kissing/spec.md) | Pawn 配对入口、资格、冷却、占用、配对状态及奖励 | 配对亲吻维护者 |
-| [addons](../openspec/specs/addons/spec.md) | 非 Pawn 目标、扩展身份、共享单 Pawn 执行、墙／树及可选文化 | 扩展维护者 |
-| [settings](../openspec/specs/settings/spec.md) | 页面、编辑、单位、控件及诊断呈现 | 设置界面维护者 |
-| [settings-use](../openspec/specs/settings-use/spec.md) | 提交到规范值、运行消费和持久化的既有连接 | 设置连接维护者 |
-| [compatibility](../openspec/specs/compatibility/spec.md) | 原生支持条件、可选内容隔离、持久身份及交付边界 | 原生适配与交付维护者 |
+## 修改前先确定意图
 
-这些是维护责任，不要求新建团队、总管、事件总线、加载器或 DLL。实际类、方法、状态寿命及原版 API 映射见[设计](../openspec/changes/tree-kissing-and-settings/design.md)。
+1. **恢复既有保证：** 找到原合同、实际调用者和失败路径，直接修复；不为每次修复虚构新要求。
+2. **补录遗漏合同：** 写明可追溯的既有需求和采用依据，保留原有输入、数据含义和使用条件。
+3. **改变保证：** 先在负责该工作的 change 中写完整差量，再实现；涉及未授权的外部影响、存档语义或玩法选择时交由维护者决定。
 
-```text
-右键／导演台／自主撮合 → kissing
-右键／导演台的非 Pawn 请求 → addons → 共用单 Pawn 执行
-settings → settings-use → 请求准入／适用结算 + 磁盘持久化
-上述能力 → compatibility 的原生环境与身份边界
-```
+新增能力的前提只约束新能力，不能回溯限制旧调用者。不能根据候选实现或一条通过输出反推需求，也不能通过改写规格掩盖缺陷。
 
-## 维护时走最短完整路径
+## 在正确位置记录
 
-1. **先读现行合同。** 找到入口、输入含义、适用条件和真实消费者；不能只看实现返回值。
-2. **在 proposal 写意图。** 区分恢复旧保证、补录有来源的旧合同和改变保证；小型文字修正不必凑齐一套制品。
-3. **有语义变化才写 delta。** 新增、改变、撤销或改名要求，才使用 `ADDED / MODIFIED / REMOVED / RENAMED Requirements`。纯恢复可以零 delta，不为每次修复强造新要求。遗漏合同可注明既有来源后补录；不能把错误实现改写成正确预期。
-4. **把实现与证据放对位置。** design 解释取舍、直接连接和责任；tasks 记录获准动作及完成依据。按项目允许的方法验证到实际消费层，复用仍适用的证据，不从场景自动生成测试任务。
-5. **明确采用和结束。** 候选注明状态及所属变更，在明确采用前不替代现行正文；`MODIFIED` 保留完整要求块和全部旧场景。采用时更新现行正文、入口和直接读取方，并保存旧文档。归档对应工作不代表发布，未完成验收不能靠归档关闭。
+- **spec.md：** 只写行为和适用条件。要求使用 `SHALL`／`MUST`，至少有一个具体 `Scenario`；场景使用 `WHEN`／`THEN`，必要时加 `GIVEN`／`AND`。
+- **proposal：** 目标、范围、授权与不做什么。
+- **design：** 技术选择、真实连接、状态所有权和取舍；路径、类名等实现细节不必变成永久接口。
+- **tasks／实现记录：** 动作、产物身份、有效证据、缺口、下一责任方。
+- **采用记录：** 维护者何时接受哪项合同修订。实施接受、原生确认和正式发布分别记录。
 
-社交收益压缩的追加采用记录见[本次 delta](../openspec/changes/social-impact-soft-cap/adoption.md)，实施与验收采用由其 [tasks](../openspec/changes/social-impact-soft-cap/tasks.md)记录。
+真实规则变化使用 `ADDED / MODIFIED / REMOVED / RENAMED Requirements`。`MODIFIED` 必须包含完整要求和所有保留场景，不能只给差异句。候选差量在采用前不替代现行正文；采用后同步唯一正文和直接读者，旧差量作为历史依据。
 
-原地、非爬行被动接收及持续参与条件见[已采用修订](../openspec/changes/mobility-and-kiss-completion/stationary-reception-adoption.md)，与原移动回退变更共用任务与证据记录。
+目录迁移若仍满足同一单源、加载和持久身份保证，只更新设计、消费者、路径和证据，不制造玩法变化。小型文档纠正无需凑齐一套新制品。
 
-移动回退及表演／返程边界的追加修订见 [delta](../openspec/changes/mobility-and-kiss-completion/adoption.md)，修复与验收见其 [tasks](../openspec/changes/mobility-and-kiss-completion/tasks.md)。
+## 证据如何支持交付
 
-当前只有 `openspec/specs/` 下的正文定义现行规则；change 可以包含候选 delta，不能自称第二套 current。原变更的实施及验收采用见[任务记录](../openspec/changes/tree-kissing-and-settings/tasks.md)。
+实现、运行内容或打包改变时使用现有 `pwsh scripts/verify-local.ps1` 和实际渠道出包入口；保留原断言，只按已采用的合同调整受影响路径。禁止新增单元测试、追加单元测试用例或等价换名脚本。纯文档改动核对完整语义、链接、读取方和隐私，不重跑未受影响构建。
 
-## 写作与工具
+区分静态检查、构建、实际包和维护者实机报告。场景清单不是已执行结果，构建成功不是游戏通过；证据只在候选、输入和条件仍适用时复用。目录布局改变可复用未改变的玩法验收，但新包加载结果单独记录。缺陷回负责的 change 修复，不通过降低要求获得通过。
 
-- 现行规格及活动变更正文使用中文；保留 `Purpose / Requirements / Requirement / Scenario`、`WHEN / THEN`，按需用 `GIVEN / AND` 和代码、路径标识。
-- 硬保证使用 `SHALL` 或 `MUST`，每条要求至少有一个具体场景。场景是合同说明，不是已经执行的测试。
-- `spec.md` 只写行为及适用条件；未实现、缺陷、已执行检查、待补证均放实现／证据材料，不混进规范正文。
-- 使用普通 Markdown 手工维护。无需安装 OpenSpec、OpenSpec-cn 或集成插件，不以 CLI 通过作为采用条件；若另行采用工具，不为解析器删场景、改语义或制造 delta。现有构建、打包、隐私和 CI 门禁不因此改变。
-- 代码实施、运行游戏、真实配置及发布仍受各自授权约束。禁止新增单元测试及等价换名用例；实机验证由维护者进行。纯文档迁移检查合同、链接、直接读取方和隐私，不为安心重跑未受影响的游戏构建。
+退役前先把仍需的唯一结论、渠道证据、恢复材料和未尽责任放进负责的现行来源，更新真实入口、机器读取方及直接引用，再把旧文件放入 `docs/archive/`，由维护者手动决定删除。不能只搬路径，却让日常运行继续依赖可删除档案；归档也不证明验收或发布完成。
 
-## 历史与采用依据
+项目级授权和下一动作由 `TODO.md` 路由，change 的 tasks 管理自身完成条件；发布过程和渠道结果分别由现行发布流程、发布状态负责。收尾让下一责任方能找到产物、有效依据和真实缺口，不复制整个历史，也不保留永久 Done 日记。
 
-方法依据为维护者提供的《RimWorld_Mod_Specification_Workflow_zh.md》。本页已包含本项目需要执行的流程，不依赖工作区外文件或上游工具才能使用。
+## 当前维护入口
 
-- [被替代英文正文与工具元数据](archive/specification-before-workflow/README.md)：保留历史，不是活动任务归档。
-- [本轮迁移与语义对账](../openspec/changes/archive/2026-10-29-specification-workflow/design.md)：记录原要求／场景去向及单一入口切换。
-- [实施结果、有效证据和真实缺口](development/tree-kissing-and-settings.md)：不把源码／离线编译写成实机成功。
+当前根布局与文档整理归 [0.4.x tasks](../openspec/changes/shared-content-and-lifecycle/tasks.md)，候选和实机覆盖归[原生确认](../openspec/changes/shared-content-and-lifecycle/native-acceptance.md)。[文档目录](README.md)提供架构、诊断、发布和历史资料的导航；现行规格始终以上表的五份正文为准。

@@ -63,14 +63,23 @@ public class MwahMod : Mod
     /// <summary>返回非空字符串是设置页在"模式选项"里出现的唯一条件。</summary>
     public override string SettingsCategory() => "MWAH.SettingsCategory".Translate();
 
-
     public override void DoSettingsWindowContents(Rect inRect)
     {
         TickQueuedSave();
         (settingsView ??= new MwahSettingsView(Settings)).DoSettingsWindowContents(inRect);
     }
 
-    /// <summary>设置页在拖 slider 时被高频调用，这里只在静默窗口期结束后真正落盘一次。</summary>
+    // ---- 提交／保存的四个动作，各有唯一入口；代次就是它们之间的账 ----
+    // 提交 = RequestSettingsSave：规范值已经改在内存里，只登记待落盘代次并重置防抖窗口，不碰磁盘。
+    // 尝试 = FlushSettingsSave：静默窗口结束后的一次真实写盘调用。
+    // 成功 = MarkSettingsPersisted：唯一的持久代次记账点。
+    // 失败 = 记 failedGeneration 并推迟重试，dirty 原样保留 —— 绝不冒称已保存（USE-02）。
+    // 防抖时长、重试时长、提交时机与玩家数值全部照旧，这里只把已有的分工写成可辨认的入口。
+
+    /// <summary>
+    /// 提交入口：设置页已经把改动落进内存规范值（USE-01 的"立即生效"），
+    /// 这里只登记"有新一代待落盘"并重置防抖窗口。
+    /// </summary>
     public void RequestSettingsSave()
     {
         requestedGeneration++;
@@ -78,6 +87,7 @@ public class MwahMod : Mod
         saveDueAt = Time.realtimeSinceStartup + SaveDebounceSeconds;
     }
 
+    /// <summary>防抖闸：由设置页每帧驱动，到点且确实还有未落盘代次时才发起一次尝试。</summary>
     private void TickQueuedSave()
     {
         if (!savePending || Time.realtimeSinceStartup < saveDueAt)
@@ -93,14 +103,16 @@ public class MwahMod : Mod
         FlushSettingsSave();
     }
 
+    /// <summary>保存尝试：成功与否由代次记账，不靠"调用过 WriteSettings"自证。</summary>
     private void FlushSettingsSave()
     {
         try
         {
+            // queuedWrite 只说明"这次 WriteSettings 来自内部防抖 flush"：
+            // 原版入口会在关设置页时先提交编辑缓冲，而我们的自动保存绝不能替玩家提前提交
+            // 还打在键盘上的数值框（USE-02）。
             queuedWrite = true;
             WriteSettings();
-            persistedGeneration = requestedGeneration;
-            savePending = false;
             MwahLog.Dev($"settings saved (generation {persistedGeneration})");
         }
         catch (Exception ex)
@@ -117,6 +129,15 @@ public class MwahMod : Mod
     {
         if (!queuedWrite) settingsView?.Close();
         base.WriteSettings();
+        MarkSettingsPersisted();
+    }
+
+    /// <summary>
+    /// 持久成功的唯一记账点：磁盘上现在就是最新请求的那一代。
+    /// 两条路径（游戏自己的保存／设置页的防抖 flush）都汇到这里，不再各写一份同样的赋值。
+    /// </summary>
+    private void MarkSettingsPersisted()
+    {
         persistedGeneration = requestedGeneration;
         savePending = false;
     }
