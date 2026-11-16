@@ -4,7 +4,7 @@
 
 Select a pawn, right-click another, and order a kiss. The mobile pawn approaches, both face each other, and vanilla hearts float up. Use the **Kiss Director** to pair pawns you cannot normally order, or send a pawn to kiss a wall, tree or machine.
 
-Supports **RimWorld 1.6 and 1.7**, live maps and single-player. Core alone is enough: no required DLC, framework or Harmony. This page includes **unreleased 0.4.0** machine and VNPE features; published changes are listed in the [changelog](docs/CHANGELOG.md).
+Supports **RimWorld 1.6 and 1.7**, live maps and single-player. Core alone is enough: no required DLC, framework or Harmony. Current release: **[0.4.0](https://github.com/Coahuilite/Mwah/releases/tag/v0.4.0)**. See the [changelog](docs/CHANGELOG.md) for changes.
 
 ## Install and update
 

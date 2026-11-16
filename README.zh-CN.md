@@ -4,7 +4,7 @@
 
 选中一个 Pawn，右键另一个，下令亲吻：能走的一方走过去，双方面对面，飘起原版爱心。**亲吻导演台**还能指定平时无法下令的 Pawn，或让 Pawn 亲墙、树和机器。
 
-支持 **RimWorld 1.6／1.7**，仅游戏内地图、仅单机。只需 Core，不强制 DLC、框架或 Harmony。本文包含**尚未发布的 0.4.0** 机器吻与 VNPE 功能；已发布变更见[更新日志](docs/CHANGELOG.zh-CN.md)。
+支持 **RimWorld 1.6／1.7**，仅游戏内地图、仅单机。只需 Core，不强制 DLC、框架或 Harmony。当前发布版为 **[0.4.0](https://github.com/Coahuilite/Mwah/releases/tag/v0.4.0)**；变更见[更新日志](docs/CHANGELOG.zh-CN.md)。
 
 ## 安装与更新
 
